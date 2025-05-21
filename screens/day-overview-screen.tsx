@@ -15,7 +15,7 @@ import {
   calculateTotalProgress,
   getProgressColorByValue,
 } from "../utils/utils";
-import { useDaysConfiguration } from "../providers/day-config-provider";
+import { usePeriodOverviewScreenManager } from "../hooks/usePeriodOverviewScreenManager";
 import usePrevious from "../hooks/usePrevious";
 import { RootStackParamList } from "../App";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -24,11 +24,11 @@ type Props = StackScreenProps<RootStackParamList, "DayOverview">;
 
 const DayOverviewScreen: React.FC<Props> = ({ route, navigation }) => {
   const { t } = useTranslation();
-  const { getDayConfig } = useDaysConfiguration();
+  const { getDayConfig } = usePeriodOverviewScreenManager();
 
   const currentDay = route.params.currentDay;
   const dayTasks = getDayConfig(currentDay);
-  const total = calculateTotalProgress(dayTasks.progress);
+  const total = dayTasks ? calculateTotalProgress(dayTasks.progress) : 0;
   const previousProgress = usePrevious(total);
   const [showComplitedModal, setShowComplitedModal] = useState(false);
 

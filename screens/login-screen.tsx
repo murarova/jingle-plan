@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   ButtonText,
@@ -17,21 +16,42 @@ import {
 } from "@gluestack-ui/themed";
 import { Alert, Keyboard } from "react-native";
 import { SCREENS } from "../constants/constants";
-import { signInWithEmailAndPassword } from "../services/services";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { InputIcon } from "@gluestack-ui/themed";
 import { Loader } from "../components/common";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { signInUserAsync } from "../services/auth-api";
+import {
+  selectAuthStatus,
+  selectCurrentUser,
+  selectAuthError,
+  isLoggedIn,
+} from "../store/authReducer";
+import { useAppSelector, useAppDispatch } from "../store/withTypes";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../App";
+
+type NavigationProp = StackNavigationProp<RootStackParamList, "Login">;
 
 export const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const isUserLoggedIn = useAppSelector(isLoggedIn);
+  const authStatus = useAppSelector(selectAuthStatus);
+  const authError = useAppSelector(selectAuthError);
 
   const { t } = useTranslation();
-  const nav = useNavigation();
+  const nav = useNavigation<NavigationProp>();
+
+  useEffect(() => {
+    if (isUserLoggedIn) {
+      nav.replace(SCREENS.HOME);
+    }
+  }, [isUserLoggedIn, nav]);
 
   const goToRegistration = () => {
     nav.push(SCREENS.REGISTER);
@@ -40,20 +60,7 @@ export const LoginScreen = () => {
 
   const goToMainFlow = async () => {
     if (email && password) {
-      try {
-        setIsLoading(true);
-        const user = await signInWithEmailAndPassword(email, password);
-        if (user) {
-          nav.replace(SCREENS.HOME);
-        }
-      } catch (e) {
-        Alert.alert(
-          t("screens.loginScreen.errorTitle"),
-          t("screens.loginScreen.errorMessage")
-        );
-      } finally {
-        setIsLoading(false);
-      }
+      dispatch(signInUserAsync({ email, password }));
     } else {
       Alert.alert(
         t("screens.loginScreen.errorTitle"),
@@ -62,7 +69,14 @@ export const LoginScreen = () => {
     }
   };
 
-  if (isLoading) {
+  if (authError) {
+    Alert.alert(
+      t("screens.loginScreen.errorTitle"),
+      t("screens.loginScreen.errorMessage")
+    );
+  }
+
+  if (authStatus === "pending") {
     return <Loader />;
   }
 
@@ -119,7 +133,7 @@ export const LoginScreen = () => {
             <Button
               mb={30}
               size="md"
-              variant="primary"
+              variant="solid"
               action="primary"
               isDisabled={!email || !password}
               onPress={goToMainFlow}

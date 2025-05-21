@@ -55,7 +55,7 @@ export default {
       email: "Email",
       password: "Password",
       repeatPassword: "Repeat the password",
-      okBtn: "Register",
+      registerBtn: "Register",
       invalidPassword:
         "Password must be at least 8 characters long and contain at least one number and at least one letter",
       validatePassword:

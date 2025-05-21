@@ -3,6 +3,7 @@ import moment from "moment";
 import {
   Calendar as NativeCalendar,
   LocaleConfig,
+  DateData,
 } from "react-native-calendars";
 import { useTranslation } from "react-i18next";
 import { getUserRole } from "../services/services";
@@ -11,7 +12,7 @@ import { Pressable } from "@gluestack-ui/themed";
 import { config } from "../config/gluestack-ui.config";
 import CircularProgress from "react-native-circular-progress-indicator";
 import { calculateTotalProgress } from "../utils/utils";
-import { useDaysConfiguration } from "../providers/day-config-provider";
+import { usePeriodOverviewScreenManager } from "../hooks/usePeriodOverviewScreenManager";
 
 export function Calendar({
   pressHandler,
@@ -66,7 +67,7 @@ export function Calendar({
   };
   LocaleConfig.defaultLocale = locale;
 
-  const { daysConfig, getDayConfig } = useDaysConfiguration();
+  const { getDayConfig, userData } = usePeriodOverviewScreenManager();
 
   useEffect(() => {
     getUserRole().then((role) => {
@@ -76,7 +77,7 @@ export function Calendar({
     });
   }, []);
 
-  const minDate = moment(daysConfig[0].day).format("YYYY-MM-DD");
+  const minDate = moment("2024-01-01").format("YYYY-MM-DD");
   const maxDate = isAdmin
     ? moment("2024-12-31").format("YYYY-MM-DD")
     : currentDate;
@@ -87,9 +88,9 @@ export function Calendar({
       firstDay={1}
       key={locale}
       hideExtraDays
-      dayComponent={({ date, state }) => {
+      dayComponent={({ date, state }: { date: DateData; state: string }) => {
         const dayConfig = getDayConfig(date?.dateString);
-        const progress = calculateTotalProgress(dayConfig.progress);
+        const progress = calculateTotalProgress(dayConfig?.progress);
         const today = date?.dateString === currentDate;
         return (
           <Pressable

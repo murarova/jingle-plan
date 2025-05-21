@@ -62,7 +62,7 @@ export default {
       email: "Пошта",
       password: "Пароль",
       repeatPassword: "Повторіть пароль",
-      okBtn: "Створити акаунт",
+      registerBtn: "Створити акаунт",
       invalidPassword:
         "Пароль має складатись із щонайменше 8 символів і містити хоча б одну цифру та хоча б одну літеру",
       validatePassword:

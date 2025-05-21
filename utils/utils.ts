@@ -1,24 +1,40 @@
-import moment from "moment";
+import moment, { Moment } from "moment";
 import { TASK_CATEGORY } from "../constants/constants";
+import { UserData, DayTaskConfig, DayConfig } from "../types/types";
 
-function getTaskGrade(config, userData, day) {
+interface TaskProgress {
+  dayTaskGrade: number;
+  moodTaskGrade: number;
+}
+
+interface DayData {
+  day: string;
+  progress: TaskProgress;
+  config: DayConfig;
+}
+
+function getTaskGrade(
+  config: DayTaskConfig,
+  userData: UserData | null,
+  day: string
+): number {
   const { category, grade, context } = config;
   const completedTask =
     category === TASK_CATEGORY.MOOD
       ? userData?.[category]?.[day]
-      : userData?.[category]?.[context];
+      : userData?.[category]?.[context!];
 
   return completedTask ? grade : 0;
 }
 
 export const enumerateDaysBetweenDates = (
-  userData,
-  taskConfig,
-  language,
-  startDate,
-  endDate
-) => {
-  const dates = [];
+  userData: UserData | null,
+  taskConfig: Record<string, Record<string, DayConfig>>,
+  language: string,
+  startDate: Moment,
+  endDate: Moment
+): DayData[] => {
+  const dates: DayData[] = [];
   let currDate = moment(startDate).startOf("hour");
   const lastDate = moment(endDate).startOf("hour");
 
@@ -50,7 +66,7 @@ export const enumerateDaysBetweenDates = (
   return dates;
 };
 
-export function getProgressColorByValue(value) {
+export function getProgressColorByValue(value: number): string {
   if (value < 30) {
     return "$progressRed";
   } else if (value >= 30 && value < 70) {
@@ -60,7 +76,10 @@ export function getProgressColorByValue(value) {
   }
 }
 
-export function calculateTotalProgress(progress) {
+export function calculateTotalProgress(progress?: TaskProgress): number {
+  if (!progress) {
+    return 0;
+  }
   const totalProgress = Object.values(progress).reduce((sum, grade) => {
     return sum + grade;
   }, 0);

@@ -22,14 +22,16 @@ import { MonthPhoto } from "./day-tasks/month-photo/month-photo";
 import { Alert } from "react-native";
 import { MoodTask } from "./day-tasks/mood/mood-task";
 import { Goals } from "./day-tasks/goals/goals";
-import { useDaysConfiguration } from "../providers/day-config-provider";
+import { useAppDispatch } from "../store/withTypes";
+import { updateDayProgressAsync } from "../services/auth-api";
 import moment from "moment";
 import {
   PlanData,
   SummaryData,
-  TaskConfig,
+  DayTaskConfig,
   TextData,
   TextImageData,
+  TaskContext,
 } from "../types/types";
 
 type UsersData = PlanData[] | SummaryData | TextImageData | TextData;
@@ -38,12 +40,12 @@ export function TaskItem({
   taskConfig,
   currentDay,
 }: {
-  taskConfig: TaskConfig;
+  taskConfig: DayTaskConfig;
   currentDay: string;
 }) {
   const { t } = useTranslation();
   const [data, setData] = useState<UsersData | null>(null);
-  const { updateDayProgress } = useDaysConfiguration();
+  const dispatch = useAppDispatch();
   const day = moment(currentDay).format("DD");
   const progressKey =
     taskConfig.category === TASK_CATEGORY.MOOD
@@ -51,17 +53,21 @@ export function TaskItem({
       : "dayTaskGrade";
 
   function handleAddProgress() {
-    updateDayProgress({
-      day: currentDay,
-      [progressKey]: taskConfig.grade,
-    });
+    dispatch(
+      updateDayProgressAsync({
+        day: currentDay,
+        [progressKey]: taskConfig.grade,
+      })
+    );
   }
 
   function handleRemoveProgress() {
-    updateDayProgress({
-      day: currentDay,
-      [progressKey]: 0,
-    });
+    dispatch(
+      updateDayProgressAsync({
+        day: currentDay,
+        [progressKey]: 0,
+      })
+    );
   }
 
   useEffect(() => {
@@ -117,7 +123,7 @@ export function TaskItem({
             <Box pt="$4">
               {taskConfig.taskOutputType === TaskOutputType.List && (
                 <Plans
-                  context={taskConfig.context}
+                  context={taskConfig.context as TaskContext}
                   data={data as PlanData[] | null}
                   setData={setData}
                   handleAddProgress={handleAddProgress}
@@ -127,7 +133,7 @@ export function TaskItem({
               {taskConfig.taskOutputType === TaskOutputType.Text &&
                 taskConfig.category === TASK_CATEGORY.SUMMARY && (
                   <Summary
-                    context={taskConfig.context}
+                    context={taskConfig.context as TaskContext}
                     data={data as SummaryData | null}
                     setData={setData}
                     handleAddProgress={handleAddProgress}
@@ -139,7 +145,7 @@ export function TaskItem({
                   <MonthPhoto
                     data={data as TextImageData | null}
                     setData={setData}
-                    context={taskConfig.context}
+                    context={taskConfig.context as TaskContext}
                     handleAddProgress={handleAddProgress}
                     handleRemoveProgress={handleRemoveProgress}
                   />
@@ -157,7 +163,7 @@ export function TaskItem({
               {taskConfig.category === TASK_CATEGORY.GOALS && (
                 <Goals
                   data={data as TextData | null}
-                  context={taskConfig.context}
+                  context={taskConfig.context as TaskContext}
                   setData={setData}
                   handleAddProgress={handleAddProgress}
                   handleRemoveProgress={handleRemoveProgress}

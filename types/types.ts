@@ -52,18 +52,32 @@ export type SummaryCollection = {
   [key in TaskContext]?: PlanScreenData[];
 };
 
-export interface TaskConfig {
-  category?: string;
-  context: TaskContext;
-  grade: number;
-  taskOutputType: TaskOutputType;
-  text: string;
-  title: string;
-}
 export type TaskGategory = (typeof TASK_CATEGORY)[keyof typeof TASK_CATEGORY];
 
 export interface TaskProgress {
   totalTasks: number;
   doneTasks: number;
   donePercentage: number;
+}
+
+export interface DayTaskConfig {
+  category: string;
+  grade: number;
+  context?: TaskContext;
+  taskOutputType: TaskOutputType;
+  text: string;
+  title: string;
+}
+
+export interface DayConfig {
+  videoText: string;
+  videoId: string;
+  dayTaskConfig: DayTaskConfig;
+  moodTaskConfig: DayTaskConfig;
+}
+
+export interface UserData {
+  [key: string]: {
+    [key: string]: any;
+  };
 }
