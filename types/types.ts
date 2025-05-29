@@ -76,8 +76,21 @@ export interface DayConfig {
   moodTaskConfig: DayTaskConfig;
 }
 
+export type CalendarConfig = Record<string, Record<string, DayConfig>>;
+
 export interface UserData {
   [key: string]: {
     [key: string]: any;
   };
+}
+
+export interface DayTaskProgress {
+  dayTaskGrade: number;
+  moodTaskGrade: number;
+}
+
+export interface DayData {
+  day: string;
+  progress: DayTaskProgress;
+  config: DayConfig;
 }

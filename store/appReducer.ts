@@ -15,9 +15,10 @@ import {
   getImageUrlAsync,
   removeTaskAsync,
 } from "../services/data-api";
+import { CalendarConfig } from "../types/types";
 
 export interface State {
-  configuration: null;
+  configuration: CalendarConfig | null;
   userData: null;
   imageUrl: string | null;
   progress: null; //["day": number]
@@ -59,7 +60,7 @@ const appSlice = createSlice({
     });
     builder.addCase(
       getConfigurationAsync.fulfilled,
-      (state, action: PayloadAction<any>) => {
+      (state, action: PayloadAction<CalendarConfig>) => {
         state.status = "succeeded";
         state.configuration = action.payload;
       }

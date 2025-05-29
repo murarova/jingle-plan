@@ -4,7 +4,13 @@ import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
 import { TASK_CATEGORY, YEAR } from "../constants/constants";
 import { SerializableUser } from "../types/user";
-import { ImageData, PlanData, TextData, TextImageData } from "../types/types";
+import {
+  CalendarConfig,
+  ImageData,
+  PlanData,
+  TextData,
+  TextImageData,
+} from "../types/types";
 
 const baseUrl = `/${YEAR}/users`;
 
@@ -111,7 +117,7 @@ export async function deleteCurrentUser(): Promise<void> {
   }
 }
 
-export async function getConfiguration(): Promise<any> {
+export async function getConfiguration(): Promise<CalendarConfig> {
   try {
     const response = await firebase
       .app()

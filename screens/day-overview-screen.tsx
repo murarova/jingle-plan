@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, useCallback, useEffect } from "react";
+import { useLayoutEffect, useState, useEffect } from "react";
 import { TasksList } from "../components/tasks-list";
 import {
   Box,
@@ -24,10 +24,12 @@ type Props = StackScreenProps<RootStackParamList, "DayOverview">;
 
 const DayOverviewScreen: React.FC<Props> = ({ route, navigation }) => {
   const { t } = useTranslation();
+
   const { getDayConfig } = usePeriodOverviewScreenManager();
 
   const currentDay = route.params.currentDay;
   const dayTasks = getDayConfig(currentDay);
+
   const total = dayTasks ? calculateTotalProgress(dayTasks.progress) : 0;
   const previousProgress = usePrevious(total);
   const [showComplitedModal, setShowComplitedModal] = useState(false);
