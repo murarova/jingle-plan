@@ -10,50 +10,47 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { TASK_CATEGORY } from "../../../constants/constants";
 import uuid from "react-native-uuid";
-import { removeTask, saveTaskByCategory } from "../../../services/services";
 import { Alert } from "react-native";
 import isEmpty from "lodash/isEmpty";
 import { HappySlider } from "./happy-slider";
 import { ActionButtons } from "../../common";
-import { SummaryData } from "../../../types/types";
+import { SummaryContextData } from "../../../types/types";
+import {
+  removeTaskAsync,
+  saveTaskByCategoryAsync,
+} from "../../../services/data-api";
+import { useAppDispatch } from "../../../store/withTypes";
 
 interface SummaryProps {
   context: string;
-  data: SummaryData | null;
-  setData: (data: SummaryData | null) => void;
-  handleAddProgress: () => void;
-  handleRemoveProgress: () => void;
+  data: SummaryContextData | null;
 }
 
-export function Summary({
-  context,
-  data,
-  setData,
-  handleAddProgress,
-  handleRemoveProgress,
-}: SummaryProps) {
+export function Summary({ context, data }: SummaryProps) {
+  const contextData = data?.[context];
   const { t } = useTranslation();
   const [text, setText] = useState("");
   const [rate, setRate] = useState(50);
   const [edit, setEdit] = useState(false);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (isEmpty(data)) {
+    if (isEmpty(contextData)) {
       setEdit(true);
     } else {
       setEdit(false);
     }
 
-    if (data?.text) {
-      setText(data.text);
+    if (contextData?.text) {
+      setText(contextData.text);
     }
-    if (data?.rate) {
-      setRate(data.rate);
+    if (contextData?.rate) {
+      setRate(contextData.rate);
     }
-  }, [data]);
+  }, [contextData]);
 
-  function onTaskSubmit() {
-    const id = data?.id ?? uuid.v4();
+  async function onTaskSubmit() {
+    const id = contextData?.id ?? uuid.v4();
     if (!text.trim()) {
       Alert.alert("Oops", "Please add some text");
       return;
@@ -64,33 +61,33 @@ export function Summary({
       rate,
     };
     try {
-      saveTaskByCategory({
-        category: TASK_CATEGORY.SUMMARY,
-        data: updatedSummary,
-        context,
-      });
+      await dispatch(
+        saveTaskByCategoryAsync({
+          category: TASK_CATEGORY.SUMMARY,
+          data: updatedSummary,
+          context,
+        })
+      ).unwrap();
     } catch (error) {
       Alert.alert("Oops", "Something wrong");
     } finally {
-      setData(updatedSummary);
-      handleAddProgress();
       setEdit(false);
     }
   }
 
   async function handleTaskRemove() {
     try {
-      await removeTask({
-        category: TASK_CATEGORY.SUMMARY,
-        context,
-      });
+      await dispatch(
+        removeTaskAsync({
+          category: TASK_CATEGORY.SUMMARY,
+          context,
+        })
+      ).unwrap();
     } catch (error) {
       Alert.alert("Oops", "Something wrong");
     } finally {
-      setData(null);
       setText("");
       setRate(50);
-      handleRemoveProgress();
     }
   }
 
@@ -113,7 +110,7 @@ export function Summary({
       ) : (
         <Box>
           <Box mb="$2">
-            <Text>{data?.text || t("common.empty")}</Text>
+            <Text>{contextData?.text || t("common.empty")}</Text>
           </Box>
           <ActionButtons
             onEdit={() => setEdit(true)}

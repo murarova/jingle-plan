@@ -20,7 +20,19 @@ export const SCREENS = {
   DASHBOARD: "Dashboard",
 } as const;
 
-export const albumScreenmMonthOrder = [
+export const LANGUAGES = {
+  ua: { icon: "ua", nativeName: "Українська", moment: "uk" },
+  en: { icon: "us", nativeName: "English", moment: "en-gb" },
+};
+
+export enum TaskOutputType {
+  Text = "text",
+  Image = "image",
+  List = "list",
+  TextPhoto = "textPhoto",
+}
+
+export const allMonths = [
   "january",
   "february",
   "march",
@@ -33,20 +45,9 @@ export const albumScreenmMonthOrder = [
   "october",
   "november",
   "december",
-  "year",
 ] as const;
 
-export const LANGUAGES = {
-  ua: { icon: "ua", nativeName: "Українська", moment: "uk" },
-  en: { icon: "us", nativeName: "English", moment: "en-gb" },
-};
-
-export enum TaskOutputType {
-  Text = "text",
-  Image = "image",
-  List = "list",
-  TextPhoto = "textPhoto",
-}
+export const albumScreenmMonthOrder = [...allMonths, "year"] as const;
 
 export const TASK_CONTEXT = {
   HEALTH: "health",

@@ -1,5 +1,6 @@
 import { selectCurrentUser } from "../store/authReducer";
 import { createAppAsyncThunk } from "../store/withTypes";
+import { ImageData, TaskGategory, TextImageData } from "../types/types";
 import {
   getConfiguration,
   saveMoodTask,
@@ -28,7 +29,7 @@ export const getUserRoleAsync = createAppAsyncThunk<string | null, void>(
 // For saveTaskByCategory
 export const saveTaskByCategoryAsync = createAppAsyncThunk<
   void,
-  { category: string; data: any; context: string }
+  { category: TaskGategory; data: any; context: string }
 >(
   "user/saveTaskByCategory",
   async ({ category, data, context }, { getState }) => {
@@ -47,17 +48,18 @@ export const getConfigurationAsync = createAppAsyncThunk<any, void>(
 
 // For saveMoodTask
 export const saveMoodTaskAsync = createAppAsyncThunk<
-  void,
-  { category: string; data: any; day: string }
+  TextImageData,
+  { category: TaskGategory; data: TextImageData; day: string }
 >("user/saveMoodTask", async ({ category, data, day }, { getState }) => {
   const currentUser = selectCurrentUser(getState());
   await saveMoodTask({ category, data, day, currentUser });
+  return data;
 });
 
 // For getUserDayTasks
 // export const getUserDayTasksAsync = createAppAsyncThunk<
 //   any,
-//   { category: string; context: string }
+//   { category: TaskGategory; context: string }
 // >("user/getUserDayTasks", async ({ category, context }, { getState }) => {
 //   const currentUser = selectCurrentUser(getState());
 //   return await getUserDayTasks(category, context, currentUser);
@@ -109,22 +111,22 @@ export const getUserPhotosAsync = createAppAsyncThunk<any, void>(
 );
 
 // For saveImage
-export const saveImageAsync = createAppAsyncThunk<
-  void,
-  { image: { id: string; uri: string } }
->("user/saveImage", async ({ image }, { getState }) => {
-  const currentUser = selectCurrentUser(getState());
-  await saveImage(image, currentUser);
-});
+export const saveImageAsync = createAppAsyncThunk<void, { image: ImageData }>(
+  "user/saveImage",
+  async ({ image }, { getState }) => {
+    const currentUser = selectCurrentUser(getState());
+    await saveImage(image, currentUser);
+  }
+);
 
 // For deleteImage
-export const deleteImageAsync = createAppAsyncThunk<
-  void,
-  { image: { id: string; uri: string } }
->("user/deleteImage", async ({ image }, { getState }) => {
-  const currentUser = selectCurrentUser(getState());
-  await deleteImage(image, currentUser);
-});
+export const deleteImageAsync = createAppAsyncThunk<void, { image: ImageData }>(
+  "user/deleteImage",
+  async ({ image }, { getState }) => {
+    const currentUser = selectCurrentUser(getState());
+    await deleteImage(image, currentUser);
+  }
+);
 
 // For getImageUrl
 export const getImageUrlAsync = createAppAsyncThunk<string, { id: string }>(
@@ -143,10 +145,10 @@ export const getImageUrlAsync = createAppAsyncThunk<string, { id: string }>(
 // For removeTask
 export const removeTaskAsync = createAppAsyncThunk<
   void,
-  { category: string; context: string }
->("user/removeTask", async ({ category, context }, { getState }) => {
+  { category: TaskGategory; context: string; day?: string }
+>("user/removeTask", async ({ category, context, day }, { getState }) => {
   const currentUser = selectCurrentUser(getState());
-  await removeTask({ category, context, currentUser });
+  await removeTask({ category, context, currentUser, day });
 });
 
 // For updateDayProgress

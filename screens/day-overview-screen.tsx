@@ -19,6 +19,7 @@ import { usePeriodOverviewScreenManager } from "../hooks/usePeriodOverviewScreen
 import usePrevious from "../hooks/usePrevious";
 import { RootStackParamList } from "../App";
 import { StackScreenProps } from "@react-navigation/stack";
+import isNil from "lodash/isNil";
 
 type Props = StackScreenProps<RootStackParamList, "DayOverview">;
 
@@ -31,11 +32,12 @@ const DayOverviewScreen: React.FC<Props> = ({ route, navigation }) => {
   const dayTasks = getDayConfig(currentDay);
 
   const total = dayTasks ? calculateTotalProgress(dayTasks.progress) : 0;
+
   const previousProgress = usePrevious(total);
   const [showComplitedModal, setShowComplitedModal] = useState(false);
 
   useEffect(() => {
-    if (previousProgress && previousProgress < 100 && total === 100) {
+    if (!isNil(previousProgress) && previousProgress < 100 && total === 100) {
       setShowComplitedModal(true);
     }
   }, [total]);

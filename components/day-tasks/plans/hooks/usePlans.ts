@@ -5,27 +5,20 @@ import {
 } from "../../../../constants/constants";
 import isEmpty from "lodash/isEmpty";
 import { useTranslation } from "react-i18next";
-import { saveTaskByCategory } from "../../../../services/services";
 import { Alert } from "react-native";
 import uuid from "react-native-uuid";
 import { PlanData } from "../../../../types/types";
+import { useAppDispatch } from "../../../../store/withTypes";
+import { saveTaskByCategoryAsync } from "../../../../services/data-api";
 
 interface UsePlansProps {
   context: string;
   data: PlanData[] | null;
-  setData: (data: PlanData[] | null) => void;
-  handleAddProgress: () => void;
-  handleRemoveProgress: () => void;
 }
 
-export function usePlans({
-  data,
-  context,
-  setData,
-  handleAddProgress,
-  handleRemoveProgress,
-}: UsePlansProps) {
+export function usePlans({ data, context }: UsePlansProps) {
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [updatedData, setUpdatedData] = useState<PlanData | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -42,16 +35,16 @@ export function usePlans({
       },
     ];
     try {
-      saveTaskByCategory({
-        category: TASK_CATEGORY.PLANS,
-        data: updatedPlans,
-        context,
-      });
+      dispatch(
+        saveTaskByCategoryAsync({
+          category: TASK_CATEGORY.PLANS,
+          data: updatedPlans,
+          context,
+        })
+      );
     } catch (error) {
       Alert.alert("Oops", "Something wrong");
     } finally {
-      setData(updatedPlans);
-      handleAddProgress();
       setLoading(false);
     }
   }
@@ -62,15 +55,16 @@ export function usePlans({
       item.id === id ? { ...item, text } : item
     );
     try {
-      saveTaskByCategory({
-        category: TASK_CATEGORY.PLANS,
-        data: updatedPlans,
-        context,
-      });
+      dispatch(
+        saveTaskByCategoryAsync({
+          category: TASK_CATEGORY.PLANS,
+          data: updatedPlans,
+          context,
+        })
+      );
     } catch (error) {
       Alert.alert("Oops", "Something wrong");
     } finally {
-      setData(updatedPlans);
       setUpdatedData(null);
       setLoading(false);
     }
@@ -85,20 +79,19 @@ export function usePlans({
     setLoading(true);
     const updatedPlans = (data ?? []).filter((item) => item.id !== planItem.id);
     if (isEmpty(updatedPlans)) {
-      handleRemoveProgress();
     }
 
     try {
-      await saveTaskByCategory({
-        category: TASK_CATEGORY.PLANS,
-        data: updatedPlans,
-        context,
-      });
+      await dispatch(
+        saveTaskByCategoryAsync({
+          category: TASK_CATEGORY.PLANS,
+          data: updatedPlans,
+          context,
+        })
+      );
     } catch (error) {
       Alert.alert("Oops", "Something wrong");
     } finally {
-      const data = isEmpty(updatedPlans) ? null : updatedPlans;
-      setData(data);
       setLoading(false);
     }
   }

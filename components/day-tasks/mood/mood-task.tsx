@@ -9,105 +9,95 @@ import {
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { TASK_CATEGORY, TaskOutputType } from "../../../constants/constants";
-import isEmpty from "lodash/isEmpty";
-
 import {
-  deleteImage,
-  removeTask,
-  saveMoodTask,
-} from "../../../services/services";
+  deleteImageAsync,
+  removeTaskAsync,
+  saveMoodTaskAsync,
+} from "../../../services/data-api";
+import { useAppDispatch } from "../../../store/withTypes";
+import isEmpty from "lodash/isEmpty";
 import { Alert } from "react-native";
 import uuid from "react-native-uuid";
 import { ActionButtons, AnimatedView, ImagePicker, Loader } from "../../common";
 import { ImageBackground } from "@gluestack-ui/themed";
 import { useImage } from "../../../hooks/useImage";
-import { TextImageData } from "../../../types/types";
+import { MoodTaskData, TextImageData } from "../../../types/types";
 
 interface MoodProps {
-  data: TextImageData | null;
-  setData: (data: TextImageData | null) => void;
-  handleAddProgress: () => void;
-  handleRemoveProgress: () => void;
+  data: MoodTaskData | null;
+
   day: string;
   taskOutputType: TaskOutputType;
 }
 
-export function MoodTask({
-  data,
-  setData,
-  day,
-  taskOutputType,
-  handleAddProgress,
-  handleRemoveProgress,
-}: MoodProps) {
+export function MoodTask({ data, day, taskOutputType }: MoodProps) {
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [edit, setEdit] = useState(false);
   const [text, setText] = useState("");
   const { saveImage, setImage, image, isLoading, setIsLoading } = useImage();
+  const dayMoodData = data ? data[day] : null;
 
   useEffect(() => {
-    if (isEmpty(data)) {
+    if (isEmpty(dayMoodData)) {
       setEdit(true);
     } else {
       setEdit(false);
     }
-    if (data?.text) {
-      setText(data.text);
+    if (dayMoodData?.text) {
+      setText(dayMoodData.text);
     }
-    if (data?.image) {
-      setImage(data?.image);
+    if (dayMoodData?.image) {
+      setImage(dayMoodData?.image);
     }
-  }, [data]);
+  }, [dayMoodData]);
 
   async function handleTaskRemove() {
     try {
-      await removeTask({
-        category: TASK_CATEGORY.MOOD,
-        context: null,
-      });
+      await dispatch(
+        removeTaskAsync({
+          category: TASK_CATEGORY.MOOD,
+          context: "",
+          day,
+        })
+      ).unwrap();
       if (image) {
-        await deleteImage(image);
+        await dispatch(deleteImageAsync({ image })).unwrap();
       }
     } catch (error) {
       Alert.alert("Oops", "Something wrong with task deletion");
     } finally {
-      setData(null);
       setText("");
       setImage(null);
-      handleRemoveProgress();
     }
   }
 
   async function onTaskSubmit() {
-    const id = data?.id ?? uuid.v4();
+    const id = dayMoodData?.id ?? uuid.v4();
 
-    let updatedData = {
+    let updatedData: TextImageData = {
       id,
       text,
-      image,
+      image: image || null,
     };
 
     if (image || text) {
       setEdit(false);
       try {
         if (image) {
-          const newImage = await saveImage();
-          updatedData = {
-            ...updatedData,
-            image: newImage ?? null,
-          };
+          await saveImage();
+          updatedData.image = { ...image, uri: image?.uri };
         }
-        await saveMoodTask({
-          category: TASK_CATEGORY.MOOD,
-          data: updatedData,
-          day,
-        });
-
-        setData(updatedData);
+        dispatch(
+          saveMoodTaskAsync({
+            category: TASK_CATEGORY.MOOD,
+            data: updatedData,
+            day,
+          })
+        ).unwrap();
       } catch (error) {
         Alert.alert("Oops", "Something wrong");
       } finally {
-        handleAddProgress();
       }
     } else {
       Alert.alert("Помилка", "Будь ласка додайте фото");
@@ -152,9 +142,9 @@ export function MoodTask({
         </>
       ) : (
         <Box>
-          {data?.text && (
+          {dayMoodData?.text && (
             <Box mb="$2">
-              <Text>{data?.text}</Text>
+              <Text>{dayMoodData?.text}</Text>
             </Box>
           )}
           {image && (

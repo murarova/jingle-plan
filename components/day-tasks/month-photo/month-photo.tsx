@@ -10,96 +10,90 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { TASK_CATEGORY } from "../../../constants/constants";
 import isEmpty from "lodash/isEmpty";
-import {
-  deleteImage,
-  removeTask,
-  saveTaskByCategory,
-} from "../../../services/services";
 import { Alert } from "react-native";
 import uuid from "react-native-uuid";
 import { ActionButtons, AnimatedView, ImagePicker, Loader } from "../../common";
 import { ImageBackground } from "@gluestack-ui/themed";
+import { MonthPhotoData, TextImageData } from "../../../types/types";
+import { useAppDispatch } from "../../../store/withTypes";
+import {
+  saveTaskByCategoryAsync,
+  deleteImageAsync,
+  removeTaskAsync,
+} from "../../../services/data-api";
 import { useImage } from "../../../hooks/useImage";
-import { TextImageData } from "../../../types/types";
 
 interface MonthPhotoProps {
   context: string;
-  data: TextImageData | null;
-  setData: (data: TextImageData | null) => void;
-  handleAddProgress: () => void;
-  handleRemoveProgress: () => void;
+  data: MonthPhotoData | null;
 }
 
-export function MonthPhoto({
-  context,
-  data,
-  setData,
-  handleAddProgress,
-  handleRemoveProgress,
-}: MonthPhotoProps) {
+export function MonthPhoto({ context, data }: MonthPhotoProps) {
+  const contextData = data?.[context];
   const { t } = useTranslation();
   const [edit, setEdit] = useState(false);
   const [text, setText] = useState("");
+  const dispatch = useAppDispatch();
   const { saveImage, setImage, image, isLoading, setIsLoading } = useImage();
 
   useEffect(() => {
-    if (isEmpty(data)) {
+    if (isEmpty(contextData)) {
       setEdit(true);
     } else {
       setEdit(false);
     }
-    if (data?.text) {
-      setText(data.text);
+    if (contextData?.text) {
+      setText(contextData.text);
     }
-    if (data?.image) {
-      setImage(data?.image);
+    if (contextData?.image) {
+      setImage(contextData?.image);
     }
-  }, [data]);
+  }, [contextData]);
 
   async function handleTaskRemove() {
     try {
-      await removeTask({
-        category: TASK_CATEGORY.MONTH_PHOTO,
-        context,
-      });
-      await deleteImage(image);
+      if (image) {
+        await dispatch(deleteImageAsync({ image })).unwrap();
+      }
+      await dispatch(
+        removeTaskAsync({
+          category: TASK_CATEGORY.MONTH_PHOTO,
+          context,
+        })
+      ).unwrap();
     } catch (error) {
       Alert.alert("Oops", "Something wrong");
     } finally {
-      setData(null);
       setText("");
       setImage(null);
-      handleRemoveProgress();
     }
   }
 
   async function onTaskSubmit() {
     if (image) {
       setEdit(false);
-      const id = data?.id ?? uuid.v4();
+      const id = contextData?.id ?? uuid.v4();
+
+      const updatedData = {
+        id,
+        text,
+        image,
+      } as TextImageData;
       try {
-        let newImage;
-        if (data?.image?.uri !== image?.uri) {
-          newImage = await saveImage();
-        } else {
-          newImage = data?.image;
+        if (contextData?.image?.uri !== image?.uri) {
+          await saveImage();
+          updatedData.image = { ...image, uri: image?.uri };
         }
 
-        const updatedData = {
-          id,
-          text,
-          image: newImage,
-        } as ImageData;
-        await saveTaskByCategory({
-          category: TASK_CATEGORY.MONTH_PHOTO,
-          data: updatedData,
-          context,
-        });
-        setData(updatedData);
+        await dispatch(
+          saveTaskByCategoryAsync({
+            category: TASK_CATEGORY.MONTH_PHOTO,
+            data: updatedData,
+            context,
+          })
+        ).unwrap();
       } catch (error) {
         Alert.alert("Oops", "Something wrong");
-      } finally {
-        handleAddProgress();
       }
     } else {
       Alert.alert("Помилка", "Будь ласка додайте фото");
@@ -157,9 +151,9 @@ export function MonthPhoto({
               </AnimatedView>
             </Box>
           )}
-          {data?.text && (
+          {contextData?.text && (
             <Box mt="$2">
-              <Text>{data?.text}</Text>
+              <Text>{contextData?.text}</Text>
             </Box>
           )}
           <ActionButtons

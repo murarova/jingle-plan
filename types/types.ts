@@ -3,6 +3,7 @@ import {
   TASK_CONTEXT,
   TaskOutputType,
   albumScreenmMonthOrder,
+  allMonths,
 } from "../constants/constants";
 
 export interface TextData {
@@ -42,7 +43,9 @@ export interface PlanScreenData extends PlanData {
   context: TaskContext;
 }
 
-export type TaskContext = (typeof TASK_CONTEXT)[keyof typeof TASK_CONTEXT];
+export type TaskContext =
+  | (typeof TASK_CONTEXT)[keyof typeof TASK_CONTEXT]
+  | (typeof allMonths)[number];
 
 export type PlansCollection = {
   [key in TaskContext]?: PlanScreenData[];
@@ -61,7 +64,7 @@ export interface TaskProgress {
 }
 
 export interface DayTaskConfig {
-  category: string;
+  category: TaskGategory;
   grade: number;
   context?: TaskContext;
   taskOutputType: TaskOutputType;
@@ -77,11 +80,17 @@ export interface DayConfig {
 }
 
 export type CalendarConfig = Record<string, Record<string, DayConfig>>;
+export type MoodTaskData = { [day: string]: TextImageData | undefined };
+export type MonthPhotoData = { [month: string]: TextImageData | undefined };
+export type PlanContextData = { [context: string]: PlanData[] | undefined };
+export type SummaryContextData = { [context: string]: SummaryData | undefined };
 
 export interface UserData {
-  [key: string]: {
-    [key: string]: any;
-  };
+  [TASK_CATEGORY.MOOD]?: MoodTaskData;
+  [TASK_CATEGORY.SUMMARY]?: SummaryContextData | null;
+  [TASK_CATEGORY.PLANS]?: PlanContextData | null;
+  [TASK_CATEGORY.MONTH_PHOTO]?: MonthPhotoData | null;
+  [TASK_CATEGORY.GOALS]?: TextData | null;
 }
 
 export interface DayTaskProgress {

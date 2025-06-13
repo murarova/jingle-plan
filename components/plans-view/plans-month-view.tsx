@@ -13,7 +13,7 @@ import {
   Heading,
   ScrollView,
 } from "@gluestack-ui/themed";
-import { months, PlansViewOptions } from "../../constants/constants";
+import { allMonths, months, PlansViewOptions } from "../../constants/constants";
 import { PlansList } from "./components/plans";
 import { AddPlanModal } from "../day-tasks/plans/add-plan-modal";
 import { MonthSelectModal } from "../modals/month-select-modal";
@@ -47,20 +47,6 @@ export function PlansMonthView({
       string,
       (PlanScreenData & { context: TaskContext })[]
     > = {};
-    const allMonths = [
-      "january",
-      "february",
-      "march",
-      "april",
-      "may",
-      "june",
-      "july",
-      "august",
-      "september",
-      "october",
-      "november",
-      "december",
-    ];
 
     for (const context in plans) {
       plans[context as TaskContext]?.forEach((item: PlanScreenData) => {

@@ -4,31 +4,28 @@ import {
   saveTaskByCategoryAsync,
   getConfigurationAsync,
   saveMoodTaskAsync,
-  // getUserDayTasksAsync,
   getUserDataAsync,
-  getUserSummaryAsync,
-  getUserPlansAsync,
-  getUserGlobalGoalAsync,
-  getUserPhotosAsync,
   saveImageAsync,
   deleteImageAsync,
   getImageUrlAsync,
   removeTaskAsync,
 } from "../services/data-api";
-import { CalendarConfig } from "../types/types";
+import { CalendarConfig, UserData, MoodTaskData } from "../types/types";
+import { TASK_CATEGORY } from "../constants/constants";
+import { isEmpty } from "lodash";
 
 export interface State {
   configuration: CalendarConfig | null;
-  userData: null;
+  userData: UserData | null;
   imageUrl: string | null;
-  progress: null; //["day": number]
+  progress: null;
   status: "idle" | "pending" | "succeeded" | "failed";
   error: string | null;
 }
 
 const initialState: State = {
   configuration: null,
-  userData: null,
+  userData: null as UserData | null,
   imageUrl: null,
   progress: null,
   status: "idle",
@@ -46,8 +43,39 @@ const appSlice = createSlice({
     builder.addCase(saveTaskByCategoryAsync.pending, (state) => {
       state.status = "pending";
     });
-    builder.addCase(saveTaskByCategoryAsync.fulfilled, (state) => {
+    builder.addCase(saveTaskByCategoryAsync.fulfilled, (state, action) => {
       state.status = "succeeded";
+      if (state.userData) {
+        const { category, data, context } = action.meta.arg;
+
+        switch (category) {
+          case TASK_CATEGORY.PLANS:
+            const plans = isEmpty(data) ? null : data;
+            state.userData[TASK_CATEGORY.PLANS] = {
+              ...(state.userData[TASK_CATEGORY.PLANS] || {}),
+              [context]: plans,
+            };
+            break;
+
+          case TASK_CATEGORY.SUMMARY:
+            state.userData[TASK_CATEGORY.SUMMARY] = {
+              ...(state.userData[TASK_CATEGORY.SUMMARY] || {}),
+              [context]: data,
+            };
+            break;
+
+          case TASK_CATEGORY.MONTH_PHOTO:
+            state.userData[TASK_CATEGORY.MONTH_PHOTO] = {
+              ...(state.userData[TASK_CATEGORY.MONTH_PHOTO] || {}),
+              [context]: data,
+            };
+            break;
+
+          case TASK_CATEGORY.GOALS:
+            state.userData[TASK_CATEGORY.GOALS] = data;
+            break;
+        }
+      }
     });
     builder.addCase(saveTaskByCategoryAsync.rejected, (state, action) => {
       state.status = "failed";
@@ -74,8 +102,19 @@ const appSlice = createSlice({
     builder.addCase(saveMoodTaskAsync.pending, (state) => {
       state.status = "pending";
     });
-    builder.addCase(saveMoodTaskAsync.fulfilled, (state) => {
+    builder.addCase(saveMoodTaskAsync.fulfilled, (state, action) => {
       state.status = "succeeded";
+      if (state.userData) {
+        const { day } = action.meta.arg;
+        const data = action.payload;
+
+        if (!state.userData[TASK_CATEGORY.MOOD]) {
+          state.userData[TASK_CATEGORY.MOOD] = {};
+        }
+
+        const moodData = state.userData[TASK_CATEGORY.MOOD]!;
+        moodData[day] = data;
+      }
     });
     builder.addCase(saveMoodTaskAsync.rejected, (state, action) => {
       state.status = "failed";
@@ -205,6 +244,45 @@ const appSlice = createSlice({
       state.status = "failed";
       state.error = action.error.message || "Failed to fetch image URL";
     });
+
+    // removeTaskAsync
+    builder.addCase(removeTaskAsync.pending, (state) => {
+      state.status = "pending";
+    });
+    builder.addCase(removeTaskAsync.fulfilled, (state, action) => {
+      state.status = "succeeded";
+      if (state.userData) {
+        const { category } = action.meta.arg;
+        switch (category) {
+          case TASK_CATEGORY.MONTH_PHOTO:
+            state.userData[TASK_CATEGORY.MONTH_PHOTO] = null;
+            break;
+          case TASK_CATEGORY.GOALS:
+            state.userData[TASK_CATEGORY.GOALS] = null;
+            break;
+          case TASK_CATEGORY.SUMMARY:
+            state.userData[TASK_CATEGORY.SUMMARY] = null;
+            break;
+          case TASK_CATEGORY.PLANS:
+            state.userData[TASK_CATEGORY.PLANS] = null;
+            break;
+          case TASK_CATEGORY.MOOD:
+            if (state.userData[TASK_CATEGORY.MOOD] && action.meta.arg.day) {
+              const moodData = state.userData[
+                TASK_CATEGORY.MOOD
+              ] as MoodTaskData;
+              delete moodData[action.meta.arg.day];
+            }
+            break;
+        }
+      }
+    });
+    builder.addCase(removeTaskAsync.rejected, (state, action) => {
+      state.status = "failed";
+      state.error = action.error.message || "Failed to remove task";
+    });
+
+    getImageUrlAsync;
   },
 });
 // export const {} = appSlice.actions;

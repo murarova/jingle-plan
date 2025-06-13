@@ -32,6 +32,7 @@ interface RemoveTaskParams {
   category: string;
   context: string;
   currentUser: SerializableUser | null;
+  day?: string;
 }
 
 export const createProfile = async (
@@ -136,9 +137,9 @@ export async function getConfiguration(): Promise<CalendarConfig> {
 
 export async function getUserDayTasks(
   category: string,
-  context: string,
-  currentUser: SerializableUser
+  context: string
 ): Promise<any> {
+  const currentUser = auth().currentUser;
   if (!currentUser) throw new Error("No user provided");
   try {
     const ref =
@@ -378,11 +379,12 @@ export async function removeTask({
   category,
   context,
   currentUser,
+  day,
 }: RemoveTaskParams): Promise<void> {
   if (!currentUser) throw new Error("No user provided");
   const ref =
     category === TASK_CATEGORY.MOOD
-      ? `${baseUrl}/${currentUser.uid}/${category}`
+      ? `${baseUrl}/${currentUser.uid}/${category}/${day}`
       : `${baseUrl}/${currentUser.uid}/${category}/${context}`;
   const response = await firebase
     .app()

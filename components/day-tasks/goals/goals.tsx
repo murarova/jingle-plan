@@ -10,30 +10,26 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { TASK_CATEGORY } from "../../../constants/constants";
 import uuid from "react-native-uuid";
-import { removeTask, saveTaskByCategory } from "../../../services/services";
 import { Alert } from "react-native";
 import isEmpty from "lodash/isEmpty";
 import { ActionButtons } from "../../common";
 import { TextData } from "../../../types/types";
+import {
+  removeTaskAsync,
+  saveTaskByCategoryAsync,
+} from "../../../services/data-api";
+import { useAppDispatch } from "../../../store/withTypes";
 
 interface GoalsProps {
   context: string;
   data: TextData | null;
-  setData: (data: TextData | null) => void;
-  handleAddProgress: () => void;
-  handleRemoveProgress: () => void;
 }
 
-export function Goals({
-  context,
-  data,
-  setData,
-  handleAddProgress,
-  handleRemoveProgress,
-}: GoalsProps) {
+export function Goals({ context, data }: GoalsProps) {
   const { t } = useTranslation();
   const [text, setText] = useState("");
   const [edit, setEdit] = useState(false);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (isEmpty(data)) {
@@ -47,7 +43,7 @@ export function Goals({
     }
   }, [data]);
 
-  function onTaskSubmit() {
+  async function onTaskSubmit() {
     const id = data?.id ?? uuid.v4();
     if (!text.trim()) {
       Alert.alert("Oops", "Please add some text");
@@ -58,32 +54,32 @@ export function Goals({
       text,
     };
     try {
-      saveTaskByCategory({
-        category: TASK_CATEGORY.GOALS,
-        data: updatedGoal,
-        context,
-      });
+      await dispatch(
+        saveTaskByCategoryAsync({
+          category: TASK_CATEGORY.GOALS,
+          data: updatedGoal,
+          context,
+        })
+      ).unwrap();
     } catch (error) {
       Alert.alert("Oops", "Something wrong");
     } finally {
-      setData(updatedGoal);
       setEdit(false);
-      handleAddProgress();
     }
   }
 
   async function handleTaskRemove() {
     try {
-      await removeTask({
-        category: TASK_CATEGORY.GOALS,
-        context,
-      });
+      await dispatch(
+        removeTaskAsync({
+          category: TASK_CATEGORY.GOALS,
+          context,
+        })
+      ).unwrap();
     } catch (error) {
       Alert.alert("Oops", "Something wrong");
     } finally {
-      setData(null);
       setText("");
-      handleRemoveProgress();
     }
   }
 
