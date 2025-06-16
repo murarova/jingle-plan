@@ -18,6 +18,7 @@ export default {
     selectMonth: "Обрати місяць",
     logout: "Вийти",
     deleteAccount: "Видалити акаунт",
+    error: "Помилка",
   },
   context: {
     health: "Тіло",
@@ -29,6 +30,10 @@ export default {
     money: "Прибуток",
     supports: "Опори",
     globalGoal: "Амбитна мета",
+  },
+  errors: {
+    emptyText: "Текстове поле не може бути порожнім",
+    generic: "Щось пішло не так. Спробуйте ще раз.",
   },
   screens: {
     intro: {
@@ -91,6 +96,9 @@ export default {
       maxPlansError: "Ви не можете додати більше ніж 10 пунктів",
       title: "Мої плани",
       everyMonthLabel: "Кожного місяця",
+      byContext: "По сферах",
+      byMonth: "По місяцях",
+      globalGoalTitle: "Моя глобальна мета 2025:",
     },
     plansModal: {
       addPlanTitle: "Додайте пункт плану",

@@ -43,7 +43,7 @@ export function Goals({ context, data }: GoalsProps) {
     }
   }, [data]);
 
-  async function onTaskSubmit() {
+  function onTaskSubmit() {
     const id = data?.id ?? uuid.v4();
     if (!text.trim()) {
       Alert.alert("Oops", "Please add some text");
@@ -54,7 +54,7 @@ export function Goals({ context, data }: GoalsProps) {
       text,
     };
     try {
-      await dispatch(
+      dispatch(
         saveTaskByCategoryAsync({
           category: TASK_CATEGORY.GOALS,
           data: updatedGoal,

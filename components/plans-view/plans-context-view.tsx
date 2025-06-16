@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react";
 import {
   Box,
   Text,
@@ -31,7 +32,7 @@ export interface PlansViewProps {
   handleDeletePlan: (id: string, context: TaskContext) => void;
   handleUpdatePlan: (id: string, text: string) => void;
   handleMonthSelect: (month: string) => void;
-  handleComplitePlan: (
+  handleCompletePlan: (
     plan: PlanScreenData,
     value: boolean,
     context: TaskContext
@@ -43,34 +44,130 @@ export interface PlansViewProps {
   updatedData: PlanScreenData | null;
 }
 
-export function PlansContextView({
-  plans,
-  openMonthSelect,
-  handleEditPlan,
-  handleDeletePlan,
-  handleComplitePlan,
-  showModal,
-  updatedData,
-  setShowModal,
-  handleUpdatePlan,
-  showMonthModal,
-  setShowMonthModal,
-  handleMonthSelect,
-}: PlansViewProps) {
-  const { t } = useTranslation();
-  return (
-    <ScrollView>
-      <Box p="$2" flex={1}>
-        <Accordion
-          key="context-view"
-          size="md"
-          my="$2"
-          type="multiple"
-          borderRadius="$lg"
-        >
-          {Object.values(TASK_CONTEXT).map((context: TaskContext) => {
-            return (
-              plans[context] && (
+interface AccordionHeaderContentProps {
+  context: TaskContext;
+  isExpanded: boolean;
+  plansCount: number;
+}
+
+const AccordionHeaderContent = memo(
+  ({ context, isExpanded, plansCount }: AccordionHeaderContentProps) => {
+    const { t } = useTranslation();
+
+    return (
+      <>
+        <AccordionTitleText>
+          <Box flexDirection="row" alignItems="center">
+            <Heading size="sm" mr="$2">
+              {t(`context.${context}`)}
+            </Heading>
+            <Text>({plansCount})</Text>
+          </Box>
+        </AccordionTitleText>
+        <AccordionIcon
+          as={isExpanded ? ChevronUpIcon : ChevronDownIcon}
+          ml="$3"
+        />
+      </>
+    );
+  }
+);
+
+AccordionHeaderContent.displayName = "AccordionHeaderContent";
+
+interface PlansAccordionContentProps {
+  context: TaskContext;
+  plans: PlanScreenData[];
+  onMonthSelect: (item: PlanScreenData) => void;
+  onEdit: (item: PlanScreenData) => void;
+  onDelete: (item: PlanScreenData) => void;
+  onComplete: (item: PlanScreenData, value: boolean) => void;
+}
+
+const PlansAccordionContent = memo(
+  ({
+    context,
+    plans,
+    onMonthSelect,
+    onEdit,
+    onDelete,
+    onComplete,
+  }: PlansAccordionContentProps) => (
+    <AccordionContent>
+      <Box>
+        <PlansList
+          view={PlansViewOptions.context}
+          plans={plans}
+          onMonthSelect={onMonthSelect}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          handleCompletePlan={onComplete}
+        />
+      </Box>
+    </AccordionContent>
+  )
+);
+
+PlansAccordionContent.displayName = "PlansAccordionContent";
+
+export const PlansContextView = memo(
+  ({
+    plans,
+    openMonthSelect,
+    handleEditPlan,
+    handleDeletePlan,
+    handleCompletePlan,
+    showModal,
+    updatedData,
+    setShowModal,
+    handleUpdatePlan,
+    showMonthModal,
+    setShowMonthModal,
+    handleMonthSelect,
+  }: PlansViewProps) => {
+    const handleMonthSelectForContext = useCallback(
+      (item: PlanScreenData, context: TaskContext) => {
+        openMonthSelect(item, context);
+      },
+      [openMonthSelect]
+    );
+
+    const handleEditForContext = useCallback(
+      (item: PlanScreenData, context: TaskContext) => {
+        handleEditPlan(item, context);
+      },
+      [handleEditPlan]
+    );
+
+    const handleDeleteForContext = useCallback(
+      (item: PlanScreenData, context: TaskContext) => {
+        handleDeletePlan(item.id, context);
+      },
+      [handleDeletePlan]
+    );
+
+    const handleCompleteForContext = useCallback(
+      (item: PlanScreenData, value: boolean, context: TaskContext) => {
+        handleCompletePlan(item, value, context);
+      },
+      [handleCompletePlan]
+    );
+
+    return (
+      <ScrollView>
+        <Box p="$2" flex={1}>
+          <Accordion
+            key="context-view"
+            size="md"
+            my="$2"
+            type="multiple"
+            borderRadius="$lg"
+          >
+            {Object.values(TASK_CONTEXT).map((context: TaskContext) => {
+              const contextPlans = plans[context];
+              if (!contextPlans) return null;
+
+              return (
                 <AccordionItem
                   key={context}
                   value={context}
@@ -79,60 +176,49 @@ export function PlansContextView({
                 >
                   <AccordionHeader>
                     <AccordionTrigger>
-                      {({ isExpanded }) => {
-                        return (
-                          <>
-                            <AccordionTitleText>
-                              <Heading size="sm">
-                                {t(`context.${context}`)}
-                              </Heading>
-                              <Text>{`  (${plans?.[context]?.length})`}</Text>
-                            </AccordionTitleText>
-                            {isExpanded ? (
-                              <AccordionIcon as={ChevronUpIcon} ml="$3" />
-                            ) : (
-                              <AccordionIcon as={ChevronDownIcon} ml="$3" />
-                            )}
-                          </>
-                        );
-                      }}
+                      {({ isExpanded }) => (
+                        <AccordionHeaderContent
+                          context={context}
+                          isExpanded={isExpanded}
+                          plansCount={contextPlans.length}
+                        />
+                      )}
                     </AccordionTrigger>
                   </AccordionHeader>
-                  <AccordionContent>
-                    <Box>
-                      <PlansList
-                        view={PlansViewOptions.context}
-                        plans={plans[context]!}
-                        onMonthSelect={(item) => openMonthSelect(item, context)}
-                        onEdit={(item) => handleEditPlan(item, context)}
-                        onDelete={(item) => {
-                          handleDeletePlan(item.id, context);
-                        }}
-                        handleComplitePlan={(item, value) =>
-                          handleComplitePlan(item, value, context)
-                        }
-                      />
-                    </Box>
-                  </AccordionContent>
+                  <PlansAccordionContent
+                    context={context}
+                    plans={contextPlans}
+                    onMonthSelect={(item) =>
+                      handleMonthSelectForContext(item, context)
+                    }
+                    onEdit={(item) => handleEditForContext(item, context)}
+                    onDelete={(item) => handleDeleteForContext(item, context)}
+                    onComplete={(item, value) =>
+                      handleCompleteForContext(item, value, context)
+                    }
+                  />
                 </AccordionItem>
-              )
-            );
-          })}
-        </Accordion>
-        {showModal && (
-          <AddPlanModal
-            data={updatedData}
-            setShowModal={setShowModal}
-            handleUpdatePlan={handleUpdatePlan}
-          />
-        )}
-        {showMonthModal && (
-          <MonthSelectModal
-            setShowMonthModal={setShowMonthModal}
-            onMonthSelect={handleMonthSelect}
-          />
-        )}
-      </Box>
-    </ScrollView>
-  );
-}
+              );
+            })}
+          </Accordion>
+
+          {showModal && (
+            <AddPlanModal
+              data={updatedData}
+              setShowModal={setShowModal}
+              handleUpdatePlan={handleUpdatePlan}
+            />
+          )}
+          {showMonthModal && (
+            <MonthSelectModal
+              setShowMonthModal={setShowMonthModal}
+              onMonthSelect={handleMonthSelect}
+            />
+          )}
+        </Box>
+      </ScrollView>
+    );
+  }
+);
+
+PlansContextView.displayName = "PlansContextView";

@@ -131,5 +131,6 @@ export const usePeriodOverviewScreenManager = () => {
     configuration,
     userData,
     getDayConfig,
+    status,
   };
 };

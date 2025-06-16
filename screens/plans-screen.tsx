@@ -1,134 +1,115 @@
-import { useState, useLayoutEffect } from "react";
-import { getUserGlobalGoal, getUserPlans } from "../services/services";
+import { useState, useMemo, memo } from "react";
 import { EmptyScreen } from "../components/empty-screen";
 import { Loader } from "../components/common";
-import { useIsFocused } from "@react-navigation/native";
-import { Alert } from "react-native";
 import { PlansContextView } from "../components/plans-view/plans-context-view";
 import { usePlansScreen } from "../components/plans-view/hooks/usePlansScreen";
 import SwitchSelector from "react-native-switch-selector";
 import { Box, Center, Heading, Text } from "@gluestack-ui/themed";
 import { PlansMonthView } from "../components/plans-view/plans-month-view";
 import { PlansViewOptions } from "../constants/constants";
-import { PlansCollection, TextData } from "../types/types";
+import { PlanContextData, TextData } from "../types/types";
+import { useAppSelector } from "../store/withTypes";
+import { useTranslation } from "react-i18next";
+
+interface ViewSwitchProps {
+  onViewChange: (value: PlansViewOptions) => void;
+}
+
+const ViewSwitch = memo(({ onViewChange }: ViewSwitchProps) => {
+  const { t } = useTranslation();
+
+  const switchOptions = useMemo(
+    () => [
+      {
+        label: t("screens.plansScreen.byContext"),
+        value: PlansViewOptions.context,
+      },
+      {
+        label: t("screens.plansScreen.byMonth"),
+        value: PlansViewOptions.month,
+      },
+    ],
+    [t]
+  );
+
+  return (
+    <Box mt="$4" mx="$2">
+      <SwitchSelector
+        initial={0}
+        onPress={onViewChange}
+        textColor="#000"
+        selectedColor="#000"
+        buttonColor="#fff"
+        borderColor="#EBEBEB"
+        backgroundColor="#EBEBEB"
+        hasPadding
+        height={32}
+        borderRadius={7}
+        options={switchOptions}
+        testID="view-switch-selector"
+        accessibilityLabel="view-switch-selector"
+      />
+    </Box>
+  );
+});
+
+ViewSwitch.displayName = "ViewSwitch";
+
+interface GlobalGoalProps {
+  text: string;
+}
+
+const GlobalGoal = memo(({ text }: GlobalGoalProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <Center pt="$5" pb="$5">
+      <Text pb="$5">{t("screens.plansScreen.globalGoalTitle")}</Text>
+      <Heading textAlign="center" size="sm">
+        {text}
+      </Heading>
+    </Center>
+  );
+});
+
+GlobalGoal.displayName = "GlobalGoal";
+
+interface PlansViewProps {
+  plans: PlanContextData;
+  plansProps: ReturnType<typeof usePlansScreen>;
+  viewType: PlansViewOptions;
+}
+
+const PlansView = memo(({ plans, plansProps, viewType }: PlansViewProps) => {
+  const ViewComponent =
+    viewType === PlansViewOptions.context ? PlansContextView : PlansMonthView;
+
+  return <ViewComponent plans={plans} {...plansProps} />;
+});
+
+PlansView.displayName = "PlansView";
 
 export function PlansScreen() {
-  const [plans, setPlans] = useState<PlansCollection | null>(null);
-  const [globalGoal, setGlobalGoal] = useState<TextData | null>(null);
-  const [view, setView] = useState<PlansViewOptions | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const isFocused = useIsFocused();
+  const [view, setView] = useState<PlansViewOptions>(PlansViewOptions.context);
 
-  useLayoutEffect(() => {
-    setIsLoading(true);
-    async function getTasks() {
-      try {
-        const plans = await getUserPlans();
-        const goal = await getUserGlobalGoal();
-        setGlobalGoal(goal);
-        setPlans(plans);
-        setView(PlansViewOptions.context);
-      } catch (error) {
-        Alert.alert("Oops", "Something wrong");
-      } finally {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 300);
-      }
-    }
-    if (isFocused) {
-      getTasks();
-    }
-  }, [isFocused]);
+  const { userData, status } = useAppSelector((state) => state.app);
+  const plans = userData?.plans as PlanContextData | null;
+  const globalGoal = userData?.goals as TextData | null;
+  const isLoading = status === "pending";
 
-  const {
-    handleUpdatePlan,
-    handleEditPlan,
-    handleDeletePlan,
-    handleComplitePlan,
-    openMonthSelect,
-    handleMonthSelect,
-    showModal,
-    showMonthModal,
-    updatedData,
-    setShowModal,
-    setShowMonthModal,
-  } = usePlansScreen({ plans, setPlans });
+  const plansProps = usePlansScreen({ plans });
 
-  if (isLoading) {
-    return <Loader />;
+  if (!plans && !globalGoal) {
+    return <EmptyScreen />;
   }
 
   return (
     <>
-      {plans || globalGoal ? (
-        <>
-          {plans && (
-            <Box mt="$4" ml="$2" mr="$2">
-              <SwitchSelector
-                initial={0}
-                onPress={setView}
-                textColor="#000"
-                selectedColor="#000"
-                buttonColor="#fff"
-                borderColor="#EBEBEB"
-                backgroundColor="#EBEBEB"
-                hasPadding
-                height={32}
-                borderRadius={7}
-                options={[
-                  { label: "По сферах", value: PlansViewOptions.context },
-                  { label: "По місяцях", value: PlansViewOptions.month },
-                ]}
-                testID="gender-switch-selector"
-                accessibilityLabel="gender-switch-selector"
-              />
-            </Box>
-          )}
-
-          {globalGoal && (
-            <Center pt="$5" pb="$5">
-              <Text pb="$5">Моя глобальна мета 2025:</Text>
-              <Heading textAlign="center" size="sm">
-                {globalGoal.text}
-              </Heading>
-            </Center>
-          )}
-
-          {plans && view === PlansViewOptions.context ? (
-            <PlansContextView
-              plans={plans!}
-              handleMonthSelect={handleMonthSelect}
-              openMonthSelect={openMonthSelect}
-              handleEditPlan={handleEditPlan}
-              handleDeletePlan={handleDeletePlan}
-              handleComplitePlan={handleComplitePlan}
-              showModal={showModal}
-              updatedData={updatedData}
-              setShowModal={setShowModal}
-              handleUpdatePlan={handleUpdatePlan}
-              showMonthModal={showMonthModal}
-              setShowMonthModal={setShowMonthModal}
-            />
-          ) : (
-            <PlansMonthView
-              plans={plans!}
-              handleMonthSelect={handleMonthSelect}
-              openMonthSelect={openMonthSelect}
-              handleEditPlan={handleEditPlan}
-              handleDeletePlan={handleDeletePlan}
-              handleComplitePlan={handleComplitePlan}
-              showModal={showModal}
-              updatedData={updatedData}
-              setShowModal={setShowModal}
-              handleUpdatePlan={handleUpdatePlan}
-              showMonthModal={showMonthModal}
-              setShowMonthModal={setShowMonthModal}
-            />
-          )}
-        </>
-      ) : (
-        <EmptyScreen />
+      {isLoading && <Loader absolute />}
+      {plans && <ViewSwitch onViewChange={setView} />}
+      {globalGoal && <GlobalGoal text={globalGoal.text} />}
+      {plans && (
+        <PlansView plans={plans} plansProps={plansProps} viewType={view} />
       )}
     </>
   );

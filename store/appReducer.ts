@@ -10,9 +10,16 @@ import {
   getImageUrlAsync,
   removeTaskAsync,
 } from "../services/data-api";
-import { CalendarConfig, UserData, MoodTaskData } from "../types/types";
+import {
+  CalendarConfig,
+  UserData,
+  MoodTaskData,
+  SummaryContextData,
+  MonthPhotoData,
+  PlanContextData,
+} from "../types/types";
 import { TASK_CATEGORY } from "../constants/constants";
-import { isEmpty } from "lodash";
+import { isEmpty, omit } from "lodash";
 
 export interface State {
   configuration: CalendarConfig | null;
@@ -255,19 +262,40 @@ const appSlice = createSlice({
         const { category } = action.meta.arg;
         switch (category) {
           case TASK_CATEGORY.MONTH_PHOTO:
-            state.userData[TASK_CATEGORY.MONTH_PHOTO] = null;
+            const monthPhotoData = state.userData[
+              TASK_CATEGORY.MONTH_PHOTO
+            ] as MonthPhotoData;
+            const updatedData = omit(monthPhotoData, [action.meta.arg.context]);
+            state.userData[TASK_CATEGORY.MONTH_PHOTO] = isEmpty(updatedData)
+              ? null
+              : updatedData;
+
             break;
           case TASK_CATEGORY.GOALS:
             state.userData[TASK_CATEGORY.GOALS] = null;
             break;
           case TASK_CATEGORY.SUMMARY:
-            state.userData[TASK_CATEGORY.SUMMARY] = null;
+            const summaryData = state.userData[
+              TASK_CATEGORY.SUMMARY
+            ] as SummaryContextData;
+            const updatedValues = omit(summaryData, [action.meta.arg.context]);
+            state.userData[TASK_CATEGORY.SUMMARY] = isEmpty(updatedValues)
+              ? null
+              : updatedValues;
+
             break;
           case TASK_CATEGORY.PLANS:
-            state.userData[TASK_CATEGORY.PLANS] = null;
+            const plansData = state.userData[
+              TASK_CATEGORY.PLANS
+            ] as PlanContextData;
+            const updatedPlans = omit(plansData, [action.meta.arg.context]);
+            state.userData[TASK_CATEGORY.PLANS] = isEmpty(updatedPlans)
+              ? null
+              : updatedPlans;
+
             break;
           case TASK_CATEGORY.MOOD:
-            if (state.userData[TASK_CATEGORY.MOOD] && action.meta.arg.day) {
+            if (action.meta.arg.day) {
               const moodData = state.userData[
                 TASK_CATEGORY.MOOD
               ] as MoodTaskData;

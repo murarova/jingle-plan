@@ -20,13 +20,12 @@ import usePrevious from "../hooks/usePrevious";
 import { RootStackParamList } from "../App";
 import { StackScreenProps } from "@react-navigation/stack";
 import isNil from "lodash/isNil";
-
+import { Loader } from "../components/common";
 type Props = StackScreenProps<RootStackParamList, "DayOverview">;
 
 const DayOverviewScreen: React.FC<Props> = ({ route, navigation }) => {
   const { t } = useTranslation();
-
-  const { getDayConfig } = usePeriodOverviewScreenManager();
+  const { getDayConfig, status } = usePeriodOverviewScreenManager();
 
   const currentDay = route.params.currentDay;
   const dayTasks = getDayConfig(currentDay);
@@ -50,6 +49,7 @@ const DayOverviewScreen: React.FC<Props> = ({ route, navigation }) => {
 
   return (
     <Box p="$2" flex={1}>
+      {status === "pending" && <Loader absolute />}
       {dayTasks ? (
         <>
           <Box my="$2.5">

@@ -16,6 +16,11 @@ export default {
     edit: "Edit",
     delete: "Delete",
     selectMonth: "Select month",
+    error: "Error",
+  },
+  errors: {
+    emptyText: "Text field cannot be empty",
+    generic: "Something went wrong. Please try again.",
   },
   context: {
     health: "Health",
@@ -83,6 +88,9 @@ export default {
       maxPlansError: "You cannot add more than 10 points",
       title: "My plans",
       everyMonthLabel: "Every month",
+      byContext: "By Context",
+      byMonth: "By Month",
+      globalGoalTitle: "My Global Goal 2025:",
     },
     plansModal: {
       addPlanTitle: "Add plan item",

@@ -32,7 +32,7 @@ interface PlansListProps {
   onEdit: (plan: PlanScreenData) => void;
   onDelete: (plan: PlanScreenData) => void;
   onMonthSelect: (plan: PlanScreenData) => void;
-  handleComplitePlan: (plan: PlanScreenData, value: boolean) => void;
+  handleCompletePlan: (plan: PlanScreenData, value: boolean) => void;
   view?: PlansViewOptions;
 }
 
@@ -40,7 +40,7 @@ export function PlansList({
   plans,
   onEdit,
   onDelete,
-  handleComplitePlan,
+  handleCompletePlan,
   onMonthSelect,
   view,
 }: PlansListProps) {
@@ -91,7 +91,7 @@ export function PlansList({
                   <Checkbox
                     value={item?.text}
                     defaultIsChecked={item?.isDone}
-                    onChange={(value) => handleComplitePlan(item, value)}
+                    onChange={(value) => handleCompletePlan(item, value)}
                     size="md"
                     aria-label={item?.text}
                   >
