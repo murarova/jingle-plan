@@ -18,6 +18,7 @@ export default {
     selectMonth: "Обрати місяць",
     logout: "Вийти",
     deleteAccount: "Видалити акаунт",
+    error: "Помилка",
   },
   context: {
     health: "Тіло",
@@ -29,6 +30,10 @@ export default {
     money: "Прибуток",
     supports: "Опори",
     globalGoal: "Амбитна мета",
+  },
+  errors: {
+    emptyText: "Текстове поле не може бути порожнім",
+    generic: "Щось пішло не так. Спробуйте ще раз.",
   },
   screens: {
     intro: {
@@ -62,7 +67,7 @@ export default {
       email: "Пошта",
       password: "Пароль",
       repeatPassword: "Повторіть пароль",
-      okBtn: "Створити акаунт",
+      registerBtn: "Створити акаунт",
       invalidPassword:
         "Пароль має складатись із щонайменше 8 символів і містити хоча б одну цифру та хоча б одну літеру",
       validatePassword:
@@ -76,7 +81,9 @@ export default {
       title: "Завдання",
     },
     dashboardScreen: {
-      title: "Твій прогрес",
+      goals: "Цілей",
+      completed: "Виконано",
+      title: "Прогрес",
     },
     tasksOfTheDay: {
       dayTitle: "Завдання дня",
@@ -91,6 +98,9 @@ export default {
       maxPlansError: "Ви не можете додати більше ніж 10 пунктів",
       title: "Мої плани",
       everyMonthLabel: "Кожного місяця",
+      byContext: "По сферах",
+      byMonth: "По місяцях",
+      globalGoalTitle: "Моя глобальна мета 2025:",
     },
     plansModal: {
       addPlanTitle: "Додайте пункт плану",

@@ -4,24 +4,17 @@ import isEmpty from "lodash/isEmpty";
 import { AddPlanModal } from "./add-plan-modal";
 import { PlansList } from "./plans-list";
 import { usePlans } from "./hooks/usePlans";
-import { PlanData } from "../../../types/types";
+import { PlanContextData, PlanData } from "../../../types/types";
 
 interface PlansProps {
   context: string;
-  data: PlanData[] | null;
-  setData: (data: PlanData[] | null) => void;
-  handleAddProgress: () => void;
-  handleRemoveProgress: () => void;
+  data: PlanContextData | null;
 }
 
-export function Plans({
-  context,
-  data,
-  setData,
-  handleAddProgress,
-  handleRemoveProgress,
-}: PlansProps) {
+export function Plans({ context, data }: PlansProps) {
   const { t } = useTranslation();
+
+  const contextData = data?.[context] as PlanData[] | null;
 
   const {
     updatedData,
@@ -34,11 +27,8 @@ export function Plans({
     handleAddPlanBtn,
     isLoading,
   } = usePlans({
-    data,
+    data: contextData,
     context,
-    setData,
-    handleAddProgress,
-    handleRemoveProgress,
   });
 
   return (
@@ -49,7 +39,7 @@ export function Plans({
       {!isEmpty(data) && (
         <Box mt="$10">
           <PlansList
-            plans={data}
+            plans={contextData}
             title={t("screens.plansScreen.title")}
             onEdit={handleEditPlan}
             onDelete={handleDeletePlan}

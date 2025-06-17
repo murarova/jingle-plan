@@ -12,7 +12,11 @@ import { SCREENS } from "./constants/constants";
 import DayOverviewScreen from "./screens/day-overview-screen";
 import { useTranslation } from "react-i18next";
 import "./i18n/i18n";
-import { DaysProvider } from "./providers/day-config-provider";
+import { Provider, useDispatch } from "react-redux";
+import { store } from "./store/store";
+import { useEffect } from "react";
+import { getUserFromStorage } from "./services/storage";
+import { hydrateAuth } from "./store/authReducer";
 
 // Switching off warning logs
 // TODO: delete after upgrading react native firebase
@@ -44,59 +48,75 @@ export type RootStackParamList = {
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-export default function App() {
+function AppContent() {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const loadPersistedUser = async () => {
+      const user = await getUserFromStorage();
+      dispatch(hydrateAuth(user));
+    };
+    loadPersistedUser();
+  }, []);
+
   return (
-    <GluestackUIProvider config={config}>
-      <NavigationContainer theme={MyTheme}>
-        <DaysProvider>
-          <Stack.Navigator>
-            <Stack.Screen
-              name={SCREENS.LOADING}
-              component={LoadingScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name={SCREENS.INTRO}
-              component={IntroScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name={SCREENS.LOGIN}
-              component={LoginScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name={SCREENS.REGISTER}
-              component={RegisterScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name={SCREENS.HOME}
-              component={HomeScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name={SCREENS.DAY_OVERVIEW}
-              component={DayOverviewScreen}
-              options={{
-                headerBackTitle: t("common.back"),
-                headerRight: AppMenu,
-              }}
-            />
-          </Stack.Navigator>
-        </DaysProvider>
-      </NavigationContainer>
-    </GluestackUIProvider>
+    <NavigationContainer theme={MyTheme}>
+      <Stack.Navigator>
+        <Stack.Screen
+          name={SCREENS.LOADING}
+          component={LoadingScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={SCREENS.INTRO}
+          component={IntroScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={SCREENS.LOGIN}
+          component={LoginScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={SCREENS.REGISTER}
+          component={RegisterScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={SCREENS.HOME}
+          component={HomeScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={SCREENS.DAY_OVERVIEW}
+          component={DayOverviewScreen}
+          options={{
+            headerBackTitle: t("common.back"),
+            headerRight: AppMenu,
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+export default function App() {
+  return (
+    <Provider store={store}>
+      <GluestackUIProvider config={config}>
+        <AppContent />
+      </GluestackUIProvider>
+    </Provider>
   );
 }

@@ -1,156 +1,124 @@
-import { useState, useLayoutEffect } from "react";
-import { getUserPlans } from "../services/services";
+import { memo } from "react";
 import { EmptyScreen } from "../components/empty-screen";
 import { Loader } from "../components/common";
-import { useIsFocused } from "@react-navigation/native";
-import { Alert } from "react-native";
-import { Box, SafeAreaView, HStack, Text, VStack } from "@gluestack-ui/themed";
+import {
+  Box,
+  SafeAreaView,
+  HStack,
+  Text,
+  VStack,
+  ScrollView,
+} from "@gluestack-ui/themed";
 import CircularProgress from "react-native-circular-progress-indicator";
 import { config } from "../config/gluestack-ui.config";
 import { TASK_CONTEXT } from "../constants/constants";
 import { DashboardContextSection } from "../components/dashboard-context-section";
-import { ScrollView } from "@gluestack-ui/themed";
-import {
-  PlansCollection,
-  TaskContext,
-  TaskProgress,
-} from "../types/types";
+import { TaskContext, TaskProgress } from "../types/types";
+import { useTranslation } from "react-i18next";
+import { useDashboardData } from "../hooks/useDashboardData";
 
-export function DashboardScreen() {
-  const [contextData, setContextData] = useState<
-    Partial<Record<TaskContext, TaskProgress>>
-  >({});
-  const [totalData, setTotalData] = useState<TaskProgress | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const isFocused = useIsFocused();
+interface ProgressStatProps {
+  value: number;
+  label: string;
+}
 
-  function calculateTotalData(taskData: PlansCollection) {
-    let totalTasks = 0;
-    let doneTasks = 0;
+const ProgressStat = memo(({ value, label }: ProgressStatProps) => (
+  <VStack justifyContent="center" alignItems="center">
+    <Text size="xl" color={config.tokens.colors.warmGray900} fontWeight="bold">
+      {value}
+    </Text>
+    <Text color={config.tokens.colors.warmGray400}>{label}</Text>
+  </VStack>
+));
 
-    for (const context in taskData) {
-      const typedContext = context as TaskContext;
-      const tasks = taskData[typedContext]!;
-      totalTasks += tasks.length;
-      doneTasks += tasks.filter((task) => task.isDone === true).length;
-    }
+ProgressStat.displayName = "ProgressStat";
 
-    const donePercentage = totalTasks > 0 ? (doneTasks / totalTasks) * 100 : 0;
+interface CircularProgressIndicatorProps {
+  percentage: number;
+}
 
-    return {
-      totalTasks,
-      doneTasks,
-      donePercentage: parseFloat(donePercentage.toFixed(0)),
-    };
-  }
+const CircularProgressIndicator = memo(
+  ({ percentage }: CircularProgressIndicatorProps) => (
+    <CircularProgress
+      value={percentage}
+      progressValueColor={config.tokens.colors.warmGray800}
+      activeStrokeColor={config.tokens.colors.green400}
+      inActiveStrokeColor={config.tokens.colors.warmGray400}
+      inActiveStrokeOpacity={0.2}
+      valueSuffix="%"
+      radius={35}
+      duration={1000}
+      maxValue={100}
+    />
+  )
+);
 
-  function calculateContextData(taskData: PlansCollection) {
-    const contextStats: Partial<Record<TaskContext, TaskProgress>> = {};
+CircularProgressIndicator.displayName = "CircularProgressIndicator";
 
-    for (const context in taskData) {
-      const typedContext = context as TaskContext;
-      const tasks = taskData[typedContext]!;
-      const totalTasks = tasks.length;
-      const doneTasks = tasks.filter((task) => task.isDone === true).length;
-      const donePercentage =
-        totalTasks > 0 ? (doneTasks / totalTasks) * 100 : 0;
+interface ContextSectionsProps {
+  contextData: Partial<Record<TaskContext, TaskProgress>>;
+}
 
-      contextStats[typedContext] = {
-        totalTasks,
-        doneTasks,
-        donePercentage: parseFloat(donePercentage.toFixed(0)),
-      };
-    }
+const ContextSections = memo(({ contextData }: ContextSectionsProps) => (
+  <Box mt={20} flexWrap="wrap" flexDirection="row">
+    {Object.values(TASK_CONTEXT).map((context) => {
+      const data = contextData[context];
+      if (!data) return null;
 
-    return contextStats;
-  }
+      return (
+        <Box key={context} width="50%">
+          <DashboardContextSection
+            context={context}
+            percentage={data.donePercentage}
+          />
+        </Box>
+      );
+    })}
+  </Box>
+));
 
-  useLayoutEffect(() => {
-    setIsLoading(true);
-    async function getTasks() {
-      try {
-        const plans = await getUserPlans();
-        const totalData = calculateTotalData(plans);
-        const contextData = calculateContextData(plans);
-        setTotalData(totalData);
-        setContextData(contextData);
-      } catch (error) {
-        Alert.alert("Oops", "Something wrong");
-      } finally {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 300);
-      }
-    }
-    if (isFocused) {
-      getTasks();
-    }
-  }, [isFocused]);
+ContextSections.displayName = "ContextSections";
 
-  if (isLoading) {
-    return <Loader />;
-  }
+interface DashboardStatsProps {
+  totalData: TaskProgress;
+}
 
-  const isEmpty =
-    !totalData ||
-    (totalData.totalTasks === 0 &&
-      totalData.doneTasks === 0 &&
-      totalData.donePercentage === 0);
+const DashboardStats = memo(({ totalData }: DashboardStatsProps) => {
+  const { t } = useTranslation();
 
   return (
-    <>
-      {!isEmpty ? (
-        <SafeAreaView flex={1}>
-          <HStack justifyContent="space-around" mt={20} pb="$4">
-            <VStack justifyContent="center" alignItems="center">
-              <Text
-                size="xl"
-                color={config.tokens.colors.warmGray900}
-                fontWeight="bold"
-              >
-                {totalData.totalTasks}
-              </Text>
-              <Text color={config.tokens.colors.warmGray400}>Цілей</Text>
-            </VStack>
-            <CircularProgress
-              value={totalData.donePercentage}
-              progressValueColor={config.tokens.colors.warmGray800}
-              activeStrokeColor={config.tokens.colors.green400}
-              inActiveStrokeColor={config.tokens.colors.warmGray400}
-              inActiveStrokeOpacity={0.2}
-              valueSuffix={"%"}
-            />
-            <VStack justifyContent="center" alignItems="center">
-              <Text
-                size="xl"
-                color={config.tokens.colors.warmGray900}
-                fontWeight="bold"
-              >
-                {totalData.doneTasks}
-              </Text>
-              <Text color={config.tokens.colors.warmGray400}>Виконано</Text>
-            </VStack>
-          </HStack>
-          <ScrollView>
-            <Box mt={20} flexWrap="wrap" flexDirection="row">
-              {Object.values(TASK_CONTEXT).map((context) => {
-                return (
-                  contextData[context] && (
-                    <Box key={context} width="50%">
-                      <DashboardContextSection
-                        context={context}
-                        percentage={contextData[context]!.donePercentage}
-                      />
-                    </Box>
-                  )
-                );
-              })}
-            </Box>
-          </ScrollView>
-        </SafeAreaView>
-      ) : (
-        <EmptyScreen />
-      )}
-    </>
+    <HStack justifyContent="space-around" mt={20} pb="$4">
+      <ProgressStat
+        value={totalData.totalTasks}
+        label={t("screens.dashboardScreen.goals")}
+      />
+      <CircularProgressIndicator percentage={totalData.donePercentage} />
+      <ProgressStat
+        value={totalData.doneTasks}
+        label={t("screens.dashboardScreen.completed")}
+      />
+    </HStack>
   );
-}
+});
+
+DashboardStats.displayName = "DashboardStats";
+
+export const DashboardScreen = memo(() => {
+  const { totalData, contextData, isEmpty, status } = useDashboardData();
+
+  if (isEmpty) {
+    return <EmptyScreen />;
+  }
+
+  return (
+    <SafeAreaView flex={1}>
+      {status === "pending" && <Loader absolute />}
+      {totalData && <DashboardStats totalData={totalData} />}
+      <ScrollView>
+        {contextData && <ContextSections contextData={contextData} />}
+      </ScrollView>
+    </SafeAreaView>
+  );
+});
+
+DashboardScreen.displayName = "DashboardScreen";

@@ -5,13 +5,7 @@ import { useTranslation } from "react-i18next";
 import uuid from "react-native-uuid";
 import { Loader } from "./loader";
 import { AnimatedView } from "./animated-view";
-
-interface ImageData {
-  id: string;
-  uri: string;
-  width: number;
-  height: number;
-}
+import { ImageData } from "../../types/types";
 
 interface ImagePickerProps {
   image: ImageData | null;

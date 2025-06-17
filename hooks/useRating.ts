@@ -2,7 +2,14 @@ import { useTranslation } from "react-i18next";
 
 export const useRating = () => {
   const { t } = useTranslation();
-  function getRating(rate: number) {
+  function getRating(rate?: number) {
+    if (rate === undefined || rate === null) {
+      return {
+        icon: "🤷‍♂️",
+        text: t("rating.notRated"),
+      };
+    }
+
     if (rate >= 0 && rate < 20) {
       return {
         icon: "😢",

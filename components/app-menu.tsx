@@ -1,9 +1,6 @@
-// @ts-nocheck
-import CountryFlag from "react-native-country-flag";
 import {
   Menu,
   MenuItem,
-  MenuItemLabel,
   Button,
   Box,
   MenuIcon,
@@ -13,26 +10,32 @@ import {
 } from "@gluestack-ui/themed";
 import { LogOut, Trash2 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { LANGUAGES, SCREENS } from "../constants/constants";
-import { useNavigation } from "@react-navigation/native";
-import auth from "@react-native-firebase/auth";
+import { SCREENS } from "../constants/constants";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Alert } from "react-native";
-import { deleteCurrentUser } from "../services/services";
+import { deleteCurrentUserAsync, signOutAsync } from "../services/auth-api";
+import { useAppDispatch } from "../store/withTypes";
+import { RootStackParamList } from "../App";
 
 export function AppMenu() {
   const { i18n, t } = useTranslation();
-  const nav = useNavigation();
+  const nav = useNavigation<NavigationProp<RootStackParamList>>();
+  const dispatch = useAppDispatch();
 
-  function handleLanguageChanged(lng) {
+  function handleLanguageChanged(lng: string) {
     i18n.changeLanguage(lng);
   }
 
-  function handleLogout() {
-    auth()
-      .signOut()
-      .then(() => {
-        nav.replace(SCREENS.LOADING);
-      });
+  async function handleLogout() {
+    try {
+      await dispatch(signOutAsync()).unwrap();
+      nav.navigate(SCREENS.LOADING);
+    } catch (error) {
+      Alert.alert(
+        t("common.error"),
+        error instanceof Error ? error.message : "An error occurred"
+      );
+    }
   }
 
   function handleDeleteAccount() {
@@ -47,8 +50,15 @@ export function AppMenu() {
         {
           text: t("common.delete"),
           onPress: async () => {
-            await deleteCurrentUser();
-            nav.replace(SCREENS.LOADING);
+            try {
+              await dispatch(deleteCurrentUserAsync()).unwrap();
+              nav.navigate(SCREENS.LOADING);
+            } catch (error) {
+              Alert.alert(
+                t("common.error"),
+                error instanceof Error ? error.message : "An error occurred"
+              );
+            }
           },
         },
       ]

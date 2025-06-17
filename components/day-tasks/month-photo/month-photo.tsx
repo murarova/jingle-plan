@@ -5,169 +5,235 @@ import {
   Text,
   Textarea,
   TextareaInput,
+  VStack,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { TASK_CATEGORY } from "../../../constants/constants";
 import isEmpty from "lodash/isEmpty";
-import {
-  deleteImage,
-  removeTask,
-  saveTaskByCategory,
-} from "../../../services/services";
 import { Alert } from "react-native";
 import uuid from "react-native-uuid";
 import { ActionButtons, AnimatedView, ImagePicker, Loader } from "../../common";
 import { ImageBackground } from "@gluestack-ui/themed";
+import { MonthPhotoData, TextImageData } from "../../../types/types";
+import { useAppDispatch, useAppSelector } from "../../../store/withTypes";
+import {
+  saveTaskByCategoryAsync,
+  deleteImageAsync,
+  removeTaskAsync,
+} from "../../../services/data-api";
 import { useImage } from "../../../hooks/useImage";
-import { TextImageData } from "../../../types/types";
 
 interface MonthPhotoProps {
   context: string;
-  data: TextImageData | null;
-  setData: (data: TextImageData | null) => void;
-  handleAddProgress: () => void;
-  handleRemoveProgress: () => void;
+  data: MonthPhotoData | null;
 }
 
-export function MonthPhoto({
-  context,
-  data,
-  setData,
-  handleAddProgress,
-  handleRemoveProgress,
-}: MonthPhotoProps) {
+interface MonthPhotoFormProps {
+  text: string;
+  image: any;
+  isImageLoading: boolean;
+  onTextChange: (text: string) => void;
+  onImageChange: (image: any) => void;
+  onSubmit: () => void;
+  setImageLoading: (loading: boolean) => void;
+}
+
+const MonthPhotoForm = memo(
+  ({
+    text,
+    image,
+    isImageLoading,
+    onTextChange,
+    onImageChange,
+    onSubmit,
+    setImageLoading,
+  }: MonthPhotoFormProps) => {
+    const { t } = useTranslation();
+
+    return (
+      <VStack space="md" width="100%">
+        <ImagePicker
+          setIsImageLoading={setImageLoading}
+          isImageLoading={isImageLoading}
+          edit={true}
+          setImage={onImageChange}
+          image={image}
+        />
+        <Textarea width="100%" mt="$4">
+          <TextareaInput
+            onChangeText={onTextChange}
+            value={text}
+            placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
+          />
+        </Textarea>
+        <Button onPress={onSubmit} mt="$2" borderRadius="$lg">
+          <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
+        </Button>
+      </VStack>
+    );
+  }
+);
+
+MonthPhotoForm.displayName = "MonthPhotoForm";
+
+interface MonthPhotoViewProps {
+  image: any;
+  text: string | undefined;
+  isLoading: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+const MonthPhotoView = memo(
+  ({ image, text, isLoading, onEdit, onDelete }: MonthPhotoViewProps) => (
+    <Box>
+      {image && (
+        <Box flex={1}>
+          {isLoading && (
+            <Box
+              position="absolute"
+              backgroundColor="$blueGray100"
+              opacity="$60"
+              top="$0"
+              bottom="$0"
+              left="$0"
+              right="$0"
+              zIndex={2}
+            >
+              <Loader size="large" />
+            </Box>
+          )}
+          <AnimatedView style={{ zIndex: 1 }} show={!isLoading}>
+            <Box height={300} width="100%" flex={1}>
+              <ImageBackground
+                style={{ flex: 1, justifyContent: "center" }}
+                src={image?.uri}
+                resizeMode="contain"
+              />
+            </Box>
+          </AnimatedView>
+        </Box>
+      )}
+      {text && (
+        <Box mt="$2">
+          <Text>{text}</Text>
+        </Box>
+      )}
+      <ActionButtons onEdit={onEdit} onDelete={onDelete} />
+    </Box>
+  )
+);
+
+MonthPhotoView.displayName = "MonthPhotoView";
+
+export const MonthPhoto = memo(({ context, data }: MonthPhotoProps) => {
+  const contextData = data?.[context];
   const { t } = useTranslation();
-  const [edit, setEdit] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState("");
+  const { status } = useAppSelector((state) => state.app);
+  const dispatch = useAppDispatch();
   const { saveImage, setImage, image, isLoading, setIsLoading } = useImage();
 
   useEffect(() => {
-    if (isEmpty(data)) {
-      setEdit(true);
+    if (isEmpty(contextData)) {
+      setIsEditing(true);
     } else {
-      setEdit(false);
+      setIsEditing(false);
     }
-    if (data?.text) {
-      setText(data.text);
+    if (contextData?.text) {
+      setText(contextData.text);
     }
-    if (data?.image) {
-      setImage(data?.image);
+    if (contextData?.image) {
+      setImage(contextData?.image);
     }
-  }, [data]);
+  }, [contextData, setImage]);
 
-  async function handleTaskRemove() {
+  const handleTaskRemove = useCallback(async () => {
     try {
-      await removeTask({
-        category: TASK_CATEGORY.MONTH_PHOTO,
-        context,
-      });
-      await deleteImage(image);
-    } catch (error) {
-      Alert.alert("Oops", "Something wrong");
-    } finally {
-      setData(null);
+      if (image) {
+        await dispatch(deleteImageAsync({ image })).unwrap();
+      }
+      await dispatch(
+        removeTaskAsync({
+          category: TASK_CATEGORY.MONTH_PHOTO,
+          context,
+        })
+      ).unwrap();
       setText("");
       setImage(null);
-      handleRemoveProgress();
+    } catch (error) {
+      Alert.alert(t("common.error"), t("errors.generic"));
     }
-  }
+  }, [dispatch, image, context, t, setImage]);
 
-  async function onTaskSubmit() {
-    if (image) {
-      setEdit(false);
-      const id = data?.id ?? uuid.v4();
-      try {
-        let newImage;
-        if (data?.image?.uri !== image?.uri) {
-          newImage = await saveImage();
-        } else {
-          newImage = data?.image;
-        }
+  const handleTaskSubmit = useCallback(async () => {
+    if (!image) {
+      Alert.alert(t("common.error"), t("errors.emptyText"));
+      return;
+    }
+    const id = contextData?.id ?? uuid.v4().toString();
 
-        const updatedData = {
-          id,
-          text,
-          image: newImage,
-        } as ImageData;
-        await saveTaskByCategory({
+    const updatedData = {
+      id,
+      text,
+      image,
+    } as TextImageData;
+
+    try {
+      if (contextData?.image?.uri !== image?.uri) {
+        const uri = await saveImage();
+        updatedData.image = { ...image, uri };
+      }
+
+      await dispatch(
+        saveTaskByCategoryAsync({
           category: TASK_CATEGORY.MONTH_PHOTO,
           data: updatedData,
           context,
-        });
-        setData(updatedData);
-      } catch (error) {
-        Alert.alert("Oops", "Something wrong");
-      } finally {
-        handleAddProgress();
-      }
-    } else {
-      Alert.alert("Помилка", "Будь ласка додайте фото");
+        })
+      ).unwrap();
+
+      setIsEditing(false);
+    } catch (error) {
+      Alert.alert(t("common.error"), t("errors.generic"));
     }
-  }
+  }, [image, text, contextData, dispatch, context, saveImage, t]);
+
+  const handleEdit = useCallback(() => {
+    setIsEditing(true);
+  }, []);
+
+  const handleTextChange = useCallback((newText: string) => {
+    setText(newText);
+  }, []);
 
   return (
     <Box>
-      {edit ? (
-        <>
-          <ImagePicker
-            setIsImageLoading={setIsLoading}
-            isImageLoading={isLoading}
-            edit={edit}
-            setImage={setImage}
-            image={image}
-          />
-          <Textarea width="100%" mt="$4">
-            <TextareaInput
-              onChangeText={setText}
-              defaultValue={text}
-              placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-            />
-          </Textarea>
-          <Button onPress={onTaskSubmit} mt="$2" borderRadius="$lg">
-            <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
-          </Button>
-        </>
+      {status === "pending" && <Loader absolute />}
+
+      {isEditing ? (
+        <MonthPhotoForm
+          text={text}
+          image={image}
+          isImageLoading={isLoading}
+          onTextChange={handleTextChange}
+          onImageChange={setImage}
+          onSubmit={handleTaskSubmit}
+          setImageLoading={setIsLoading}
+        />
       ) : (
-        <Box>
-          {image && (
-            <Box flex={1}>
-              {isLoading && (
-                <Box
-                  position="absolute"
-                  backgroundColor="$blueGray100"
-                  opacity="$60"
-                  top="$0"
-                  bottom="$0"
-                  left="$0"
-                  right="$0"
-                  zIndex={2}
-                >
-                  <Loader size="large" />
-                </Box>
-              )}
-              <AnimatedView style={{ zIndex: 1 }} show={!isLoading}>
-                <Box height={300} width="100%" flex={1}>
-                  <ImageBackground
-                    style={{ flex: 1, justifyContent: "center" }}
-                    src={image?.uri}
-                    resizeMode="contain"
-                  />
-                </Box>
-              </AnimatedView>
-            </Box>
-          )}
-          {data?.text && (
-            <Box mt="$2">
-              <Text>{data?.text}</Text>
-            </Box>
-          )}
-          <ActionButtons
-            onEdit={() => setEdit(true)}
-            onDelete={handleTaskRemove}
-          />
-        </Box>
+        <MonthPhotoView
+          image={image}
+          text={contextData?.text}
+          isLoading={isLoading}
+          onEdit={handleEdit}
+          onDelete={handleTaskRemove}
+        />
       )}
     </Box>
   );
-}
+});
+
+MonthPhoto.displayName = "MonthPhoto";

@@ -16,6 +16,11 @@ export default {
     edit: "Edit",
     delete: "Delete",
     selectMonth: "Select month",
+    error: "Error",
+  },
+  errors: {
+    emptyText: "Text field cannot be empty",
+    generic: "Something went wrong. Please try again.",
   },
   context: {
     health: "Health",
@@ -55,7 +60,7 @@ export default {
       email: "Email",
       password: "Password",
       repeatPassword: "Repeat the password",
-      okBtn: "Register",
+      registerBtn: "Register",
       invalidPassword:
         "Password must be at least 8 characters long and contain at least one number and at least one letter",
       validatePassword:
@@ -68,6 +73,8 @@ export default {
       title: "Main",
     },
     dashboardScreen: {
+      goals: "Goals",
+      completed: "Completed",
       title: "Dashboard",
     },
     tasksOfTheDay: {
@@ -83,6 +90,9 @@ export default {
       maxPlansError: "You cannot add more than 10 points",
       title: "My plans",
       everyMonthLabel: "Every month",
+      byContext: "By Context",
+      byMonth: "By Month",
+      globalGoalTitle: "My Global Goal 2025:",
     },
     plansModal: {
       addPlanTitle: "Add plan item",

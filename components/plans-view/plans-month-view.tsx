@@ -1,3 +1,4 @@
+import { memo, useCallback, useMemo } from "react";
 import {
   Box,
   Text,
@@ -13,7 +14,7 @@ import {
   Heading,
   ScrollView,
 } from "@gluestack-ui/themed";
-import { months, PlansViewOptions } from "../../constants/constants";
+import { allMonths, months, PlansViewOptions } from "../../constants/constants";
 import { PlansList } from "./components/plans";
 import { AddPlanModal } from "../day-tasks/plans/add-plan-modal";
 import { MonthSelectModal } from "../modals/month-select-modal";
@@ -26,87 +27,163 @@ import {
   TaskContext,
 } from "../../types/types";
 
-export function PlansMonthView({
-  plans,
-  handleEditPlan,
-  handleDeletePlan,
-  handleComplitePlan,
-  showModal,
-  updatedData,
-  setShowModal,
-  handleUpdatePlan,
-  showMonthModal,
-  setShowMonthModal,
-  handleMonthSelect,
-  openMonthSelect,
-}: PlansViewProps) {
-  function groupByMonthWithContext(
-    plans: PlansCollection
-  ): Record<string, (PlanScreenData & { context: TaskContext })[]> {
-    const result: Record<
-      string,
-      (PlanScreenData & { context: TaskContext })[]
-    > = {};
-    const allMonths = [
-      "january",
-      "february",
-      "march",
-      "april",
-      "may",
-      "june",
-      "july",
-      "august",
-      "september",
-      "october",
-      "november",
-      "december",
-    ];
+interface PlanWithContext extends PlanScreenData {
+  context: TaskContext;
+}
 
-    for (const context in plans) {
-      plans[context as TaskContext]?.forEach((item: PlanScreenData) => {
-        const month = item.month as string;
-        const itemWithContext = { ...item, context: context as TaskContext };
+type MonthlyPlans = Record<string, PlanWithContext[]>;
 
-        if (month === "every") {
-          // Add the plan to every month from January to December
-          allMonths.forEach((monthName) => {
-            if (!result[monthName]) {
-              result[monthName] = [];
-            }
-            result[monthName].push(itemWithContext);
-          });
-        } else {
-          // Normal case for a specific month
-          if (!result[month]) {
-            result[month] = [];
-          }
-          result[month].push(itemWithContext);
-        }
-      });
+interface AccordionHeaderContentProps {
+  monthName: string;
+  plansCount: number;
+  isExpanded: boolean;
+}
+
+const AccordionHeaderContent = memo(
+  ({ monthName, plansCount, isExpanded }: AccordionHeaderContentProps) => (
+    <>
+      <AccordionTitleText>
+        <Box flexDirection="row" alignItems="center">
+          <Heading size="sm" mr="$2">
+            {monthName}
+          </Heading>
+          <Text>({plansCount})</Text>
+        </Box>
+      </AccordionTitleText>
+      <AccordionIcon
+        as={isExpanded ? ChevronUpIcon : ChevronDownIcon}
+        ml="$3"
+      />
+    </>
+  )
+);
+
+AccordionHeaderContent.displayName = "AccordionHeaderContent";
+
+interface MonthPlansContentProps {
+  plans: PlanWithContext[];
+  onMonthSelect: (item: PlanWithContext) => void;
+  onEdit: (item: PlanWithContext) => void;
+  onDelete: (item: PlanWithContext) => void;
+  onComplete: (item: PlanWithContext, value: boolean) => void;
+}
+
+const MonthPlansContent = memo(
+  ({
+    plans,
+    onMonthSelect,
+    onEdit,
+    onDelete,
+    onComplete,
+  }: MonthPlansContentProps) => (
+    <AccordionContent>
+      <Box>
+        <PlansList
+          view={PlansViewOptions.month}
+          plans={plans}
+          onMonthSelect={onMonthSelect}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          handleCompletePlan={onComplete}
+        />
+      </Box>
+    </AccordionContent>
+  )
+);
+
+MonthPlansContent.displayName = "MonthPlansContent";
+
+const groupPlansByMonth = (plans: PlansCollection): MonthlyPlans => {
+  const result: MonthlyPlans = {};
+
+  Object.entries(plans).forEach(([context, contextPlans]) => {
+    contextPlans?.forEach((item) => {
+      const itemWithContext: PlanWithContext = {
+        ...item,
+        context: context as TaskContext,
+      };
+
+      if (item.month === "every") {
+        // Add the plan to every month
+        allMonths.forEach((monthName) => {
+          result[monthName] = result[monthName] || [];
+          result[monthName].push(itemWithContext);
+        });
+      } else if (item.month) {
+        // Add plan to specific month
+        result[item.month] = result[item.month] || [];
+        result[item.month].push(itemWithContext);
+      }
+    });
+  });
+
+  return result;
+};
+
+export const PlansMonthView = memo(
+  ({
+    plans,
+    handleEditPlan,
+    handleDeletePlan,
+    handleCompletePlan,
+    showModal,
+    updatedData,
+    setShowModal,
+    handleUpdatePlan,
+    showMonthModal,
+    setShowMonthModal,
+    handleMonthSelect,
+    openMonthSelect,
+  }: PlansViewProps) => {
+    const sortedPlans = useMemo(() => groupPlansByMonth(plans), [plans]);
+
+    const handlePlanEdit = useCallback(
+      (item: PlanWithContext) => {
+        handleEditPlan(item, item.context);
+      },
+      [handleEditPlan]
+    );
+
+    const handlePlanDelete = useCallback(
+      (item: PlanWithContext) => {
+        handleDeletePlan(item.id, item.context);
+      },
+      [handleDeletePlan]
+    );
+
+    const handlePlanComplete = useCallback(
+      (item: PlanWithContext, value: boolean) => {
+        handleCompletePlan(item, value, item.context);
+      },
+      [handleCompletePlan]
+    );
+
+    const handlePlanMonthSelect = useCallback(
+      (item: PlanWithContext) => {
+        openMonthSelect(item, item.context);
+      },
+      [openMonthSelect]
+    );
+
+    if (isEmpty(sortedPlans)) {
+      return <EmptyScreen />;
     }
 
-    return result;
-  }
+    return (
+      <ScrollView>
+        <Box p="$2" flex={1}>
+          <Accordion
+            key="month-view"
+            size="md"
+            my="$2"
+            type="multiple"
+            borderRadius="$lg"
+          >
+            {months.map((month) => {
+              const monthPlans = sortedPlans[month.value];
+              if (!monthPlans) return null;
 
-  const sortedPlans = groupByMonthWithContext(plans);
-
-  if (isEmpty(sortedPlans)) {
-    return <EmptyScreen />;
-  }
-
-  return (
-    <ScrollView>
-      <Box p="$2" flex={1}>
-        <Accordion
-          key="month-view"
-          size="md"
-          my="$2"
-          type="multiple"
-          borderRadius="$lg"
-        >
-          {months.map((month) => {
-            return (
-              sortedPlans[month.value] && (
+              return (
                 <AccordionItem
                   key={month.value}
                   value={month.value}
@@ -115,62 +192,44 @@ export function PlansMonthView({
                 >
                   <AccordionHeader>
                     <AccordionTrigger>
-                      {({ isExpanded }) => {
-                        return (
-                          <>
-                            <AccordionTitleText>
-                              <Heading size="sm">{month.long}</Heading>
-                              <Text>{`  (${
-                                sortedPlans[month.value].length
-                              })`}</Text>
-                            </AccordionTitleText>
-                            {isExpanded ? (
-                              <AccordionIcon as={ChevronUpIcon} ml="$3" />
-                            ) : (
-                              <AccordionIcon as={ChevronDownIcon} ml="$3" />
-                            )}
-                          </>
-                        );
-                      }}
+                      {({ isExpanded }) => (
+                        <AccordionHeaderContent
+                          monthName={month.long}
+                          plansCount={monthPlans.length}
+                          isExpanded={isExpanded}
+                        />
+                      )}
                     </AccordionTrigger>
                   </AccordionHeader>
-                  <AccordionContent>
-                    <Box>
-                      <PlansList
-                        view={PlansViewOptions.month}
-                        plans={sortedPlans[month.value]}
-                        onMonthSelect={(item) => {
-                          openMonthSelect(item, item.context);
-                        }}
-                        onEdit={(item) => handleEditPlan(item, item.context)}
-                        onDelete={(item) =>
-                          handleDeletePlan(item.id, item.context)
-                        }
-                        handleComplitePlan={(item, value) =>
-                          handleComplitePlan(item, value, item.context)
-                        }
-                      />
-                    </Box>
-                  </AccordionContent>
+                  <MonthPlansContent
+                    plans={monthPlans}
+                    onMonthSelect={handlePlanMonthSelect}
+                    onEdit={handlePlanEdit}
+                    onDelete={handlePlanDelete}
+                    onComplete={handlePlanComplete}
+                  />
                 </AccordionItem>
-              )
-            );
-          })}
-        </Accordion>
-        {showModal && (
-          <AddPlanModal
-            data={updatedData}
-            setShowModal={setShowModal}
-            handleUpdatePlan={handleUpdatePlan}
-          />
-        )}
-        {showMonthModal && (
-          <MonthSelectModal
-            setShowMonthModal={setShowMonthModal}
-            onMonthSelect={handleMonthSelect}
-          />
-        )}
-      </Box>
-    </ScrollView>
-  );
-}
+              );
+            })}
+          </Accordion>
+
+          {showModal && (
+            <AddPlanModal
+              data={updatedData}
+              setShowModal={setShowModal}
+              handleUpdatePlan={handleUpdatePlan}
+            />
+          )}
+          {showMonthModal && (
+            <MonthSelectModal
+              setShowMonthModal={setShowMonthModal}
+              onMonthSelect={handleMonthSelect}
+            />
+          )}
+        </Box>
+      </ScrollView>
+    );
+  }
+);
+
+PlansMonthView.displayName = "PlansMonthView";

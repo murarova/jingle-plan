@@ -2,13 +2,13 @@ import { Box, Text, ScrollView } from "@gluestack-ui/themed";
 import { YoutubePlayer } from "./common";
 import { TaskItem } from "./task-item";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { TaskConfig } from "../types/types";
+import { DayTaskConfig } from "../types/types";
 
 interface TaskListProps {
   videoText: string;
   videoId: string;
-  dayTaskConfig: TaskConfig;
-  moodTaskConfig: TaskConfig;
+  dayTaskConfig: DayTaskConfig;
+  moodTaskConfig: DayTaskConfig;
   currentDay: string;
 }
 

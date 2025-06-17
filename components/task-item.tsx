@@ -13,24 +13,26 @@ import {
   Heading,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
 import { TaskOutputType, TASK_CATEGORY } from "../constants/constants";
-import { getUserDayTasks } from "../services/services";
 import { Plans } from "./day-tasks/plans/plans";
 import { Summary } from "./day-tasks/summary/summary";
 import { MonthPhoto } from "./day-tasks/month-photo/month-photo";
-import { Alert } from "react-native";
-import { MoodTask } from "./day-tasks/mood/mood-task";
 import { Goals } from "./day-tasks/goals/goals";
-import { useDaysConfiguration } from "../providers/day-config-provider";
+import { useAppDispatch, useAppSelector } from "../store/withTypes";
 import moment from "moment";
 import {
   PlanData,
   SummaryData,
-  TaskConfig,
+  DayTaskConfig,
   TextData,
   TextImageData,
+  TaskContext,
+  MoodTaskData,
+  MonthPhotoData,
+  PlanContextData,
+  SummaryContextData,
 } from "../types/types";
+import { MoodTask } from "./day-tasks/mood/mood-task";
 
 type UsersData = PlanData[] | SummaryData | TextImageData | TextData;
 
@@ -38,50 +40,12 @@ export function TaskItem({
   taskConfig,
   currentDay,
 }: {
-  taskConfig: TaskConfig;
+  taskConfig: DayTaskConfig;
   currentDay: string;
 }) {
   const { t } = useTranslation();
-  const [data, setData] = useState<UsersData | null>(null);
-  const { updateDayProgress } = useDaysConfiguration();
+  const { userData } = useAppSelector((state) => state.app);
   const day = moment(currentDay).format("DD");
-  const progressKey =
-    taskConfig.category === TASK_CATEGORY.MOOD
-      ? "moodTaskGrade"
-      : "dayTaskGrade";
-
-  function handleAddProgress() {
-    updateDayProgress({
-      day: currentDay,
-      [progressKey]: taskConfig.grade,
-    });
-  }
-
-  function handleRemoveProgress() {
-    updateDayProgress({
-      day: currentDay,
-      [progressKey]: 0,
-    });
-  }
-
-  useEffect(() => {
-    async function getDayData() {
-      try {
-        const data = await getUserDayTasks(
-          taskConfig.category,
-          taskConfig.context
-        );
-        if (data) {
-          taskConfig.category === TASK_CATEGORY.MOOD
-            ? setData(data[day])
-            : setData(data);
-        }
-      } catch (error) {
-        Alert.alert("Oops", "Something wrong");
-      }
-    }
-    getDayData();
-  }, []);
 
   return (
     <>
@@ -117,50 +81,45 @@ export function TaskItem({
             <Box pt="$4">
               {taskConfig.taskOutputType === TaskOutputType.List && (
                 <Plans
-                  context={taskConfig.context}
-                  data={data as PlanData[] | null}
-                  setData={setData}
-                  handleAddProgress={handleAddProgress}
-                  handleRemoveProgress={handleRemoveProgress}
+                  context={taskConfig.context as TaskContext}
+                  data={
+                    (userData?.[taskConfig.category] as PlanContextData) ?? null
+                  }
                 />
               )}
               {taskConfig.taskOutputType === TaskOutputType.Text &&
                 taskConfig.category === TASK_CATEGORY.SUMMARY && (
                   <Summary
-                    context={taskConfig.context}
-                    data={data as SummaryData | null}
-                    setData={setData}
-                    handleAddProgress={handleAddProgress}
-                    handleRemoveProgress={handleRemoveProgress}
+                    context={taskConfig.context as TaskContext}
+                    data={
+                      (userData?.[taskConfig.category] as SummaryContextData) ??
+                      null
+                    }
                   />
                 )}
               {taskConfig.taskOutputType === TaskOutputType.Image &&
                 taskConfig.category !== TASK_CATEGORY.MOOD && (
                   <MonthPhoto
-                    data={data as TextImageData | null}
-                    setData={setData}
-                    context={taskConfig.context}
-                    handleAddProgress={handleAddProgress}
-                    handleRemoveProgress={handleRemoveProgress}
+                    data={
+                      (userData?.[taskConfig.category] as MonthPhotoData) ??
+                      null
+                    }
+                    context={taskConfig.context as TaskContext}
                   />
                 )}
               {taskConfig.category === TASK_CATEGORY.MOOD && (
                 <MoodTask
-                  data={data as TextImageData | null}
+                  data={
+                    (userData?.[taskConfig.category] as MoodTaskData) ?? null
+                  }
                   taskOutputType={taskConfig.taskOutputType}
-                  setData={setData}
                   day={day}
-                  handleAddProgress={handleAddProgress}
-                  handleRemoveProgress={handleRemoveProgress}
                 />
               )}
               {taskConfig.category === TASK_CATEGORY.GOALS && (
                 <Goals
-                  data={data as TextData | null}
-                  context={taskConfig.context}
-                  setData={setData}
-                  handleAddProgress={handleAddProgress}
-                  handleRemoveProgress={handleRemoveProgress}
+                  data={(userData?.[taskConfig.category] as TextData) ?? null}
+                  context={taskConfig.context as TaskContext}
                 />
               )}
             </Box>

@@ -3,16 +3,16 @@ import { Box, SafeAreaView } from "@gluestack-ui/themed";
 import { Calendar } from "../components/calendar";
 import { Loader } from "../components/common";
 
-import { useDaysConfiguration } from "../providers/day-config-provider";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
+import { useCalendarDayManager } from "../hooks/useCalendarDayManager";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "PeriodOverview">;
 
 function PeriodOverviewScreen() {
   const nav = useNavigation<NavigationProp>();
-  const { isLoading } = useDaysConfiguration();
+  const { isLoading } = useCalendarDayManager();
 
   function pressHandler(dateString: string) {
     nav.navigate(SCREENS.DAY_OVERVIEW, {

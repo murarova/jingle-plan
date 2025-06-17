@@ -1,4 +1,4 @@
-import { useEffect, useState, useLayoutEffect } from "react";
+import { useCallback, useState } from "react";
 import {
   Box,
   Text,
@@ -19,209 +19,231 @@ import {
   ScrollView,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
-import {
-  getUserSummary,
-  removeTask,
-  saveTaskByCategory,
-} from "../services/services";
-import omit from "lodash/omit";
 import { EmptyScreen } from "../components/empty-screen";
 import { TASK_CATEGORY, TASK_CONTEXT } from "../constants/constants";
 import { ActionButtons, Loader } from "../components/common";
 import { useRating } from "../hooks/useRating";
-import { useIsFocused } from "@react-navigation/native";
 import { Alert } from "react-native";
-import isEmpty from "lodash/isEmpty";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { SummaryData, TaskContext, TextData } from "../types/types";
+import { SummaryContextData, TaskContext, SummaryData } from "../types/types";
+import { useAppDispatch, useAppSelector } from "../store/withTypes";
+import { removeTaskAsync, saveTaskByCategoryAsync } from "../services/data-api";
 
-export function SummaryScreen() {
+interface EditableContentProps {
+  context: TaskContext;
+  text: string;
+  onTextChange: (text: string) => void;
+  onSubmit: () => void;
+}
+
+interface ContentViewProps {
+  text: string;
+  context: TaskContext;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+interface AccordionHeaderProps {
+  context: TaskContext;
+  isExpanded: boolean;
+  getRating: (rate?: number) => { icon: string } | undefined;
+  t: (key: string) => string;
+  summary: SummaryContextData | null;
+}
+
+const EditableContent: React.FC<EditableContentProps> = ({
+  text,
+  onTextChange,
+  onSubmit,
+}) => {
   const { t } = useTranslation();
-  const [summary, setSummary] = useState<
-    Partial<Record<TaskContext, SummaryData>>
-  >({});
-  const [isLoading, setIsLoading] = useState(false);
+
+  return (
+    <>
+      <Textarea width="100%">
+        <TextareaInput
+          onChangeText={onTextChange}
+          value={text}
+          placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
+        />
+      </Textarea>
+      <Button onPress={onSubmit} mt="$2" borderRadius="$lg">
+        <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
+      </Button>
+    </>
+  );
+};
+
+const ContentView: React.FC<ContentViewProps> = ({
+  text,
+  onEdit,
+  onDelete,
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <Box>
+      <Box mb="$2">
+        <Text>{text || t("common.empty")}</Text>
+      </Box>
+      <ActionButtons onEdit={onEdit} onDelete={onDelete} />
+    </Box>
+  );
+};
+
+const AccordionHeaderContent: React.FC<AccordionHeaderProps> = ({
+  context,
+  isExpanded,
+  getRating,
+  t,
+  summary,
+}) => (
+  <>
+    <AccordionTitleText>
+      <Box display="flex" flexDirection="row" alignItems="center">
+        <Box mr="$2">
+          <Heading size="sm">{t(`context.${context}`)}</Heading>
+        </Box>
+        <Box display="flex" alignItems="center">
+          <Text>{getRating(summary?.[context]?.rate)?.icon}</Text>
+        </Box>
+      </Box>
+    </AccordionTitleText>
+    <AccordionIcon as={isExpanded ? ChevronUpIcon : ChevronDownIcon} ml="$3" />
+  </>
+);
+
+export const SummaryScreen: React.FC = () => {
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const getRating = useRating();
-  const isFocused = useIsFocused();
+
+  const { userData, status } = useAppSelector((state) => state.app);
+  const summary = userData?.summary as SummaryContextData | null;
+
   const [editContext, setEditContext] = useState<TaskContext | null>(null);
   const [text, setText] = useState("");
 
-  useEffect(() => {
-    if (summary && editContext) {
-      setText(summary[editContext]?.text ?? "");
-    }
-  }, [editContext]);
+  const isLoading = status === "pending";
 
-  useLayoutEffect(() => {
-    setIsLoading(true);
-    async function getTasks() {
-      try {
-        const summary = await getUserSummary();
-        setSummary(summary);
-      } catch (error) {
-        Alert.alert("Oops", "Something wrong");
-      } finally {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 300);
+  const handleTaskSubmit = useCallback(
+    async (context: TaskContext, item?: SummaryData) => {
+      if (!text.trim()) {
+        Alert.alert(t("common.error"), t("errors.emptyText"));
+        return;
       }
-    }
-    if (isFocused) {
-      getTasks();
-    }
-  }, [isFocused]);
 
-  function onTaskSubmit(context: TaskContext, item?: TextData) {
-    if (!text.trim()) {
-      Alert.alert("Oops", "Please add some text");
-      return;
-    }
+      try {
+        await dispatch(
+          saveTaskByCategoryAsync({
+            category: TASK_CATEGORY.SUMMARY,
+            data: {
+              ...item,
+              text,
+              rate: item?.rate ?? 0,
+            },
+            context,
+          })
+        ).unwrap();
+        setEditContext(null);
+        setText("");
+      } catch (error) {
+        Alert.alert(t("common.error"), t("errors.generic"));
+      }
+    },
+    [dispatch, text, t]
+  );
 
-    const updatedSummary = {
-      ...item,
-      text,
-    };
-    try {
-      saveTaskByCategory({
-        category: TASK_CATEGORY.SUMMARY,
-        data: updatedSummary,
-        context,
-      });
-    } catch (error) {
-      Alert.alert("Oops", "Something wrong");
-    } finally {
-      setSummary((prevSummary) => ({
-        ...prevSummary,
-        [context]: {
-          ...item,
-          text,
-        },
-      }));
-      setEditContext(null);
-    }
+  const handleTaskRemove = useCallback(
+    async (context: TaskContext) => {
+      try {
+        await dispatch(
+          removeTaskAsync({
+            category: TASK_CATEGORY.SUMMARY,
+            context,
+          })
+        ).unwrap();
+        setText("");
+      } catch (error) {
+        Alert.alert(t("common.error"), t("errors.generic"));
+      }
+    },
+    [dispatch, t]
+  );
+
+  if (!userData) {
+    return null;
   }
 
-  async function handleTaskRemove(context: TaskContext) {
-    try {
-      await removeTask({
-        category: TASK_CATEGORY.SUMMARY,
-        context,
-      });
-    } catch (error) {
-      Alert.alert("Oops", "Something wrong");
-    } finally {
-      const updatedValues = omit(summary, [context]);
-      setSummary(isEmpty(updatedValues) ? {} : updatedValues);
-      setText("");
-    }
+  if (!summary) {
+    return <EmptyScreen />;
   }
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  return summary ? (
+  return (
     <Box p="$2" flex={1}>
+      {isLoading && <Loader absolute />}
       <KeyboardAwareScrollView extraScrollHeight={100}>
         <ScrollView>
           <Accordion
-            key={"summary"}
+            key="summary"
             size="md"
             my="$2"
             type="multiple"
             borderRadius="$lg"
           >
             {Object.values(TASK_CONTEXT).map((context) => {
+              if (!summary[context]) return null;
+
               return (
-                summary[context] && (
-                  <AccordionItem
-                    key={context}
-                    value={context}
-                    borderRadius="$lg"
-                    mb="$5"
-                  >
-                    <AccordionHeader>
-                      <AccordionTrigger>
-                        {({ isExpanded }) => {
-                          return (
-                            <>
-                              <AccordionTitleText>
-                                <Box
-                                  display="flex"
-                                  flexDirection="row"
-                                  alignItems="center"
-                                >
-                                  <Box mr="$2">
-                                    <Heading size="sm">
-                                      {t(`context.${context}`)}
-                                    </Heading>
-                                  </Box>
-                                  <Box display="flex" alignItems="center">
-                                    <Text>
-                                      {getRating(summary[context]!.rate)?.icon}
-                                    </Text>
-                                  </Box>
-                                </Box>
-                              </AccordionTitleText>
-                              {isExpanded ? (
-                                <AccordionIcon as={ChevronUpIcon} ml="$3" />
-                              ) : (
-                                <AccordionIcon as={ChevronDownIcon} ml="$3" />
-                              )}
-                            </>
-                          );
-                        }}
-                      </AccordionTrigger>
-                    </AccordionHeader>
-                    <AccordionContent>
-                      <Box>
-                        {editContext === context ? (
-                          <>
-                            <Textarea width="100%">
-                              <TextareaInput
-                                onChangeText={setText}
-                                defaultValue={summary[context]?.text ?? ""}
-                                placeholder={t(
-                                  "screens.tasksOfTheDay.textareaPlaceholder"
-                                )}
-                              />
-                            </Textarea>
-                            <Button
-                              onPress={() =>
-                                onTaskSubmit(context, summary[context])
-                              }
-                              mt="$2"
-                              borderRadius="$lg"
-                            >
-                              <ButtonText>
-                                {t("screens.tasksOfTheDay.submitBtnText")}
-                              </ButtonText>
-                            </Button>
-                          </>
-                        ) : (
-                          <Box>
-                            <Box mb="$2">
-                              <Text>
-                                {summary[context]?.text || t("common.empty")}
-                              </Text>
-                            </Box>
-                            <ActionButtons
-                              onEdit={() => setEditContext(context)}
-                              onDelete={() => handleTaskRemove(context)}
-                            />
-                          </Box>
-                        )}
-                      </Box>
-                    </AccordionContent>
-                  </AccordionItem>
-                )
+                <AccordionItem
+                  key={context}
+                  value={context}
+                  borderRadius="$lg"
+                  mb="$5"
+                >
+                  <AccordionHeader>
+                    <AccordionTrigger>
+                      {({ isExpanded }) => (
+                        <AccordionHeaderContent
+                          context={context}
+                          isExpanded={isExpanded}
+                          getRating={getRating}
+                          t={t}
+                          summary={summary}
+                        />
+                      )}
+                    </AccordionTrigger>
+                  </AccordionHeader>
+                  <AccordionContent>
+                    <Box>
+                      {editContext === context ? (
+                        <EditableContent
+                          context={context}
+                          text={text || summary[context]?.text || ""}
+                          onTextChange={setText}
+                          onSubmit={() =>
+                            handleTaskSubmit(context, summary[context])
+                          }
+                        />
+                      ) : (
+                        <ContentView
+                          text={summary[context]?.text || ""}
+                          context={context}
+                          onEdit={() => {
+                            setEditContext(context);
+                            setText(summary[context]?.text || "");
+                          }}
+                          onDelete={() => handleTaskRemove(context)}
+                        />
+                      )}
+                    </Box>
+                  </AccordionContent>
+                </AccordionItem>
               );
             })}
           </Accordion>
         </ScrollView>
       </KeyboardAwareScrollView>
     </Box>
-  ) : (
-    <EmptyScreen />
   );
-}
+};

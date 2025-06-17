@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Box,
   Text,
@@ -5,122 +6,140 @@ import {
   TextareaInput,
   Button,
   ButtonText,
+  VStack,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
 import { TASK_CATEGORY } from "../../../constants/constants";
 import uuid from "react-native-uuid";
-import { removeTask, saveTaskByCategory } from "../../../services/services";
 import { Alert } from "react-native";
 import isEmpty from "lodash/isEmpty";
 import { HappySlider } from "./happy-slider";
-import { ActionButtons } from "../../common";
-import { SummaryData } from "../../../types/types";
+import { ActionButtons, Loader } from "../../common";
+import { SummaryContextData } from "../../../types/types";
+import {
+  removeTaskAsync,
+  saveTaskByCategoryAsync,
+} from "../../../services/data-api";
+import { useAppDispatch, useAppSelector } from "../../../store/withTypes";
 
 interface SummaryProps {
   context: string;
-  data: SummaryData | null;
-  setData: (data: SummaryData | null) => void;
-  handleAddProgress: () => void;
-  handleRemoveProgress: () => void;
+  data: SummaryContextData | null;
 }
 
-export function Summary({
-  context,
-  data,
-  setData,
-  handleAddProgress,
-  handleRemoveProgress,
-}: SummaryProps) {
+export function Summary({ context, data }: SummaryProps): React.JSX.Element {
+  const contextData = data?.[context];
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { status } = useAppSelector((state) => state.app);
+
   const [text, setText] = useState("");
   const [rate, setRate] = useState(50);
-  const [edit, setEdit] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    if (isEmpty(data)) {
-      setEdit(true);
+    if (isEmpty(contextData)) {
+      setIsEditing(true);
     } else {
-      setEdit(false);
+      setIsEditing(false);
     }
 
-    if (data?.text) {
-      setText(data.text);
+    if (contextData?.text) {
+      setText(contextData.text);
     }
-    if (data?.rate) {
-      setRate(data.rate);
-    }
-  }, [data]);
 
-  function onTaskSubmit() {
-    const id = data?.id ?? uuid.v4();
+    if (contextData?.rate) {
+      setRate(contextData.rate);
+    }
+  }, [contextData]);
+
+  const handleTextChange = useCallback((newText: string) => {
+    setText(newText);
+  }, []);
+
+  const handleRateChange = useCallback((newRate: number) => {
+    setRate(newRate);
+  }, []);
+
+  const handleEdit = useCallback(() => {
+    setIsEditing(true);
+  }, []);
+
+  const handleSubmit = useCallback(async () => {
     if (!text.trim()) {
-      Alert.alert("Oops", "Please add some text");
+      Alert.alert(t("common.error"), t("errors.emptyText"));
       return;
     }
+
+    const id = contextData?.id ?? uuid.v4().toString();
+
     const updatedSummary = {
       id,
       text,
       rate,
     };
-    try {
-      saveTaskByCategory({
-        category: TASK_CATEGORY.SUMMARY,
-        data: updatedSummary,
-        context,
-      });
-    } catch (error) {
-      Alert.alert("Oops", "Something wrong");
-    } finally {
-      setData(updatedSummary);
-      handleAddProgress();
-      setEdit(false);
-    }
-  }
 
-  async function handleTaskRemove() {
     try {
-      await removeTask({
-        category: TASK_CATEGORY.SUMMARY,
-        context,
-      });
+      await dispatch(
+        saveTaskByCategoryAsync({
+          category: TASK_CATEGORY.SUMMARY,
+          data: updatedSummary,
+          context,
+        })
+      ).unwrap();
+      setIsEditing(false);
     } catch (error) {
-      Alert.alert("Oops", "Something wrong");
-    } finally {
-      setData(null);
+      Alert.alert(t("common.error"), t("errors.generic"));
+    }
+  }, [text, rate, contextData, dispatch, context, t]);
+
+  const handleTaskRemove = useCallback(async () => {
+    try {
+      await dispatch(
+        removeTaskAsync({
+          category: TASK_CATEGORY.SUMMARY,
+          context,
+        })
+      ).unwrap();
       setText("");
       setRate(50);
-      handleRemoveProgress();
+    } catch (error) {
+      Alert.alert(t("common.error"), t("errors.generic"));
     }
-  }
+  }, [dispatch, context, t]);
+
+  const renderEditingMode = () => (
+    <VStack space="md" width="100%">
+      <HappySlider rate={rate} setRate={handleRateChange} isDisabled={false} />
+      <Textarea width="100%">
+        <TextareaInput
+          onChangeText={handleTextChange}
+          value={text}
+          placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
+        />
+      </Textarea>
+      <Button onPress={handleSubmit} mt="$2" borderRadius="$lg">
+        <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
+      </Button>
+    </VStack>
+  );
+
+  const renderViewMode = () => (
+    <VStack space="md" width="100%">
+      <HappySlider rate={rate} setRate={() => {}} isDisabled={true} />
+      <Box mb="$2">
+        <Text>{contextData?.text || t("common.empty")}</Text>
+      </Box>
+      <ActionButtons onEdit={handleEdit} onDelete={handleTaskRemove} />
+    </VStack>
+  );
 
   return (
     <Box>
-      <HappySlider rate={rate} setRate={setRate} isDisabled={!edit} />
-      {edit ? (
-        <>
-          <Textarea width="100%">
-            <TextareaInput
-              onChangeText={setText}
-              defaultValue={text}
-              placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-            />
-          </Textarea>
-          <Button onPress={onTaskSubmit} mt="$2" borderRadius="$lg">
-            <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
-          </Button>
-        </>
-      ) : (
-        <Box>
-          <Box mb="$2">
-            <Text>{data?.text || t("common.empty")}</Text>
-          </Box>
-          <ActionButtons
-            onEdit={() => setEdit(true)}
-            onDelete={handleTaskRemove}
-          />
-        </Box>
-      )}
+      {status === "pending" && <Loader absolute />}
+      {isEditing ? renderEditingMode() : renderViewMode()}
     </Box>
   );
 }
+
+Summary.displayName = "Summary";

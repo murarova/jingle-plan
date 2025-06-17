@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import {
@@ -14,19 +13,20 @@ import {
   Button,
   InputSlot,
   InputIcon,
-  Link,
-  LinkText,
 } from "@gluestack-ui/themed";
 import { Alert, Keyboard } from "react-native";
 import { SCREENS } from "../constants/constants";
-import {
-  createProfile,
-  createUserWithEmailAndPassword,
-} from "../services/services";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { Loader } from "../components/common";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useAppDispatch, useAppSelector } from "../store/withTypes";
+import { selectAuthStatus } from "../store/authReducer";
+import { createUserAsync, createProfileAsync } from "../services/auth-api";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../App";
+
+type NavigationProp = StackNavigationProp<RootStackParamList, "Register">;
 
 export const RegisterScreen = () => {
   const [name, setName] = useState("");
@@ -37,11 +37,12 @@ export const RegisterScreen = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [passwordMatchError, setPasswordMatchError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const authStatus = useAppSelector(selectAuthStatus);
 
   const { t } = useTranslation();
-
-  const nav = useNavigation();
+  const nav = useNavigation<NavigationProp>();
 
   // Email validation regex
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -51,7 +52,7 @@ export const RegisterScreen = () => {
 
   const handleState = () => setShowPassword((prevState) => !prevState);
 
-  const validateEmail = (email) => {
+  const validateEmail = (email: string) => {
     if (!emailRegex.test(email)) {
       setEmailError(t("screens.registerScreen.invalidEmail"));
     } else {
@@ -59,7 +60,7 @@ export const RegisterScreen = () => {
     }
   };
 
-  const validatePassword = (password) => {
+  const validatePassword = (password: string) => {
     if (!passwordRegex.test(password)) {
       setPasswordError(t("screens.registerScreen.invalidPassword"));
     } else {
@@ -67,7 +68,7 @@ export const RegisterScreen = () => {
     }
   };
 
-  const handleRegister = async () => {
+  const handleRegister = () => {
     if (
       !emailError &&
       !passwordError &&
@@ -76,38 +77,37 @@ export const RegisterScreen = () => {
       password &&
       repeatPassword
     ) {
-      try {
-        setIsLoading(true);
-        const user = await createUserWithEmailAndPassword(email, password);
-        if (user) {
-          await createProfile(user.uid, name);
-          nav.replace(SCREENS.HOME);
-        }
-      } catch (e) {
-        if (e.code == "auth/email-already-in-use") {
-          Alert.alert("Oops", "Email already in use");
-        } else {
-          Alert.alert("Oops", "Please check your form and try again");
-        }
-      } finally {
-        setIsLoading(false);
-      }
+      dispatch(createUserAsync({ email, password }))
+        .unwrap()
+        .then((result) => {
+          dispatch(createProfileAsync({ uid: result.uid, name }))
+            .unwrap()
+            .then(() => {
+              nav.replace(SCREENS.HOME);
+            });
+        })
+        .catch((e) => {
+          Alert.alert(
+            "Oops",
+            e?.message || t("screens.registerScreen.errorMessage")
+          );
+        });
     }
   };
 
-  const handlePasswordChange = (value) => {
+  const handlePasswordChange = (value: string) => {
     setPassword(value);
     validatePassword(value);
   };
 
-  const handleRepeatPasswordChange = (value) => {
+  const handleRepeatPasswordChange = (value: string) => {
     setRepeatPassword(value);
     setPasswordMatchError(
       value !== password ? t("screens.registerScreen.passwordMatchError") : ""
     );
   };
 
-  if (isLoading) {
+  if (authStatus === "pending") {
     return <Loader />;
   }
 
@@ -204,35 +204,13 @@ export const RegisterScreen = () => {
             <Button
               mb={30}
               size="md"
+              variant="solid"
+              action="primary"
+              isDisabled={!email || !password || !repeatPassword || !name}
               onPress={handleRegister}
-              isDisabled={
-                !email ||
-                !password ||
-                !!emailError ||
-                !!passwordError ||
-                !!passwordMatchError
-              }
             >
-              <ButtonText>{t("screens.registerScreen.okBtn")}</ButtonText>
+              <ButtonText>{t("screens.registerScreen.registerBtn")}</ButtonText>
             </Button>
-            <Box justifyContent="center" alignItems="center">
-              <Text size="sm">
-                Натаскаючи “Створити акаунт” ви погоджуєтесь з
-              </Text>
-              <Link
-                isExternal
-                href="https://www.privacypolicies.com/live/6604a845-1674-4d58-86c6-ebbe21b1ab6e"
-              >
-                <LinkText size="sm">умовами використання</LinkText>
-              </Link>
-              <Text size="sm">та</Text>
-              <Link
-                isExternal
-                href="https://www.privacypolicies.com/live/52ce9c15-b98b-4b6b-83d6-c014af9d475b"
-              >
-                <LinkText size="sm">політикою конфіденційності</LinkText>
-              </Link>
-            </Box>
           </Box>
         </SafeAreaView>
       </KeyboardAwareScrollView>
