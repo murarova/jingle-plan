@@ -84,6 +84,10 @@ export type MoodTaskData = { [day: string]: TextImageData | undefined };
 export type MonthPhotoData = { [month: string]: TextImageData | undefined };
 export type PlanContextData = { [context: string]: PlanData[] | undefined };
 export type SummaryContextData = { [context: string]: SummaryData | undefined };
+export type UserProfile = {
+  name: string;
+  isAdmin?: boolean;
+};
 
 export interface UserData {
   [TASK_CATEGORY.MOOD]?: MoodTaskData;
@@ -91,6 +95,7 @@ export interface UserData {
   [TASK_CATEGORY.PLANS]?: PlanContextData | null;
   [TASK_CATEGORY.MONTH_PHOTO]?: MonthPhotoData | null;
   [TASK_CATEGORY.GOALS]?: TextData | null;
+  userProfile: UserProfile;
 }
 
 export interface DayTaskProgress {

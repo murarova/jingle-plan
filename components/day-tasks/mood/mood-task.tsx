@@ -5,16 +5,17 @@ import {
   Text,
   Textarea,
   TextareaInput,
+  VStack,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { TASK_CATEGORY, TaskOutputType } from "../../../constants/constants";
 import {
   deleteImageAsync,
   removeTaskAsync,
   saveMoodTaskAsync,
 } from "../../../services/data-api";
-import { useAppDispatch } from "../../../store/withTypes";
+import { useAppDispatch, useAppSelector } from "../../../store/withTypes";
 import isEmpty from "lodash/isEmpty";
 import { Alert } from "react-native";
 import uuid from "react-native-uuid";
@@ -25,34 +26,153 @@ import { MoodTaskData, TextImageData } from "../../../types/types";
 
 interface MoodProps {
   data: MoodTaskData | null;
-
   day: string;
   taskOutputType: TaskOutputType;
 }
 
-export function MoodTask({ data, day, taskOutputType }: MoodProps) {
+interface MoodFormProps {
+  text: string;
+  taskOutputType: TaskOutputType;
+  onTextChange: (text: string) => void;
+  onSubmit: () => void;
+  image: any;
+  isImageLoading: boolean;
+  setImageLoading: (loading: boolean) => void;
+  setImage: (image: any) => void;
+}
+
+const MoodForm = memo(
+  ({
+    text,
+    taskOutputType,
+    onTextChange,
+    onSubmit,
+    image,
+    isImageLoading,
+    setImageLoading,
+    setImage,
+  }: MoodFormProps) => {
+    const { t } = useTranslation();
+
+    const showText =
+      taskOutputType === TaskOutputType.Text ||
+      taskOutputType === TaskOutputType.TextPhoto;
+    const showImage =
+      taskOutputType === TaskOutputType.Image ||
+      taskOutputType === TaskOutputType.TextPhoto;
+
+    return (
+      <VStack space="md" width="100%">
+        {showText && (
+          <Textarea width="100%" mb="$4">
+            <TextareaInput
+              onChangeText={onTextChange}
+              value={text}
+              placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
+            />
+          </Textarea>
+        )}
+
+        {showImage && (
+          <ImagePicker
+            setIsImageLoading={setImageLoading}
+            isImageLoading={isImageLoading}
+            edit={true}
+            setImage={setImage}
+            image={image}
+          />
+        )}
+
+        <Button onPress={onSubmit} mt="$2" borderRadius="$lg">
+          <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
+        </Button>
+      </VStack>
+    );
+  }
+);
+
+MoodForm.displayName = "MoodForm";
+
+interface MoodViewProps {
+  text?: string;
+  image: any;
+  isImageLoading: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+const MoodView = memo(
+  ({ text, image, isImageLoading, onEdit, onDelete }: MoodViewProps) => (
+    <Box>
+      {text && (
+        <Box mb="$2">
+          <Text>{text}</Text>
+        </Box>
+      )}
+
+      {image && (
+        <Box flex={1}>
+          {isImageLoading && (
+            <Box
+              position="absolute"
+              backgroundColor="$blueGray100"
+              opacity="$60"
+              top="$0"
+              bottom="$0"
+              left="$0"
+              right="$0"
+              zIndex={2}
+            >
+              <Loader size="large" />
+            </Box>
+          )}
+          <AnimatedView style={{ zIndex: 1 }} show={!isImageLoading}>
+            <Box height={300} width="100%" flex={1}>
+              <ImageBackground
+                style={{ flex: 1, justifyContent: "center" }}
+                src={image?.uri}
+                resizeMode="contain"
+              />
+            </Box>
+          </AnimatedView>
+        </Box>
+      )}
+
+      <ActionButtons onEdit={onEdit} onDelete={onDelete} />
+    </Box>
+  )
+);
+
+MoodView.displayName = "MoodView";
+
+export const MoodTask = memo(({ data, day, taskOutputType }: MoodProps) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [edit, setEdit] = useState(false);
+  const { status } = useAppSelector((state) => state.app);
+
+  const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState("");
+
   const { saveImage, setImage, image, isLoading, setIsLoading } = useImage();
   const dayMoodData = data ? data[day] : null;
 
   useEffect(() => {
     if (isEmpty(dayMoodData)) {
-      setEdit(true);
+      setIsEditing(true);
     } else {
-      setEdit(false);
+      setIsEditing(false);
     }
+
     if (dayMoodData?.text) {
       setText(dayMoodData.text);
     }
+
     if (dayMoodData?.image) {
       setImage(dayMoodData?.image);
     }
-  }, [dayMoodData]);
+  }, [dayMoodData, setImage]);
 
-  async function handleTaskRemove() {
+  const handleTaskRemove = useCallback(async () => {
     try {
       await dispatch(
         removeTaskAsync({
@@ -61,19 +181,40 @@ export function MoodTask({ data, day, taskOutputType }: MoodProps) {
           day,
         })
       ).unwrap();
+
       if (image) {
         await dispatch(deleteImageAsync({ image })).unwrap();
       }
-    } catch (error) {
-      Alert.alert("Oops", "Something wrong with task deletion");
-    } finally {
+
       setText("");
       setImage(null);
+    } catch (error) {
+      Alert.alert(t("common.error"), t("errors.generic"));
     }
-  }
+  }, [dispatch, day, image, setImage, t]);
 
-  async function onTaskSubmit() {
-    const id = dayMoodData?.id ?? uuid.v4();
+  const handleTextChange = useCallback((newText: string) => {
+    setText(newText);
+  }, []);
+
+  const handleEdit = useCallback(() => {
+    setIsEditing(true);
+  }, []);
+
+  const handleSubmit = useCallback(async () => {
+    const needsText =
+      taskOutputType === TaskOutputType.Text ||
+      taskOutputType === TaskOutputType.TextPhoto;
+    const needsImage =
+      taskOutputType === TaskOutputType.Image ||
+      taskOutputType === TaskOutputType.TextPhoto;
+
+    if (needsText && !text.trim() && needsImage && !image) {
+      Alert.alert(t("common.error"), t("errors.emptyText"));
+      return;
+    }
+
+    const id = dayMoodData?.id ?? uuid.v4().toString();
 
     let updatedData: TextImageData = {
       id,
@@ -81,105 +222,52 @@ export function MoodTask({ data, day, taskOutputType }: MoodProps) {
       image: image || null,
     };
 
-    if (image || text) {
-      setEdit(false);
-      try {
-        if (image) {
-          await saveImage();
-          updatedData.image = { ...image, uri: image?.uri };
-        }
-        dispatch(
-          saveMoodTaskAsync({
-            category: TASK_CATEGORY.MOOD,
-            data: updatedData,
-            day,
-          })
-        ).unwrap();
-      } catch (error) {
-        Alert.alert("Oops", "Something wrong");
-      } finally {
+    try {
+      if (image) {
+        const uri = await saveImage();
+        updatedData.image = { ...image, uri };
       }
-    } else {
-      Alert.alert("Помилка", "Будь ласка додайте фото");
+
+      await dispatch(
+        saveMoodTaskAsync({
+          category: TASK_CATEGORY.MOOD,
+          data: updatedData,
+          day,
+        })
+      ).unwrap();
+
+      setIsEditing(false);
+    } catch (error) {
+      Alert.alert(t("common.error"), t("errors.generic"));
     }
-  }
+  }, [taskOutputType, text, image, dayMoodData, saveImage, dispatch, day, t]);
 
   return (
     <Box>
-      {edit ? (
-        <>
-          {(taskOutputType === TaskOutputType.Text ||
-            taskOutputType === TaskOutputType.TextPhoto) && (
-            <>
-              <Textarea width="100%" mb="$4">
-                <TextareaInput
-                  onChangeText={setText}
-                  defaultValue={text}
-                  placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-                />
-              </Textarea>
-            </>
-          )}
+      {status === "pending" && <Loader absolute />}
 
-          {(taskOutputType === TaskOutputType.Image ||
-            taskOutputType === TaskOutputType.TextPhoto) && (
-            <ImagePicker
-              setIsImageLoading={setIsLoading}
-              isImageLoading={isLoading}
-              edit={edit}
-              setImage={setImage}
-              image={image}
-            />
-          )}
-
-          {taskOutputType && (
-            <Button onPress={onTaskSubmit} mt="$2" borderRadius="$lg">
-              <ButtonText>
-                {t("screens.tasksOfTheDay.submitBtnText")}
-              </ButtonText>
-            </Button>
-          )}
-        </>
+      {isEditing ? (
+        <MoodForm
+          text={text}
+          taskOutputType={taskOutputType}
+          onTextChange={handleTextChange}
+          onSubmit={handleSubmit}
+          image={image}
+          isImageLoading={isLoading}
+          setImageLoading={setIsLoading}
+          setImage={setImage}
+        />
       ) : (
-        <Box>
-          {dayMoodData?.text && (
-            <Box mb="$2">
-              <Text>{dayMoodData?.text}</Text>
-            </Box>
-          )}
-          {image && (
-            <Box flex={1}>
-              {isLoading && (
-                <Box
-                  position="absolute"
-                  backgroundColor="$blueGray100"
-                  opacity="$60"
-                  top="$0"
-                  bottom="$0"
-                  left="$0"
-                  right="$0"
-                  zIndex={2}
-                >
-                  <Loader size="large" />
-                </Box>
-              )}
-              <AnimatedView style={{ zIndex: 1 }} show={!isLoading}>
-                <Box height={300} width="100%" flex={1}>
-                  <ImageBackground
-                    style={{ flex: 1, justifyContent: "center" }}
-                    src={image?.uri}
-                    resizeMode="contain"
-                  />
-                </Box>
-              </AnimatedView>
-            </Box>
-          )}
-          <ActionButtons
-            onEdit={() => setEdit(true)}
-            onDelete={handleTaskRemove}
-          />
-        </Box>
+        <MoodView
+          text={dayMoodData?.text}
+          image={image}
+          isImageLoading={isLoading}
+          onEdit={handleEdit}
+          onDelete={handleTaskRemove}
+        />
       )}
     </Box>
   );
-}
+});
+
+MoodTask.displayName = "MoodTask";

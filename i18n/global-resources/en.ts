@@ -73,6 +73,8 @@ export default {
       title: "Main",
     },
     dashboardScreen: {
+      goals: "Goals",
+      completed: "Completed",
       title: "Dashboard",
     },
     tasksOfTheDay: {

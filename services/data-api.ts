@@ -4,27 +4,13 @@ import { ImageData, TaskGategory, TextImageData } from "../types/types";
 import {
   getConfiguration,
   saveMoodTask,
-  getUserDayTasks,
   getUserData,
-  getUserSummary,
-  getUserPlans,
-  getUserGlobalGoal,
-  getUserPhotos,
   saveImage,
   deleteImage,
   getImageUrl,
   removeTask,
-  getUserRole,
   saveTaskByCategory,
 } from "./services";
-
-// For getUserRole
-export const getUserRoleAsync = createAppAsyncThunk<string | null, void>(
-  "user/getUserRole",
-  async (_, { getState }) => {
-    return await getUserRole();
-  }
-);
 
 // For saveTaskByCategory
 export const saveTaskByCategoryAsync = createAppAsyncThunk<
@@ -56,57 +42,12 @@ export const saveMoodTaskAsync = createAppAsyncThunk<
   return data;
 });
 
-// For getUserDayTasks
-// export const getUserDayTasksAsync = createAppAsyncThunk<
-//   any,
-//   { category: TaskGategory; context: string }
-// >("user/getUserDayTasks", async ({ category, context }, { getState }) => {
-//   const currentUser = selectCurrentUser(getState());
-//   return await getUserDayTasks(category, context, currentUser);
-// });
-
 // For getUserData
 export const getUserDataAsync = createAppAsyncThunk<any, void>(
   "user/getUserData",
   async (_, { getState }) => {
     const currentUser = selectCurrentUser(getState());
     return await getUserData(currentUser?.uid);
-  }
-);
-
-// For getUserSummary
-export const getUserSummaryAsync = createAppAsyncThunk<any, void>(
-  "user/getUserSummary",
-  async (_, { getState }) => {
-    const currentUser = selectCurrentUser(getState());
-    return await getUserSummary(currentUser);
-  }
-);
-
-// For getUserPlans
-export const getUserPlansAsync = createAppAsyncThunk<any, void>(
-  "user/getUserPlans",
-  async (_, { getState }) => {
-    const currentUser = selectCurrentUser(getState());
-    return await getUserPlans(currentUser);
-  }
-);
-
-// For getUserGlobalGoal
-export const getUserGlobalGoalAsync = createAppAsyncThunk<any, void>(
-  "user/getUserGlobalGoal",
-  async (_, { getState }) => {
-    const currentUser = selectCurrentUser(getState());
-    return await getUserGlobalGoal(currentUser);
-  }
-);
-
-// For getUserPhotos
-export const getUserPhotosAsync = createAppAsyncThunk<any, void>(
-  "user/getUserPhotos",
-  async (_, { getState }) => {
-    const currentUser = selectCurrentUser(getState());
-    return await getUserPhotos(currentUser);
   }
 );
 
@@ -149,17 +90,4 @@ export const removeTaskAsync = createAppAsyncThunk<
 >("user/removeTask", async ({ category, context, day }, { getState }) => {
   const currentUser = selectCurrentUser(getState());
   await removeTask({ category, context, currentUser, day });
-});
-
-// For updateDayProgress
-export const updateDayProgressAsync = createAppAsyncThunk<
-  void,
-  { day: string; dayTaskGrade?: number; moodTaskGrade?: number }
->("user/updateDayProgress", async ({ day, dayTaskGrade, moodTaskGrade }) => {
-  // TODO: Implement updating day progress in the backend
-  console.warn("Day progress update not implemented yet", {
-    day,
-    dayTaskGrade,
-    moodTaskGrade,
-  });
 });

@@ -81,7 +81,9 @@ export default {
       title: "Завдання",
     },
     dashboardScreen: {
-      title: "Твій прогрес",
+      goals: "Цілей",
+      completed: "Виконано",
+      title: "Прогрес",
     },
     tasksOfTheDay: {
       dayTitle: "Завдання дня",

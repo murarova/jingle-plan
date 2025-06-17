@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Box,
   Text,
@@ -5,61 +6,79 @@ import {
   TextareaInput,
   Button,
   ButtonText,
+  VStack,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
 import { TASK_CATEGORY } from "../../../constants/constants";
 import uuid from "react-native-uuid";
 import { Alert } from "react-native";
 import isEmpty from "lodash/isEmpty";
 import { HappySlider } from "./happy-slider";
-import { ActionButtons } from "../../common";
+import { ActionButtons, Loader } from "../../common";
 import { SummaryContextData } from "../../../types/types";
 import {
   removeTaskAsync,
   saveTaskByCategoryAsync,
 } from "../../../services/data-api";
-import { useAppDispatch } from "../../../store/withTypes";
+import { useAppDispatch, useAppSelector } from "../../../store/withTypes";
 
 interface SummaryProps {
   context: string;
   data: SummaryContextData | null;
 }
 
-export function Summary({ context, data }: SummaryProps) {
+export function Summary({ context, data }: SummaryProps): React.JSX.Element {
   const contextData = data?.[context];
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { status } = useAppSelector((state) => state.app);
+
   const [text, setText] = useState("");
   const [rate, setRate] = useState(50);
-  const [edit, setEdit] = useState(false);
-  const dispatch = useAppDispatch();
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     if (isEmpty(contextData)) {
-      setEdit(true);
+      setIsEditing(true);
     } else {
-      setEdit(false);
+      setIsEditing(false);
     }
 
     if (contextData?.text) {
       setText(contextData.text);
     }
+
     if (contextData?.rate) {
       setRate(contextData.rate);
     }
   }, [contextData]);
 
-  async function onTaskSubmit() {
-    const id = contextData?.id ?? uuid.v4();
+  const handleTextChange = useCallback((newText: string) => {
+    setText(newText);
+  }, []);
+
+  const handleRateChange = useCallback((newRate: number) => {
+    setRate(newRate);
+  }, []);
+
+  const handleEdit = useCallback(() => {
+    setIsEditing(true);
+  }, []);
+
+  const handleSubmit = useCallback(async () => {
     if (!text.trim()) {
-      Alert.alert("Oops", "Please add some text");
+      Alert.alert(t("common.error"), t("errors.emptyText"));
       return;
     }
+
+    const id = contextData?.id ?? uuid.v4().toString();
+
     const updatedSummary = {
       id,
       text,
       rate,
     };
+
     try {
       await dispatch(
         saveTaskByCategoryAsync({
@@ -68,14 +87,13 @@ export function Summary({ context, data }: SummaryProps) {
           context,
         })
       ).unwrap();
+      setIsEditing(false);
     } catch (error) {
-      Alert.alert("Oops", "Something wrong");
-    } finally {
-      setEdit(false);
+      Alert.alert(t("common.error"), t("errors.generic"));
     }
-  }
+  }, [text, rate, contextData, dispatch, context, t]);
 
-  async function handleTaskRemove() {
+  const handleTaskRemove = useCallback(async () => {
     try {
       await dispatch(
         removeTaskAsync({
@@ -83,41 +101,45 @@ export function Summary({ context, data }: SummaryProps) {
           context,
         })
       ).unwrap();
-    } catch (error) {
-      Alert.alert("Oops", "Something wrong");
-    } finally {
       setText("");
       setRate(50);
+    } catch (error) {
+      Alert.alert(t("common.error"), t("errors.generic"));
     }
-  }
+  }, [dispatch, context, t]);
+
+  const renderEditingMode = () => (
+    <VStack space="md" width="100%">
+      <HappySlider rate={rate} setRate={handleRateChange} isDisabled={false} />
+      <Textarea width="100%">
+        <TextareaInput
+          onChangeText={handleTextChange}
+          value={text}
+          placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
+        />
+      </Textarea>
+      <Button onPress={handleSubmit} mt="$2" borderRadius="$lg">
+        <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
+      </Button>
+    </VStack>
+  );
+
+  const renderViewMode = () => (
+    <VStack space="md" width="100%">
+      <HappySlider rate={rate} setRate={() => {}} isDisabled={true} />
+      <Box mb="$2">
+        <Text>{contextData?.text || t("common.empty")}</Text>
+      </Box>
+      <ActionButtons onEdit={handleEdit} onDelete={handleTaskRemove} />
+    </VStack>
+  );
 
   return (
     <Box>
-      <HappySlider rate={rate} setRate={setRate} isDisabled={!edit} />
-      {edit ? (
-        <>
-          <Textarea width="100%">
-            <TextareaInput
-              onChangeText={setText}
-              defaultValue={text}
-              placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-            />
-          </Textarea>
-          <Button onPress={onTaskSubmit} mt="$2" borderRadius="$lg">
-            <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
-          </Button>
-        </>
-      ) : (
-        <Box>
-          <Box mb="$2">
-            <Text>{contextData?.text || t("common.empty")}</Text>
-          </Box>
-          <ActionButtons
-            onEdit={() => setEdit(true)}
-            onDelete={handleTaskRemove}
-          />
-        </Box>
-      )}
+      {status === "pending" && <Loader absolute />}
+      {isEditing ? renderEditingMode() : renderViewMode()}
     </Box>
   );
 }
+
+Summary.displayName = "Summary";

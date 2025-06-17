@@ -1,9 +1,5 @@
-import { useState, useLayoutEffect, useRef } from "react";
-import { getUserPhotos } from "../services/services";
-import { EmptyScreen } from "../components/empty-screen";
-import { Loader } from "../components/common";
-import { useIsFocused } from "@react-navigation/native";
-import { Alert, Dimensions, Platform, StyleSheet, View } from "react-native";
+import { useState, useCallback, useMemo, memo, useRef } from "react";
+import { Dimensions, ImageStyle } from "react-native";
 import {
   Box,
   Button,
@@ -14,159 +10,188 @@ import {
   ButtonIcon,
   ChevronLeftIcon,
   SafeAreaView,
+  Image,
 } from "@gluestack-ui/themed";
-import Carousel, { ParallaxImage } from "react-native-snap-carousel";
+import Carousel from "react-native-snap-carousel";
 import { albumScreenmMonthOrder, months } from "../constants/constants";
-import { Image } from "@gluestack-ui/themed";
-import { AlbumScreenMonth, MonthlyData, MonthlyTasks } from "../types/types";
+import { AlbumScreenMonth, MonthlyData, MonthPhotoData } from "../types/types";
+import { useAppSelector } from "../store/withTypes";
+import { EmptyScreen } from "../components/empty-screen";
+import { Loader } from "../components/common";
+import { useTranslation } from "react-i18next";
 
-const { width } = Dimensions.get("window");
-const screenWidth = width - 60;
+const { width: windowWidth } = Dimensions.get("window");
+const SCREEN_PADDING = 30;
+const screenWidth = windowWidth - SCREEN_PADDING * 2;
 
-export function AlbumScreen() {
-  const [photos, setPhotos] = useState<MonthlyData[] | null>(null);
-  const [activeSlide, setActiveSlide] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const isFocused = useIsFocused();
-  const carouselRef = useRef<any>();
+interface RenderItemProps {
+  item: MonthlyData;
+  index: number;
+}
 
-  function mapDataToCarousel(inputDict: MonthlyTasks) {
-    const outputList: MonthlyData[] = [];
+const imageStyle: ImageStyle = {
+  flex: 1,
+  width: undefined,
+  height: undefined,
+  resizeMode: "contain",
+};
 
-    for (const [month, data] of Object.entries(inputDict)) {
-      const typedMonth = month as AlbumScreenMonth;
+const CarouselItem = memo(({ item }: RenderItemProps) => (
+  <Box flex={1} width={screenWidth}>
+    <Box
+      flexGrow={1}
+      backgroundColor="$white"
+      p={10}
+      borderTopRightRadius={8}
+      borderTopLeftRadius={8}
+      borderBottomRightRadius={item.text ? 0 : 8}
+      borderBottomLeftRadius={item.text ? 0 : 8}
+    >
+      <Image
+        source={{ uri: item?.image?.uri }}
+        style={imageStyle}
+        alt={`Photo for ${item.month}`}
+      />
+    </Box>
+    {item.text && (
+      <ScrollView
+        flexBasis="30%"
+        p={10}
+        flexGrow={0}
+        backgroundColor="$white"
+        borderBottomRightRadius={8}
+        borderBottomLeftRadius={8}
+      >
+        <Text pb="$4">{item.text}</Text>
+      </ScrollView>
+    )}
+  </Box>
+));
 
-      outputList.push({
-        month: typedMonth,
-        id: data.id,
-        image: data.image,
-        text: data.text,
-      });
-    }
-    outputList.sort(
-      (a, b) =>
-        albumScreenmMonthOrder.indexOf(a.month) -
-        albumScreenmMonthOrder.indexOf(b.month)
-    );
-    return outputList;
-  }
+CarouselItem.displayName = "CarouselItem";
 
-  const goForward = () => {
-    carouselRef.current.snapToNext();
-  };
+interface NavigationControlsProps {
+  onBack: () => void;
+  onForward: () => void;
+  currentMonth: string;
+}
 
-  const goBack = () => {
-    carouselRef.current.snapToPrev();
-  };
+const NavigationControls = memo(
+  ({ onBack, onForward, currentMonth }: NavigationControlsProps) => (
+    <Box
+      display="flex"
+      flexDirection="row"
+      justifyContent="space-between"
+      width={screenWidth}
+      borderRadius="$full"
+      mt="$2"
+      mb="$5"
+      px="$5"
+      backgroundColor="$white"
+    >
+      <Button onPress={onBack} size="xl" variant="link">
+        <ButtonIcon color="$warmGray800" as={ChevronLeftIcon} />
+      </Button>
+      <Center>
+        <Text verticalAlign="middle" fontWeight={600}>
+          {currentMonth}
+        </Text>
+      </Center>
+      <Button onPress={onForward} size="xl" variant="link">
+        <ButtonIcon color="$warmGray800" as={ChevronRightIcon} />
+      </Button>
+    </Box>
+  )
+);
 
-  useLayoutEffect(() => {
-    setIsLoading(true);
-    async function getTasks() {
-      try {
-        const data = await getUserPhotos();
-        if (data) {
-          const photos = mapDataToCarousel(data);
-          setPhotos(photos);
-        }
-      } catch (error) {
-        Alert.alert("Oops", "Something wrong");
-      } finally {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 300);
+NavigationControls.displayName = "NavigationControls";
+
+const mapDataToCarousel = (inputDict: MonthPhotoData): MonthlyData[] => {
+  const outputList = Object.entries(inputDict).reduce<MonthlyData[]>(
+    (acc, [month, data]) => {
+      if (data) {
+        acc.push({
+          month: month as AlbumScreenMonth,
+          id: data.id,
+          image: data.image,
+          text: data.text,
+        });
       }
-    }
-    if (isFocused) {
-      getTasks();
-    }
-  }, [isFocused]);
+      return acc;
+    },
+    []
+  );
 
-  const renderItem = ({ item }: { item: MonthlyData }) => {
-    return (
-      <Box flex={1} width={screenWidth}>
-        <Box
-          flexGrow={1}
-          backgroundColor="$white"
-          p={10}
-          borderTopRightRadius={8}
-          borderTopLeftRadius={8}
-          borderBottomRightRadius={item.text ? 0 : 8}
-          borderBottomLeftRadius={item.text ? 0 : 8}
-        >
-          <Image
-            source={{ uri: item?.image?.uri }}
-            style={{
-              flex: 1,
-              width: undefined,
-              height: undefined,
-              resizeMode: "contain",
-            }}
-            alt="user photo"
-          />
-        </Box>
-        {item.text && (
-          <ScrollView
-            flexBasis="30%"
-            p={10}
-            flexGrow={0}
-            backgroundColor="$white"
-            borderBottomRightRadius={8}
-            borderBottomLeftRadius={8}
-          >
-            <Text pb="$4">{item.text}</Text>
-          </ScrollView>
-        )}
-      </Box>
-    );
-  };
+  return outputList.sort(
+    (a, b) =>
+      albumScreenmMonthOrder.indexOf(a.month) -
+      albumScreenmMonthOrder.indexOf(b.month)
+  );
+};
 
-  if (isLoading) {
-    return <Loader />;
+type CarouselRefType = Carousel<MonthlyData>;
+
+export const AlbumScreen = memo(() => {
+  const { t } = useTranslation();
+  const [activeSlide, setActiveSlide] = useState(0);
+  const carouselRef = useRef<CarouselRefType>(null);
+
+  const { userData, status } = useAppSelector((state) => state.app);
+  const monthPhoto = userData?.monthPhoto as MonthPhotoData | null;
+
+  const photos = useMemo(
+    () => (monthPhoto ? mapDataToCarousel(monthPhoto) : null),
+    [monthPhoto]
+  );
+
+  const currentMonth = useMemo(() => {
+    if (!photos?.[activeSlide]?.month) return t("common.year");
+    const month = months.find((m) => m.value === photos[activeSlide].month);
+    return month?.long || t("common.year");
+  }, [photos, activeSlide, t]);
+
+  const handleForward = useCallback(() => {
+    carouselRef.current?.snapToNext();
+  }, []);
+
+  const handleBack = useCallback(() => {
+    carouselRef.current?.snapToPrev();
+  }, []);
+
+  const handleSnapToItem = useCallback((index: number) => {
+    setActiveSlide(index);
+  }, []);
+
+  const renderItem = useCallback(
+    (itemProps: RenderItemProps) => <CarouselItem {...itemProps} />,
+    []
+  );
+
+  if (!photos) {
+    return <EmptyScreen />;
   }
 
   return (
     <SafeAreaView flex={1} backgroundColor="$backgroundLight50">
-      {photos ? (
-        <Box flex={1} pt={20} alignItems="center">
-          <Carousel
-            ref={carouselRef}
-            sliderWidth={width}
-            onSnapToItem={setActiveSlide}
-            itemWidth={screenWidth}
-            hasParallaxImages
-            data={photos}
-            firstItem={activeSlide}
-            renderItem={renderItem}
-          />
-          <Box
-            display="flex"
-            flexDirection="row"
-            justifyContent="space-between"
-            width={screenWidth}
-            borderRadius="$full"
-            mt="$2"
-            mb="$5"
-            px="$5"
-            backgroundColor="$white"
-          >
-            <Button onPress={goBack} size="xl" variant="link">
-              <ButtonIcon color="$warmGray800" as={ChevronLeftIcon} />
-            </Button>
-            <Center>
-              <Text verticalAlign="middle" fontWeight={600}>
-                {months.find(
-                  (month) => month.value === photos[activeSlide]?.month
-                )?.long || "Рік"}
-              </Text>
-            </Center>
-            <Button onPress={goForward} size="xl" variant="link">
-              <ButtonIcon color="$warmGray800" as={ChevronRightIcon} />
-            </Button>
-          </Box>
-        </Box>
-      ) : (
-        <EmptyScreen />
-      )}
+      {status === "pending" && <Loader absolute />}
+      <Box flex={1} pt={20} alignItems="center">
+        <Carousel<MonthlyData>
+          ref={carouselRef}
+          sliderWidth={windowWidth}
+          onSnapToItem={handleSnapToItem}
+          itemWidth={screenWidth}
+          data={photos}
+          firstItem={activeSlide}
+          renderItem={renderItem}
+        />
+        <NavigationControls
+          onBack={handleBack}
+          onForward={handleForward}
+          currentMonth={currentMonth}
+        />
+      </Box>
     </SafeAreaView>
   );
-}
+});
+
+AlbumScreen.displayName = "AlbumScreen";

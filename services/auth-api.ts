@@ -3,7 +3,6 @@ import {
   createProfile,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  getCurrentUser,
   deleteCurrentUser,
   signOut,
 } from "./services";

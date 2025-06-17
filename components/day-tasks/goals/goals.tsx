@@ -5,70 +5,138 @@ import {
   TextareaInput,
   Button,
   ButtonText,
+  VStack,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { TASK_CATEGORY } from "../../../constants/constants";
 import uuid from "react-native-uuid";
 import { Alert } from "react-native";
 import isEmpty from "lodash/isEmpty";
-import { ActionButtons } from "../../common";
+import { ActionButtons, Loader } from "../../common";
 import { TextData } from "../../../types/types";
 import {
   removeTaskAsync,
   saveTaskByCategoryAsync,
 } from "../../../services/data-api";
-import { useAppDispatch } from "../../../store/withTypes";
+import { useAppDispatch, useAppSelector } from "../../../store/withTypes";
 
 interface GoalsProps {
   context: string;
   data: TextData | null;
 }
 
-export function Goals({ context, data }: GoalsProps) {
+interface GoalsFormProps {
+  initialText: string;
+  onSubmit: (text: string) => void;
+  placeholderText: string;
+  submitButtonText: string;
+}
+
+const GoalsForm = memo(
+  ({
+    initialText,
+    onSubmit,
+    placeholderText,
+    submitButtonText,
+  }: GoalsFormProps) => {
+    const [text, setText] = useState(initialText);
+
+    const handleSubmit = useCallback(() => {
+      onSubmit(text);
+    }, [text, onSubmit]);
+
+    return (
+      <VStack space="md" width="100%">
+        <Textarea width="100%">
+          <TextareaInput
+            onChangeText={setText}
+            value={text}
+            placeholder={placeholderText}
+          />
+        </Textarea>
+        <Button
+          onPress={handleSubmit}
+          borderRadius="$lg"
+          accessibilityLabel="Save goals"
+        >
+          <ButtonText>{submitButtonText}</ButtonText>
+        </Button>
+      </VStack>
+    );
+  }
+);
+
+GoalsForm.displayName = "GoalsForm";
+
+interface GoalsViewProps {
+  text: string;
+  emptyText: string;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+const GoalsView = memo(
+  ({ text, emptyText, onEdit, onDelete }: GoalsViewProps) => (
+    <Box>
+      <Box mb="$2">
+        <Text>{text || emptyText}</Text>
+      </Box>
+      <ActionButtons onEdit={onEdit} onDelete={onDelete} />
+    </Box>
+  )
+);
+
+GoalsView.displayName = "GoalsView";
+
+export const Goals = memo(({ context, data }: GoalsProps) => {
   const { t } = useTranslation();
   const [text, setText] = useState("");
-  const [edit, setEdit] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const dispatch = useAppDispatch();
+  const { status } = useAppSelector((state) => state.app);
 
   useEffect(() => {
-    if (isEmpty(data)) {
-      setEdit(true);
-    } else {
-      setEdit(false);
-    }
-
+    setIsEditing(isEmpty(data));
     if (data?.text) {
       setText(data.text);
     }
   }, [data]);
 
-  function onTaskSubmit() {
-    const id = data?.id ?? uuid.v4();
-    if (!text.trim()) {
-      Alert.alert("Oops", "Please add some text");
-      return;
-    }
-    const updatedGoal = {
-      id,
-      text,
-    };
-    try {
-      dispatch(
-        saveTaskByCategoryAsync({
-          category: TASK_CATEGORY.GOALS,
-          data: updatedGoal,
-          context,
-        })
-      ).unwrap();
-    } catch (error) {
-      Alert.alert("Oops", "Something wrong");
-    } finally {
-      setEdit(false);
-    }
-  }
+  const handleSubmit = useCallback(
+    async (submittedText: string) => {
+      if (!submittedText.trim()) {
+        Alert.alert(t("common.error"), t("errors.emptyText"));
+        return;
+      }
 
-  async function handleTaskRemove() {
+      const id = data?.id ?? uuid.v4().toString();
+
+      const updatedGoal = {
+        id,
+        text: submittedText,
+      };
+
+      try {
+        await dispatch(
+          saveTaskByCategoryAsync({
+            category: TASK_CATEGORY.GOALS,
+            data: updatedGoal,
+            context,
+          })
+        ).unwrap();
+
+        setText(submittedText);
+        setIsEditing(false);
+      } catch (error) {
+        Alert.alert(t("common.error"), t("errors.generic"));
+        console.error("Failed to save goal:", error);
+      }
+    },
+    [dispatch, context, data?.id, t]
+  );
+
+  const handleRemove = useCallback(async () => {
     try {
       await dispatch(
         removeTaskAsync({
@@ -76,39 +144,53 @@ export function Goals({ context, data }: GoalsProps) {
           context,
         })
       ).unwrap();
-    } catch (error) {
-      Alert.alert("Oops", "Something wrong");
-    } finally {
       setText("");
+      setIsEditing(true);
+    } catch (error) {
+      Alert.alert(
+        t("common.error"),
+        t("errors.generic", "Something went wrong. Please try again.")
+      );
+      console.error("Failed to remove goal:", error);
     }
-  }
+  }, [dispatch, context, t]);
+
+  const handleEdit = useCallback(() => {
+    setIsEditing(true);
+  }, []);
+
+  const placeholderText = useMemo(
+    () => t("screens.tasksOfTheDay.textareaPlaceholder"),
+    [t]
+  );
+
+  const submitButtonText = useMemo(
+    () => t("screens.tasksOfTheDay.submitBtnText"),
+    [t]
+  );
+
+  const emptyText = useMemo(() => t("common.empty"), [t]);
 
   return (
-    <Box>
-      {edit ? (
-        <>
-          <Textarea width="100%">
-            <TextareaInput
-              onChangeText={setText}
-              defaultValue={text}
-              placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-            />
-          </Textarea>
-          <Button onPress={onTaskSubmit} mt="$2" borderRadius="$lg">
-            <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
-          </Button>
-        </>
+    <Box width="100%">
+      {status === "pending" && <Loader absolute />}
+      {isEditing ? (
+        <GoalsForm
+          initialText={text}
+          onSubmit={handleSubmit}
+          placeholderText={placeholderText}
+          submitButtonText={submitButtonText}
+        />
       ) : (
-        <Box>
-          <Box mb="$2">
-            <Text>{data?.text || t("common.empty")}</Text>
-          </Box>
-          <ActionButtons
-            onEdit={() => setEdit(true)}
-            onDelete={handleTaskRemove}
-          />
-        </Box>
+        <GoalsView
+          text={text}
+          emptyText={emptyText}
+          onEdit={handleEdit}
+          onDelete={handleRemove}
+        />
       )}
     </Box>
   );
-}
+});
+
+Goals.displayName = "Goals";

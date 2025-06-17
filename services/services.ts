@@ -4,13 +4,7 @@ import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
 import { TASK_CATEGORY, YEAR } from "../constants/constants";
 import { SerializableUser } from "../types/user";
-import {
-  CalendarConfig,
-  ImageData,
-  PlanData,
-  TextData,
-  TextImageData,
-} from "../types/types";
+import { CalendarConfig, ImageData } from "../types/types";
 
 const baseUrl = `/${YEAR}/users`;
 
@@ -161,26 +155,6 @@ export async function getUserDayTasks(
   }
 }
 
-export const getUserRole = async (): Promise<string> => {
-  try {
-    const user = auth().currentUser;
-    if (!user) throw new Error("No authenticated user");
-
-    const snapshot = await firebase
-      .app()
-      .database(EXPO_PUBLIC_DB)
-      .ref(`${baseUrl}/${user.uid}/userProfile/role`)
-      .once("value");
-
-    return snapshot.val() || "user";
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      throw new Error(`Failed to get user role: ${error.message}`);
-    }
-    throw new Error("Failed to get user role: Unknown error");
-  }
-};
-
 export const deleteUser = async (uid: string): Promise<void> => {
   try {
     await firebase
@@ -193,47 +167,6 @@ export const deleteUser = async (uid: string): Promise<void> => {
       throw new Error(`Failed to delete user: ${error.message}`);
     }
     throw new Error("Failed to delete user: Unknown error");
-  }
-};
-
-export const saveTask = async ({
-  category,
-  data,
-  context,
-  currentUser,
-}: TaskParams): Promise<void> => {
-  if (!currentUser) throw new Error("No user provided");
-  try {
-    await firebase
-      .app()
-      .database(EXPO_PUBLIC_DB)
-      .ref(`${baseUrl}/${currentUser.uid}/${category}/${context}`)
-      .set(data);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      throw new Error(`Failed to save task: ${error.message}`);
-    }
-    throw new Error("Failed to save task: Unknown error");
-  }
-};
-
-export const removePlan = async ({
-  category,
-  context,
-  currentUser,
-}: RemoveTaskParams): Promise<void> => {
-  if (!currentUser) throw new Error("No user provided");
-  try {
-    await firebase
-      .app()
-      .database(EXPO_PUBLIC_DB)
-      .ref(`${baseUrl}/${currentUser.uid}/${category}/${context}`)
-      .remove();
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      throw new Error(`Failed to remove plan: ${error.message}`);
-    }
-    throw new Error("Failed to remove plan: Unknown error");
   }
 };
 
@@ -276,32 +209,6 @@ export async function getUserData(uid?: string): Promise<any> {
   }
 }
 
-export async function getUserSummary(
-  currentUser: SerializableUser | null
-): Promise<TextData | null> {
-  if (!currentUser) throw new Error("No user provided");
-  const response = await firebase
-    .app()
-    .database(EXPO_PUBLIC_DB)
-    .ref(`${baseUrl}/${currentUser.uid}/summary`)
-    .once("value");
-
-  return response.val();
-}
-
-export async function getUserPlans(
-  currentUser: SerializableUser | null
-): Promise<PlanData[] | null> {
-  if (!currentUser) throw new Error("No user provided");
-  const response = await firebase
-    .app()
-    .database(EXPO_PUBLIC_DB)
-    .ref(`${baseUrl}/${currentUser.uid}/plans`)
-    .once("value");
-
-  return response.val();
-}
-
 export async function saveTaskByCategory({
   currentUser,
   category,
@@ -316,32 +223,6 @@ export async function saveTaskByCategory({
     .set(data);
 
   return response;
-}
-
-export async function getUserGlobalGoal(
-  currentUser: SerializableUser | null
-): Promise<TextData | null> {
-  if (!currentUser) throw new Error("No user provided");
-  const response = await firebase
-    .app()
-    .database(EXPO_PUBLIC_DB)
-    .ref(`${baseUrl}/${currentUser.uid}/goals/globalGoal`)
-    .once("value");
-
-  return response.val();
-}
-
-export async function getUserPhotos(
-  currentUser: SerializableUser | null
-): Promise<TextImageData | null> {
-  if (!currentUser) throw new Error("No user provided");
-  const response = await firebase
-    .app()
-    .database(EXPO_PUBLIC_DB)
-    .ref(`${baseUrl}/${currentUser.uid}/monthPhoto`)
-    .once("value");
-
-  return response.val();
 }
 
 export async function saveImage(
@@ -394,22 +275,3 @@ export async function removeTask({
 
   return response;
 }
-
-export const uploadImage = async (
-  uri: string,
-  imageName: string
-): Promise<string> => {
-  try {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    const ref = storage().ref().child(`images/${imageName}`);
-
-    await ref.put(blob);
-    return await ref.getDownloadURL();
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      throw new Error(`Failed to upload image: ${error.message}`);
-    }
-    throw new Error("Failed to upload image: Unknown error");
-  }
-};
