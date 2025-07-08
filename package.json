@@ -60,7 +60,10 @@
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",
     "redux-logger": "^3.0.6",
-    "typescript": "~5.3.3"
+    "typescript": "~5.3.3",
+    "expo-notifications": "~0.28.19",
+    "expo-device": "~6.0.2",
+    "expo-constants": "~16.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",

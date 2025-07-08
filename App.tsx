@@ -17,6 +17,7 @@ import { store } from "./store/store";
 import { useEffect } from "react";
 import { getUserFromStorage } from "./services/storage";
 import { hydrateAuth } from "./store/authReducer";
+import { usePushNotifications } from "./hooks/usePushNotifications";
 
 // Switching off warning logs
 // TODO: delete after upgrading react native firebase
@@ -51,6 +52,10 @@ const Stack = createStackNavigator<RootStackParamList>();
 function AppContent() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { expoPushToken, notification } = usePushNotifications();
+
+  console.log("expoPushToken", expoPushToken);
+  console.log("notification", notification);
 
   useEffect(() => {
     const loadPersistedUser = async () => {
