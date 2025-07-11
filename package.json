@@ -7,7 +7,9 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "build:ios": "eas build --profile preview --platform ios",
+    "build:android": "eas build --profile preview --platform android"
   },
   "dependencies": {
     "@expo/vector-icons": "~14.0.4",
@@ -27,9 +29,12 @@
     "@types/react": "~18.3.12",
     "expo": "~52.0.47",
     "expo-build-properties": "~0.13.3",
+    "expo-constants": "~17.0.8",
     "expo-dev-client": "~5.0.20",
+    "expo-device": "~7.0.3",
     "expo-image-picker": "~16.0.6",
     "expo-localization": "~16.0.1",
+    "expo-notifications": "~0.29.14",
     "i18next": "^23.16.5",
     "i18next-react-native-async-storage": "^1.0.4",
     "lodash": "^4.17.21",
@@ -60,10 +65,7 @@
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",
     "redux-logger": "^3.0.6",
-    "typescript": "~5.3.3",
-    "expo-notifications": "~0.29.14",
-    "expo-device": "~7.0.3",
-    "expo-constants": "~17.0.8"
+    "typescript": "~5.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
