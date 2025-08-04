@@ -6,9 +6,8 @@ import {
   deleteCurrentUserAsync,
   signOutAsync,
 } from "../services/auth-api";
-import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { RootState } from "./store";
-import { SerializableUser, convertToSerializableUser } from "../types/user";
+import { SerializableUser } from "../types/user";
 import { saveUserToStorage, removeUserFromStorage } from "../services/storage";
 
 // Define a type for the slice state
