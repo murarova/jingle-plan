@@ -17,9 +17,8 @@ import { store } from "./store/store";
 import { useEffect } from "react";
 import { getUserFromStorage } from "./services/storage";
 import { hydrateAuth } from "./store/authReducer";
+import { useFirebaseMessaging } from "./hooks/useFirebaseMessaging";
 
-// Switching off warning logs
-// TODO: delete after upgrading react native firebase
 (globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
 
 const MyTheme = {
@@ -51,6 +50,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 function AppContent() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  useFirebaseMessaging();
 
   useEffect(() => {
     const loadPersistedUser = async () => {
