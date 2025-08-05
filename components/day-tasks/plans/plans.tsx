@@ -19,13 +19,12 @@ export function Plans({ context, data }: PlansProps) {
   const {
     updatedData,
     showModal,
-    setShowModal,
+    closeModal,
     handleAddPlan,
     handleUpdatePlan,
     handleEditPlan,
     handleDeletePlan,
     handleAddPlanBtn,
-    isLoading,
   } = usePlans({
     data: contextData,
     context,
@@ -50,7 +49,7 @@ export function Plans({ context, data }: PlansProps) {
       {showModal && (
         <AddPlanModal
           data={updatedData}
-          setShowModal={setShowModal}
+          closeModal={closeModal}
           handleUpdatePlan={handleUpdatePlan}
           handleAddPlan={handleAddPlan}
         />

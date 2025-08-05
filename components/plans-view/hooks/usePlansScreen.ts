@@ -1,88 +1,102 @@
 import { useState, useCallback } from "react";
-import { TASK_CATEGORY } from "../../../constants/constants";
-import { Alert } from "react-native";
-import isEmpty from "lodash/isEmpty";
 import {
   PlanScreenData,
   PlansCollection,
   TaskContext,
-  TaskGategory,
 } from "../../../types/types";
 import { useAppDispatch } from "../../../store/withTypes";
-import {
-  removeTaskAsync,
-  saveTaskByCategoryAsync,
-} from "../../../services/data-api";
 import { useTranslation } from "react-i18next";
+import {
+  findPlanContextById,
+  getPlansList,
+  savePlans,
+} from "../../../utils/plans-utils";
 
 interface UsePlansScreenProps {
   plans: PlansCollection | null;
 }
+
 export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
   const [updatedData, setUpdatedData] = useState<PlanScreenData | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showMonthModal, setShowMonthModal] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState<string>();
   const [context, setContext] = useState<TaskContext | null>(null);
 
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
 
-  const updatePlan = useCallback(
-    async (updatedPlans: PlanScreenData[]) => {
-      if (!context) {
-        return;
-      }
+  const resetState = useCallback(() => {
+    setUpdatedData(null);
+    setContext(null);
+    setSelectedMonth(undefined);
+  }, []);
 
+  const closeModal = useCallback(() => {
+    setShowModal(false);
+    resetState();
+  }, [resetState]);
+
+  const closeMonthModal = useCallback(() => {
+    setShowMonthModal(false);
+    resetState();
+  }, [resetState]);
+
+  const updatePlan = useCallback(
+    async (context: TaskContext, updatedPlans: PlanScreenData[]) => {
       try {
-        await dispatch(
-          saveTaskByCategoryAsync({
-            category: TASK_CATEGORY.PLANS as TaskGategory,
-            data: updatedPlans,
-            context,
-          })
-        ).unwrap();
-      } catch (error) {
-        Alert.alert(t("common.error"), t("errors.generic"));
+        await savePlans(dispatch, context, updatedPlans, t);
       } finally {
-        setUpdatedData(null);
-        setContext(null);
+        resetState();
       }
     },
-    [context, dispatch, t]
+    [dispatch, t, resetState]
   );
 
   const handleUpdatePlan = useCallback(
-    (id: string, text: string) => {
-      if (!context || !plans) {
-        return;
-      }
+    async (id: string, text: string) => {
+      if (!context || !plans || !updatedData) return;
 
-      const plansList = plans[context];
-      if (!plansList) {
-        return;
-      }
+      const oldContext = findPlanContextById(plans, id);
+      const isContextChanged = oldContext && oldContext !== context;
 
-      const updatedPlans = plansList.map((item) =>
-        item.id === id ? { ...item, text } : item
-      );
-      updatePlan(updatedPlans);
+      try {
+        if (isContextChanged) {
+          const oldPlansList = getPlansList(plans, oldContext);
+          const updatedOldPlans = oldPlansList.filter((item) => item.id !== id);
+          await savePlans(dispatch, oldContext, updatedOldPlans, t);
+
+          const newPlansList = getPlansList(plans, context);
+          const updatedNewPlans = [
+            ...newPlansList,
+            { ...updatedData, text, context, month: selectedMonth },
+          ];
+          await savePlans(dispatch, context, updatedNewPlans, t);
+        } else {
+          const plansList = getPlansList(plans, context);
+          const updatedPlans =
+            plansList.length > 0
+              ? plansList.map((item) =>
+                  item.id === updatedData.id
+                    ? { ...updatedData, text, context, month: selectedMonth }
+                    : item
+                )
+              : [{ ...updatedData, text, context, month: selectedMonth }];
+
+          await savePlans(dispatch, context, updatedPlans, t);
+        }
+      } catch (error) {}
     },
-    [context, plans, updatePlan]
+    [plans, context, updatedData, selectedMonth, dispatch, t]
   );
 
   const handleEditPlan = useCallback(
     (item: PlanScreenData, planContext: TaskContext) => {
-      if (!plans) {
-        return;
-      }
-
-      const plansList = plans[planContext];
-      if (!plansList) {
-        return;
-      }
-
+      const plansList = getPlansList(plans, planContext);
       const plan = plansList.find((p) => p.id === item.id) ?? null;
+
       setContext(planContext);
+      setSelectedMonth(plan?.month);
       setUpdatedData(plan);
       setShowModal(true);
     },
@@ -91,101 +105,73 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
 
   const handleDeletePlan = useCallback(
     async (id: string, planContext: TaskContext) => {
-      if (!plans) {
-        return;
-      }
+      if (!plans) return;
 
-      const plansList = plans[planContext];
-      if (!plansList) {
-        return;
-      }
-
+      const plansList = getPlansList(plans, planContext);
       const updatedPlans = plansList.filter((item) => item.id !== id);
 
-      try {
-        if (!isEmpty(updatedPlans)) {
-          await dispatch(
-            saveTaskByCategoryAsync({
-              category: TASK_CATEGORY.PLANS as TaskGategory,
-              data: updatedPlans,
-              context: planContext,
-            })
-          ).unwrap();
-        } else {
-          await dispatch(
-            removeTaskAsync({
-              category: TASK_CATEGORY.PLANS as TaskGategory,
-              context: planContext,
-            })
-          ).unwrap();
-        }
-      } catch (error) {
-        Alert.alert(t("common.error"), t("errors.generic"));
-      }
+      await savePlans(dispatch, planContext, updatedPlans, t);
     },
-    [dispatch, plans, t]
+    [plans, dispatch, t]
   );
 
   const handleCompletePlan = useCallback(
     async (plan: PlanScreenData, isDone: boolean, planContext: TaskContext) => {
-      if (!plans) {
-        return;
-      }
+      if (!plans) return;
 
-      const plansList = plans[planContext];
-      if (!plansList) {
-        return;
-      }
-
+      const plansList = getPlansList(plans, planContext);
       const updatedPlans = plansList.map((item) =>
         item.id === plan.id ? { ...plan, isDone } : item
       );
 
       try {
-        await dispatch(
-          saveTaskByCategoryAsync({
-            category: TASK_CATEGORY.PLANS as TaskGategory,
-            data: updatedPlans,
-            context: planContext,
-          })
-        ).unwrap();
-      } catch (error) {
-        Alert.alert(t("common.error"), t("errors.generic"));
+        await savePlans(dispatch, planContext, updatedPlans, t);
       } finally {
-        setUpdatedData(null);
-        setContext(null);
+        resetState();
       }
     },
-    [dispatch, plans, t]
+    [plans, dispatch, t, resetState]
+  );
+
+  const handleAddPlan = useCallback(
+    async (text: string, context?: TaskContext, month?: string) => {
+      if (!context) return;
+
+      const id = Date.now().toString();
+      const plansList = getPlansList(plans, context);
+      const updatedPlans = [
+        ...plansList,
+        { id, text, isDone: false, month, context },
+      ];
+
+      await savePlans(dispatch, context, updatedPlans, t);
+    },
+    [plans, dispatch, t]
   );
 
   const openMonthSelect = useCallback(
     (plan: PlanScreenData, planContext: TaskContext) => {
       setUpdatedData(plan);
       setContext(planContext);
+      setSelectedMonth(plan.month);
       setShowMonthModal(true);
     },
     []
   );
 
   const handleMonthSelect = useCallback(
-    (month: string) => {
-      if (!plans || !context) {
-        return;
-      }
+    async (month: string) => {
+      if (!plans || !context || !updatedData) return;
 
-      const plansList = plans[context];
-      if (!plansList || !updatedData) {
-        return;
-      }
-
+      const plansList = getPlansList(plans, context);
       const updatedPlans = plansList.map((item) =>
         item.id === updatedData.id ? { ...updatedData, month } : item
       );
-      updatePlan(updatedPlans);
+
+      await updatePlan(context, updatedPlans);
       setShowMonthModal(false);
     },
-    [context, plans, updatedData, updatePlan]
+    [plans, context, updatedData, updatePlan]
   );
 
   return {
@@ -201,6 +187,12 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
     updatedData,
     setShowModal,
     setShowMonthModal,
+    handleAddPlan,
+    closeModal,
+    closeMonthModal,
+    setContext,
+    selectedMonth,
+    setSelectedMonth,
   };
 };
 

@@ -212,20 +212,6 @@ export const PlansMonthView = memo(
               );
             })}
           </Accordion>
-
-          {showModal && (
-            <AddPlanModal
-              data={updatedData}
-              setShowModal={setShowModal}
-              handleUpdatePlan={handleUpdatePlan}
-            />
-          )}
-          {showMonthModal && (
-            <MonthSelectModal
-              setShowMonthModal={setShowMonthModal}
-              onMonthSelect={handleMonthSelect}
-            />
-          )}
         </Box>
       </ScrollView>
     );

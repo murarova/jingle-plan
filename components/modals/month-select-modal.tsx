@@ -14,20 +14,15 @@ import { months } from "../../constants/constants";
 
 export function MonthSelectModal({
   onMonthSelect,
-  setShowMonthModal,
+  closeMonthModal,
 }: {
   onMonthSelect: (month: string) => void;
-  setShowMonthModal: (value: boolean) => void;
+  closeMonthModal: () => void;
 }) {
   const { t } = useTranslation();
 
   return (
-    <Modal
-      isOpen
-      onClose={() => {
-        setShowMonthModal(false);
-      }}
-    >
+    <Modal isOpen onClose={closeMonthModal}>
       <ModalBackdrop />
       <ModalContent>
         <ModalHeader
