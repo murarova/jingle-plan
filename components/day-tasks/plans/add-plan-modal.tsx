@@ -22,12 +22,10 @@ import {
   SelectDragIndicatorWrapper,
   SelectItem,
   FormControlErrorText,
-  KeyboardAvoidingView,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { PlanData, PlanScreenData, TaskContext } from "../../../types/types";
 import { allMonths, TASK_CONTEXT } from "../../../constants/constants";
-import { Platform } from "react-native";
 
 interface AddPlanModalProps {
   isPlanScreen?: boolean;
@@ -88,72 +86,35 @@ export function AddPlanModal({
   }
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "height" : "height"}
-      style={{ flex: 1, zIndex: 999 }}
-    >
-      <Modal isOpen onClose={closeModal}>
-        <ModalBackdrop />
-        <ModalContent width="90%">
-          <ModalHeader mb={10}>
-            <Text>
-              {isEditMode
-                ? t("screens.plansModal.editPlanTitle")
-                : t("screens.plansModal.addPlanTitle")}
-            </Text>
-          </ModalHeader>
-          <ModalBody>
-            <VStack space="md">
-              <Textarea w="100%" size="md">
-                <TextareaInput
-                  onChangeText={setText}
-                  defaultValue={text}
-                  placeholder={t("screens.plansModal.placeholder")}
-                />
-              </Textarea>
-              {isPlanScreen && (
-                <>
-                  <VStack space="xs">
-                    <Select
-                      selectedValue={t(`context.${context}`)}
-                      onValueChange={handleContextChange}
-                    >
-                      <SelectTrigger bg="$white">
-                        <SelectInput
-                          placeholder={t("screens.plansModal.selectContext")}
-                        />
-                      </SelectTrigger>
-                      <SelectPortal>
-                        <SelectBackdrop />
-                        <SelectContent>
-                          <SelectDragIndicatorWrapper>
-                            <SelectDragIndicator />
-                          </SelectDragIndicatorWrapper>
-                          {Object.values(TASK_CONTEXT).map((context) => (
-                            <SelectItem
-                              key={context}
-                              label={t(`context.${context}`)}
-                              value={context}
-                            />
-                          ))}
-                        </SelectContent>
-                      </SelectPortal>
-                    </Select>
-                    {contextError && (
-                      <FormControlErrorText>
-                        {t("screens.plansModal.contextRequired")}
-                      </FormControlErrorText>
-                    )}
-                  </VStack>
+    <Modal avoidKeyboard isOpen onClose={closeModal}>
+      <ModalBackdrop />
+      <ModalContent width="90%">
+        <ModalHeader mb={10}>
+          <Text>
+            {isEditMode
+              ? t("screens.plansModal.editPlanTitle")
+              : t("screens.plansModal.addPlanTitle")}
+          </Text>
+        </ModalHeader>
+        <ModalBody>
+          <VStack space="md">
+            <Textarea w="100%" size="md">
+              <TextareaInput
+                onChangeText={setText}
+                defaultValue={text}
+                placeholder={t("screens.plansModal.placeholder")}
+              />
+            </Textarea>
+            {isPlanScreen && (
+              <>
+                <VStack space="xs">
                   <Select
-                    selectedValue={
-                      selectedMonth ? t(`months.${selectedMonth}`) : ""
-                    }
-                    onValueChange={setSelectedMonth}
+                    selectedValue={context ? t(`context.${context}`) : ""}
+                    onValueChange={handleContextChange}
                   >
                     <SelectTrigger bg="$white">
                       <SelectInput
-                        placeholder={t("screens.plansModal.selectMonth")}
+                        placeholder={t("screens.plansModal.selectContext")}
                       />
                     </SelectTrigger>
                     <SelectPortal>
@@ -162,32 +123,64 @@ export function AddPlanModal({
                         <SelectDragIndicatorWrapper>
                           <SelectDragIndicator />
                         </SelectDragIndicatorWrapper>
-                        {[...allMonths, "every"].map((month) => (
+                        {Object.values(TASK_CONTEXT).map((context) => (
                           <SelectItem
-                            key={month}
-                            label={t(`months.${month}`)}
-                            value={month}
+                            key={context}
+                            label={t(`context.${context}`)}
+                            value={context}
                           />
                         ))}
                       </SelectContent>
                     </SelectPortal>
                   </Select>
-                </>
-              )}
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" size="sm" mr="$3" onPress={closeModal}>
-              <ButtonText>{t("common.cancel")}</ButtonText>
-            </Button>
-            <Button variant="solid" action="primary" onPress={handleSubmit}>
-              <ButtonText>
-                {isEditMode ? t("common.save") : t("common.add")}
-              </ButtonText>
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </KeyboardAvoidingView>
+                  {contextError && (
+                    <FormControlErrorText>
+                      {t("screens.plansModal.contextRequired")}
+                    </FormControlErrorText>
+                  )}
+                </VStack>
+                <Select
+                  selectedValue={
+                    selectedMonth ? t(`months.${selectedMonth}`) : ""
+                  }
+                  onValueChange={setSelectedMonth}
+                >
+                  <SelectTrigger bg="$white">
+                    <SelectInput
+                      placeholder={t("screens.plansModal.selectMonth")}
+                    />
+                  </SelectTrigger>
+                  <SelectPortal>
+                    <SelectBackdrop />
+                    <SelectContent>
+                      <SelectDragIndicatorWrapper>
+                        <SelectDragIndicator />
+                      </SelectDragIndicatorWrapper>
+                      {[...allMonths, "every"].map((month) => (
+                        <SelectItem
+                          key={month}
+                          label={t(`months.${month}`)}
+                          value={month}
+                        />
+                      ))}
+                    </SelectContent>
+                  </SelectPortal>
+                </Select>
+              </>
+            )}
+          </VStack>
+        </ModalBody>
+        <ModalFooter>
+          <Button variant="outline" size="sm" mr="$3" onPress={closeModal}>
+            <ButtonText>{t("common.cancel")}</ButtonText>
+          </Button>
+          <Button variant="solid" action="primary" onPress={handleSubmit}>
+            <ButtonText>
+              {isEditMode ? t("common.save") : t("common.add")}
+            </ButtonText>
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }

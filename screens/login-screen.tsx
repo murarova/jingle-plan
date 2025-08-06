@@ -12,22 +12,16 @@ import {
   VStack,
   Button,
   InputSlot,
-  Center,
 } from "@gluestack-ui/themed";
 import { Alert, Keyboard } from "react-native";
-import { SCREENS } from "../constants/constants";
+import { SCREENS, EMAIL_REGEX } from "../constants/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { InputIcon } from "@gluestack-ui/themed";
 import { Loader } from "../components/common";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { signInUserAsync } from "../services/auth-api";
-import {
-  selectAuthStatus,
-  selectCurrentUser,
-  selectAuthError,
-  isLoggedIn,
-} from "../store/authReducer";
+import { selectAuthStatus, isLoggedIn } from "../store/authReducer";
 import { useAppSelector, useAppDispatch } from "../store/withTypes";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
@@ -38,14 +32,26 @@ export const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
 
   const dispatch = useAppDispatch();
   const isUserLoggedIn = useAppSelector(isLoggedIn);
   const authStatus = useAppSelector(selectAuthStatus);
-  const authError = useAppSelector(selectAuthError);
 
   const { t } = useTranslation();
   const nav = useNavigation<NavigationProp>();
+
+  const validateEmail = (email: string) => {
+    if (!email) {
+      setEmailError("");
+      return;
+    }
+    if (!EMAIL_REGEX.test(email)) {
+      setEmailError(t("screens.registerScreen.invalidEmail"));
+    } else {
+      setEmailError("");
+    }
+  };
 
   useEffect(() => {
     if (isUserLoggedIn) {
@@ -59,22 +65,15 @@ export const LoginScreen = () => {
   const handleState = () => setShowPassword((prevState) => !prevState);
 
   const goToMainFlow = async () => {
-    if (email && password) {
-      dispatch(signInUserAsync({ email, password }));
-    } else {
-      Alert.alert(
-        t("screens.loginScreen.errorTitle"),
-        t("screens.loginScreen.emptyFieldsMessage")
-      );
-    }
+    dispatch(signInUserAsync({ email, password }))
+      .unwrap()
+      .catch(() => {
+        Alert.alert(
+          t("screens.loginScreen.errorTitle"),
+          t("screens.loginScreen.errorMessage")
+        );
+      });
   };
-
-  if (authError) {
-    Alert.alert(
-      t("screens.loginScreen.errorTitle"),
-      t("screens.loginScreen.errorMessage")
-    );
-  }
 
   if (authStatus === "pending") {
     return <Loader />;
@@ -106,11 +105,18 @@ export const LoginScreen = () => {
                   <InputField
                     value={email}
                     onChangeText={setEmail}
+                    onBlur={() => validateEmail(email)}
+                    onFocus={() => setEmailError("")}
                     autoCapitalize="none"
                     inputMode="email"
                     placeholder={t("screens.loginScreen.emailPlaceholder")}
                   />
                 </Input>
+                {emailError ? (
+                  <Text size="sm" color="$red500">
+                    {emailError}
+                  </Text>
+                ) : null}
               </VStack>
               <VStack space="sm" mb={30}>
                 <Text>{t("screens.loginScreen.password")}</Text>
@@ -135,7 +141,7 @@ export const LoginScreen = () => {
               size="md"
               variant="solid"
               action="primary"
-              isDisabled={!email || !password}
+              isDisabled={!email || !password || !!emailError}
               onPress={goToMainFlow}
             >
               <ButtonText>{t("screens.loginScreen.loginButton")}</ButtonText>

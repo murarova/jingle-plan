@@ -91,3 +91,7 @@ export enum PlansViewOptions {
   context = "context",
   month = "month",
 }
+
+// Validation regex patterns
+export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;

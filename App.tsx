@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import { getUserFromStorage } from "./services/storage";
 import { hydrateAuth } from "./store/authReducer";
 import { useFirebaseMessaging } from "./hooks/useFirebaseMessaging";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 (globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
 
@@ -114,9 +115,11 @@ function AppContent() {
 export default function App() {
   return (
     <Provider store={store}>
-      <GluestackUIProvider config={config}>
-        <AppContent />
-      </GluestackUIProvider>
+      <SafeAreaProvider>
+        <GluestackUIProvider config={config}>
+          <AppContent />
+        </GluestackUIProvider>
+      </SafeAreaProvider>
     </Provider>
   );
 }

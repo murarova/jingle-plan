@@ -17,6 +17,7 @@ import {
   Heading,
   ButtonText,
   ScrollView,
+  SafeAreaView,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { EmptyScreen } from "../components/empty-screen";
@@ -180,70 +181,72 @@ export const SummaryScreen: React.FC = () => {
   }
 
   return (
-    <Box p="$2" flex={1}>
-      {isLoading && <Loader absolute />}
-      <KeyboardAwareScrollView extraScrollHeight={100}>
-        <ScrollView>
-          <Accordion
-            key="summary"
-            size="md"
-            my="$2"
-            type="multiple"
-            borderRadius="$lg"
-          >
-            {Object.values(TASK_CONTEXT).map((context) => {
-              if (!summary[context]) return null;
+    <SafeAreaView flex={1}>
+      <Box p="$2" flex={1}>
+        {isLoading && <Loader absolute />}
+        <KeyboardAwareScrollView extraScrollHeight={100}>
+          <ScrollView>
+            <Accordion
+              key="summary"
+              size="md"
+              my="$2"
+              type="multiple"
+              borderRadius="$lg"
+            >
+              {Object.values(TASK_CONTEXT).map((context) => {
+                if (!summary[context]) return null;
 
-              return (
-                <AccordionItem
-                  key={context}
-                  value={context}
-                  borderRadius="$lg"
-                  mb="$5"
-                >
-                  <AccordionHeader>
-                    <AccordionTrigger>
-                      {({ isExpanded }) => (
-                        <AccordionHeaderContent
-                          context={context}
-                          isExpanded={isExpanded}
-                          getRating={getRating}
-                          t={t}
-                          summary={summary}
-                        />
-                      )}
-                    </AccordionTrigger>
-                  </AccordionHeader>
-                  <AccordionContent>
-                    <Box>
-                      {editContext === context ? (
-                        <EditableContent
-                          context={context}
-                          text={text || summary[context]?.text || ""}
-                          onTextChange={setText}
-                          onSubmit={() =>
-                            handleTaskSubmit(context, summary[context])
-                          }
-                        />
-                      ) : (
-                        <ContentView
-                          text={summary[context]?.text || ""}
-                          context={context}
-                          onEdit={() => {
-                            setEditContext(context);
-                            setText(summary[context]?.text || "");
-                          }}
-                          onDelete={() => handleTaskRemove(context)}
-                        />
-                      )}
-                    </Box>
-                  </AccordionContent>
-                </AccordionItem>
-              );
-            })}
-          </Accordion>
-        </ScrollView>
-      </KeyboardAwareScrollView>
-    </Box>
+                return (
+                  <AccordionItem
+                    key={context}
+                    value={context}
+                    borderRadius="$lg"
+                    mb="$5"
+                  >
+                    <AccordionHeader>
+                      <AccordionTrigger>
+                        {({ isExpanded }) => (
+                          <AccordionHeaderContent
+                            context={context}
+                            isExpanded={isExpanded}
+                            getRating={getRating}
+                            t={t}
+                            summary={summary}
+                          />
+                        )}
+                      </AccordionTrigger>
+                    </AccordionHeader>
+                    <AccordionContent>
+                      <Box>
+                        {editContext === context ? (
+                          <EditableContent
+                            context={context}
+                            text={text || summary[context]?.text || ""}
+                            onTextChange={setText}
+                            onSubmit={() =>
+                              handleTaskSubmit(context, summary[context])
+                            }
+                          />
+                        ) : (
+                          <ContentView
+                            text={summary[context]?.text || ""}
+                            context={context}
+                            onEdit={() => {
+                              setEditContext(context);
+                              setText(summary[context]?.text || "");
+                            }}
+                            onDelete={() => handleTaskRemove(context)}
+                          />
+                        )}
+                      </Box>
+                    </AccordionContent>
+                  </AccordionItem>
+                );
+              })}
+            </Accordion>
+          </ScrollView>
+        </KeyboardAwareScrollView>
+      </Box>
+    </SafeAreaView>
   );
 };

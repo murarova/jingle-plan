@@ -11,7 +11,6 @@ import {
   Icon,
   Divider,
   ScrollView,
-  Heading,
   Checkbox,
   CheckboxIndicator,
   CheckboxIcon,

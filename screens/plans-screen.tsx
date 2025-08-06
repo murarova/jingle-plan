@@ -11,6 +11,7 @@ import {
   Text,
   ButtonIcon,
   Fab,
+  SafeAreaView,
 } from "@gluestack-ui/themed";
 import { PlansMonthView } from "../components/plans-view/plans-month-view";
 import { PlansViewOptions } from "../constants/constants";
@@ -114,7 +115,7 @@ export function PlansScreen() {
   }
 
   return (
-    <>
+    <SafeAreaView flex={1}>
       {isLoading && <Loader absolute />}
       {plans && <ViewSwitch onViewChange={setView} />}
       {globalGoal && <GlobalGoal text={globalGoal.text} />}
@@ -149,6 +150,6 @@ export function PlansScreen() {
           onMonthSelect={plansProps.handleMonthSelect}
         />
       )}
-    </>
+    </SafeAreaView>
   );
 }

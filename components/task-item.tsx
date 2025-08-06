@@ -34,8 +34,6 @@ import {
 } from "../types/types";
 import { MoodTask } from "./day-tasks/mood/mood-task";
 
-type UsersData = PlanData[] | SummaryData | TextImageData | TextData;
-
 export function TaskItem({
   taskConfig,
   currentDay,
