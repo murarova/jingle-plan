@@ -1,18 +1,11 @@
-import {
-  createBottomTabNavigator,
-  useBottomTabBarHeight,
-} from "@react-navigation/bottom-tabs";
-import {
-  House,
-  // Compass,
-  // Medal,
-} from "lucide-react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { House } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { SCREENS } from "../constants/constants";
 import PeriodOverviewScreen from "./period-overview-screen";
 import { AppMenu } from "../components/app-menu";
 import { SummaryScreen } from "./summary-screen";
-import { PlansScreen } from "./plans-screen";
+import { PlansScreen } from "./plans-screen/plans-screen";
 import Medal from "../assets/svg/medal";
 import Compas from "../assets/svg/compas";
 import Album from "../assets/svg/album";
