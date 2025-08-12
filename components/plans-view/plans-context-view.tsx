@@ -16,8 +16,6 @@ import {
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { TASK_CONTEXT, PlansViewOptions } from "../../constants/constants";
-import { AddPlanModal } from "../day-tasks/plans/add-plan-modal";
-import { MonthSelectModal } from "../modals/month-select-modal";
 import { PlansList } from "./components/plans";
 import {
   PlanScreenData,

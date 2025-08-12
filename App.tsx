@@ -19,6 +19,8 @@ import { getUserFromStorage } from "./services/storage";
 import { hydrateAuth } from "./store/authReducer";
 import { useFirebaseMessaging } from "./hooks/useFirebaseMessaging";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 (globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
 
@@ -114,12 +116,16 @@ function AppContent() {
 
 export default function App() {
   return (
-    <Provider store={store}>
-      <SafeAreaProvider>
-        <GluestackUIProvider config={config}>
-          <AppContent />
-        </GluestackUIProvider>
-      </SafeAreaProvider>
-    </Provider>
+    <GluestackUIProvider config={config}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Provider store={store}>
+          <SafeAreaProvider>
+            <BottomSheetModalProvider>
+              <AppContent />
+            </BottomSheetModalProvider>
+          </SafeAreaProvider>
+        </Provider>
+      </GestureHandlerRootView>
+    </GluestackUIProvider>
   );
 }

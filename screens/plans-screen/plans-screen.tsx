@@ -8,6 +8,7 @@ import { PlanContextData, TextData } from "../../types/types";
 import { useAppSelector } from "../../store/withTypes";
 import { Plus } from "lucide-react-native";
 import { AddPlanModal } from "../../components/day-tasks/plans/add-plan-modal";
+import { MonthSelectModal } from "../../components/modals/month-select-modal";
 import { ViewSwitch } from "./view-switch";
 import { GlobalGoal } from "./global-goal";
 import { PlansView } from "./plans-view";
@@ -56,12 +57,12 @@ export function PlansScreen() {
           handleAddPlan={plansProps.handleAddPlan}
         />
       )}
-      {/* {plansProps.showMonthModal && (
-        <MonthSelectModal
-          closeMonthModal={plansProps.closeMonthModal}
-          onMonthSelect={plansProps.handleMonthSelect}
-        />
-      )} */}
+      <MonthSelectModal
+        sheetRef={plansProps.sheetRef}
+        closeMonthModal={plansProps.closeMonthModal}
+        onMonthSelect={plansProps.handleMonthSelect}
+        month={plansProps.updatedData?.month}
+      />
     </SafeAreaView>
   );
 }

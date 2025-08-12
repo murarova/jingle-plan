@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import {
   PlanScreenData,
   PlansCollection,
@@ -11,6 +11,7 @@ import {
   getPlansList,
   savePlans,
 } from "../../../utils/plans-utils";
+import { SheetRef } from "../../common";
 
 interface UsePlansScreenProps {
   plans: PlansCollection | null;
@@ -19,9 +20,9 @@ interface UsePlansScreenProps {
 export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
   const [updatedData, setUpdatedData] = useState<PlanScreenData | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [showMonthModal, setShowMonthModal] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>();
   const [context, setContext] = useState<TaskContext | null>(null);
+  const sheetRef = useRef<SheetRef>(null);
 
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
@@ -38,7 +39,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
   }, [resetState]);
 
   const closeMonthModal = useCallback(() => {
-    setShowMonthModal(false);
+    sheetRef.current?.hide();
     resetState();
   }, [resetState]);
 
@@ -154,7 +155,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
       setUpdatedData(plan);
       setContext(planContext);
       setSelectedMonth(plan.month);
-      setShowMonthModal(true);
+      sheetRef.current?.show();
     },
     []
   );
@@ -169,7 +170,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
       );
 
       await updatePlan(context, updatedPlans);
-      setShowMonthModal(false);
+      sheetRef.current?.hide();
     },
     [plans, context, updatedData, updatePlan]
   );
@@ -182,17 +183,16 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
     openMonthSelect,
     handleMonthSelect,
     showModal,
-    showMonthModal,
     context,
     updatedData,
     setShowModal,
-    setShowMonthModal,
     handleAddPlan,
     closeModal,
     closeMonthModal,
     setContext,
     selectedMonth,
     setSelectedMonth,
+    sheetRef,
   };
 };
 

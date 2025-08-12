@@ -16,8 +16,6 @@ import {
 } from "@gluestack-ui/themed";
 import { allMonths, months, PlansViewOptions } from "../../constants/constants";
 import { PlansList } from "./components/plans";
-import { AddPlanModal } from "../day-tasks/plans/add-plan-modal";
-import { MonthSelectModal } from "../modals/month-select-modal";
 import { EmptyScreen } from "../empty-screen";
 import isEmpty from "lodash/isEmpty";
 import { PlansViewProps } from "./plans-context-view";

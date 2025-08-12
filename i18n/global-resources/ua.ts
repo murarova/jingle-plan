@@ -20,6 +20,7 @@ export default {
     logout: "Вийти",
     deleteAccount: "Видалити акаунт",
     error: "Помилка",
+    submitBtnText: "Готово",
   },
   context: {
     health: "Тіло",
