@@ -9,9 +9,29 @@ export const calculateTotalData = (taskData: PlanContextData): TaskProgress => {
       if (!tasks) return acc;
 
       const doneTasks = tasks.filter((task) => task.isDone).length;
+
+      // Calculate monthly tasks (considering "every" month tasks as 12 per year)
+      const monthlyTasks = tasks.reduce((monthlyTotal, task) => {
+        if (task.month === "every") {
+          return monthlyTotal + 12; // One task per month for the whole year
+        }
+        return monthlyTotal;
+      }, 0);
+
+      const monthlyDoneTasks = tasks.reduce((monthlyDone, task) => {
+        if (task.month === "every") {
+          const monthlyProgress = (task.monthlyProgress ?? []).reduce(
+            (acc, month) => acc + (month.isDone ? 1 : 0),
+            0
+          );
+          return parseFloat((monthlyDone + monthlyProgress).toFixed(0));
+        }
+        return monthlyDone;
+      }, 0);
+
       return {
-        total: acc.total + tasks.length,
-        done: acc.done + doneTasks,
+        total: acc.total + tasks.length + monthlyTasks,
+        done: acc.done + doneTasks + monthlyDoneTasks,
       };
     },
     { total: 0, done: 0 }
@@ -37,17 +57,38 @@ export const calculateContextData = (
   >((acc, [context, tasks]) => {
     if (!tasks) return acc;
 
+    // Calculate total tasks (actual task count)
     const totalTasks = tasks.length;
     const doneTasks = tasks.filter((task) => task.isDone).length;
-    const donePercentage =
-      totalTasks > 0
-        ? parseFloat(((doneTasks / totalTasks) * 100).toFixed(0))
-        : 0;
+
+    // Calculate monthly tasks (considering "every" month tasks as 12 per year)
+    const monthlyTasks = tasks.reduce((monthlyTotal, task) => {
+      if (task.month === "every") {
+        return monthlyTotal + 12; // One task per month for the whole year
+      }
+      return monthlyTotal;
+    }, 0);
+
+    const monthlyDoneTasks = tasks.reduce((monthlyDone, task) => {
+      if (task.month === "every") {
+        const monthlyProgress = (task.monthlyProgress ?? []).reduce(
+          (acc, month) => acc + (month.isDone ? 1 : 0),
+          0
+        );
+        return parseFloat((monthlyDone + monthlyProgress).toFixed(0));
+      }
+      return monthlyDone;
+    }, 0);
 
     acc[context as TaskContext] = {
-      totalTasks,
-      doneTasks,
-      donePercentage,
+      totalTasks: totalTasks + monthlyTasks,
+      doneTasks: doneTasks + monthlyDoneTasks,
+      donePercentage: parseFloat(
+        (
+          ((doneTasks + monthlyDoneTasks) / (totalTasks + monthlyTasks)) *
+          100
+        ).toFixed(0)
+      ),
     };
 
     return acc;

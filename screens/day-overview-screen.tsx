@@ -1,11 +1,4 @@
-import {
-  useLayoutEffect,
-  useState,
-  useEffect,
-  memo,
-  useMemo,
-  useCallback,
-} from "react";
+import { useLayoutEffect, useState, useEffect, memo, useCallback } from "react";
 import { TasksList } from "../components/tasks-list";
 import {
   Box,
@@ -17,6 +10,7 @@ import {
   VStack,
   Button,
   ButtonText,
+  SafeAreaView,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
@@ -99,35 +93,41 @@ const DayOverviewScreen: React.FC<Props> = memo(({ route, navigation }) => {
 
   if (status === "pending" && !dayTasks) {
     return (
-      <Box flex={1}>
-        <Loader absolute />
-      </Box>
+      <SafeAreaView flex={1}>
+        <Box flex={1}>
+          <Loader absolute />
+        </Box>
+      </SafeAreaView>
     );
   }
 
   if (error) {
     return (
-      <Box flex={1}>
-        <EmptyState message={t("common.error")} onRetry={handleRetry} />
-      </Box>
+      <SafeAreaView flex={1}>
+        <Box flex={1}>
+          <EmptyState message={t("common.error")} onRetry={handleRetry} />
+        </Box>
+      </SafeAreaView>
     );
   }
 
   return (
-    <Box p="$2" flex={1}>
-      {status === "pending" && <Loader absolute />}
-      {dayTasks ? (
-        <>
-          <ProgressBar total={total} t={t} />
-          <TasksList {...dayTasks.config} currentDay={currentDay} />
-        </>
-      ) : (
-        <EmptyState message={t("common.empty")} />
-      )}
-      {showCompletedModal && (
-        <CompletedTaskModal setShowModal={setShowCompletedModal} />
-      )}
-    </Box>
+    <SafeAreaView flex={1}>
+      <Box p="$2" flex={1}>
+        {status === "pending" && <Loader absolute />}
+        {dayTasks ? (
+          <>
+            <ProgressBar total={total} t={t} />
+            <TasksList {...dayTasks.config} currentDay={currentDay} />
+          </>
+        ) : (
+          <EmptyState message={t("common.empty")} />
+        )}
+        {showCompletedModal && (
+          <CompletedTaskModal setShowModal={setShowCompletedModal} />
+        )}
+      </Box>
+    </SafeAreaView>
   );
 });
 

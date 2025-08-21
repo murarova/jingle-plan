@@ -17,6 +17,7 @@ export default {
     delete: "Delete",
     selectMonth: "Select month",
     error: "Error",
+    save: "Save",
   },
   errors: {
     emptyText: "Text field cannot be empty",
@@ -27,6 +28,27 @@ export default {
     learning: "Learning",
     work: "Work",
     relationship: "Relationship",
+    relax: "Relax",
+    art: "Art",
+    money: "Money",
+    supports: "Supports",
+    globalGoal: "Global Goal",
+    supportWord: "Support Word",
+  },
+  months: {
+    january: "January",
+    february: "February",
+    march: "March",
+    april: "April",
+    may: "May",
+    june: "June",
+    july: "July",
+    august: "August",
+    september: "September",
+    october: "October",
+    november: "November",
+    december: "December",
+    every: "Every month",
   },
   screens: {
     intro: {
@@ -76,6 +98,15 @@ export default {
       goals: "Goals",
       completed: "Completed",
       title: "Dashboard",
+      tasks: "goals",
+      tasksSingular: "goal",
+      tasksFew: "goals",
+      tasksPlural: "goals",
+      heatmap: {
+        title: "Monthly Plans",
+        showAll: "Show all",
+        hideAll: "Hide all",
+      },
     },
     tasksOfTheDay: {
       dayTitle: "Task for today",
@@ -96,7 +127,11 @@ export default {
     },
     plansModal: {
       addPlanTitle: "Add plan item",
+      editPlanTitle: "Edit plan item",
       placeholder: "Type your plan here",
+      selectMonth: "Select month",
+      selectContext: "Select context",
+      contextRequired: "Please select a context",
     },
     completedTaskModal: {
       title: "Nice work!",

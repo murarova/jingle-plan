@@ -4,6 +4,7 @@ import {
   TaskOutputType,
   albumScreenmMonthOrder,
   allMonths,
+  taskMonths,
 } from "../constants/constants";
 
 export interface TextData {
@@ -34,8 +35,14 @@ export interface SummaryData extends TextData {
   rate: number;
 }
 
+export interface EveryMonthProgress {
+  month: string;
+  isDone: boolean;
+}
+
 export interface PlanData extends TextData {
   isDone: boolean;
+  monthlyProgress?: EveryMonthProgress[];
   month?: string;
 }
 
@@ -45,7 +52,7 @@ export interface PlanScreenData extends PlanData {
 
 export type TaskContext =
   | (typeof TASK_CONTEXT)[keyof typeof TASK_CONTEXT]
-  | (typeof allMonths)[number];
+  | (typeof taskMonths)[number];
 
 export type PlansCollection = {
   [key in TaskContext]?: PlanScreenData[];
@@ -56,7 +63,6 @@ export type SummaryCollection = {
 };
 
 export type TaskGategory = (typeof TASK_CATEGORY)[keyof typeof TASK_CATEGORY];
-
 export interface TaskProgress {
   totalTasks: number;
   doneTasks: number;

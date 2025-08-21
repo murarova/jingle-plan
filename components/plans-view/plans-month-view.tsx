@@ -16,11 +16,9 @@ import {
 } from "@gluestack-ui/themed";
 import { allMonths, months, PlansViewOptions } from "../../constants/constants";
 import { PlansList } from "./components/plans";
-import { AddPlanModal } from "../day-tasks/plans/add-plan-modal";
-import { MonthSelectModal } from "../modals/month-select-modal";
 import { EmptyScreen } from "../empty-screen";
 import isEmpty from "lodash/isEmpty";
-import { PlansViewProps } from "./plans-context-view";
+import { CompletePlanProps, PlansViewProps } from "./plans-context-view";
 import {
   PlanScreenData,
   PlansCollection,
@@ -65,7 +63,8 @@ interface MonthPlansContentProps {
   onMonthSelect: (item: PlanWithContext) => void;
   onEdit: (item: PlanWithContext) => void;
   onDelete: (item: PlanWithContext) => void;
-  onComplete: (item: PlanWithContext, value: boolean) => void;
+  onComplete: (props: CompletePlanProps) => void;
+  month: string;
 }
 
 const MonthPlansContent = memo(
@@ -75,6 +74,7 @@ const MonthPlansContent = memo(
     onEdit,
     onDelete,
     onComplete,
+    month,
   }: MonthPlansContentProps) => (
     <AccordionContent>
       <Box>
@@ -85,6 +85,7 @@ const MonthPlansContent = memo(
           onEdit={onEdit}
           onDelete={onDelete}
           handleCompletePlan={onComplete}
+          month={month}
         />
       </Box>
     </AccordionContent>
@@ -105,9 +106,9 @@ const groupPlansByMonth = (plans: PlansCollection): MonthlyPlans => {
 
       if (item.month === "every") {
         // Add the plan to every month
-        allMonths.forEach((monthName) => {
-          result[monthName] = result[monthName] || [];
-          result[monthName].push(itemWithContext);
+        item.monthlyProgress?.forEach((month) => {
+          result[month.month] = result[month.month] || [];
+          result[month.month].push(itemWithContext);
         });
       } else if (item.month) {
         // Add plan to specific month
@@ -116,7 +117,6 @@ const groupPlansByMonth = (plans: PlansCollection): MonthlyPlans => {
       }
     });
   });
-
   return result;
 };
 
@@ -126,13 +126,6 @@ export const PlansMonthView = memo(
     handleEditPlan,
     handleDeletePlan,
     handleCompletePlan,
-    showModal,
-    updatedData,
-    setShowModal,
-    handleUpdatePlan,
-    showMonthModal,
-    setShowMonthModal,
-    handleMonthSelect,
     openMonthSelect,
   }: PlansViewProps) => {
     const sortedPlans = useMemo(() => groupPlansByMonth(plans), [plans]);
@@ -152,8 +145,8 @@ export const PlansMonthView = memo(
     );
 
     const handlePlanComplete = useCallback(
-      (item: PlanWithContext, value: boolean) => {
-        handleCompletePlan(item, value, item.context);
+      (props: CompletePlanProps) => {
+        handleCompletePlan(props);
       },
       [handleCompletePlan]
     );
@@ -206,26 +199,19 @@ export const PlansMonthView = memo(
                     onMonthSelect={handlePlanMonthSelect}
                     onEdit={handlePlanEdit}
                     onDelete={handlePlanDelete}
-                    onComplete={handlePlanComplete}
+                    onComplete={(props) =>
+                      handlePlanComplete({
+                        ...props,
+                        month: month.value,
+                        view: PlansViewOptions.month,
+                      })
+                    }
+                    month={month.value}
                   />
                 </AccordionItem>
               );
             })}
           </Accordion>
-
-          {showModal && (
-            <AddPlanModal
-              data={updatedData}
-              setShowModal={setShowModal}
-              handleUpdatePlan={handleUpdatePlan}
-            />
-          )}
-          {showMonthModal && (
-            <MonthSelectModal
-              setShowMonthModal={setShowMonthModal}
-              onMonthSelect={handleMonthSelect}
-            />
-          )}
         </Box>
       </ScrollView>
     );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   MAX_PLANS_AMOUNT,
   TASK_CATEGORY,
@@ -22,6 +22,11 @@ export function usePlans({ data, context }: UsePlansProps) {
   const [updatedData, setUpdatedData] = useState<PlanData | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
+
+  const closeModal = useCallback(() => {
+    setShowModal(false);
+    setUpdatedData(null);
+  }, []);
 
   function handleAddPlan(text: string) {
     setLoading(true);
@@ -107,12 +112,12 @@ export function usePlans({ data, context }: UsePlansProps) {
   return {
     updatedData,
     showModal,
-    setShowModal,
     handleAddPlan,
     handleUpdatePlan,
     handleEditPlan,
     handleDeletePlan,
     handleAddPlanBtn,
     isLoading,
+    closeModal,
   };
 }

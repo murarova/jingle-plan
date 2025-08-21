@@ -15,7 +15,7 @@ import {
   InputIcon,
 } from "@gluestack-ui/themed";
 import { Alert, Keyboard } from "react-native";
-import { SCREENS } from "../constants/constants";
+import { SCREENS, EMAIL_REGEX, PASSWORD_REGEX } from "../constants/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { Loader } from "../components/common";
@@ -44,16 +44,14 @@ export const RegisterScreen = () => {
   const { t } = useTranslation();
   const nav = useNavigation<NavigationProp>();
 
-  // Email validation regex
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  // Password validation regex
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-
   const handleState = () => setShowPassword((prevState) => !prevState);
 
   const validateEmail = (email: string) => {
-    if (!emailRegex.test(email)) {
+    if (!email) {
+      setEmailError("");
+      return;
+    }
+    if (!EMAIL_REGEX.test(email)) {
       setEmailError(t("screens.registerScreen.invalidEmail"));
     } else {
       setEmailError("");
@@ -61,7 +59,7 @@ export const RegisterScreen = () => {
   };
 
   const validatePassword = (password: string) => {
-    if (!passwordRegex.test(password)) {
+    if (!PASSWORD_REGEX.test(password)) {
       setPasswordError(t("screens.registerScreen.invalidPassword"));
     } else {
       setPasswordError("");
@@ -84,13 +82,13 @@ export const RegisterScreen = () => {
             .unwrap()
             .then(() => {
               nav.replace(SCREENS.HOME);
+            })
+            .catch(() => {
+              Alert.alert("Oops", t("screens.registerScreen.errorMessage"));
             });
         })
-        .catch((e) => {
-          Alert.alert(
-            "Oops",
-            e?.message || t("screens.registerScreen.errorMessage")
-          );
+        .catch(() => {
+          Alert.alert("Oops", t("screens.registerScreen.errorMessage"));
         });
     }
   };
@@ -107,14 +105,11 @@ export const RegisterScreen = () => {
     );
   };
 
-  if (authStatus === "pending") {
-    return <Loader />;
-  }
-
   return (
     <Pressable flex={1} onPress={Keyboard.dismiss}>
       <KeyboardAwareScrollView>
-        <SafeAreaView>
+        <SafeAreaView flex={1}>
+          {authStatus === "pending" && <Loader />}
           <Box p={10}>
             <Box pb={10}>
               <Heading>{t("screens.registerScreen.title")}</Heading>
@@ -147,10 +142,9 @@ export const RegisterScreen = () => {
                 <Input>
                   <InputField
                     value={email}
-                    onChangeText={(value) => {
-                      setEmail(value);
-                      validateEmail(value);
-                    }}
+                    onChangeText={setEmail}
+                    onBlur={() => validateEmail(email)}
+                    onFocus={() => setEmailError("")}
                     autoCapitalize="none"
                     inputMode="text"
                     placeholder={t("screens.registerScreen.email")}

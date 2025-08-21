@@ -1,25 +1,24 @@
-// @ts-nocheck
 import { useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
-import auth from "@react-native-firebase/auth";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { SCREENS } from "../constants/constants";
 import { Loader } from "../components/common";
+import { useAppSelector } from "../store/withTypes";
+import { isLoggedIn } from "../store/authReducer";
+import { RootStackParamList } from "../App";
+import { useCalendarDayManager } from "../hooks/useCalendarDayManager";
 
 export const LoadingScreen = () => {
-  const nav = useNavigation();
-
-  function onAuthStateChanged(user) {
-    if (user) {
-      nav.replace(SCREENS.HOME);
-    } else {
-      nav.replace(SCREENS.INTRO);
-    }
-  }
+  const nav = useNavigation<NavigationProp<RootStackParamList>>();
+  const isUserLoggedIn = useAppSelector(isLoggedIn);
+  const { isLoading } = useCalendarDayManager();
 
   useEffect(() => {
-    const sub = auth().onAuthStateChanged(onAuthStateChanged);
-    return sub;
-  }, []);
+    if (isUserLoggedIn && !isLoading) {
+      nav.navigate(SCREENS.HOME);
+    } else {
+      nav.navigate(SCREENS.INTRO);
+    }
+  }, [isUserLoggedIn, nav]);
 
   return <Loader />;
 };

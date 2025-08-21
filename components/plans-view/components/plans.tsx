@@ -11,7 +11,6 @@ import {
   Icon,
   Divider,
   ScrollView,
-  Heading,
   Checkbox,
   CheckboxIndicator,
   CheckboxIcon,
@@ -24,16 +23,22 @@ import {
 import { EditIcon, Trash2, Ellipsis, CalendarDays } from "lucide-react-native";
 import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { months, PlansViewOptions } from "../../../constants/constants";
+import {
+  allMonths,
+  months,
+  PlansViewOptions,
+} from "../../../constants/constants";
 import { PlanScreenData } from "../../../types/types";
+import { CompletePlanProps } from "../plans-context-view";
 
 interface PlansListProps {
   plans: PlanScreenData[];
   onEdit: (plan: PlanScreenData) => void;
   onDelete: (plan: PlanScreenData) => void;
   onMonthSelect: (plan: PlanScreenData) => void;
-  handleCompletePlan: (plan: PlanScreenData, value: boolean) => void;
+  handleCompletePlan: (props: CompletePlanProps) => void;
   view?: PlansViewOptions;
+  month?: string;
 }
 
 export function PlansList({
@@ -43,6 +48,7 @@ export function PlansList({
   handleCompletePlan,
   onMonthSelect,
   view,
+  month,
 }: PlansListProps) {
   const { t } = useTranslation();
 
@@ -59,6 +65,12 @@ export function PlansList({
       <VStack width="100%" flex={1} space="sm">
         {plans.map((item, index, array) => {
           const label = getMonthBadge(item);
+          const isDone =
+            Boolean(
+              item.monthlyProgress?.find(
+                (planMonth) => planMonth.month === month
+              )?.isDone
+            ) || item?.isDone;
           return (
             <Fragment key={item.id}>
               {view === PlansViewOptions.context && label && (
@@ -90,8 +102,15 @@ export function PlansList({
                 <Box flex={1}>
                   <Checkbox
                     value={item?.text}
-                    defaultIsChecked={item?.isDone}
-                    onChange={(value) => handleCompletePlan(item, value)}
+                    defaultIsChecked={isDone}
+                    onChange={(value) =>
+                      handleCompletePlan({
+                        plan: item,
+                        value,
+                        context: item.context,
+                        month,
+                      })
+                    }
                     size="md"
                     aria-label={item?.text}
                   >
@@ -101,7 +120,7 @@ export function PlansList({
                     <CheckboxLabel flex={1}>
                       <Text
                         style={
-                          item?.isDone && {
+                          isDone && {
                             textDecorationLine: "line-through",
                             textDecorationStyle: "solid",
                             opacity: 0.5,
