@@ -35,15 +35,17 @@ export function MonthSelectModal({
   const handleDone = () => {
     if (selectedMonth) {
       onMonthSelect(selectedMonth);
-      setSelectedMonth("");
+      setTimeout(() => {
+        setSelectedMonth("");
+      }, 100);
     }
   };
 
   const handleGoBack = () => {
+    sheetRef.current?.hide();
     if (selectedMonth) {
       setSelectedMonth("");
     }
-    sheetRef.current?.hide();
   };
 
   const handleMonthSelect = (month: string) => {

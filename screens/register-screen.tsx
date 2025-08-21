@@ -105,14 +105,11 @@ export const RegisterScreen = () => {
     );
   };
 
-  if (authStatus === "pending") {
-    return <Loader />;
-  }
-
   return (
     <Pressable flex={1} onPress={Keyboard.dismiss}>
       <KeyboardAwareScrollView>
         <SafeAreaView flex={1}>
+          {authStatus === "pending" && <Loader />}
           <Box p={10}>
             <Box pb={10}>
               <Heading>{t("screens.registerScreen.title")}</Heading>

@@ -14,13 +14,14 @@ import { useTranslation } from "react-i18next";
 import "./i18n/i18n";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "./store/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getUserFromStorage } from "./services/storage";
 import { hydrateAuth } from "./store/authReducer";
 import { useFirebaseMessaging } from "./hooks/useFirebaseMessaging";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { Loader } from "./components/common";
 
 (globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
 
@@ -53,15 +54,24 @@ const Stack = createStackNavigator<RootStackParamList>();
 function AppContent() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
   useFirebaseMessaging();
 
   useEffect(() => {
     const loadPersistedUser = async () => {
-      const user = await getUserFromStorage();
-      dispatch(hydrateAuth(user));
+      try {
+        const user = await getUserFromStorage();
+        dispatch(hydrateAuth(user));
+      } finally {
+        setIsLoading(false);
+      }
     };
     loadPersistedUser();
-  }, []);
+  }, [dispatch]);
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <NavigationContainer theme={MyTheme}>

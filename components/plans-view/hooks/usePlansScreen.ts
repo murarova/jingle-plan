@@ -12,6 +12,8 @@ import {
   savePlans,
 } from "../../../utils/plans-utils";
 import { SheetRef } from "../../common";
+import { CompletePlanProps } from "../plans-context-view";
+import { allMonths, PlansViewOptions } from "../../../constants/constants";
 
 interface UsePlansScreenProps {
   plans: PlansCollection | null;
@@ -117,16 +119,47 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
   );
 
   const handleCompletePlan = useCallback(
-    async (plan: PlanScreenData, isDone: boolean, planContext: TaskContext) => {
+    async (props: CompletePlanProps) => {
+      const { plan, value: isDone, context: planContext, month, view } = props;
       if (!plans) return;
 
       const plansList = getPlansList(plans, planContext);
+      if (!plansList) return;
+
+      let updatedPlan = {
+        ...plan,
+        monthlyProgress: plan.monthlyProgress ? [...plan.monthlyProgress] : [],
+      };
+
+      if (plan.month === "every") {
+        if (view === PlansViewOptions.context) {
+          updatedPlan.monthlyProgress = updatedPlan.monthlyProgress.map(
+            (planMonth) => ({ ...planMonth, isDone })
+          );
+        }
+        if (plan.month === "every" && month) {
+          updatedPlan.monthlyProgress = updatedPlan.monthlyProgress.map(
+            (planMonth) =>
+              planMonth.month === month ? { ...planMonth, isDone } : planMonth
+          );
+        }
+
+        const isAllDone = updatedPlan.monthlyProgress.every(
+          (planMonth) => planMonth.isDone
+        );
+        updatedPlan.isDone = isAllDone;
+      } else {
+        updatedPlan.isDone = isDone;
+      }
+
       const updatedPlans = plansList.map((item) =>
-        item.id === plan.id ? { ...plan, isDone } : item
+        item.id === plan.id ? updatedPlan : item
       );
 
       try {
         await savePlans(dispatch, planContext, updatedPlans, t);
+      } catch (error) {
+        console.error("Failed to save plan completion:", error);
       } finally {
         resetState();
       }
@@ -162,15 +195,20 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
 
   const handleMonthSelect = useCallback(
     async (month: string) => {
-      if (!plans || !context || !updatedData) return;
-
-      const plansList = getPlansList(plans, context);
-      const updatedPlans = plansList.map((item) =>
-        item.id === updatedData.id ? { ...updatedData, month } : item
-      );
-
-      await updatePlan(context, updatedPlans);
       sheetRef.current?.hide();
+      if (!plans || !context || !updatedData) return;
+      const data = { ...updatedData };
+      const plansList = getPlansList(plans, context);
+      if (month === "every") {
+        data.monthlyProgress = allMonths.map((month) => ({
+          month,
+          isDone: false,
+        }));
+      }
+      const updatedPlans = plansList.map((item) =>
+        item.id === data.id ? { ...data, month } : item
+      );
+      await updatePlan(context, updatedPlans);
     },
     [plans, context, updatedData, updatePlan]
   );

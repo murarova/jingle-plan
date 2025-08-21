@@ -102,6 +102,15 @@ export default {
       goals: "Цілей",
       completed: "Виконано",
       title: "Прогрес",
+      tasks: "цілей",
+      tasksSingular: "ціль",
+      tasksFew: "цілі",
+      tasksPlural: "цілей",
+      heatmap: {
+        title: "Щомісячні плани",
+        showAll: "Показати всі",
+        hideAll: "Сховати всі",
+      },
     },
     tasksOfTheDay: {
       dayTitle: "Завдання дня",

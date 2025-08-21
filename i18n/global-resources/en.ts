@@ -98,6 +98,15 @@ export default {
       goals: "Goals",
       completed: "Completed",
       title: "Dashboard",
+      tasks: "goals",
+      tasksSingular: "goal",
+      tasksFew: "goals",
+      tasksPlural: "goals",
+      heatmap: {
+        title: "Monthly Plans",
+        showAll: "Show all",
+        hideAll: "Hide all",
+      },
     },
     tasksOfTheDay: {
       dayTitle: "Task for today",

@@ -35,7 +35,6 @@ export const LoginScreen = () => {
   const [emailError, setEmailError] = useState("");
 
   const dispatch = useAppDispatch();
-  const isUserLoggedIn = useAppSelector(isLoggedIn);
   const authStatus = useAppSelector(selectAuthStatus);
 
   const { t } = useTranslation();
@@ -53,12 +52,6 @@ export const LoginScreen = () => {
     }
   };
 
-  useEffect(() => {
-    if (isUserLoggedIn) {
-      nav.replace(SCREENS.HOME);
-    }
-  }, [isUserLoggedIn, nav]);
-
   const goToRegistration = () => {
     nav.push(SCREENS.REGISTER);
   };
@@ -67,6 +60,9 @@ export const LoginScreen = () => {
   const goToMainFlow = async () => {
     dispatch(signInUserAsync({ email, password }))
       .unwrap()
+      .then(() => {
+        nav.replace(SCREENS.HOME);
+      })
       .catch(() => {
         Alert.alert(
           t("screens.loginScreen.errorTitle"),
@@ -75,14 +71,11 @@ export const LoginScreen = () => {
       });
   };
 
-  if (authStatus === "pending") {
-    return <Loader />;
-  }
-
   return (
     <Pressable flex={1} onPress={Keyboard.dismiss}>
       <KeyboardAwareScrollView>
         <SafeAreaView>
+          {authStatus === "pending" && <Loader />}
           <Box p={10} pt={30} row-direction="column" justifyContent="center">
             <Box pb={10}>
               <Heading>{t("screens.loginScreen.title")}</Heading>

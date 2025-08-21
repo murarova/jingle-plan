@@ -15,13 +15,25 @@ import {
   ScrollView,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
-import { TASK_CONTEXT, PlansViewOptions } from "../../constants/constants";
+import {
+  TASK_CONTEXT,
+  PlansViewOptions,
+  allMonths,
+} from "../../constants/constants";
 import { PlansList } from "./components/plans";
 import {
   PlanScreenData,
   PlansCollection,
   TaskContext,
 } from "../../types/types";
+
+export interface CompletePlanProps {
+  plan: PlanScreenData;
+  value: boolean;
+  context: TaskContext;
+  month?: string;
+  view?: PlansViewOptions;
+}
 
 export interface PlansViewProps {
   plans: PlansCollection;
@@ -30,11 +42,7 @@ export interface PlansViewProps {
   handleDeletePlan: (id: string, context: TaskContext) => void;
   handleUpdatePlan: (id: string, text: string) => void;
   handleMonthSelect: (month: string) => void;
-  handleCompletePlan: (
-    plan: PlanScreenData,
-    value: boolean,
-    context: TaskContext
-  ) => void;
+  handleCompletePlan: (props: CompletePlanProps) => void;
   setShowModal: (value: boolean) => void;
   setShowMonthModal: (value: boolean) => void;
   showModal: boolean;
@@ -79,7 +87,7 @@ interface PlansAccordionContentProps {
   onMonthSelect: (item: PlanScreenData) => void;
   onEdit: (item: PlanScreenData) => void;
   onDelete: (item: PlanScreenData) => void;
-  onComplete: (item: PlanScreenData, value: boolean) => void;
+  onComplete: (props: CompletePlanProps) => void;
 }
 
 const PlansAccordionContent = memo(
@@ -115,13 +123,6 @@ export const PlansContextView = memo(
     handleEditPlan,
     handleDeletePlan,
     handleCompletePlan,
-    showModal,
-    updatedData,
-    setShowModal,
-    handleUpdatePlan,
-    showMonthModal,
-    setShowMonthModal,
-    handleMonthSelect,
   }: PlansViewProps) => {
     const handleMonthSelectForContext = useCallback(
       (item: PlanScreenData, context: TaskContext) => {
@@ -145,8 +146,8 @@ export const PlansContextView = memo(
     );
 
     const handleCompleteForContext = useCallback(
-      (item: PlanScreenData, value: boolean, context: TaskContext) => {
-        handleCompletePlan(item, value, context);
+      (props: CompletePlanProps) => {
+        handleCompletePlan(props);
       },
       [handleCompletePlan]
     );
@@ -191,8 +192,11 @@ export const PlansContextView = memo(
                     }
                     onEdit={(item) => handleEditForContext(item, context)}
                     onDelete={(item) => handleDeleteForContext(item, context)}
-                    onComplete={(item, value) =>
-                      handleCompleteForContext(item, value, context)
+                    onComplete={(props) =>
+                      handleCompleteForContext({
+                        ...props,
+                        view: PlansViewOptions.context,
+                      })
                     }
                   />
                 </AccordionItem>

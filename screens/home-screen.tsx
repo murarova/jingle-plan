@@ -11,7 +11,7 @@ import Compas from "../assets/svg/compas";
 import Album from "../assets/svg/album";
 import Dashboard from "../assets/svg/dashboard";
 import { AlbumScreen } from "./album-screen";
-import { DashboardScreen } from "./dashboard-screen";
+import { DashboardScreen } from "./dashboard-screen/dashboard-screen";
 
 const Tab = createBottomTabNavigator();
 

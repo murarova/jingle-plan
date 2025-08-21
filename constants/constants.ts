@@ -48,6 +48,7 @@ export const allMonths = [
 ] as const;
 
 export const albumScreenmMonthOrder = [...allMonths, "year"] as const;
+export const taskMonths = [...allMonths, "every"] as const;
 
 export const TASK_CONTEXT = {
   HEALTH: "health",
