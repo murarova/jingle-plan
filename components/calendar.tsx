@@ -1,4 +1,4 @@
-import { LANGUAGES, YEAR } from "../constants/constants";
+import { LANGUAGES } from "../constants/constants";
 import moment from "moment";
 import { Calendar as NativeCalendar, DateData } from "react-native-calendars";
 import { useTranslation } from "react-i18next";
@@ -10,6 +10,7 @@ import CircularProgress from "react-native-circular-progress-indicator";
 import { calculateTotalProgress } from "../utils/utils";
 import { useCalendarDayManager } from "../hooks/useCalendarDayManager";
 import { useAppSelector } from "../store/withTypes";
+import { selectSelectedYear } from "../store/appReducer";
 import { Loader } from "./common";
 import { calendarTheme, setupCalendarLocale } from "../utils/calendar-utils";
 
@@ -78,12 +79,13 @@ const DayComponent = memo(
 DayComponent.displayName = "DayComponent";
 
 export const Calendar = memo(({ pressHandler }: CalendarProps) => {
-  const currentDate = moment(`${YEAR}-12-14`).format("YYYY-MM-DD");
+  const selectedYear = useAppSelector(selectSelectedYear);
+  const currentDate = moment(`${selectedYear}-12-14`).format("YYYY-MM-DD");
   const { i18n, t } = useTranslation();
   const resolvedLanguage =
     (i18n.resolvedLanguage as keyof typeof LANGUAGES) || "en";
   const { status, userData } = useAppSelector((state) => state.app);
-  const isAdmin = userData?.userProfile.isAdmin || false;
+  const isAdmin = userData?.userProfile?.isAdmin || false;
 
   const locale = useMemo(
     () => (LANGUAGES[resolvedLanguage]?.moment === "uk" ? "uk" : ""),
@@ -98,14 +100,16 @@ export const Calendar = memo(({ pressHandler }: CalendarProps) => {
   }, [locale]);
 
   const minDate = useMemo(
-    () => moment(`${YEAR}-01-01`).format("YYYY-MM-DD"),
-    []
+    () => moment(`${selectedYear}-01-01`).format("YYYY-MM-DD"),
+    [selectedYear]
   );
 
   const maxDate = useMemo(
     () =>
-      isAdmin ? moment(`${YEAR}-12-31`).format("YYYY-MM-DD") : currentDate,
-    [isAdmin, currentDate]
+      isAdmin
+        ? moment(`${selectedYear}-12-31`).format("YYYY-MM-DD")
+        : currentDate,
+    [isAdmin, currentDate, selectedYear]
   );
 
   const renderDayComponent = useCallback(

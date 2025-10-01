@@ -21,6 +21,7 @@ export default {
     deleteAccount: "Видалити акаунт",
     error: "Помилка",
     submitBtnText: "Готово",
+    welcome: "Ласкаво просимо",
   },
   context: {
     health: "Тіло",

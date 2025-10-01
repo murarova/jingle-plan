@@ -7,13 +7,15 @@ import {
   signOut,
 } from "./services";
 import { createAppAsyncThunk } from "../store/withTypes";
+import { selectSelectedYear } from "../store/appReducer";
 
 // For createProfile
 export const createProfileAsync = createAppAsyncThunk<
   void,
   { uid: string; name: string }
->("user/createProfile", async ({ uid, name }) => {
-  await createProfile(uid, name);
+>("user/createProfile", async ({ uid, name }, { getState }) => {
+  const year = selectSelectedYear(getState());
+  await createProfile(uid, name, year);
 });
 
 // For createUserWithEmailAndPassword

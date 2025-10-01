@@ -1,4 +1,5 @@
 import { selectCurrentUser } from "../store/authReducer";
+import { selectSelectedYear } from "../store/appReducer";
 import { createAppAsyncThunk } from "../store/withTypes";
 import { ImageData, TaskGategory, TextImageData } from "../types/types";
 import {
@@ -20,15 +21,17 @@ export const saveTaskByCategoryAsync = createAppAsyncThunk<
   "user/saveTaskByCategory",
   async ({ category, data, context }, { getState }) => {
     const currentUser = selectCurrentUser(getState());
-    await saveTaskByCategory({ category, data, context, currentUser });
+    const year = selectSelectedYear(getState());
+    await saveTaskByCategory({ category, data, context, currentUser, year });
   }
 );
 
 // For getConfiguration
 export const getConfigurationAsync = createAppAsyncThunk<any, void>(
   "user/getConfiguration",
-  async () => {
-    return await getConfiguration();
+  async (_, { getState }) => {
+    const year = selectSelectedYear(getState());
+    return await getConfiguration(year);
   }
 );
 
@@ -38,7 +41,8 @@ export const saveMoodTaskAsync = createAppAsyncThunk<
   { category: TaskGategory; data: TextImageData; day: string }
 >("user/saveMoodTask", async ({ category, data, day }, { getState }) => {
   const currentUser = selectCurrentUser(getState());
-  await saveMoodTask({ category, data, day, currentUser });
+  const year = selectSelectedYear(getState());
+  await saveMoodTask({ category, data, day, currentUser, year });
   return data;
 });
 
@@ -47,7 +51,10 @@ export const getUserDataAsync = createAppAsyncThunk<any, void>(
   "user/getUserData",
   async (_, { getState }) => {
     const currentUser = selectCurrentUser(getState());
-    return await getUserData(currentUser?.uid);
+    const year = selectSelectedYear(getState());
+    console.log("getUserDataAsync", currentUser?.uid, year);
+
+    return await getUserData(currentUser?.uid, year);
   }
 );
 
@@ -56,7 +63,8 @@ export const saveImageAsync = createAppAsyncThunk<void, { image: ImageData }>(
   "user/saveImage",
   async ({ image }, { getState }) => {
     const currentUser = selectCurrentUser(getState());
-    await saveImage(image, currentUser);
+    const year = selectSelectedYear(getState());
+    await saveImage(image, currentUser, year);
   }
 );
 
@@ -65,7 +73,8 @@ export const deleteImageAsync = createAppAsyncThunk<void, { image: ImageData }>(
   "user/deleteImage",
   async ({ image }, { getState }) => {
     const currentUser = selectCurrentUser(getState());
-    await deleteImage(image, currentUser);
+    const year = selectSelectedYear(getState());
+    await deleteImage(image, currentUser, year);
   }
 );
 
@@ -74,7 +83,8 @@ export const getImageUrlAsync = createAppAsyncThunk<string, { id: string }>(
   "user/getImageUrl",
   async ({ id }, { getState }) => {
     const currentUser = selectCurrentUser(getState());
-    const url = await getImageUrl(id, currentUser);
+    const year = selectSelectedYear(getState());
+    const url = await getImageUrl(id, currentUser, year);
     if (url) {
       return url;
     } else {
@@ -89,5 +99,6 @@ export const removeTaskAsync = createAppAsyncThunk<
   { category: TaskGategory; context: string; day?: string }
 >("user/removeTask", async ({ category, context, day }, { getState }) => {
   const currentUser = selectCurrentUser(getState());
-  await removeTask({ category, context, currentUser, day });
+  const year = selectSelectedYear(getState());
+  await removeTask({ category, context, currentUser, day, year });
 });

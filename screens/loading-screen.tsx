@@ -15,10 +15,10 @@ export const LoadingScreen = () => {
   useEffect(() => {
     if (isUserLoggedIn && !isLoading) {
       nav.navigate(SCREENS.HOME);
-    } else {
+    } else if (!isUserLoggedIn) {
       nav.navigate(SCREENS.INTRO);
     }
-  }, [isUserLoggedIn, nav]);
+  }, [isUserLoggedIn, isLoading, nav]);
 
   return <Loader />;
 };

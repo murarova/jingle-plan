@@ -21,7 +21,7 @@ import {
   MonthPhotoData,
   PlanContextData,
 } from "../types/types";
-import { TASK_CATEGORY } from "../constants/constants";
+import { TASK_CATEGORY, YEARS } from "../constants/constants";
 import { isEmpty, omit } from "lodash";
 
 export type RequestStatus = "idle" | "pending" | "succeeded" | "failed";
@@ -30,6 +30,7 @@ export interface AppState {
   configuration: CalendarConfig | null;
   userData: UserData | null;
   imageUrl: string | null;
+  selectedYear: string;
   status: RequestStatus;
   error: string | null;
 }
@@ -38,6 +39,7 @@ const initialState: AppState = {
   configuration: null,
   userData: null,
   imageUrl: null,
+  selectedYear: YEARS[YEARS.length - 1],
   status: "idle",
   error: null,
 };
@@ -276,7 +278,15 @@ const addRemoveTaskCase = (builder: ActionReducerMapBuilder<AppState>) => {
 const appSlice = createSlice({
   name: "appSlice",
   initialState,
-  reducers: {},
+  reducers: {
+    setSelectedYear: (state, action: PayloadAction<string>) => {
+      state.selectedYear = action.payload;
+    },
+    clearUserData: (state) => {
+      state.userData = null;
+      state.imageUrl = null;
+    },
+  },
   extraReducers: (builder) => {
     addTaskCategoryCase(builder);
     addConfigurationCase(builder);
@@ -286,5 +296,9 @@ const appSlice = createSlice({
     addRemoveTaskCase(builder);
   },
 });
+
+export const { setSelectedYear, clearUserData } = appSlice.actions;
+export const selectSelectedYear = (state: { app: AppState }) =>
+  state.app.selectedYear;
 
 export default appSlice.reducer;

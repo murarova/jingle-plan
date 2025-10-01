@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../store/withTypes";
 import { getConfigurationAsync, getUserDataAsync } from "../services/data-api";
 import {
@@ -15,25 +15,33 @@ import {
 import { TASK_CATEGORY } from "../constants/constants";
 import moment from "moment";
 
+// Cache to prevent duplicate fetches across StrictMode remounts
+const fetchedKeys = new Set<string>();
+
 export const useCalendarDayManager = () => {
   const dispatch = useAppDispatch();
-  const { configuration, userData, status, error } = useAppSelector(
-    (state) => state.app
-  );
+  const { configuration, userData, status, error, selectedYear } =
+    useAppSelector((state) => state.app);
   const { currentUser } = useAppSelector((state) => state.auth);
   const isLoading = status === "pending";
-
-  useEffect(() => {
-    if (currentUser && !userData && !configuration && status !== "pending") {
-      dispatch(getUserDataAsync());
-      dispatch(getConfigurationAsync());
-    }
-  }, [status, userData, configuration, currentUser, dispatch]);
+  const lastFetchedKey = useRef<string | null>(null);
 
   const refresh = useCallback(() => {
     dispatch(getUserDataAsync());
     dispatch(getConfigurationAsync());
   }, [dispatch]);
+
+  useEffect(() => {
+    const fetchKey = currentUser ? `${currentUser.uid}:${selectedYear}` : null;
+    if (!fetchKey) return;
+
+    if (lastFetchedKey.current !== fetchKey && !fetchedKeys.has(fetchKey)) {
+      lastFetchedKey.current = fetchKey;
+      fetchedKeys.add(fetchKey);
+      dispatch(getUserDataAsync());
+      dispatch(getConfigurationAsync());
+    }
+  }, [currentUser, selectedYear, dispatch]);
 
   const calculateTaskGradeByCategory = useCallback(
     (
@@ -152,12 +160,12 @@ export const useCalendarDayManager = () => {
         config: dayConfig,
       };
     },
-    [configuration, userData, getTaskGrade]
+    [configuration, userData, getTaskGrade, selectedYear]
   );
 
   const hasData = useMemo(
     () => Boolean(configuration && userData),
-    [configuration, userData]
+    [configuration, userData, selectedYear]
   );
   const shouldRetry = useMemo(
     () => Boolean(error && !isLoading),

@@ -14,21 +14,20 @@ import { SCREENS } from "../constants/constants";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Alert } from "react-native";
 import { deleteCurrentUserAsync, signOutAsync } from "../services/auth-api";
-import { useAppDispatch } from "../store/withTypes";
+import { useAppDispatch, useAppSelector } from "../store/withTypes";
+import { clearUserData } from "../store/appReducer";
 import { RootStackParamList } from "../App";
 
 export function AppMenu() {
-  const { i18n, t } = useTranslation();
+  const { t } = useTranslation();
   const nav = useNavigation<NavigationProp<RootStackParamList>>();
   const dispatch = useAppDispatch();
-
-  function handleLanguageChanged(lng: string) {
-    i18n.changeLanguage(lng);
-  }
+  const userData = useAppSelector((state) => state.app.userData);
 
   async function handleLogout() {
     try {
       await dispatch(signOutAsync()).unwrap();
+      dispatch(clearUserData());
       nav.navigate(SCREENS.LOADING);
     } catch (error) {
       Alert.alert(
@@ -77,7 +76,22 @@ export function AppMenu() {
           );
         }}
       >
-        // Switching languages will not be a part of v1
+        <MenuItem key="welcome" textValue="welcome" disabled>
+          <Box
+            padding="$3"
+            borderBottomWidth={1}
+            borderBottomColor="$warmGray200"
+          >
+            <Text fontSize="$sm" color="$warmGray600" mb="$1">
+              {t("common.welcome")}
+            </Text>
+            <Text fontSize="$md" fontWeight="$semibold" color="$warmGray800">
+              {userData?.userProfile?.name || "User"}
+            </Text>
+          </Box>
+        </MenuItem>
+
+        {/* Switching languages will not be a part of v1 */}
         {/* {Object.keys(LANGUAGES).map((lng) => (
         <MenuItem
           key={LANGUAGES[lng].icon}

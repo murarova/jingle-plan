@@ -2,17 +2,16 @@ import { EXPO_PUBLIC_DB } from "@env";
 import { firebase } from "@react-native-firebase/database";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
-import { TASK_CATEGORY, YEAR } from "../constants/constants";
+import { TASK_CATEGORY } from "../constants/constants";
 import { SerializableUser } from "../types/user";
 import { CalendarConfig, ImageData } from "../types/types";
-
-const baseUrl = `/${YEAR}/users`;
 
 interface TaskParams {
   category: string;
   data: any;
   context: string;
   currentUser: SerializableUser | null;
+  year: string;
 }
 
 interface MoodTaskParams {
@@ -20,6 +19,7 @@ interface MoodTaskParams {
   data: any;
   day: string;
   currentUser: SerializableUser | null;
+  year: string;
 }
 
 interface RemoveTaskParams {
@@ -27,17 +27,19 @@ interface RemoveTaskParams {
   context: string;
   currentUser: SerializableUser | null;
   day?: string;
+  year: string;
 }
 
 export const createProfile = async (
   uid: string,
-  name: string
+  name: string,
+  year: string
 ): Promise<void> => {
   try {
     return await firebase
       .app()
       .database(EXPO_PUBLIC_DB)
-      .ref(`${baseUrl}/${uid}`)
+      .ref(`/${year}/users/${uid}`)
       .set({ userProfile: { name } });
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -85,7 +87,24 @@ export function getCurrentUser(): FirebaseAuthTypes.User | null {
 }
 
 export async function signOut(): Promise<void> {
-  await auth().signOut();
+  const currentUser = auth().currentUser;
+  if (!currentUser) return;
+  try {
+    await auth().signOut();
+  } catch (error: unknown) {
+    // Ignore when there's no current user according to Firebase
+    if (
+      typeof error === "object" &&
+      error &&
+      (error as any).code === "auth/no-current-user"
+    ) {
+      return;
+    }
+    if (error instanceof Error) {
+      throw new Error(`Failed to sign out: ${error.message}`);
+    }
+    throw new Error("Failed to sign out: Unknown error");
+  }
 }
 
 export async function deleteCurrentUser(): Promise<void> {
@@ -99,7 +118,7 @@ export async function deleteCurrentUser(): Promise<void> {
     await firebase
       .app()
       .database(EXPO_PUBLIC_DB)
-      .ref(`${baseUrl}/${currentUser.uid}`)
+      .ref(`${currentUser.uid}`)
       .remove();
 
     // Then delete the user account
@@ -112,12 +131,12 @@ export async function deleteCurrentUser(): Promise<void> {
   }
 }
 
-export async function getConfiguration(): Promise<CalendarConfig> {
+export async function getConfiguration(year: string): Promise<CalendarConfig> {
   try {
     const response = await firebase
       .app()
       .database(EXPO_PUBLIC_DB)
-      .ref("2024/configuration")
+      .ref(`${year}/configuration`)
       .once("value");
 
     return response.val();
@@ -131,19 +150,20 @@ export async function getConfiguration(): Promise<CalendarConfig> {
 
 export async function getUserDayTasks(
   category: string,
-  context: string
+  context: string,
+  year: string
 ): Promise<any> {
   const currentUser = auth().currentUser;
   if (!currentUser) throw new Error("No user provided");
   try {
     const ref =
       category === TASK_CATEGORY.MOOD
-        ? `${baseUrl}/${currentUser.uid}/${category}`
-        : `${baseUrl}/${currentUser.uid}/${category}/${context}`;
+        ? `${currentUser.uid}/${category}`
+        : `${currentUser.uid}/${category}/${context}`;
     const response = await firebase
       .app()
       .database(EXPO_PUBLIC_DB)
-      .ref(ref)
+      .ref(`${year}/${ref}`)
       .once("value");
 
     return response.val();
@@ -157,11 +177,7 @@ export async function getUserDayTasks(
 
 export const deleteUser = async (uid: string): Promise<void> => {
   try {
-    await firebase
-      .app()
-      .database(EXPO_PUBLIC_DB)
-      .ref(`${baseUrl}/${uid}`)
-      .remove();
+    await firebase.app().database(EXPO_PUBLIC_DB).ref(`${uid}`).remove();
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw new Error(`Failed to delete user: ${error.message}`);
@@ -175,13 +191,14 @@ export const saveMoodTask = async ({
   data,
   day,
   currentUser,
+  year,
 }: MoodTaskParams): Promise<void> => {
   if (!currentUser) throw new Error("No user provided");
   try {
     await firebase
       .app()
       .database(EXPO_PUBLIC_DB)
-      .ref(`${baseUrl}/${currentUser.uid}/${category}/${day}`)
+      .ref(`/${year}/users/${currentUser.uid}/${category}/${day}`)
       .set(data);
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -191,13 +208,14 @@ export const saveMoodTask = async ({
   }
 };
 
-export async function getUserData(uid?: string): Promise<any> {
+export async function getUserData(uid?: string, year?: string): Promise<any> {
   if (!uid) throw new Error("No user provided");
+  if (!year) throw new Error("No year provided");
   try {
     const snapshot = await firebase
       .app()
       .database(EXPO_PUBLIC_DB)
-      .ref(`${baseUrl}/${uid}`)
+      .ref(`/${year}/users/${uid}`)
       .once("value");
 
     return snapshot.val() || null;
@@ -214,12 +232,13 @@ export async function saveTaskByCategory({
   category,
   data,
   context,
+  year,
 }: TaskParams): Promise<void> {
   if (!currentUser) throw new Error("No user provided");
   const response = await firebase
     .app()
     .database(EXPO_PUBLIC_DB)
-    .ref(`${baseUrl}/${currentUser.uid}/${category}/${context}`)
+    .ref(`/${year}/users/${currentUser.uid}/${category}/${context}`)
     .set(data);
 
   return response;
@@ -227,10 +246,13 @@ export async function saveTaskByCategory({
 
 export async function saveImage(
   image: ImageData,
-  currentUser: SerializableUser | null
+  currentUser: SerializableUser | null,
+  year: string
 ): Promise<void> {
   if (!currentUser) throw new Error("No user provided");
-  const reference = storage().ref(`/images/${currentUser.uid}/${image.id}`);
+  const reference = storage().ref(
+    `/images/${year}/${currentUser.uid}/${image.id}`
+  );
   if (image.uri) {
     await reference.putFile(image.uri);
   }
@@ -238,20 +260,24 @@ export async function saveImage(
 
 export async function deleteImage(
   image: ImageData,
-  currentUser: SerializableUser | null
+  currentUser: SerializableUser | null,
+  year: string
 ): Promise<void> {
   if (!currentUser) throw new Error("No user provided");
-  const reference = storage().ref(`/images/${currentUser.uid}/${image.id}`);
+  const reference = storage().ref(
+    `/images/${year}/${currentUser.uid}/${image.id}`
+  );
   await reference.delete();
 }
 
 export async function getImageUrl(
   id: string,
-  currentUser: SerializableUser | null
+  currentUser: SerializableUser | null,
+  year: string
 ): Promise<string> {
   if (!currentUser) throw new Error("No user provided");
   const url = await storage()
-    .ref(`/images/${currentUser.uid}/${id}`)
+    .ref(`/images/${year}/${currentUser.uid}/${id}`)
     .getDownloadURL();
   return url;
 }
@@ -261,16 +287,17 @@ export async function removeTask({
   context,
   currentUser,
   day,
+  year,
 }: RemoveTaskParams): Promise<void> {
   if (!currentUser) throw new Error("No user provided");
   const ref =
     category === TASK_CATEGORY.MOOD
-      ? `${baseUrl}/${currentUser.uid}/${category}/${day}`
-      : `${baseUrl}/${currentUser.uid}/${category}/${context}`;
+      ? `${currentUser.uid}/${category}/${day}`
+      : `${currentUser.uid}/${category}/${context}`;
   const response = await firebase
     .app()
     .database(EXPO_PUBLIC_DB)
-    .ref(ref)
+    .ref(`${year}/${ref}`)
     .remove();
 
   return response;

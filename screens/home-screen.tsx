@@ -12,6 +12,7 @@ import Album from "../assets/svg/album";
 import Dashboard from "../assets/svg/dashboard";
 import { AlbumScreen } from "./album-screen";
 import { DashboardScreen } from "./dashboard-screen/dashboard-screen";
+import { YearSelector } from "../components/year-selector";
 
 const Tab = createBottomTabNavigator();
 
@@ -21,6 +22,7 @@ export const HomeScreen = () => {
     <Tab.Navigator
       initialRouteName={SCREENS.PERIOD_OVERVIEW}
       screenOptions={{
+        headerLeft: YearSelector,
         headerRight: AppMenu,
         tabBarActiveTintColor: "#fe434c",
         tabBarInactiveTintColor: "#999999",

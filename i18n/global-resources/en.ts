@@ -18,6 +18,7 @@ export default {
     selectMonth: "Select month",
     error: "Error",
     save: "Save",
+    welcome: "Welcome",
   },
   errors: {
     emptyText: "Text field cannot be empty",
