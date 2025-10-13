@@ -7,7 +7,7 @@ import { DashboardStats } from "./dashboard-stats";
 import { ContextSections } from "./context-sections";
 
 export const DashboardScreen = memo(() => {
-  const { totalData, contextData, isEmpty, status } = useDashboardData();
+  const { totalData, contextData, isEmpty, isLoading } = useDashboardData();
 
   if (isEmpty) {
     return <EmptyScreen />;
@@ -16,7 +16,7 @@ export const DashboardScreen = memo(() => {
   return (
     <SafeAreaView flex={1}>
       <Box p="$2">
-        {status === "pending" && <Loader absolute />}
+        {isLoading && <Loader absolute />}
         {totalData && <DashboardStats totalData={totalData} />}
         <ScrollView>
           {contextData && <ContextSections contextData={contextData} />}

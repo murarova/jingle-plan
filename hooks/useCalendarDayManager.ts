@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useAppDispatch, useAppSelector } from "../store/withTypes";
-import { getConfigurationAsync, getUserDataAsync } from "../services/data-api";
+import { useAppSelector } from "../store/withTypes";
+import { useGetConfigurationQuery, useGetUserDataQuery } from "../services/api";
 import {
   DayData,
   DayTaskProgress,
@@ -15,33 +15,32 @@ import {
 import { TASK_CATEGORY } from "../constants/constants";
 import moment from "moment";
 
-// Cache to prevent duplicate fetches across StrictMode remounts
-const fetchedKeys = new Set<string>();
-
 export const useCalendarDayManager = () => {
-  const dispatch = useAppDispatch();
-  const { configuration, userData, status, error, selectedYear } =
-    useAppSelector((state) => state.app);
+  const { selectedYear } = useAppSelector((state) => state.app);
   const { currentUser } = useAppSelector((state) => state.auth);
-  const isLoading = status === "pending";
-  const lastFetchedKey = useRef<string | null>(null);
+
+  const {
+    data: configuration,
+    isLoading: isConfigLoading,
+    error: configError,
+  } = useGetConfigurationQuery({ year: selectedYear }, { skip: !selectedYear });
+
+  const {
+    data: userData,
+    isLoading: isUserDataLoading,
+    error: userDataError,
+    refetch: refetchUserData,
+  } = useGetUserDataQuery(
+    { uid: currentUser?.uid!, year: selectedYear },
+    { skip: !currentUser?.uid || !selectedYear }
+  );
+
+  const isLoading = isConfigLoading || isUserDataLoading;
+  const error = configError || userDataError;
 
   const refresh = useCallback(() => {
-    dispatch(getUserDataAsync());
-    dispatch(getConfigurationAsync());
-  }, [dispatch]);
-
-  useEffect(() => {
-    const fetchKey = currentUser ? `${currentUser.uid}:${selectedYear}` : null;
-    if (!fetchKey) return;
-
-    if (lastFetchedKey.current !== fetchKey && !fetchedKeys.has(fetchKey)) {
-      lastFetchedKey.current = fetchKey;
-      fetchedKeys.add(fetchKey);
-      dispatch(getUserDataAsync());
-      dispatch(getConfigurationAsync());
-    }
-  }, [currentUser, selectedYear, dispatch]);
+    refetchUserData();
+  }, [refetchUserData]);
 
   const calculateTaskGradeByCategory = useCallback(
     (
@@ -178,7 +177,6 @@ export const useCalendarDayManager = () => {
     configuration,
     userData,
     getDayConfig,
-    status,
     refresh,
     hasData,
     shouldRetry,

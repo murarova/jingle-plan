@@ -95,7 +95,7 @@ export default {
       invalidEmail: "Будь ласка, введіть дійсну електронну адресу",
     },
     emptyScreen: "На сьогодні завдань немає",
-    processText: "Ти виконав:",
+    processText: "Виконано:",
     periodOverview: {
       title: "Завдання",
     },

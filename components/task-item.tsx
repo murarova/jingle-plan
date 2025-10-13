@@ -18,7 +18,7 @@ import { Plans } from "./day-tasks/plans/plans";
 import { Summary } from "./day-tasks/summary/summary";
 import { MonthPhoto } from "./day-tasks/month-photo/month-photo";
 import { Goals } from "./day-tasks/goals/goals";
-import { useAppDispatch, useAppSelector } from "../store/withTypes";
+import { useAppSelector } from "../store/withTypes";
 import moment from "moment";
 import {
   PlanData,
@@ -33,6 +33,9 @@ import {
   SummaryContextData,
 } from "../types/types";
 import { MoodTask } from "./day-tasks/mood/mood-task";
+import { useGetUserDataQuery } from "../services/api";
+import { useRef } from "react";
+import { View } from "react-native";
 
 export function TaskItem({
   taskConfig,
@@ -42,33 +45,41 @@ export function TaskItem({
   currentDay: string;
 }) {
   const { t } = useTranslation();
-  const { userData } = useAppSelector((state) => state.app);
+  const { currentUser } = useAppSelector((state) => state.auth);
+  const { selectedYear } = useAppSelector((state) => state.app);
+  const { data: userData } = useGetUserDataQuery(
+    { uid: currentUser?.uid!, year: selectedYear },
+    { skip: !currentUser?.uid || !selectedYear }
+  );
   const day = moment(currentDay).format("DD");
+  const accordionHeaderRef = useRef<View>(null);
 
   return (
     <>
       <Accordion size="md" my="$2" type="multiple" borderRadius="$lg">
         <AccordionItem value="a" borderRadius="$lg">
-          <AccordionHeader>
-            <AccordionTrigger>
-              {({ isExpanded }) => {
-                return (
-                  <>
-                    <AccordionTitleText>
-                      {taskConfig.category === TASK_CATEGORY.MOOD
-                        ? t("screens.tasksOfTheDay.moodTitle")
-                        : t("screens.tasksOfTheDay.dayTitle")}
-                    </AccordionTitleText>
-                    {isExpanded ? (
-                      <AccordionIcon as={ChevronUpIcon} ml="$3" />
-                    ) : (
-                      <AccordionIcon as={ChevronDownIcon} ml="$3" />
-                    )}
-                  </>
-                );
-              }}
-            </AccordionTrigger>
-          </AccordionHeader>
+          <View ref={accordionHeaderRef}>
+            <AccordionHeader>
+              <AccordionTrigger>
+                {({ isExpanded }) => {
+                  return (
+                    <>
+                      <AccordionTitleText>
+                        {taskConfig.category === TASK_CATEGORY.MOOD
+                          ? t("screens.tasksOfTheDay.moodTitle")
+                          : t("screens.tasksOfTheDay.dayTitle")}
+                      </AccordionTitleText>
+                      {isExpanded ? (
+                        <AccordionIcon as={ChevronUpIcon} ml="$3" />
+                      ) : (
+                        <AccordionIcon as={ChevronDownIcon} ml="$3" />
+                      )}
+                    </>
+                  );
+                }}
+              </AccordionTrigger>
+            </AccordionHeader>
+          </View>
           <AccordionContent>
             <Box>
               <Heading size="sm" pb="$2">

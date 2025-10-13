@@ -24,6 +24,7 @@ import {
   FormControlErrorText,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
+import { Alert } from "react-native";
 import { PlanData, PlanScreenData, TaskContext } from "../../../types/types";
 import { allMonths, TASK_CONTEXT } from "../../../constants/constants";
 
@@ -59,7 +60,10 @@ export function AddPlanModal({
   function handleSubmit() {
     const trimmedText = text.trim();
 
-    if (!trimmedText) return;
+    if (!trimmedText) {
+      Alert.alert(t("common.error"), t("errors.emptyText"));
+      return;
+    }
 
     if (isPlanScreen && !isEditMode && !context) {
       setContextError(true);
@@ -103,6 +107,9 @@ export function AddPlanModal({
                 onChangeText={setText}
                 defaultValue={text}
                 placeholder={t("screens.plansModal.placeholder")}
+                returnKeyType="done"
+                submitBehavior="blurAndSubmit"
+                onSubmitEditing={handleSubmit}
               />
             </Textarea>
             {isPlanScreen && (

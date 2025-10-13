@@ -12,14 +12,19 @@ import { MonthSelectModal } from "../../components/modals/month-select-modal";
 import { ViewSwitch } from "./view-switch";
 import { GlobalGoal } from "./global-goal";
 import { PlansView } from "./plans-view";
+import { useGetUserDataQuery } from "../../services/api";
 
 export function PlansScreen() {
   const [view, setView] = useState<PlansViewOptions>(PlansViewOptions.context);
 
-  const { userData, status } = useAppSelector((state) => state.app);
+  const { currentUser } = useAppSelector((state) => state.auth);
+  const { selectedYear } = useAppSelector((state) => state.app);
+  const { data: userData, isLoading } = useGetUserDataQuery(
+    { uid: currentUser?.uid!, year: selectedYear },
+    { skip: !currentUser?.uid || !selectedYear }
+  );
   const plans = userData?.plans as PlanContextData | null;
   const globalGoal = userData?.goals as TextData | null;
-  const isLoading = status === "pending";
 
   const plansProps = usePlansScreen({ plans });
 

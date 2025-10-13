@@ -20,9 +20,15 @@ import { EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { InputIcon } from "@gluestack-ui/themed";
 import { Loader } from "../components/common";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { signInUserAsync } from "../services/auth-api";
-import { selectAuthStatus, isLoggedIn } from "../store/authReducer";
+import { useSignInUserMutation } from "../services/auth-api-rtk";
+import {
+  isLoggedIn,
+  setUser,
+  setAuthError,
+  setAuthLoading,
+} from "../store/authReducer";
 import { useAppSelector, useAppDispatch } from "../store/withTypes";
+import { convertToSerializableUser } from "../types/user";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
 
@@ -35,7 +41,7 @@ export const LoginScreen = () => {
   const [emailError, setEmailError] = useState("");
 
   const dispatch = useAppDispatch();
-  const authStatus = useAppSelector(selectAuthStatus);
+  const [signInUser, { isLoading: isSigningIn }] = useSignInUserMutation();
 
   const { t } = useTranslation();
   const nav = useNavigation<NavigationProp>();
@@ -58,24 +64,27 @@ export const LoginScreen = () => {
   const handleState = () => setShowPassword((prevState) => !prevState);
 
   const goToMainFlow = async () => {
-    dispatch(signInUserAsync({ email, password }))
-      .unwrap()
-      .then(() => {
-        nav.replace(SCREENS.HOME);
-      })
-      .catch(() => {
-        Alert.alert(
-          t("screens.loginScreen.errorTitle"),
-          t("screens.loginScreen.errorMessage")
-        );
-      });
+    try {
+      dispatch(setAuthLoading());
+      const user = await signInUser({ email, password }).unwrap();
+      dispatch(setUser(convertToSerializableUser(user)));
+      nav.replace(SCREENS.HOME);
+    } catch (error) {
+      dispatch(
+        setAuthError(error instanceof Error ? error.message : "Sign in failed")
+      );
+      Alert.alert(
+        t("screens.loginScreen.errorTitle"),
+        t("screens.loginScreen.errorMessage")
+      );
+    }
   };
 
   return (
     <Pressable flex={1} onPress={Keyboard.dismiss}>
       <KeyboardAwareScrollView>
         <SafeAreaView>
-          {authStatus === "pending" && <Loader />}
+          {isSigningIn && <Loader />}
           <Box p={10} pt={30} row-direction="column" justifyContent="center">
             <Box pb={10}>
               <Heading>{t("screens.loginScreen.title")}</Heading>

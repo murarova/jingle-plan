@@ -13,6 +13,7 @@ import { useAppSelector } from "../store/withTypes";
 import { selectSelectedYear } from "../store/appReducer";
 import { Loader } from "./common";
 import { calendarTheme, setupCalendarLocale } from "../utils/calendar-utils";
+import { useGetUserDataQuery } from "../services/api";
 
 interface CalendarProps {
   pressHandler: (dateString: string) => void;
@@ -42,9 +43,7 @@ const DayComponent = memo(
           <CircularProgress
             value={progress}
             activeStrokeColor={
-              pressed
-                ? config.tokens.colors.green500
-                : config.tokens.colors.green400
+              progress === 0 ? "transparent" : config.tokens.colors.green400
             }
             inActiveStrokeColor={config.tokens.colors.warmGray400}
             inActiveStrokeOpacity={0.2}
@@ -84,7 +83,13 @@ export const Calendar = memo(({ pressHandler }: CalendarProps) => {
   const { i18n, t } = useTranslation();
   const resolvedLanguage =
     (i18n.resolvedLanguage as keyof typeof LANGUAGES) || "en";
-  const { status, userData } = useAppSelector((state) => state.app);
+  const { currentUser } = useAppSelector((state) => state.auth);
+
+  const { data: userData, isLoading: isUserDataLoading } = useGetUserDataQuery(
+    { uid: currentUser?.uid!, year: selectedYear },
+    { skip: !currentUser?.uid || !selectedYear }
+  );
+
   const isAdmin = userData?.userProfile?.isAdmin || false;
 
   const locale = useMemo(
@@ -93,7 +98,7 @@ export const Calendar = memo(({ pressHandler }: CalendarProps) => {
   );
 
   const { getDayConfig } = useCalendarDayManager();
-  const isLoading = status === "pending";
+  const isLoading = isUserDataLoading;
 
   useEffect(() => {
     setupCalendarLocale(locale);
@@ -125,7 +130,7 @@ export const Calendar = memo(({ pressHandler }: CalendarProps) => {
           state={state}
           onPress={pressHandler}
           currentDate={currentDate}
-          progress={progress}
+          progress={progress ?? 0}
         />
       );
     },

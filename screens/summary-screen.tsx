@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import {
   Box,
   Text,
@@ -18,6 +18,7 @@ import {
   ButtonText,
   ScrollView,
   SafeAreaView,
+  HStack,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { EmptyScreen } from "../components/empty-screen";
@@ -27,14 +28,19 @@ import { useRating } from "../hooks/useRating";
 import { Alert } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SummaryContextData, TaskContext, SummaryData } from "../types/types";
-import { useAppDispatch, useAppSelector } from "../store/withTypes";
-import { removeTaskAsync, saveTaskByCategoryAsync } from "../services/data-api";
+import { useAppSelector } from "../store/withTypes";
+import {
+  useRemoveTaskMutation,
+  useSaveTaskByCategoryMutation,
+  useGetUserDataQuery,
+} from "../services/api";
 
 interface EditableContentProps {
   context: TaskContext;
   text: string;
   onTextChange: (text: string) => void;
   onSubmit: () => void;
+  onCancel: () => void;
 }
 
 interface ContentViewProps {
@@ -56,6 +62,7 @@ const EditableContent: React.FC<EditableContentProps> = ({
   text,
   onTextChange,
   onSubmit,
+  onCancel,
 }) => {
   const { t } = useTranslation();
 
@@ -66,11 +73,24 @@ const EditableContent: React.FC<EditableContentProps> = ({
           onChangeText={onTextChange}
           value={text}
           placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
+          returnKeyType="done"
+          submitBehavior="blurAndSubmit"
+          onSubmitEditing={onSubmit}
         />
       </Textarea>
-      <Button onPress={onSubmit} mt="$2" borderRadius="$lg">
-        <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
-      </Button>
+      <HStack space="sm" mt="$2">
+        <Button
+          flex={1}
+          variant="outline"
+          onPress={onCancel}
+          borderRadius="$lg"
+        >
+          <ButtonText>{t("common.cancel")}</ButtonText>
+        </Button>
+        <Button flex={1} onPress={onSubmit} borderRadius="$lg">
+          <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
+        </Button>
+      </HStack>
     </>
   );
 };
@@ -116,16 +136,24 @@ const AccordionHeaderContent: React.FC<AccordionHeaderProps> = ({
 
 export const SummaryScreen: React.FC = () => {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
   const getRating = useRating();
+  const [saveTaskByCategory, { isLoading: isSaving }] =
+    useSaveTaskByCategoryMutation();
+  const [removeTask, { isLoading: isRemoving }] = useRemoveTaskMutation();
 
-  const { userData, status } = useAppSelector((state) => state.app);
+  const { currentUser } = useAppSelector((state) => state.auth);
+  const { selectedYear } = useAppSelector((state) => state.app);
+  const { data: userData } = useGetUserDataQuery(
+    { uid: currentUser?.uid!, year: selectedYear },
+    { skip: !currentUser?.uid || !selectedYear }
+  );
   const summary = userData?.summary as SummaryContextData | null;
 
   const [editContext, setEditContext] = useState<TaskContext | null>(null);
   const [text, setText] = useState("");
+  const scrollViewRef = useRef<any>(null);
 
-  const isLoading = status === "pending";
+  const isLoading = isSaving || isRemoving;
 
   const handleTaskSubmit = useCallback(
     async (context: TaskContext, item?: SummaryData) => {
@@ -135,41 +163,52 @@ export const SummaryScreen: React.FC = () => {
       }
 
       try {
-        await dispatch(
-          saveTaskByCategoryAsync({
-            category: TASK_CATEGORY.SUMMARY,
-            data: {
-              ...item,
-              text,
-              rate: item?.rate ?? 0,
-            },
-            context,
-          })
-        ).unwrap();
+        await saveTaskByCategory({
+          category: TASK_CATEGORY.SUMMARY,
+          data: {
+            ...item,
+            text,
+            rate: item?.rate ?? 0,
+          },
+          context,
+          year: selectedYear,
+        }).unwrap();
         setEditContext(null);
         setText("");
       } catch (error) {
         Alert.alert(t("common.error"), t("errors.generic"));
       }
     },
-    [dispatch, text, t]
+    [saveTaskByCategory, text, t, selectedYear]
   );
 
   const handleTaskRemove = useCallback(
     async (context: TaskContext) => {
       try {
-        await dispatch(
-          removeTaskAsync({
-            category: TASK_CATEGORY.SUMMARY,
-            context,
-          })
-        ).unwrap();
+        await removeTask({
+          category: TASK_CATEGORY.SUMMARY,
+          context,
+          year: selectedYear,
+        }).unwrap();
         setText("");
       } catch (error) {
         Alert.alert(t("common.error"), t("errors.generic"));
       }
     },
-    [dispatch, t]
+    [removeTask, t, selectedYear]
+  );
+
+  const handleCancel = useCallback(
+    (context: TaskContext) => {
+      // Reset form to original state
+      if (summary?.[context]?.text) {
+        setText(summary[context].text);
+      } else {
+        setText("");
+      }
+      setEditContext(null);
+    },
+    [summary]
   );
 
   if (!userData) {
@@ -184,7 +223,7 @@ export const SummaryScreen: React.FC = () => {
     <SafeAreaView flex={1}>
       <Box p="$2" flex={1}>
         {isLoading && <Loader absolute />}
-        <KeyboardAwareScrollView extraScrollHeight={100}>
+        <KeyboardAwareScrollView ref={scrollViewRef} extraScrollHeight={100}>
           <ScrollView>
             <Accordion
               key="summary"
@@ -205,15 +244,17 @@ export const SummaryScreen: React.FC = () => {
                   >
                     <AccordionHeader>
                       <AccordionTrigger>
-                        {({ isExpanded }) => (
-                          <AccordionHeaderContent
-                            context={context}
-                            isExpanded={isExpanded}
-                            getRating={getRating}
-                            t={t}
-                            summary={summary}
-                          />
-                        )}
+                        {({ isExpanded }) => {
+                          return (
+                            <AccordionHeaderContent
+                              context={context}
+                              isExpanded={isExpanded}
+                              getRating={getRating}
+                              t={t}
+                              summary={summary}
+                            />
+                          );
+                        }}
                       </AccordionTrigger>
                     </AccordionHeader>
                     <AccordionContent>
@@ -226,6 +267,7 @@ export const SummaryScreen: React.FC = () => {
                             onSubmit={() =>
                               handleTaskSubmit(context, summary[context])
                             }
+                            onCancel={() => handleCancel(context)}
                           />
                         ) : (
                           <ContentView

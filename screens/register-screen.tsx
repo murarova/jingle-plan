@@ -20,9 +20,14 @@ import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { Loader } from "../components/common";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useAppDispatch, useAppSelector } from "../store/withTypes";
-import { selectAuthStatus } from "../store/authReducer";
-import { createUserAsync, createProfileAsync } from "../services/auth-api";
+import { useAppDispatch } from "../store/withTypes";
+import { setUser, setAuthError, setAuthLoading } from "../store/authReducer";
+import {
+  useCreateUserMutation,
+  useCreateProfileMutation,
+} from "../services/auth-api-rtk";
+import { convertToSerializableUser } from "../types/user";
+import { useGetConfigurationQuery } from "../services/api";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
 
@@ -39,7 +44,9 @@ export const RegisterScreen = () => {
   const [passwordMatchError, setPasswordMatchError] = useState("");
 
   const dispatch = useAppDispatch();
-  const authStatus = useAppSelector(selectAuthStatus);
+  const [createUser, { isLoading: isCreatingUser }] = useCreateUserMutation();
+  const [createProfile] = useCreateProfileMutation();
+  const { data: configuration } = useGetConfigurationQuery({ year: "2024" }); // Default year
 
   const { t } = useTranslation();
   const nav = useNavigation<NavigationProp>();
@@ -66,7 +73,7 @@ export const RegisterScreen = () => {
     }
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (
       !emailError &&
       !passwordError &&
@@ -75,21 +82,28 @@ export const RegisterScreen = () => {
       password &&
       repeatPassword
     ) {
-      dispatch(createUserAsync({ email, password }))
-        .unwrap()
-        .then((result) => {
-          dispatch(createProfileAsync({ uid: result.uid, name }))
-            .unwrap()
-            .then(() => {
-              nav.replace(SCREENS.HOME);
-            })
-            .catch(() => {
-              Alert.alert("Oops", t("screens.registerScreen.errorMessage"));
-            });
-        })
-        .catch(() => {
-          Alert.alert("Oops", t("screens.registerScreen.errorMessage"));
-        });
+      try {
+        dispatch(setAuthLoading());
+        const user = await createUser({ email, password }).unwrap();
+        const serializableUser = convertToSerializableUser(user);
+
+        // Create profile
+        await createProfile({
+          uid: user.uid,
+          name,
+          year: "2024", // Default year for profile creation
+        }).unwrap();
+
+        dispatch(setUser(serializableUser));
+        nav.replace(SCREENS.HOME);
+      } catch (error) {
+        dispatch(
+          setAuthError(
+            error instanceof Error ? error.message : "Registration failed"
+          )
+        );
+        Alert.alert("Oops", t("screens.registerScreen.errorMessage"));
+      }
     }
   };
 
@@ -109,7 +123,7 @@ export const RegisterScreen = () => {
     <Pressable flex={1} onPress={Keyboard.dismiss}>
       <KeyboardAwareScrollView>
         <SafeAreaView flex={1}>
-          {authStatus === "pending" && <Loader />}
+          {isCreatingUser && <Loader />}
           <Box p={10}>
             <Box pb={10}>
               <Heading>{t("screens.registerScreen.title")}</Heading>

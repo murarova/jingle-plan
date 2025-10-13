@@ -7,8 +7,8 @@ import {
   TaskGategory,
 } from "../types/types";
 import { TASK_CATEGORY } from "../constants/constants";
-import { removeTaskAsync, saveTaskByCategoryAsync } from "../services/data-api";
-import { AppDispatch } from "../store/store";
+// This utility will be updated to work with RTK Query mutations
+// For now, components should use RTK Query hooks directly
 import { TFunction } from "i18next";
 
 export const findPlanContextById = (
@@ -30,31 +30,5 @@ export const getPlansList = (
   return plans?.[context] || [];
 };
 
-export const savePlans = async (
-  dispatch: AppDispatch,
-  context: TaskContext,
-  data: PlanScreenData[],
-  t: TFunction
-): Promise<void> => {
-  try {
-    if (!isEmpty(data)) {
-      await dispatch(
-        saveTaskByCategoryAsync({
-          category: TASK_CATEGORY.PLANS as TaskGategory,
-          data,
-          context,
-        })
-      ).unwrap();
-    } else {
-      await dispatch(
-        removeTaskAsync({
-          category: TASK_CATEGORY.PLANS as TaskGategory,
-          context,
-        })
-      ).unwrap();
-    }
-  } catch (error) {
-    Alert.alert(t("common.error"), t("errors.generic"));
-    throw error;
-  }
-};
+// This function has been removed as components should use RTK Query hooks directly
+// Use useSaveTaskByCategoryMutation and useRemoveTaskMutation in components

@@ -13,21 +13,33 @@ import { useTranslation } from "react-i18next";
 import { SCREENS } from "../constants/constants";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Alert } from "react-native";
-import { deleteCurrentUserAsync, signOutAsync } from "../services/auth-api";
 import { useAppDispatch, useAppSelector } from "../store/withTypes";
-import { clearUserData } from "../store/appReducer";
+import { clearUser } from "../store/authReducer";
+import {
+  useSignOutMutation,
+  useDeleteCurrentUserMutation,
+} from "../services/auth-api-rtk";
+import { useGetUserDataQuery } from "../services/api";
 import { RootStackParamList } from "../App";
 
 export function AppMenu() {
   const { t } = useTranslation();
   const nav = useNavigation<NavigationProp<RootStackParamList>>();
   const dispatch = useAppDispatch();
-  const userData = useAppSelector((state) => state.app.userData);
+  const { currentUser } = useAppSelector((state) => state.auth);
+  const { selectedYear } = useAppSelector((state) => state.app);
+  const { data: userData } = useGetUserDataQuery(
+    { uid: currentUser?.uid!, year: selectedYear },
+    { skip: !currentUser?.uid || !selectedYear }
+  );
+  const [signOut, { isLoading: isSigningOut }] = useSignOutMutation();
+  const [deleteCurrentUser, { isLoading: isDeleting }] =
+    useDeleteCurrentUserMutation();
 
   async function handleLogout() {
     try {
-      await dispatch(signOutAsync()).unwrap();
-      dispatch(clearUserData());
+      await signOut().unwrap();
+      dispatch(clearUser());
       nav.navigate(SCREENS.LOADING);
     } catch (error) {
       Alert.alert(
@@ -50,7 +62,7 @@ export function AppMenu() {
           text: t("common.delete"),
           onPress: async () => {
             try {
-              await dispatch(deleteCurrentUserAsync()).unwrap();
+              await deleteCurrentUser().unwrap();
               nav.navigate(SCREENS.LOADING);
             } catch (error) {
               Alert.alert(

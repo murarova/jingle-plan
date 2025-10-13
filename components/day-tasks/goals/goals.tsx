@@ -6,6 +6,7 @@ import {
   Button,
   ButtonText,
   VStack,
+  HStack,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -16,10 +17,10 @@ import isEmpty from "lodash/isEmpty";
 import { ActionButtons, Loader } from "../../common";
 import { TextData } from "../../../types/types";
 import {
-  removeTaskAsync,
-  saveTaskByCategoryAsync,
-} from "../../../services/data-api";
-import { useAppDispatch, useAppSelector } from "../../../store/withTypes";
+  useRemoveTaskMutation,
+  useSaveTaskByCategoryMutation,
+} from "../../../services/api";
+import { useAppSelector } from "../../../store/withTypes";
 
 interface GoalsProps {
   context: string;
@@ -29,6 +30,7 @@ interface GoalsProps {
 interface GoalsFormProps {
   initialText: string;
   onSubmit: (text: string) => void;
+  onCancel: () => void;
   placeholderText: string;
   submitButtonText: string;
 }
@@ -37,9 +39,11 @@ const GoalsForm = memo(
   ({
     initialText,
     onSubmit,
+    onCancel,
     placeholderText,
     submitButtonText,
   }: GoalsFormProps) => {
+    const { t } = useTranslation();
     const [text, setText] = useState(initialText);
 
     const handleSubmit = useCallback(() => {
@@ -53,15 +57,29 @@ const GoalsForm = memo(
             onChangeText={setText}
             value={text}
             placeholder={placeholderText}
+            returnKeyType="done"
+            submitBehavior="blurAndSubmit"
+            onSubmitEditing={handleSubmit}
           />
         </Textarea>
-        <Button
-          onPress={handleSubmit}
-          borderRadius="$lg"
-          accessibilityLabel="Save goals"
-        >
-          <ButtonText>{submitButtonText}</ButtonText>
-        </Button>
+        <HStack space="sm" mt="$2">
+          <Button
+            flex={1}
+            variant="outline"
+            onPress={onCancel}
+            borderRadius="$lg"
+          >
+            <ButtonText>{t("common.cancel")}</ButtonText>
+          </Button>
+          <Button
+            flex={1}
+            onPress={handleSubmit}
+            borderRadius="$lg"
+            accessibilityLabel="Save goals"
+          >
+            <ButtonText>{submitButtonText}</ButtonText>
+          </Button>
+        </HStack>
       </VStack>
     );
   }
@@ -93,8 +111,10 @@ export const Goals = memo(({ context, data }: GoalsProps) => {
   const { t } = useTranslation();
   const [text, setText] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const dispatch = useAppDispatch();
-  const { status } = useAppSelector((state) => state.app);
+  const [saveTaskByCategory, { isLoading: isSaving }] =
+    useSaveTaskByCategoryMutation();
+  const [removeTask, { isLoading: isRemoving }] = useRemoveTaskMutation();
+  const { selectedYear } = useAppSelector((state) => state.app);
 
   useEffect(() => {
     setIsEditing(isEmpty(data));
@@ -118,13 +138,12 @@ export const Goals = memo(({ context, data }: GoalsProps) => {
       };
 
       try {
-        await dispatch(
-          saveTaskByCategoryAsync({
-            category: TASK_CATEGORY.GOALS,
-            data: updatedGoal,
-            context,
-          })
-        ).unwrap();
+        await saveTaskByCategory({
+          category: TASK_CATEGORY.GOALS,
+          data: updatedGoal,
+          context,
+          year: selectedYear,
+        }).unwrap();
 
         setText(submittedText);
         setIsEditing(false);
@@ -133,17 +152,16 @@ export const Goals = memo(({ context, data }: GoalsProps) => {
         console.error("Failed to save goal:", error);
       }
     },
-    [dispatch, context, data?.id, t]
+    [saveTaskByCategory, context, data?.id, t, selectedYear]
   );
 
   const handleRemove = useCallback(async () => {
     try {
-      await dispatch(
-        removeTaskAsync({
-          category: TASK_CATEGORY.GOALS,
-          context,
-        })
-      ).unwrap();
+      await removeTask({
+        category: TASK_CATEGORY.GOALS,
+        context,
+        year: selectedYear,
+      }).unwrap();
       setText("");
       setIsEditing(true);
     } catch (error) {
@@ -153,11 +171,21 @@ export const Goals = memo(({ context, data }: GoalsProps) => {
       );
       console.error("Failed to remove goal:", error);
     }
-  }, [dispatch, context, t]);
+  }, [removeTask, context, t, selectedYear]);
 
   const handleEdit = useCallback(() => {
     setIsEditing(true);
   }, []);
+
+  const handleCancel = useCallback(() => {
+    // Reset form to original state
+    if (data?.text) {
+      setText(data.text);
+    } else {
+      setText("");
+    }
+    setIsEditing(false);
+  }, [data]);
 
   const placeholderText = useMemo(
     () => t("screens.tasksOfTheDay.textareaPlaceholder"),
@@ -173,11 +201,12 @@ export const Goals = memo(({ context, data }: GoalsProps) => {
 
   return (
     <Box width="100%">
-      {status === "pending" && <Loader absolute />}
+      {(isSaving || isRemoving) && <Loader absolute />}
       {isEditing ? (
         <GoalsForm
           initialText={text}
           onSubmit={handleSubmit}
+          onCancel={handleCancel}
           placeholderText={placeholderText}
           submitButtonText={submitButtonText}
         />

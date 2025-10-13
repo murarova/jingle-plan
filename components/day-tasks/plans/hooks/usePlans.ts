@@ -8,8 +8,8 @@ import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
 import uuid from "react-native-uuid";
 import { PlanData } from "../../../../types/types";
-import { useAppDispatch } from "../../../../store/withTypes";
-import { saveTaskByCategoryAsync } from "../../../../services/data-api";
+import { useAppSelector } from "../../../../store/withTypes";
+import { useSaveTaskByCategoryMutation } from "../../../../services/api";
 
 interface UsePlansProps {
   context: string;
@@ -18,7 +18,9 @@ interface UsePlansProps {
 
 export function usePlans({ data, context }: UsePlansProps) {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
+  const [saveTaskByCategory, { isLoading: isSaving }] =
+    useSaveTaskByCategoryMutation();
+  const { selectedYear } = useAppSelector((state) => state.app);
   const [updatedData, setUpdatedData] = useState<PlanData | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -28,7 +30,7 @@ export function usePlans({ data, context }: UsePlansProps) {
     setUpdatedData(null);
   }, []);
 
-  function handleAddPlan(text: string) {
+  async function handleAddPlan(text: string) {
     setLoading(true);
     const id = uuid.v4();
     const updatedPlans = [
@@ -40,13 +42,12 @@ export function usePlans({ data, context }: UsePlansProps) {
       },
     ];
     try {
-      dispatch(
-        saveTaskByCategoryAsync({
-          category: TASK_CATEGORY.PLANS,
-          data: updatedPlans,
-          context,
-        })
-      );
+      await saveTaskByCategory({
+        category: TASK_CATEGORY.PLANS,
+        data: updatedPlans,
+        context,
+        year: selectedYear,
+      }).unwrap();
     } catch (error) {
       Alert.alert("Oops", "Something wrong");
     } finally {
@@ -54,19 +55,18 @@ export function usePlans({ data, context }: UsePlansProps) {
     }
   }
 
-  function handleUpdatePlan(id: string, text: string) {
+  async function handleUpdatePlan(id: string, text: string) {
     setLoading(true);
     const updatedPlans = (data ?? []).map((item) =>
       item.id === id ? { ...item, text } : item
     );
     try {
-      dispatch(
-        saveTaskByCategoryAsync({
-          category: TASK_CATEGORY.PLANS,
-          data: updatedPlans,
-          context,
-        })
-      );
+      await saveTaskByCategory({
+        category: TASK_CATEGORY.PLANS,
+        data: updatedPlans,
+        context,
+        year: selectedYear,
+      }).unwrap();
     } catch (error) {
       Alert.alert("Oops", "Something wrong");
     } finally {
@@ -87,13 +87,12 @@ export function usePlans({ data, context }: UsePlansProps) {
     }
 
     try {
-      await dispatch(
-        saveTaskByCategoryAsync({
-          category: TASK_CATEGORY.PLANS,
-          data: updatedPlans,
-          context,
-        })
-      );
+      await saveTaskByCategory({
+        category: TASK_CATEGORY.PLANS,
+        data: updatedPlans,
+        context,
+        year: selectedYear,
+      }).unwrap();
     } catch (error) {
       Alert.alert("Oops", "Something wrong");
     } finally {
@@ -117,7 +116,7 @@ export function usePlans({ data, context }: UsePlansProps) {
     handleEditPlan,
     handleDeletePlan,
     handleAddPlanBtn,
-    isLoading,
+    isLoading: isLoading || isSaving,
     closeModal,
   };
 }

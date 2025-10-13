@@ -6,16 +6,17 @@ import {
   Textarea,
   TextareaInput,
   VStack,
+  HStack,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { memo, useCallback, useEffect, useState } from "react";
 import { TASK_CATEGORY, TaskOutputType } from "../../../constants/constants";
 import {
-  deleteImageAsync,
-  removeTaskAsync,
-  saveMoodTaskAsync,
-} from "../../../services/data-api";
-import { useAppDispatch, useAppSelector } from "../../../store/withTypes";
+  useRemoveTaskMutation,
+  useSaveMoodTaskMutation,
+  useDeleteImageMutation,
+} from "../../../services/api";
+import { useAppSelector } from "../../../store/withTypes";
 import isEmpty from "lodash/isEmpty";
 import { Alert } from "react-native";
 import uuid from "react-native-uuid";
@@ -35,6 +36,7 @@ interface MoodFormProps {
   taskOutputType: TaskOutputType;
   onTextChange: (text: string) => void;
   onSubmit: () => void;
+  onCancel: () => void;
   image: any;
   isImageLoading: boolean;
   setImageLoading: (loading: boolean) => void;
@@ -47,6 +49,7 @@ const MoodForm = memo(
     taskOutputType,
     onTextChange,
     onSubmit,
+    onCancel,
     image,
     isImageLoading,
     setImageLoading,
@@ -69,6 +72,9 @@ const MoodForm = memo(
               onChangeText={onTextChange}
               value={text}
               placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
+              returnKeyType="done"
+              submitBehavior="blurAndSubmit"
+              onSubmitEditing={onSubmit}
             />
           </Textarea>
         )}
@@ -147,8 +153,10 @@ MoodView.displayName = "MoodView";
 
 export const MoodTask = memo(({ data, day, taskOutputType }: MoodProps) => {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
-  const { status } = useAppSelector((state) => state.app);
+  const [saveMoodTask, { isLoading: isSaving }] = useSaveMoodTaskMutation();
+  const [removeTask, { isLoading: isRemoving }] = useRemoveTaskMutation();
+  const [deleteImage] = useDeleteImageMutation();
+  const { selectedYear } = useAppSelector((state) => state.app);
 
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState("");
@@ -174,16 +182,15 @@ export const MoodTask = memo(({ data, day, taskOutputType }: MoodProps) => {
 
   const handleTaskRemove = useCallback(async () => {
     try {
-      await dispatch(
-        removeTaskAsync({
-          category: TASK_CATEGORY.MOOD,
-          context: "",
-          day,
-        })
-      ).unwrap();
+      await removeTask({
+        category: TASK_CATEGORY.MOOD,
+        context: "",
+        day,
+        year: selectedYear,
+      }).unwrap();
 
       if (image) {
-        await dispatch(deleteImageAsync({ image })).unwrap();
+        await deleteImage({ image, year: selectedYear }).unwrap();
       }
 
       setText("");
@@ -191,7 +198,7 @@ export const MoodTask = memo(({ data, day, taskOutputType }: MoodProps) => {
     } catch (error) {
       Alert.alert(t("common.error"), t("errors.generic"));
     }
-  }, [dispatch, day, image, setImage, t]);
+  }, [removeTask, deleteImage, day, image, setImage, t, selectedYear]);
 
   const handleTextChange = useCallback((newText: string) => {
     setText(newText);
@@ -201,6 +208,23 @@ export const MoodTask = memo(({ data, day, taskOutputType }: MoodProps) => {
     setIsEditing(true);
   }, []);
 
+  const handleCancel = useCallback(() => {
+    // Reset form to original state
+    if (dayMoodData?.text) {
+      setText(dayMoodData.text);
+    } else {
+      setText("");
+    }
+
+    if (dayMoodData?.image) {
+      setImage(dayMoodData.image);
+    } else {
+      setImage(null);
+    }
+
+    setIsEditing(false);
+  }, [dayMoodData, setImage]);
+
   const handleSubmit = useCallback(async () => {
     const needsText =
       taskOutputType === TaskOutputType.Text ||
@@ -209,8 +233,20 @@ export const MoodTask = memo(({ data, day, taskOutputType }: MoodProps) => {
       taskOutputType === TaskOutputType.Image ||
       taskOutputType === TaskOutputType.TextPhoto;
 
-    if (needsText && !text.trim() && needsImage && !image) {
+    // Validation: Check if required fields are empty
+    if (needsText && !text.trim()) {
       Alert.alert(t("common.error"), t("errors.emptyText"));
+      return;
+    }
+
+    if (needsImage && !image) {
+      Alert.alert(t("common.error"), t("errors.emptyImage"));
+      return;
+    }
+
+    // Additional validation: if both text and image are required, at least one must be provided
+    if (needsText && needsImage && !text.trim() && !image) {
+      Alert.alert(t("common.error"), t("errors.emptyTextAndImage"));
       return;
     }
 
@@ -225,26 +261,39 @@ export const MoodTask = memo(({ data, day, taskOutputType }: MoodProps) => {
     try {
       if (image) {
         const uri = await saveImage();
+        if (!uri) {
+          Alert.alert(t("common.error"), t("errors.generic"));
+          return; // stop if image upload failed
+        }
         updatedData.image = { ...image, uri };
       }
 
-      await dispatch(
-        saveMoodTaskAsync({
-          category: TASK_CATEGORY.MOOD,
-          data: updatedData,
-          day,
-        })
-      ).unwrap();
+      await saveMoodTask({
+        category: TASK_CATEGORY.MOOD,
+        data: updatedData,
+        day,
+        year: selectedYear,
+      }).unwrap();
 
       setIsEditing(false);
     } catch (error) {
       Alert.alert(t("common.error"), t("errors.generic"));
     }
-  }, [taskOutputType, text, image, dayMoodData, saveImage, dispatch, day, t]);
+  }, [
+    taskOutputType,
+    text,
+    image,
+    dayMoodData,
+    saveImage,
+    saveMoodTask,
+    day,
+    t,
+    selectedYear,
+  ]);
 
   return (
     <Box>
-      {status === "pending" && <Loader absolute />}
+      {(isSaving || isRemoving) && <Loader absolute />}
 
       {isEditing ? (
         <MoodForm
@@ -252,6 +301,7 @@ export const MoodTask = memo(({ data, day, taskOutputType }: MoodProps) => {
           taskOutputType={taskOutputType}
           onTextChange={handleTextChange}
           onSubmit={handleSubmit}
+          onCancel={handleCancel}
           image={image}
           isImageLoading={isLoading}
           setImageLoading={setIsLoading}
