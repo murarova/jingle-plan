@@ -2,7 +2,6 @@ import { memo, useRef } from "react";
 import { useDashboardData } from "../../hooks/useDashboardData";
 import { EmptyScreen } from "../../components/empty-screen";
 import { SafeAreaView, ScrollView, Box } from "@gluestack-ui/themed";
-import { Loader } from "../../components/common";
 import { DashboardStats } from "./dashboard-stats";
 import { ContextSections } from "./context-sections";
 
@@ -16,7 +15,6 @@ export const DashboardScreen = memo(() => {
   return (
     <SafeAreaView flex={1}>
       <Box p="$2">
-        {isLoading && <Loader absolute />}
         {totalData && <DashboardStats totalData={totalData} />}
         <ScrollView>
           {contextData && <ContextSections contextData={contextData} />}

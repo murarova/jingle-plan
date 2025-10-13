@@ -27,9 +27,7 @@ import usePrevious from "../hooks/usePrevious";
 import { RootStackParamList } from "../App";
 import { StackScreenProps } from "@react-navigation/stack";
 import isNil from "lodash/isNil";
-import { Loader } from "../components/common";
 import { useDayTasks } from "../hooks/useDayTasks";
-import { View } from "react-native";
 
 type Props = StackScreenProps<RootStackParamList, "DayOverview">;
 
@@ -113,7 +111,6 @@ const DayOverviewScreen: React.FC<Props> = memo(({ route, navigation }) => {
   return (
     <SafeAreaView flex={1}>
       <Box p="$2" flex={1}>
-        {isLoading && <Loader absolute />}
         {dayTasks ? (
           <>
             <ProgressBar total={total} t={t} />

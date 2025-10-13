@@ -15,7 +15,7 @@ import uuid from "react-native-uuid";
 import { Alert } from "react-native";
 import isEmpty from "lodash/isEmpty";
 import { HappySlider } from "./happy-slider";
-import { ActionButtons, Loader } from "../../common";
+import { ActionButtons } from "../../common";
 import { SummaryContextData } from "../../../types/types";
 import {
   useRemoveTaskMutation,
@@ -165,12 +165,7 @@ export function Summary({ context, data }: SummaryProps): React.JSX.Element {
     </VStack>
   );
 
-  return (
-    <Box>
-      {(isSaving || isRemoving) && <Loader absolute />}
-      {isEditing ? renderEditingMode() : renderViewMode()}
-    </Box>
-  );
+  return <Box>{isEditing ? renderEditingMode() : renderViewMode()}</Box>;
 }
 
 Summary.displayName = "Summary";

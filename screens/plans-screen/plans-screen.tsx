@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { EmptyScreen } from "../../components/empty-screen";
-import { Loader } from "../../components/common";
 import { usePlansScreen } from "../../components/plans-view/hooks/usePlansScreen";
 import { ButtonIcon, Fab, SafeAreaView } from "@gluestack-ui/themed";
 import { PlansViewOptions } from "../../constants/constants";
@@ -34,7 +33,6 @@ export function PlansScreen() {
 
   return (
     <SafeAreaView flex={1}>
-      {isLoading && <Loader absolute />}
       {plans && <ViewSwitch onViewChange={setView} />}
       {globalGoal && <GlobalGoal text={globalGoal.text} />}
       {plans && (

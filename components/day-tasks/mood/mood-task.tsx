@@ -20,7 +20,7 @@ import { useAppSelector } from "../../../store/withTypes";
 import isEmpty from "lodash/isEmpty";
 import { Alert } from "react-native";
 import uuid from "react-native-uuid";
-import { ActionButtons, AnimatedView, ImagePicker, Loader } from "../../common";
+import { ActionButtons, AnimatedView, ImagePicker } from "../../common";
 import { ImageBackground } from "@gluestack-ui/themed";
 import { useImage } from "../../../hooks/useImage";
 import { MoodTaskData, TextImageData } from "../../../types/types";
@@ -293,8 +293,6 @@ export const MoodTask = memo(({ data, day, taskOutputType }: MoodProps) => {
 
   return (
     <Box>
-      {(isSaving || isRemoving) && <Loader absolute />}
-
       {isEditing ? (
         <MoodForm
           text={text}

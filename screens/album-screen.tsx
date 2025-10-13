@@ -17,7 +17,6 @@ import { albumScreenmMonthOrder, months } from "../constants/constants";
 import { AlbumScreenMonth, MonthlyData, MonthPhotoData } from "../types/types";
 import { useAppSelector } from "../store/withTypes";
 import { EmptyScreen } from "../components/empty-screen";
-import { Loader } from "../components/common";
 import { useTranslation } from "react-i18next";
 import { useGetUserDataQuery } from "../services/api";
 
@@ -179,7 +178,6 @@ export const AlbumScreen = memo(() => {
 
   return (
     <SafeAreaView flex={1} backgroundColor="$backgroundLight50">
-      {isLoading && <Loader absolute />}
       <Box flex={1} pt={20} alignItems="center">
         <Carousel<MonthlyData>
           ref={carouselRef}

@@ -21,7 +21,7 @@ import { useFirebaseMessaging } from "./hooks/useFirebaseMessaging";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { Loader } from "./components/common";
+import { Loader, GlobalLoader } from "./components/common";
 
 (globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
 
@@ -74,53 +74,56 @@ function AppContent() {
   }
 
   return (
-    <NavigationContainer theme={MyTheme}>
-      <Stack.Navigator>
-        <Stack.Screen
-          name={SCREENS.LOADING}
-          component={LoadingScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name={SCREENS.INTRO}
-          component={IntroScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name={SCREENS.LOGIN}
-          component={LoginScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name={SCREENS.REGISTER}
-          component={RegisterScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name={SCREENS.HOME}
-          component={HomeScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name={SCREENS.DAY_OVERVIEW}
-          component={DayOverviewScreen}
-          options={{
-            headerBackTitle: t("common.back"),
-            headerRight: AppMenu,
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <NavigationContainer theme={MyTheme}>
+        <Stack.Navigator>
+          <Stack.Screen
+            name={SCREENS.LOADING}
+            component={LoadingScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name={SCREENS.INTRO}
+            component={IntroScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name={SCREENS.LOGIN}
+            component={LoginScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name={SCREENS.REGISTER}
+            component={RegisterScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name={SCREENS.HOME}
+            component={HomeScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name={SCREENS.DAY_OVERVIEW}
+            component={DayOverviewScreen}
+            options={{
+              headerBackTitle: t("common.back"),
+              headerRight: AppMenu,
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+      <GlobalLoader />
+    </>
   );
 }
 

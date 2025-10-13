@@ -18,7 +18,6 @@ import { SCREENS, EMAIL_REGEX } from "../constants/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { InputIcon } from "@gluestack-ui/themed";
-import { Loader } from "../components/common";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useSignInUserMutation } from "../services/auth-api-rtk";
 import {
@@ -84,7 +83,6 @@ export const LoginScreen = () => {
     <Pressable flex={1} onPress={Keyboard.dismiss}>
       <KeyboardAwareScrollView>
         <SafeAreaView>
-          {isSigningIn && <Loader />}
           <Box p={10} pt={30} row-direction="column" justifyContent="center">
             <Box pb={10}>
               <Heading>{t("screens.loginScreen.title")}</Heading>

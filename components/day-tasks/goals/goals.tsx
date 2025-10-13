@@ -14,7 +14,7 @@ import { TASK_CATEGORY } from "../../../constants/constants";
 import uuid from "react-native-uuid";
 import { Alert } from "react-native";
 import isEmpty from "lodash/isEmpty";
-import { ActionButtons, Loader } from "../../common";
+import { ActionButtons } from "../../common";
 import { TextData } from "../../../types/types";
 import {
   useRemoveTaskMutation,
@@ -201,7 +201,6 @@ export const Goals = memo(({ context, data }: GoalsProps) => {
 
   return (
     <Box width="100%">
-      {(isSaving || isRemoving) && <Loader absolute />}
       {isEditing ? (
         <GoalsForm
           initialText={text}

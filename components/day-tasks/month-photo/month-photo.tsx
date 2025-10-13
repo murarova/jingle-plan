@@ -3,7 +3,6 @@ import { memo } from "react";
 import { MonthPhotoData } from "../../../types/types";
 import { MonthPhotoForm } from "./month-photo-form";
 import { MonthPhotoView } from "./month-photo-view";
-import { Loader } from "../../common";
 import { useMonthPhoto } from "./hooks/useMonthPhoto";
 
 interface MonthPhotoProps {
@@ -30,8 +29,6 @@ export const MonthPhoto = memo(({ context, data }: MonthPhotoProps) => {
 
   return (
     <Box>
-      {(isSaving || isRemoving) && <Loader absolute />}
-
       {isEditing ? (
         <MonthPhotoForm
           text={text}

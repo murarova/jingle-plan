@@ -11,7 +11,6 @@ import { calculateTotalProgress } from "../utils/utils";
 import { useCalendarDayManager } from "../hooks/useCalendarDayManager";
 import { useAppSelector } from "../store/withTypes";
 import { selectSelectedYear } from "../store/appReducer";
-import { Loader } from "./common";
 import { calendarTheme, setupCalendarLocale } from "../utils/calendar-utils";
 import { useGetUserDataQuery } from "../services/api";
 
@@ -139,7 +138,6 @@ export const Calendar = memo(({ pressHandler }: CalendarProps) => {
 
   return (
     <Box position="relative">
-      {isLoading && <Loader absolute />}
       <NativeCalendar
         initialDate={minDate}
         firstDay={1}

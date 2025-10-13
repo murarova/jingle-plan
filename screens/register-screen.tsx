@@ -18,7 +18,6 @@ import { Alert, Keyboard } from "react-native";
 import { SCREENS, EMAIL_REGEX, PASSWORD_REGEX } from "../constants/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
-import { Loader } from "../components/common";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useAppDispatch } from "../store/withTypes";
 import { setUser, setAuthError, setAuthLoading } from "../store/authReducer";
@@ -123,7 +122,6 @@ export const RegisterScreen = () => {
     <Pressable flex={1} onPress={Keyboard.dismiss}>
       <KeyboardAwareScrollView>
         <SafeAreaView flex={1}>
-          {isCreatingUser && <Loader />}
           <Box p={10}>
             <Box pb={10}>
               <Heading>{t("screens.registerScreen.title")}</Heading>

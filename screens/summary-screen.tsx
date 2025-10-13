@@ -23,7 +23,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { EmptyScreen } from "../components/empty-screen";
 import { TASK_CATEGORY, TASK_CONTEXT } from "../constants/constants";
-import { ActionButtons, Loader } from "../components/common";
+import { ActionButtons } from "../components/common";
 import { useRating } from "../hooks/useRating";
 import { Alert } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -222,7 +222,6 @@ export const SummaryScreen: React.FC = () => {
   return (
     <SafeAreaView flex={1}>
       <Box p="$2" flex={1}>
-        {isLoading && <Loader absolute />}
         <KeyboardAwareScrollView ref={scrollViewRef} extraScrollHeight={100}>
           <ScrollView>
             <Accordion
