@@ -50,6 +50,10 @@ export default {
     december: "Грудень",
     every: "Кожного місяця",
   },
+  messages: {
+    confirmDeletePlan: "Ви впевнені, що хочете видалити цей план?",
+    confirmDeleteTask: "Ви впевнені, що хочете видалити це завдання?",
+  },
   errors: {
     emptyText: "Текстове поле не може бути порожнім",
     emptyImage: "Будь ласка, оберіть зображення",

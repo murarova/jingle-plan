@@ -32,9 +32,8 @@ export function AppMenu() {
     { uid: currentUser?.uid!, year: selectedYear },
     { skip: !currentUser?.uid || !selectedYear }
   );
-  const [signOut, { isLoading: isSigningOut }] = useSignOutMutation();
-  const [deleteCurrentUser, { isLoading: isDeleting }] =
-    useDeleteCurrentUserMutation();
+  const [signOut] = useSignOutMutation();
+  const [deleteCurrentUser] = useDeleteCurrentUserMutation();
 
   async function handleLogout() {
     try {
@@ -88,7 +87,13 @@ export function AppMenu() {
           );
         }}
       >
-        <MenuItem key="welcome" textValue="welcome" disabled>
+        <MenuItem
+          key="welcome"
+          textValue="welcome"
+          disabled
+          borderTopLeftRadius="$lg"
+          borderTopRightRadius="$lg"
+        >
           <Box
             padding="$3"
             borderBottomWidth={1}
@@ -117,13 +122,45 @@ export function AppMenu() {
           <MenuItemLabel size="sm">{LANGUAGES[lng].nativeName}</MenuItemLabel>
         </MenuItem>
       ))} */}
-        <MenuItem key="Logout" onPress={handleLogout} textValue="Logout">
-          <Icon as={LogOut} size="sm" mr="$2" />
-          <Text>{t("common.logout")}</Text>
+        <MenuItem
+          key="Logout"
+          onPress={handleLogout}
+          textValue="Logout"
+          p="$3"
+          minHeight={48}
+          sx={{
+            ":active": {
+              backgroundColor: "$coolGray200",
+            },
+            ":hover": {
+              backgroundColor: "$coolGray100",
+            },
+          }}
+        >
+          <Icon as={LogOut} size="sm" mr="$3" />
+          <Text fontSize="$md">{t("common.logout")}</Text>
         </MenuItem>
-        <MenuItem key="Delete" onPress={handleDeleteAccount} textValue="Delete">
-          <Icon as={Trash2} size="sm" mr="$2" />
-          <Text>{t("common.deleteAccount")}</Text>
+        <MenuItem
+          key="Delete"
+          onPress={handleDeleteAccount}
+          textValue="Delete"
+          p="$3"
+          minHeight={48}
+          borderBottomLeftRadius="$lg"
+          borderBottomRightRadius="$lg"
+          sx={{
+            ":active": {
+              backgroundColor: "$red100",
+            },
+            ":hover": {
+              backgroundColor: "$red50",
+            },
+          }}
+        >
+          <Icon as={Trash2} size="sm" mr="$3" color="$red600" />
+          <Text fontSize="$md" color="$red600">
+            {t("common.deleteAccount")}
+          </Text>
         </MenuItem>
       </Menu>
     </Box>

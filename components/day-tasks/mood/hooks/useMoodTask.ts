@@ -53,23 +53,32 @@ export const useMoodTask = ({
   }, [dayMoodData, setImage]);
 
   const handleTaskRemove = useCallback(async () => {
-    try {
-      await removeTask({
-        category: TASK_CATEGORY.MOOD,
-        context: "",
-        day,
-        year: selectedYear,
-      }).unwrap();
+    Alert.alert(t("common.delete"), t("messages.confirmDeleteTask"), [
+      { text: t("common.cancel"), style: "cancel" },
+      {
+        text: t("common.delete"),
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await removeTask({
+              category: TASK_CATEGORY.MOOD,
+              context: "",
+              day,
+              year: selectedYear,
+            }).unwrap();
 
-      if (image) {
-        await deleteImage({ image, year: selectedYear }).unwrap();
-      }
+            if (image) {
+              await deleteImage({ image, year: selectedYear }).unwrap();
+            }
 
-      setText("");
-      setImage(null);
-    } catch (error) {
-      Alert.alert(t("common.error"), t("errors.generic"));
-    }
+            setText("");
+            setImage(null);
+          } catch (error) {
+            Alert.alert(t("common.error"), t("errors.generic"));
+          }
+        },
+      },
+    ]);
   }, [removeTask, deleteImage, day, image, setImage, t, selectedYear]);
 
   const handleTextChange = useCallback((newText: string) => {

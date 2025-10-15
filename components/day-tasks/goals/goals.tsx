@@ -156,21 +156,26 @@ export const Goals = memo(({ context, data }: GoalsProps) => {
   );
 
   const handleRemove = useCallback(async () => {
-    try {
-      await removeTask({
-        category: TASK_CATEGORY.GOALS,
-        context,
-        year: selectedYear,
-      }).unwrap();
-      setText("");
-      setIsEditing(true);
-    } catch (error) {
-      Alert.alert(
-        t("common.error"),
-        t("errors.generic", "Something went wrong. Please try again.")
-      );
-      console.error("Failed to remove goal:", error);
-    }
+    Alert.alert(t("common.delete"), t("messages.confirmDeleteTask"), [
+      { text: t("common.cancel"), style: "cancel" },
+      {
+        text: t("common.delete"),
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await removeTask({
+              category: TASK_CATEGORY.GOALS,
+              context,
+              year: selectedYear,
+            }).unwrap();
+            setText("");
+            setIsEditing(true);
+          } catch (error) {
+            Alert.alert(t("common.error"), t("errors.generic"));
+          }
+        },
+      },
+    ]);
   }, [removeTask, context, t, selectedYear]);
 
   const handleEdit = useCallback(() => {

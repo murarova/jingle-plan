@@ -112,17 +112,26 @@ export function Summary({ context, data }: SummaryProps): React.JSX.Element {
   }, [text, rate, contextData, saveTaskByCategory, context, t, selectedYear]);
 
   const handleTaskRemove = useCallback(async () => {
-    try {
-      await removeTask({
-        category: TASK_CATEGORY.SUMMARY,
-        context,
-        year: selectedYear,
-      }).unwrap();
-      setText("");
-      setRate(50);
-    } catch (error) {
-      Alert.alert(t("common.error"), t("errors.generic"));
-    }
+    Alert.alert(t("common.delete"), t("messages.confirmDeleteTask"), [
+      { text: t("common.cancel"), style: "cancel" },
+      {
+        text: t("common.delete"),
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await removeTask({
+              category: TASK_CATEGORY.SUMMARY,
+              context,
+              year: selectedYear,
+            }).unwrap();
+            setText("");
+            setRate(50);
+          } catch (error) {
+            Alert.alert(t("common.error"), t("errors.generic"));
+          }
+        },
+      },
+    ]);
   }, [removeTask, context, t, selectedYear]);
 
   const renderEditingMode = () => (

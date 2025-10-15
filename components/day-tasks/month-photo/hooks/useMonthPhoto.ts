@@ -46,20 +46,29 @@ export const useMonthPhoto = ({ context, data }: UseMonthPhotoProps) => {
   }, [contextData, setImage]);
 
   const handleTaskRemove = useCallback(async () => {
-    try {
-      if (image) {
-        await deleteImage({ image, year: selectedYear }).unwrap();
-      }
-      await removeTask({
-        category: TASK_CATEGORY.MONTH_PHOTO,
-        context,
-        year: selectedYear,
-      }).unwrap();
-      setText("");
-      setImage(null);
-    } catch (error) {
-      Alert.alert(t("common.error"), t("errors.generic"));
-    }
+    Alert.alert(t("common.delete"), t("messages.confirmDeleteTask"), [
+      { text: t("common.cancel"), style: "cancel" },
+      {
+        text: t("common.delete"),
+        style: "destructive",
+        onPress: async () => {
+          try {
+            if (image) {
+              await deleteImage({ image, year: selectedYear }).unwrap();
+            }
+            await removeTask({
+              category: TASK_CATEGORY.MONTH_PHOTO,
+              context,
+              year: selectedYear,
+            }).unwrap();
+            setText("");
+            setImage(null);
+          } catch (error) {
+            Alert.alert(t("common.error"), t("errors.generic"));
+          }
+        },
+      },
+    ]);
   }, [deleteImage, removeTask, image, context, t, setImage, selectedYear]);
 
   const handleTaskSubmit = useCallback(async () => {

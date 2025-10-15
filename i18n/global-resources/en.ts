@@ -20,6 +20,10 @@ export default {
     save: "Save",
     welcome: "Welcome",
   },
+  messages: {
+    confirmDeletePlan: "Are you sure you want to delete this plan?",
+    confirmDeleteTask: "Are you sure you want to delete this task?",
+  },
   errors: {
     emptyText: "Text field cannot be empty",
     emptyImage: "Please select an image",

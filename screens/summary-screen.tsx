@@ -184,16 +184,25 @@ export const SummaryScreen: React.FC = () => {
 
   const handleTaskRemove = useCallback(
     async (context: TaskContext) => {
-      try {
-        await removeTask({
-          category: TASK_CATEGORY.SUMMARY,
-          context,
-          year: selectedYear,
-        }).unwrap();
-        setText("");
-      } catch (error) {
-        Alert.alert(t("common.error"), t("errors.generic"));
-      }
+      Alert.alert(t("common.delete"), t("messages.confirmDeleteTask"), [
+        { text: t("common.cancel"), style: "cancel" },
+        {
+          text: t("common.delete"),
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await removeTask({
+                category: TASK_CATEGORY.SUMMARY,
+                context,
+                year: selectedYear,
+              }).unwrap();
+              setText("");
+            } catch (error) {
+              Alert.alert(t("common.error"), t("errors.generic"));
+            }
+          },
+        },
+      ]);
     },
     [removeTask, t, selectedYear]
   );

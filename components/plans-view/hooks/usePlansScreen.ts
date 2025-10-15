@@ -14,6 +14,7 @@ import {
 import { SheetRef } from "../../common";
 import { CompletePlanProps } from "../plans-context-view";
 import { allMonths, PlansViewOptions } from "../../../constants/constants";
+import { Alert } from "react-native";
 
 interface UsePlansScreenProps {
   plans: PlansCollection | null;
@@ -110,10 +111,18 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
     async (id: string, planContext: TaskContext) => {
       if (!plans) return;
 
-      const plansList = getPlansList(plans, planContext);
-      const updatedPlans = plansList.filter((item) => item.id !== id);
-
-      await savePlans(dispatch, planContext, updatedPlans, t);
+      Alert.alert(t("common.delete"), t("messages.confirmDeletePlan"), [
+        { text: t("common.cancel"), style: "cancel" },
+        {
+          text: t("common.delete"),
+          style: "destructive",
+          onPress: async () => {
+            const plansList = getPlansList(plans, planContext);
+            const updatedPlans = plansList.filter((item) => item.id !== id);
+            await savePlans(dispatch, planContext, updatedPlans, t);
+          },
+        },
+      ]);
     },
     [plans, dispatch, t]
   );

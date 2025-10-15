@@ -81,23 +81,32 @@ export function usePlans({ data, context }: UsePlansProps) {
   }
 
   async function handleDeletePlan(planItem: PlanData) {
-    setLoading(true);
-    const updatedPlans = (data ?? []).filter((item) => item.id !== planItem.id);
-    if (isEmpty(updatedPlans)) {
-    }
+    Alert.alert(t("common.delete"), t("messages.confirmDeletePlan"), [
+      { text: t("common.cancel"), style: "cancel" },
+      {
+        text: t("common.delete"),
+        style: "destructive",
+        onPress: async () => {
+          setLoading(true);
+          const updatedPlans = (data ?? []).filter(
+            (item) => item.id !== planItem.id
+          );
 
-    try {
-      await saveTaskByCategory({
-        category: TASK_CATEGORY.PLANS,
-        data: updatedPlans,
-        context,
-        year: selectedYear,
-      }).unwrap();
-    } catch (error) {
-      Alert.alert("Oops", "Something wrong");
-    } finally {
-      setLoading(false);
-    }
+          try {
+            await saveTaskByCategory({
+              category: TASK_CATEGORY.PLANS,
+              data: updatedPlans,
+              context,
+              year: selectedYear,
+            }).unwrap();
+          } catch (error) {
+            Alert.alert(t("common.error"), t("errors.generic"));
+          } finally {
+            setLoading(false);
+          }
+        },
+      },
+    ]);
   }
 
   function handleAddPlanBtn() {
