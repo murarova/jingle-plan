@@ -24,12 +24,12 @@ import moment from "moment";
 import { CompletedTaskModal } from "../components/modals/completed-task-modal";
 import { getProgressColorByValue } from "../utils/utils";
 import usePrevious from "../hooks/usePrevious";
-import { RootStackParamList } from "../App";
 import { StackScreenProps } from "@react-navigation/stack";
 import isNil from "lodash/isNil";
 import { useDayTasks } from "../hooks/useDayTasks";
+import { HomeStackParamList } from "./home-screen";
 
-type Props = StackScreenProps<RootStackParamList, "DayOverview">;
+type Props = StackScreenProps<HomeStackParamList, "DayOverview">;
 
 interface ProgressBarProps {
   total: number;
@@ -76,8 +76,7 @@ EmptyState.displayName = "EmptyState";
 const DayOverviewScreen: React.FC<Props> = memo(({ route, navigation }) => {
   const { t } = useTranslation();
   const currentDay = route.params.currentDay;
-  const { dayTasks, total, refresh, isLoading, error } =
-    useDayTasks(currentDay);
+  const { dayTasks, total, refresh, error } = useDayTasks(currentDay);
 
   const previousProgress = usePrevious(total);
   const [showCompletedModal, setShowCompletedModal] = useState(false);

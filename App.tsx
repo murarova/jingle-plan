@@ -1,6 +1,5 @@
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { AppMenu } from "./components/app-menu";
 import { RegisterScreen } from "./screens/register-screen";
 import { LoadingScreen } from "./screens/loading-screen";
 import { LoginScreen } from "./screens/login-screen";
@@ -9,7 +8,6 @@ import { IntroScreen } from "./screens/intro-screen";
 import { GluestackUIProvider } from "@gluestack-ui/themed";
 import { config } from "./config/gluestack-ui.config";
 import { SCREENS } from "./constants/constants";
-import DayOverviewScreen from "./screens/day-overview-screen";
 import { useTranslation } from "react-i18next";
 import "./i18n/i18n";
 import { Provider, useDispatch } from "react-redux";
@@ -37,16 +35,10 @@ const MyTheme = {
 
 export type RootStackParamList = {
   INTRO: undefined;
-  PeriodOverview: undefined;
-  DayOverview: { currentDay: string };
   Register: undefined;
   Login: undefined;
   Loading: undefined;
-  Summary: undefined;
-  Home: { screen: keyof RootStackParamList } | undefined; // Allow nested navigation
-  Plans: undefined;
-  Album: undefined;
-  Dashboard: undefined;
+  Home: { screen?: string } | undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -110,14 +102,6 @@ function AppContent() {
             component={HomeScreen}
             options={{
               headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name={SCREENS.DAY_OVERVIEW}
-            component={DayOverviewScreen}
-            options={{
-              headerBackTitle: t("common.back"),
-              headerRight: AppMenu,
             }}
           />
         </Stack.Navigator>

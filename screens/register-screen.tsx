@@ -21,12 +21,9 @@ import { EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useAppDispatch } from "../store/withTypes";
 import { setUser, setAuthError, setAuthLoading } from "../store/authReducer";
-import {
-  useCreateUserMutation,
-  useCreateProfileMutation,
-} from "../services/auth-api-rtk";
+import { useCreateUserMutation } from "../services/auth-api-rtk";
 import { convertToSerializableUser } from "../types/user";
-import { useGetConfigurationQuery } from "../services/api";
+import { useCreateProfileMutation } from "../services/api";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
 
@@ -43,9 +40,8 @@ export const RegisterScreen = () => {
   const [passwordMatchError, setPasswordMatchError] = useState("");
 
   const dispatch = useAppDispatch();
-  const [createUser, { isLoading: isCreatingUser }] = useCreateUserMutation();
+  const [createUser] = useCreateUserMutation();
   const [createProfile] = useCreateProfileMutation();
-  const { data: configuration } = useGetConfigurationQuery({ year: "2024" }); // Default year
 
   const { t } = useTranslation();
   const nav = useNavigation<NavigationProp>();
