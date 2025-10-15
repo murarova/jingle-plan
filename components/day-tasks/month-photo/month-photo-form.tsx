@@ -32,7 +32,6 @@ export const MonthPhotoForm = memo(
     onTextChange,
     onImageChange,
     onSubmit,
-    onCancel,
     setImageLoading,
   }: MonthPhotoFormProps) => {
     const { t } = useTranslation();
@@ -57,14 +56,6 @@ export const MonthPhotoForm = memo(
           />
         </Textarea>
         <HStack space="sm" mt="$2">
-          <Button
-            flex={1}
-            variant="outline"
-            onPress={onCancel}
-            borderRadius="$lg"
-          >
-            <ButtonText>{t("common.cancel")}</ButtonText>
-          </Button>
           <Button flex={1} onPress={onSubmit} borderRadius="$lg">
             <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
           </Button>

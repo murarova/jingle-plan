@@ -22,6 +22,7 @@ export default {
   },
   errors: {
     emptyText: "Text field cannot be empty",
+    emptyImage: "Please select an image",
     generic: "Something went wrong. Please try again.",
   },
   context: {

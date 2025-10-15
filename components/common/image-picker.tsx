@@ -40,8 +40,6 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
         height: result.assets[0].height,
       };
       setImage(newImage);
-    } else {
-      Alert.alert("Canceled");
     }
   };
 

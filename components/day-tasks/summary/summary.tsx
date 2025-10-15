@@ -31,9 +31,8 @@ interface SummaryProps {
 export function Summary({ context, data }: SummaryProps): React.JSX.Element {
   const contextData = data?.[context];
   const { t } = useTranslation();
-  const [saveTaskByCategory, { isLoading: isSaving }] =
-    useSaveTaskByCategoryMutation();
-  const [removeTask, { isLoading: isRemoving }] = useRemoveTaskMutation();
+  const [saveTaskByCategory] = useSaveTaskByCategoryMutation();
+  const [removeTask] = useRemoveTaskMutation();
   const { selectedYear } = useAppSelector((state) => state.app);
 
   const [text, setText] = useState("");
@@ -159,7 +158,7 @@ export function Summary({ context, data }: SummaryProps): React.JSX.Element {
     <VStack space="md" width="100%">
       <HappySlider rate={rate} setRate={() => {}} isDisabled={true} />
       <Box mb="$2">
-        <Text>{contextData?.text || t("common.empty")}</Text>
+        <Text>{text || t("common.empty")}</Text>
       </Box>
       <ActionButtons onEdit={handleEdit} onDelete={handleTaskRemove} />
     </VStack>

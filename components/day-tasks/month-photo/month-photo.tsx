@@ -16,8 +16,6 @@ export const MonthPhoto = memo(({ context, data }: MonthPhotoProps) => {
     text,
     image,
     isLoading,
-    isSaving,
-    isRemoving,
     setIsLoading,
     setImage,
     handleTaskRemove,
@@ -43,7 +41,7 @@ export const MonthPhoto = memo(({ context, data }: MonthPhotoProps) => {
       ) : (
         <MonthPhotoView
           image={image}
-          text={data?.[context]?.text}
+          text={text}
           isLoading={isLoading}
           onEdit={handleEdit}
           onDelete={handleTaskRemove}
