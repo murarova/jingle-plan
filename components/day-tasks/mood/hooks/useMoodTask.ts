@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
+import * as Haptics from "expo-haptics";
 import uuid from "react-native-uuid";
 import isEmpty from "lodash/isEmpty";
 import { TASK_CATEGORY, TaskOutputType } from "../../../../constants/constants";
@@ -159,6 +160,12 @@ export const useMoodTask = ({
       }).unwrap();
 
       setIsEditing(false);
+
+      try {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } catch (error) {
+        console.log("Haptics not available");
+      }
     } catch (error) {
       Alert.alert(t("common.error"), t("errors.generic"));
     }

@@ -18,7 +18,7 @@ export function PlansScreen() {
 
   const { currentUser } = useAppSelector((state) => state.auth);
   const { selectedYear } = useAppSelector((state) => state.app);
-  const { data: userData, isLoading } = useGetUserDataQuery(
+  const { data: userData } = useGetUserDataQuery(
     { uid: currentUser?.uid!, year: selectedYear },
     { skip: !currentUser?.uid || !selectedYear }
   );

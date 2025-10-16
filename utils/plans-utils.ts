@@ -1,15 +1,4 @@
-import { Alert } from "react-native";
-import isEmpty from "lodash/isEmpty";
-import {
-  PlanScreenData,
-  PlansCollection,
-  TaskContext,
-  TaskGategory,
-} from "../types/types";
-import { TASK_CATEGORY } from "../constants/constants";
-// This utility will be updated to work with RTK Query mutations
-// For now, components should use RTK Query hooks directly
-import { TFunction } from "i18next";
+import { PlanScreenData, PlansCollection, TaskContext } from "../types/types";
 
 export const findPlanContextById = (
   plans: PlansCollection,
@@ -29,6 +18,3 @@ export const getPlansList = (
 ): PlanScreenData[] => {
   return plans?.[context] || [];
 };
-
-// This function has been removed as components should use RTK Query hooks directly
-// Use useSaveTaskByCategoryMutation and useRemoveTaskMutation in components

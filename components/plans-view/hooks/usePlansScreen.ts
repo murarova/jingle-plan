@@ -4,17 +4,19 @@ import {
   PlansCollection,
   TaskContext,
 } from "../../../types/types";
-import { useAppDispatch } from "../../../store/withTypes";
+import { useAppDispatch, useAppSelector } from "../../../store/withTypes";
 import { useTranslation } from "react-i18next";
-import {
-  findPlanContextById,
-  getPlansList,
-  savePlans,
-} from "../../../utils/plans-utils";
+import * as Haptics from "expo-haptics";
+import { findPlanContextById, getPlansList } from "../../../utils/plans-utils";
 import { SheetRef } from "../../common";
 import { CompletePlanProps } from "../plans-context-view";
-import { allMonths, PlansViewOptions } from "../../../constants/constants";
+import {
+  allMonths,
+  PlansViewOptions,
+  TASK_CATEGORY,
+} from "../../../constants/constants";
 import { Alert } from "react-native";
+import { useSaveTaskByCategoryMutation } from "../../../services/api";
 
 interface UsePlansScreenProps {
   plans: PlansCollection | null;
@@ -27,8 +29,9 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
   const [context, setContext] = useState<TaskContext | null>(null);
   const sheetRef = useRef<SheetRef>(null);
 
-  const dispatch = useAppDispatch();
   const { t } = useTranslation();
+  const { selectedYear } = useAppSelector((state) => state.app);
+  const [saveTaskByCategory] = useSaveTaskByCategoryMutation();
 
   const resetState = useCallback(() => {
     setUpdatedData(null);
@@ -49,12 +52,20 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
   const updatePlan = useCallback(
     async (context: TaskContext, updatedPlans: PlanScreenData[]) => {
       try {
-        await savePlans(dispatch, context, updatedPlans, t);
+        await saveTaskByCategory({
+          category: TASK_CATEGORY.PLANS,
+          data: updatedPlans,
+          context,
+          year: selectedYear,
+        }).unwrap();
+      } catch (error) {
+        Alert.alert(t("common.error"), t("errors.generic"));
+        throw error;
       } finally {
         resetState();
       }
     },
-    [dispatch, t, resetState]
+    [saveTaskByCategory, selectedYear, t, resetState]
   );
 
   const handleUpdatePlan = useCallback(
@@ -68,14 +79,24 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         if (isContextChanged) {
           const oldPlansList = getPlansList(plans, oldContext);
           const updatedOldPlans = oldPlansList.filter((item) => item.id !== id);
-          await savePlans(dispatch, oldContext, updatedOldPlans, t);
+          await saveTaskByCategory({
+            category: TASK_CATEGORY.PLANS,
+            data: updatedOldPlans,
+            context: oldContext,
+            year: selectedYear,
+          }).unwrap();
 
           const newPlansList = getPlansList(plans, context);
           const updatedNewPlans = [
             ...newPlansList,
             { ...updatedData, text, context, month: selectedMonth },
           ];
-          await savePlans(dispatch, context, updatedNewPlans, t);
+          await saveTaskByCategory({
+            category: TASK_CATEGORY.PLANS,
+            data: updatedNewPlans,
+            context,
+            year: selectedYear,
+          }).unwrap();
         } else {
           const plansList = getPlansList(plans, context);
           const updatedPlans =
@@ -87,11 +108,29 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
                 )
               : [{ ...updatedData, text, context, month: selectedMonth }];
 
-          await savePlans(dispatch, context, updatedPlans, t);
+          await saveTaskByCategory({
+            category: TASK_CATEGORY.PLANS,
+            data: updatedPlans,
+            context,
+            year: selectedYear,
+          }).unwrap();
+        }
+
+        try {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        } catch (error) {
+          console.log("Haptics not available");
         }
       } catch (error) {}
     },
-    [plans, context, updatedData, selectedMonth, dispatch, t]
+    [
+      plans,
+      context,
+      updatedData,
+      selectedMonth,
+      saveTaskByCategory,
+      selectedYear,
+    ]
   );
 
   const handleEditPlan = useCallback(
@@ -119,12 +158,21 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
           onPress: async () => {
             const plansList = getPlansList(plans, planContext);
             const updatedPlans = plansList.filter((item) => item.id !== id);
-            await savePlans(dispatch, planContext, updatedPlans, t);
+            try {
+              await saveTaskByCategory({
+                category: TASK_CATEGORY.PLANS,
+                data: updatedPlans,
+                context: planContext,
+                year: selectedYear,
+              }).unwrap();
+            } catch (error) {
+              Alert.alert(t("common.error"), t("errors.generic"));
+            }
           },
         },
       ]);
     },
-    [plans, dispatch, t]
+    [plans, saveTaskByCategory, selectedYear, t]
   );
 
   const handleCompletePlan = useCallback(
@@ -166,14 +214,26 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
       );
 
       try {
-        await savePlans(dispatch, planContext, updatedPlans, t);
+        await saveTaskByCategory({
+          category: TASK_CATEGORY.PLANS,
+          data: updatedPlans,
+          context: planContext,
+          year: selectedYear,
+        }).unwrap();
+
+        try {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        } catch (error) {
+          console.log("Haptics not available");
+        }
       } catch (error) {
         console.error("Failed to save plan completion:", error);
+        Alert.alert(t("common.error"), t("errors.generic"));
       } finally {
         resetState();
       }
     },
-    [plans, dispatch, t, resetState]
+    [plans, saveTaskByCategory, selectedYear, t, resetState]
   );
 
   const handleAddPlan = useCallback(
@@ -187,9 +247,24 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         { id, text, isDone: false, month, context },
       ];
 
-      await savePlans(dispatch, context, updatedPlans, t);
+      try {
+        await saveTaskByCategory({
+          category: TASK_CATEGORY.PLANS,
+          data: updatedPlans,
+          context,
+          year: selectedYear,
+        }).unwrap();
+
+        try {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        } catch (error) {
+          console.log("Haptics not available");
+        }
+      } catch (error) {
+        Alert.alert(t("common.error"), t("errors.generic"));
+      }
     },
-    [plans, dispatch, t]
+    [plans, saveTaskByCategory, selectedYear, t]
   );
 
   const openMonthSelect = useCallback(
@@ -218,6 +293,12 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         item.id === data.id ? { ...data, month } : item
       );
       await updatePlan(context, updatedPlans);
+
+      try {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } catch (error) {
+        console.log("Haptics not available");
+      }
     },
     [plans, context, updatedData, updatePlan]
   );

@@ -26,7 +26,11 @@ export const YearSelector = () => {
 
   return (
     <Box paddingLeft={16}>
-      <Select selectedValue={selectedYear} onValueChange={handleYearChange}>
+      <Select
+        key={selectedYear}
+        selectedValue={selectedYear}
+        onValueChange={handleYearChange}
+      >
         <SelectTrigger borderWidth={0}>
           <Box
             backgroundColor="$white"

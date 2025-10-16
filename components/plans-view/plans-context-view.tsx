@@ -15,11 +15,7 @@ import {
   ScrollView,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
-import {
-  TASK_CONTEXT,
-  PlansViewOptions,
-  allMonths,
-} from "../../constants/constants";
+import { TASK_CONTEXT, PlansViewOptions } from "../../constants/constants";
 import { PlansList } from "./components/plans";
 import {
   PlanScreenData,
@@ -44,9 +40,7 @@ export interface PlansViewProps {
   handleMonthSelect: (month: string) => void;
   handleCompletePlan: (props: CompletePlanProps) => void;
   setShowModal: (value: boolean) => void;
-  setShowMonthModal: (value: boolean) => void;
   showModal: boolean;
-  showMonthModal: boolean;
   updatedData: PlanScreenData | null;
 }
 
@@ -92,7 +86,6 @@ interface PlansAccordionContentProps {
 
 const PlansAccordionContent = memo(
   ({
-    context,
     plans,
     onMonthSelect,
     onEdit,

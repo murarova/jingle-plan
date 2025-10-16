@@ -6,6 +6,7 @@ import {
 import isEmpty from "lodash/isEmpty";
 import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
+import * as Haptics from "expo-haptics";
 import uuid from "react-native-uuid";
 import { PlanData } from "../../../../types/types";
 import { useAppSelector } from "../../../../store/withTypes";
@@ -48,8 +49,14 @@ export function usePlans({ data, context }: UsePlansProps) {
         context,
         year: selectedYear,
       }).unwrap();
+
+      try {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } catch (error) {
+        console.log("Haptics not available");
+      }
     } catch (error) {
-      Alert.alert("Oops", "Something wrong");
+      Alert.alert(t("common.error"), t("errors.generic"));
     } finally {
       setLoading(false);
     }
@@ -67,8 +74,14 @@ export function usePlans({ data, context }: UsePlansProps) {
         context,
         year: selectedYear,
       }).unwrap();
+
+      try {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } catch (error) {
+        console.log("Haptics not available");
+      }
     } catch (error) {
-      Alert.alert("Oops", "Something wrong");
+      Alert.alert(t("common.error"), t("errors.generic"));
     } finally {
       setUpdatedData(null);
       setLoading(false);
@@ -109,7 +122,7 @@ export function usePlans({ data, context }: UsePlansProps) {
     ]);
   }
 
-  function handleAddPlanBtn() {
+  async function handleAddPlanBtn() {
     if (data?.length === MAX_PLANS_AMOUNT) {
       Alert.alert(t("screens.plansScreen.maxPlansError"));
       return;

@@ -2,9 +2,10 @@ import { LANGUAGES } from "../constants/constants";
 import moment from "moment";
 import { Calendar as NativeCalendar, DateData } from "react-native-calendars";
 import { useTranslation } from "react-i18next";
+import * as Haptics from "expo-haptics";
 
 import { memo, useCallback, useEffect, useMemo } from "react";
-import { Pressable, Box } from "@gluestack-ui/themed";
+import { Pressable, Box, View } from "@gluestack-ui/themed";
 import { config } from "../config/gluestack-ui.config";
 import CircularProgress from "react-native-circular-progress-indicator";
 import { calculateTotalProgress } from "../utils/utils";
@@ -31,43 +32,62 @@ const DayComponent = memo(
     const today = date?.dateString === currentDate;
     const disabled = state === "disabled";
 
-    const handlePress = useCallback(() => {
+    const handlePress = useCallback(async () => {
       if (disabled) return;
+
+      try {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } catch (error) {
+        console.log("Haptics not available");
+      }
+
       onPress(date?.dateString!);
     }, [disabled, date?.dateString, onPress]);
 
     return (
       <Pressable onPress={handlePress}>
         {({ pressed }) => (
-          <CircularProgress
-            value={progress}
-            activeStrokeColor={
-              progress === 0 ? "transparent" : config.tokens.colors.green400
-            }
-            inActiveStrokeColor={config.tokens.colors.warmGray400}
-            inActiveStrokeOpacity={0.2}
-            circleBackgroundColor={
-              today
-                ? config.tokens.colors.green300
-                : pressed
-                ? config.tokens.colors.backgroundLight100
-                : "transparent"
-            }
-            showProgressValue={false}
-            title={date?.day?.toString() || ""}
-            activeStrokeWidth={disabled ? 0 : 5}
-            inActiveStrokeWidth={disabled ? 0 : 5}
-            titleStyle={{
-              fontSize: 16,
-              fontWeight: today ? 700 : 500,
-              color: today
-                ? config.tokens.colors.white
-                : disabled
-                ? config.tokens.colors.warmGray400
-                : "#292524",
-            }}
-            radius={25}
-          />
+          <Box alignItems="center" justifyContent="center" position="relative">
+            <CircularProgress
+              value={progress}
+              activeStrokeColor={
+                progress === 0 ? "transparent" : config.tokens.colors.green400
+              }
+              inActiveStrokeColor={
+                disabled
+                  ? config.tokens.colors.warmGray300
+                  : config.tokens.colors.warmGray400
+              }
+              inActiveStrokeOpacity={0.2}
+              circleBackgroundColor={
+                disabled
+                  ? config.tokens.colors.warmGray200
+                  : pressed
+                  ? config.tokens.colors.backgroundLight100
+                  : "transparent"
+              }
+              showProgressValue={false}
+              title={date?.day?.toString() || ""}
+              activeStrokeWidth={disabled ? 0 : 5}
+              inActiveStrokeWidth={disabled ? 0 : 5}
+              titleStyle={{
+                fontSize: 16,
+                fontWeight: today ? 700 : 500,
+                color: disabled ? config.tokens.colors.warmGray400 : "#292524",
+              }}
+              radius={25}
+            />
+            {today && (
+              <Box
+                position="absolute"
+                top={-12}
+                width={6}
+                height={6}
+                borderRadius={3}
+                backgroundColor={config.tokens.colors.primary500}
+              />
+            )}
+          </Box>
         )}
       </Pressable>
     );
@@ -84,7 +104,7 @@ export const Calendar = memo(({ pressHandler }: CalendarProps) => {
     (i18n.resolvedLanguage as keyof typeof LANGUAGES) || "en";
   const { currentUser } = useAppSelector((state) => state.auth);
 
-  const { data: userData, isLoading: isUserDataLoading } = useGetUserDataQuery(
+  const { data: userData } = useGetUserDataQuery(
     { uid: currentUser?.uid!, year: selectedYear },
     { skip: !currentUser?.uid || !selectedYear }
   );
@@ -97,14 +117,13 @@ export const Calendar = memo(({ pressHandler }: CalendarProps) => {
   );
 
   const { getDayConfig } = useCalendarDayManager();
-  const isLoading = isUserDataLoading;
 
   useEffect(() => {
     setupCalendarLocale(locale);
   }, [locale]);
 
   const minDate = useMemo(
-    () => moment(`${selectedYear}-01-01`).format("YYYY-MM-DD"),
+    () => moment(`${selectedYear}-12-01`).format("YYYY-MM-DD"),
     [selectedYear]
   );
 

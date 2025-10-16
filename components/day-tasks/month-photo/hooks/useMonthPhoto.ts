@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { useTranslation } from "react-i18next";
+import * as Haptics from "expo-haptics";
 import { TASK_CATEGORY } from "../../../../constants/constants";
 import isEmpty from "lodash/isEmpty";
 import uuid from "react-native-uuid";
@@ -107,6 +108,12 @@ export const useMonthPhoto = ({ context, data }: UseMonthPhotoProps) => {
         context,
         year: selectedYear,
       }).unwrap();
+
+      try {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } catch (error) {
+        console.log("Haptics not available");
+      }
 
       setIsEditing(false);
     } catch (error) {

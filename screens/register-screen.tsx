@@ -86,7 +86,7 @@ export const RegisterScreen = () => {
         await createProfile({
           uid: user.uid,
           name,
-          year: "2024", // Default year for profile creation
+          year: new Date().getFullYear().toString(),
         }).unwrap();
 
         dispatch(setUser(serializableUser));

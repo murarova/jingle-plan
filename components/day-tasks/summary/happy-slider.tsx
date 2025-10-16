@@ -27,9 +27,9 @@ export const HappySlider = ({
     <VStack space="2xl" mt="$4" mb="$10">
       <Box>
         <Text textAlign="center" fontSize="$6xl" pb="$2">
-          {getRating(rate).icon}
+          {getRating(rate)?.icon}
         </Text>
-        <Text textAlign="center">{getRating(rate).text}</Text>
+        <Text textAlign="center">{getRating(rate)?.text}</Text>
       </Box>
       <HStack space="lg">
         <Center w="$80">

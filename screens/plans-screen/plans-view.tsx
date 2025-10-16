@@ -5,14 +5,14 @@ import { PlansViewOptions } from "../../constants/constants";
 import { PlanContextData } from "../../types/types";
 import { usePlansScreen } from "../../components/plans-view/hooks/usePlansScreen";
 
-interface PlansViewProps {
+interface PlansViewComponentProps {
   plans: PlanContextData;
   plansProps: ReturnType<typeof usePlansScreen>;
   viewType: PlansViewOptions;
 }
 
 export const PlansView = memo(
-  ({ plans, plansProps, viewType }: PlansViewProps) => {
+  ({ plans, plansProps, viewType }: PlansViewComponentProps) => {
     const ViewComponent =
       viewType === PlansViewOptions.context ? PlansContextView : PlansMonthView;
 

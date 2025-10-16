@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { House } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
+import * as Haptics from "expo-haptics";
 import { SCREENS } from "../constants/constants";
 import PeriodOverviewScreen from "./period-overview-screen";
 import DayOverviewScreen from "./day-overview-screen";
@@ -28,17 +29,14 @@ const HomeStack = createStackNavigator<HomeStackParamList>();
 function HomeStackNavigator() {
   const { t } = useTranslation();
   return (
-    <HomeStack.Navigator
-      screenOptions={{
-        headerLeft: YearSelector,
-        headerRight: AppMenu,
-      }}
-    >
+    <HomeStack.Navigator>
       <HomeStack.Screen
         name="PeriodOverviewMain"
         component={PeriodOverviewScreen}
         options={{
           title: t("screens.periodOverview.title"),
+          headerLeft: YearSelector,
+          headerRight: AppMenu,
         }}
       />
       <HomeStack.Screen
@@ -79,8 +77,15 @@ export const HomeScreen = () => {
         name={SCREENS.PERIOD_OVERVIEW}
         component={HomeStackNavigator}
         listeners={({ navigation }) => ({
-          tabPress: (e) => {
+          tabPress: async (e) => {
             e.preventDefault();
+
+            try {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            } catch (error) {
+              console.log("Haptics not available");
+            }
+
             // Always reset to the main calendar screen
             navigation.navigate(SCREENS.PERIOD_OVERVIEW);
             // Reset the nested stack to show only PeriodOverviewMain
@@ -109,6 +114,15 @@ export const HomeScreen = () => {
             <Medal color={focused ? "#fe434c" : "#999999"} />
           ),
         }}
+        listeners={{
+          tabPress: async () => {
+            try {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            } catch (error) {
+              console.log("Haptics not available");
+            }
+          },
+        }}
       />
       <Tab.Screen
         name={SCREENS.PLANS}
@@ -121,6 +135,15 @@ export const HomeScreen = () => {
           tabBarIcon: ({ focused }) => (
             <Compas color={focused ? "#fe434c" : "#999999"} />
           ),
+        }}
+        listeners={{
+          tabPress: async () => {
+            try {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            } catch (error) {
+              console.log("Haptics not available");
+            }
+          },
         }}
       />
       <Tab.Screen
@@ -135,6 +158,15 @@ export const HomeScreen = () => {
             <Album color={focused ? "#fe434c" : "#999999"} />
           ),
         }}
+        listeners={{
+          tabPress: async () => {
+            try {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            } catch (error) {
+              console.log("Haptics not available");
+            }
+          },
+        }}
       />
       <Tab.Screen
         name={SCREENS.DASHBOARD}
@@ -147,6 +179,15 @@ export const HomeScreen = () => {
           tabBarIcon: ({ focused }) => (
             <Dashboard color={focused ? "#fe434c" : "#999999"} />
           ),
+        }}
+        listeners={{
+          tabPress: async () => {
+            try {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            } catch (error) {
+              console.log("Haptics not available");
+            }
+          },
         }}
       />
     </Tab.Navigator>
