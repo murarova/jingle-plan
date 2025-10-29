@@ -16,6 +16,7 @@ export default {
     edit: "Edit",
     delete: "Delete",
     selectMonth: "Select month",
+    copyToNextYear: "Copy to next year",
     error: "Error",
     save: "Save",
     welcome: "Welcome",
@@ -95,6 +96,7 @@ export default {
         "Password must be at least 8 characters long and contain at least one number and at least one letter",
       passwordMatchError: "Passwords do not match",
       invalidEmail: "Please enter a valid email address",
+      emptyName: "Name is required",
     },
     processText: "You have completed:",
     periodOverview: {
@@ -113,6 +115,7 @@ export default {
         showAll: "Show all",
         hideAll: "Hide all",
       },
+      goToPlansBtn: "To plans",
     },
     tasksOfTheDay: {
       dayTitle: "Task for today",

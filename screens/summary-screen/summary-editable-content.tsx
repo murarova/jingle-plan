@@ -28,9 +28,6 @@ export const EditableContent = memo(
             onChangeText={onTextChange}
             value={text}
             placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-            returnKeyType="done"
-            submitBehavior="blurAndSubmit"
-            onSubmitEditing={onSubmit}
           />
         </Textarea>
         <HStack space="sm" mt="$2">

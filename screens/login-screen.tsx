@@ -40,7 +40,7 @@ export const LoginScreen = () => {
   const [emailError, setEmailError] = useState("");
 
   const dispatch = useAppDispatch();
-  const [signInUser, { isLoading: isSigningIn }] = useSignInUserMutation();
+  const [signInUser] = useSignInUserMutation();
 
   const { t } = useTranslation();
   const nav = useNavigation<NavigationProp>();

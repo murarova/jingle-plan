@@ -222,6 +222,7 @@ export const api = createApi({
 export const {
   useGetConfigurationQuery,
   useGetUserDataQuery,
+  useLazyGetUserDataQuery,
   useCreateProfileMutation,
   useSaveTaskByCategoryMutation,
   useSaveMoodTaskMutation,

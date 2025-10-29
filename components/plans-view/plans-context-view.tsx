@@ -38,6 +38,7 @@ export interface PlansViewProps {
   handleDeletePlan: (id: string, context: TaskContext) => void;
   handleUpdatePlan: (id: string, text: string) => void;
   handleMonthSelect: (month: string) => void;
+  handleCopyToNextYear: (plan: PlanScreenData, context: TaskContext) => void;
   handleCompletePlan: (props: CompletePlanProps) => void;
   setShowModal: (value: boolean) => void;
   showModal: boolean;
@@ -81,6 +82,7 @@ interface PlansAccordionContentProps {
   onMonthSelect: (item: PlanScreenData) => void;
   onEdit: (item: PlanScreenData) => void;
   onDelete: (item: PlanScreenData) => void;
+  onCopyToNextYear?: (item: PlanScreenData) => void;
   onComplete: (props: CompletePlanProps) => void;
 }
 
@@ -90,6 +92,7 @@ const PlansAccordionContent = memo(
     onMonthSelect,
     onEdit,
     onDelete,
+    onCopyToNextYear,
     onComplete,
   }: PlansAccordionContentProps) => (
     <AccordionContent>
@@ -100,6 +103,7 @@ const PlansAccordionContent = memo(
           onMonthSelect={onMonthSelect}
           onEdit={onEdit}
           onDelete={onDelete}
+          onCopyToNextYear={onCopyToNextYear}
           handleCompletePlan={onComplete}
         />
       </Box>
@@ -115,6 +119,7 @@ export const PlansContextView = memo(
     openMonthSelect,
     handleEditPlan,
     handleDeletePlan,
+    handleCopyToNextYear,
     handleCompletePlan,
   }: PlansViewProps) => {
     const handleMonthSelectForContext = useCallback(
@@ -185,6 +190,9 @@ export const PlansContextView = memo(
                     }
                     onEdit={(item) => handleEditForContext(item, context)}
                     onDelete={(item) => handleDeleteForContext(item, context)}
+                    onCopyToNextYear={(item) =>
+                      handleCopyToNextYear(item, context)
+                    }
                     onComplete={(props) =>
                       handleCompleteForContext({
                         ...props,

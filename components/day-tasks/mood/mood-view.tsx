@@ -1,4 +1,4 @@
-import { Box, Button, Text } from "@gluestack-ui/themed";
+import { Box, Button, Divider, Text } from "@gluestack-ui/themed";
 import { memo } from "react";
 import { ActionButtons, AnimatedView, Loader } from "../../common";
 import { ImageBackground } from "@gluestack-ui/themed";
@@ -24,9 +24,12 @@ export const MoodView = memo(
   }: MoodViewProps) => (
     <Box>
       {text && (
-        <Box mb="$2">
-          <Text>{text}</Text>
-        </Box>
+        <>
+          <Divider mb="$4" />
+          <Box mb="$2">
+            <Text>{text}</Text>
+          </Box>
+        </>
       )}
 
       {image && (

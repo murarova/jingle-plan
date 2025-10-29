@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 export function useImage() {
   const { t } = useTranslation();
   const [image, setImage] = useState<ImageData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { selectedYear } = useAppSelector((state) => state.app);
   const [saveImage, { isLoading: isSaving }] = useSaveImageMutation();
   const [getImageUrl, { isLoading: isUrlLoading }] = useLazyGetImageUrlQuery();
@@ -30,7 +31,7 @@ export function useImage() {
     saveImage: saveUserImage,
     image,
     setImage,
-    setIsLoading: () => {}, // No longer needed with RTK Query
-    isLoading: isSaving || isUrlLoading,
+    isLoading: isSaving || isUrlLoading || isLoading,
+    setIsLoading,
   };
 }

@@ -69,7 +69,8 @@
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",
     "redux-logger": "^3.0.6",
-    "typescript": "~5.3.3"
+    "typescript": "~5.3.3",
+    "expo-splash-screen": "~0.29.24"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",

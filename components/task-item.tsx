@@ -21,11 +21,8 @@ import { Goals } from "./day-tasks/goals/goals";
 import { useAppSelector } from "../store/withTypes";
 import moment from "moment";
 import {
-  PlanData,
-  SummaryData,
   DayTaskConfig,
   TextData,
-  TextImageData,
   TaskContext,
   MoodTaskData,
   MonthPhotoData,

@@ -39,8 +39,6 @@ export const GoalsForm = memo(
             onChangeText={setText}
             value={text}
             placeholder={placeholderText}
-            returnKeyType="done"
-            submitBehavior="blurAndSubmit"
             onSubmitEditing={handleSubmit}
           />
         </Textarea>

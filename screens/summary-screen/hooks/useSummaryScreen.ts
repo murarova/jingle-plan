@@ -89,7 +89,7 @@ export const useSummaryScreen = ({ summary }: UseSummaryScreenProps) => {
     (context: TaskContext) => {
       // Reset form to original state
       if (summary?.[context]?.text) {
-        setText(summary[context].text);
+        setText(summary[context]!.text);
       } else {
         setText("");
       }

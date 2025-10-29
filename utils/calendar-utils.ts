@@ -42,10 +42,12 @@ export const setupCalendarLocale = (locale: string): void => {
       ],
       dayNamesShort: ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
     };
-    LocaleConfig.defaultLocale = locale;
-  } else {
-    LocaleConfig.defaultLocale = "en";
+    LocaleConfig.defaultLocale = "uk";
+    return;
   }
+
+  // Default to English explicitly when not Ukrainian
+  LocaleConfig.defaultLocale = "en";
 };
 
 export const calendarTheme = {

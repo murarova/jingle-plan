@@ -1,4 +1,4 @@
-import { Box } from "@gluestack-ui/themed";
+import { Box, Divider } from "@gluestack-ui/themed";
 import { memo } from "react";
 import { MonthPhotoData } from "../../../types/types";
 import { MonthPhotoForm } from "./month-photo-form";
@@ -45,6 +45,7 @@ export const MonthPhoto = memo(({ context, data }: MonthPhotoProps) => {
           isLoading={isLoading}
           onEdit={handleEdit}
           onDelete={handleTaskRemove}
+          setIsImageLoading={setIsLoading}
         />
       )}
     </Box>

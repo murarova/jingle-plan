@@ -6,7 +6,6 @@ import {
   Text,
   Select,
   SelectTrigger,
-  SelectInput,
   SelectPortal,
   SelectBackdrop,
   SelectContent,

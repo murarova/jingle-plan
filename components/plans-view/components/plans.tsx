@@ -20,14 +20,16 @@ import {
   BadgeText,
   BadgeIcon,
 } from "@gluestack-ui/themed";
-import { EditIcon, Trash2, Ellipsis, CalendarDays } from "lucide-react-native";
+import {
+  EditIcon,
+  Trash2,
+  Ellipsis,
+  CalendarDays,
+  Copy,
+} from "lucide-react-native";
 import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  allMonths,
-  months,
-  PlansViewOptions,
-} from "../../../constants/constants";
+import { months, PlansViewOptions } from "../../../constants/constants";
 import { PlanScreenData } from "../../../types/types";
 import { CompletePlanProps } from "../plans-context-view";
 
@@ -36,6 +38,7 @@ interface PlansListProps {
   onEdit: (plan: PlanScreenData) => void;
   onDelete: (plan: PlanScreenData) => void;
   onMonthSelect: (plan: PlanScreenData) => void;
+  onCopyToNextYear?: (plan: PlanScreenData) => void;
   handleCompletePlan: (props: CompletePlanProps) => void;
   view?: PlansViewOptions;
   month?: string;
@@ -47,6 +50,7 @@ export function PlansList({
   onDelete,
   handleCompletePlan,
   onMonthSelect,
+  onCopyToNextYear,
   view,
   month,
 }: PlansListProps) {
@@ -177,7 +181,56 @@ export function PlansList({
                     <MenuItemLabel size="md">{t("common.edit")}</MenuItemLabel>
                     <Icon as={EditIcon} size="sm" ml="$3" />
                   </MenuItem>
-
+                  <MenuItem
+                    key="selectMonth"
+                    textValue="selectMonth"
+                    backgroundColor="#fff"
+                    display="flex"
+                    justifyContent="space-between"
+                    p="$3"
+                    mb="$px"
+                    minHeight={48}
+                    onPress={() => onMonthSelect(item)}
+                    sx={{
+                      ":active": {
+                        backgroundColor: "$coolGray200",
+                      },
+                      ":hover": {
+                        backgroundColor: "$coolGray100",
+                      },
+                    }}
+                  >
+                    <MenuItemLabel size="md">
+                      {t("common.selectMonth")}
+                    </MenuItemLabel>
+                    <Icon as={CalendarDays} size="sm" ml="$3" />
+                  </MenuItem>
+                  {onCopyToNextYear && (
+                    <MenuItem
+                      key="copyToNextYear"
+                      textValue="copyToNextYear"
+                      backgroundColor="#fff"
+                      display="flex"
+                      justifyContent="space-between"
+                      p="$3"
+                      mb="$px"
+                      minHeight={48}
+                      onPress={() => onCopyToNextYear(item)}
+                      sx={{
+                        ":active": {
+                          backgroundColor: "$coolGray200",
+                        },
+                        ":hover": {
+                          backgroundColor: "$coolGray100",
+                        },
+                      }}
+                    >
+                      <MenuItemLabel size="md">
+                        {t("common.copyToNextYear")}
+                      </MenuItemLabel>
+                      <Icon as={Copy} size="sm" ml="$3" />
+                    </MenuItem>
+                  )}
                   <MenuItem
                     key="delete"
                     mb="$px"
@@ -186,6 +239,8 @@ export function PlansList({
                     display="flex"
                     justifyContent="space-between"
                     p="$3"
+                    borderBottomLeftRadius="$lg"
+                    borderBottomRightRadius="$lg"
                     minHeight={48}
                     onPress={() => onDelete(item)}
                     sx={{
@@ -201,31 +256,6 @@ export function PlansList({
                       {t("common.delete")}
                     </MenuItemLabel>
                     <Icon as={Trash2} size="sm" ml="$3" color="$red600" />
-                  </MenuItem>
-                  <MenuItem
-                    key="selectMonth"
-                    textValue="selectMonth"
-                    backgroundColor="#fff"
-                    display="flex"
-                    justifyContent="space-between"
-                    p="$3"
-                    minHeight={48}
-                    borderBottomLeftRadius="$lg"
-                    borderBottomRightRadius="$lg"
-                    onPress={() => onMonthSelect(item)}
-                    sx={{
-                      ":active": {
-                        backgroundColor: "$coolGray200",
-                      },
-                      ":hover": {
-                        backgroundColor: "$coolGray100",
-                      },
-                    }}
-                  >
-                    <MenuItemLabel size="md">
-                      {t("common.selectMonth")}
-                    </MenuItemLabel>
-                    <Icon as={CalendarDays} size="sm" ml="$3" />
                   </MenuItem>
                 </Menu>
               </HStack>

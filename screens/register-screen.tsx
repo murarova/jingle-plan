@@ -38,6 +38,7 @@ export const RegisterScreen = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [passwordMatchError, setPasswordMatchError] = useState("");
+  const [nameError, setNameError] = useState("");
 
   const dispatch = useAppDispatch();
   const [createUser] = useCreateUserMutation();
@@ -68,24 +69,36 @@ export const RegisterScreen = () => {
     }
   };
 
+  const validateName = (name: string) => {
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      setNameError(t("screens.registerScreen.emptyName"));
+    } else {
+      setNameError("");
+    }
+  };
+
   const handleRegister = async () => {
+    const trimmedName = name.trim();
     if (
       !emailError &&
       !passwordError &&
       !passwordMatchError &&
+      !nameError &&
       email &&
       password &&
-      repeatPassword
+      repeatPassword &&
+      trimmedName
     ) {
       try {
         dispatch(setAuthLoading());
         const user = await createUser({ email, password }).unwrap();
-        const serializableUser = convertToSerializableUser(user);
+        const serializableUser = convertToSerializableUser(user, trimmedName);
 
         // Create profile
         await createProfile({
           uid: user.uid,
-          name,
+          name: trimmedName,
           year: new Date().getFullYear().toString(),
         }).unwrap();
 
@@ -114,6 +127,11 @@ export const RegisterScreen = () => {
     );
   };
 
+  const handleNameChange = (value: string) => {
+    setName(value);
+    validateName(value);
+  };
+
   return (
     <Pressable flex={1} onPress={Keyboard.dismiss}>
       <KeyboardAwareScrollView>
@@ -139,11 +157,18 @@ export const RegisterScreen = () => {
                 <Input>
                   <InputField
                     value={name}
-                    onChangeText={setName}
+                    onChangeText={handleNameChange}
+                    onBlur={() => validateName(name)}
+                    onFocus={() => setNameError("")}
                     inputMode="text"
                     placeholder={t("screens.registerScreen.name")}
                   />
                 </Input>
+                {nameError ? (
+                  <Text size="sm" color="$red500">
+                    {nameError}
+                  </Text>
+                ) : null}
               </VStack>
               <VStack space="sm" mb={20}>
                 <Text>{t("screens.registerScreen.email")}</Text>
@@ -208,7 +233,9 @@ export const RegisterScreen = () => {
               size="md"
               variant="solid"
               action="primary"
-              isDisabled={!email || !password || !repeatPassword || !name}
+              isDisabled={
+                !email || !password || !repeatPassword || !name.trim()
+              }
               onPress={handleRegister}
             >
               <ButtonText>{t("screens.registerScreen.registerBtn")}</ButtonText>

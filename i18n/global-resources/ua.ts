@@ -17,6 +17,7 @@ export default {
     save: "Зберегти",
     delete: "Видалити",
     selectMonth: "Обрати місяць",
+    copyToNextYear: "Скопіювати у наступний рік",
     logout: "Вийти",
     deleteAccount: "Видалити акаунт",
     error: "Помилка",
@@ -98,6 +99,7 @@ export default {
         "Пароль має складатись із щонайменше 8 символів і містити хоча б одну цифру та хоча б одну літеру",
       passwordMatchError: "Паролі не збігаються",
       invalidEmail: "Будь ласка, введіть дійсну електронну адресу",
+      emptyName: "Ім'я обов'язкове",
     },
     emptyScreen: "На сьогодні завдань немає",
     processText: "Виконано:",
@@ -117,6 +119,7 @@ export default {
         showAll: "Показати всі",
         hideAll: "Сховати всі",
       },
+      goToPlansBtn: "До планів",
     },
     tasksOfTheDay: {
       dayTitle: "Завдання дня",

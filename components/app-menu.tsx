@@ -39,7 +39,7 @@ export function AppMenu() {
     try {
       await signOut().unwrap();
       dispatch(clearUser());
-      nav.navigate(SCREENS.LOADING);
+      nav.navigate(SCREENS.INTRO);
     } catch (error) {
       Alert.alert(
         t("common.error"),
@@ -62,7 +62,7 @@ export function AppMenu() {
           onPress: async () => {
             try {
               await deleteCurrentUser().unwrap();
-              nav.navigate(SCREENS.LOADING);
+              nav.navigate(SCREENS.INTRO);
             } catch (error) {
               Alert.alert(
                 t("common.error"),

@@ -12,7 +12,8 @@ export interface SerializableUser {
 }
 
 export const convertToSerializableUser = (
-  firebaseUser: any
+  firebaseUser: any,
+  name?: string
 ): SerializableUser => {
   if (!firebaseUser) throw new Error("Cannot convert null user");
 
@@ -20,7 +21,7 @@ export const convertToSerializableUser = (
     uid: firebaseUser.uid,
     email: firebaseUser.email,
     emailVerified: firebaseUser.emailVerified,
-    displayName: firebaseUser.displayName,
+    displayName: firebaseUser.displayName ?? name,
     phoneNumber: firebaseUser.phoneNumber,
     photoURL: firebaseUser.photoURL,
     metadata: {

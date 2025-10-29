@@ -107,8 +107,6 @@ export function AddPlanModal({
                 onChangeText={setText}
                 defaultValue={text}
                 placeholder={t("screens.plansModal.placeholder")}
-                returnKeyType="done"
-                submitBehavior="blurAndSubmit"
                 onSubmitEditing={handleSubmit}
               />
             </Textarea>

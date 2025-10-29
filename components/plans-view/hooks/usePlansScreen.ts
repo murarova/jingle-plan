@@ -4,7 +4,7 @@ import {
   PlansCollection,
   TaskContext,
 } from "../../../types/types";
-import { useAppDispatch, useAppSelector } from "../../../store/withTypes";
+import { useAppSelector } from "../../../store/withTypes";
 import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
 import { findPlanContextById, getPlansList } from "../../../utils/plans-utils";
@@ -16,7 +16,12 @@ import {
   TASK_CATEGORY,
 } from "../../../constants/constants";
 import { Alert } from "react-native";
-import { useSaveTaskByCategoryMutation } from "../../../services/api";
+import {
+  useSaveTaskByCategoryMutation,
+  useLazyGetUserDataQuery,
+} from "../../../services/api";
+import { PlanContextData } from "../../../types/types";
+import uuid from "react-native-uuid";
 
 interface UsePlansScreenProps {
   plans: PlansCollection | null;
@@ -31,7 +36,9 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
 
   const { t } = useTranslation();
   const { selectedYear } = useAppSelector((state) => state.app);
+  const { currentUser } = useAppSelector((state) => state.auth);
   const [saveTaskByCategory] = useSaveTaskByCategoryMutation();
+  const [getUserData] = useLazyGetUserDataQuery();
 
   const resetState = useCallback(() => {
     setUpdatedData(null);
@@ -303,6 +310,50 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
     [plans, context, updatedData, updatePlan]
   );
 
+  const handleCopyToNextYear = useCallback(
+    async (plan: PlanScreenData, planContext: TaskContext) => {
+      if (!plans || !currentUser?.uid) return;
+
+      const nextYear = (parseInt(selectedYear) + 1).toString();
+      const newPlanId = uuid.v4().toString();
+      const newPlan: PlanScreenData = {
+        ...plan,
+        id: newPlanId,
+        isDone: false,
+      };
+
+      try {
+        const result = await getUserData({
+          uid: currentUser.uid,
+          year: nextYear,
+        }).unwrap();
+
+        const nextYearUserData = result?.data ?? [];
+
+        const existingPlans = ((nextYearUserData?.plans as PlanContextData)?.[
+          planContext
+        ] || []) as PlanScreenData[];
+        const updatedPlans = [...existingPlans, newPlan];
+
+        await saveTaskByCategory({
+          category: TASK_CATEGORY.PLANS,
+          data: updatedPlans,
+          context: planContext,
+          year: nextYear,
+        }).unwrap();
+
+        try {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        } catch (error) {
+          console.log("Haptics not available");
+        }
+      } catch (error) {
+        Alert.alert(t("common.error"), t("errors.generic"));
+      }
+    },
+    [plans, selectedYear, saveTaskByCategory, getUserData, currentUser?.uid, t]
+  );
+
   return {
     handleUpdatePlan,
     handleEditPlan,
@@ -310,6 +361,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
     handleCompletePlan,
     openMonthSelect,
     handleMonthSelect,
+    handleCopyToNextYear,
     showModal,
     context,
     updatedData,

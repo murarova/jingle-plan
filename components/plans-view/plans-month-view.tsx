@@ -63,6 +63,7 @@ interface MonthPlansContentProps {
   onMonthSelect: (item: PlanWithContext) => void;
   onEdit: (item: PlanWithContext) => void;
   onDelete: (item: PlanWithContext) => void;
+  onCopyToNextYear?: (item: PlanWithContext) => void;
   onComplete: (props: CompletePlanProps) => void;
   month: string;
 }
@@ -73,6 +74,7 @@ const MonthPlansContent = memo(
     onMonthSelect,
     onEdit,
     onDelete,
+    onCopyToNextYear,
     onComplete,
     month,
   }: MonthPlansContentProps) => (
@@ -84,6 +86,7 @@ const MonthPlansContent = memo(
           onMonthSelect={onMonthSelect}
           onEdit={onEdit}
           onDelete={onDelete}
+          onCopyToNextYear={onCopyToNextYear}
           handleCompletePlan={onComplete}
           month={month}
         />
@@ -125,6 +128,7 @@ export const PlansMonthView = memo(
     plans,
     handleEditPlan,
     handleDeletePlan,
+    handleCopyToNextYear,
     handleCompletePlan,
     openMonthSelect,
   }: PlansViewProps) => {
@@ -156,6 +160,13 @@ export const PlansMonthView = memo(
         openMonthSelect(item, item.context);
       },
       [openMonthSelect]
+    );
+
+    const handlePlanCopyToNextYear = useCallback(
+      (item: PlanWithContext) => {
+        handleCopyToNextYear(item, item.context);
+      },
+      [handleCopyToNextYear]
     );
 
     if (isEmpty(sortedPlans)) {
@@ -199,6 +210,7 @@ export const PlansMonthView = memo(
                     onMonthSelect={handlePlanMonthSelect}
                     onEdit={handlePlanEdit}
                     onDelete={handlePlanDelete}
+                    onCopyToNextYear={handlePlanCopyToNextYear}
                     onComplete={(props) =>
                       handlePlanComplete({
                         ...props,

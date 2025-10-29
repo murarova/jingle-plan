@@ -1,6 +1,6 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import { SerializableUser, convertToSerializableUser } from "../types/user";
+import { convertToSerializableUser } from "../types/user";
 
 // Custom base query for Firebase Auth operations
 const authQuery = async (args: any) => {

@@ -8,7 +8,6 @@ import { IntroScreen } from "./screens/intro-screen";
 import { GluestackUIProvider } from "@gluestack-ui/themed";
 import { config } from "./config/gluestack-ui.config";
 import { SCREENS } from "./constants/constants";
-import { useTranslation } from "react-i18next";
 import "./i18n/i18n";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "./store/store";
@@ -20,6 +19,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Loader, GlobalLoader } from "./components/common";
+import { StatusBar } from "react-native";
 
 (globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
 
@@ -44,11 +44,9 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 function AppContent() {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   useFirebaseMessaging();
-
   useEffect(() => {
     const loadPersistedUser = async () => {
       try {
@@ -114,6 +112,7 @@ function AppContent() {
 export default function App() {
   return (
     <GluestackUIProvider config={config}>
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Provider store={store}>
           <SafeAreaProvider>

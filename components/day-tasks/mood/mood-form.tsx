@@ -53,9 +53,6 @@ export const MoodForm = memo(
               onChangeText={onTextChange}
               value={text}
               placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-              returnKeyType="done"
-              submitBehavior="blurAndSubmit"
-              onSubmitEditing={onSubmit}
             />
           </Textarea>
         )}

@@ -9,10 +9,18 @@ interface MonthPhotoViewProps {
   isLoading: boolean;
   onEdit: () => void;
   onDelete: () => void;
+  setIsImageLoading: (isLoading: boolean) => void;
 }
 
 export const MonthPhotoView = memo(
-  ({ image, text, isLoading, onEdit, onDelete }: MonthPhotoViewProps) => {
+  ({
+    image,
+    text,
+    isLoading,
+    onEdit,
+    onDelete,
+    setIsImageLoading,
+  }: MonthPhotoViewProps) => {
     return (
       <Box>
         {image && (
@@ -37,6 +45,8 @@ export const MonthPhotoView = memo(
                   style={{ flex: 1, justifyContent: "center" }}
                   source={{ uri: image?.uri }}
                   resizeMode="contain"
+                  onLoadStart={() => setIsImageLoading(true)}
+                  onLoadEnd={() => setIsImageLoading(false)}
                 />
               </Box>
             </AnimatedView>

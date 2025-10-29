@@ -1,11 +1,10 @@
-import { Box } from "@gluestack-ui/themed";
+import { Box, Divider } from "@gluestack-ui/themed";
 import { memo } from "react";
 import { TaskOutputType } from "../../../constants/constants";
 import { MoodTaskData } from "../../../types/types";
 import { MoodForm } from "./mood-form";
 import { MoodView } from "./mood-view";
 import { useMoodTask } from "./hooks/useMoodTask";
-import { useTranslation } from "react-i18next";
 
 interface MoodProps {
   data: MoodTaskData | null;
@@ -28,8 +27,6 @@ export const MoodTask = memo(({ data, day, taskOutputType }: MoodProps) => {
     handleSubmit,
     isEditable,
   } = useMoodTask({ data, day, taskOutputType });
-
-  const { t } = useTranslation();
 
   return (
     <Box>
