@@ -13,6 +13,7 @@ import {
   useSaveTaskByCategoryMutation,
 } from "../../../services/api";
 import { useTranslation } from "react-i18next";
+import { resolveErrorMessage } from "../../../utils/utils";
 
 interface UseSummaryScreenProps {
   summary: SummaryContextData | null;
@@ -54,7 +55,11 @@ export const useSummaryScreen = ({ summary }: UseSummaryScreenProps) => {
           console.log("Haptics not available");
         }
       } catch (error) {
-        Alert.alert(t("common.error"), t("errors.generic"));
+        const message =
+          resolveErrorMessage(error) ??
+          t("errors.generic", "An error occurred");
+
+        Alert.alert(t("common.error"), message);
       }
     },
     [saveTaskByCategory, text, t, selectedYear]
@@ -76,7 +81,11 @@ export const useSummaryScreen = ({ summary }: UseSummaryScreenProps) => {
               }).unwrap();
               setText("");
             } catch (error) {
-              Alert.alert(t("common.error"), t("errors.generic"));
+              const message =
+                resolveErrorMessage(error) ??
+                t("errors.generic", "An error occurred");
+
+              Alert.alert(t("common.error"), message);
             }
           },
         },

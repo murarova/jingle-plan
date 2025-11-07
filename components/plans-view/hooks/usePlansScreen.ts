@@ -22,6 +22,7 @@ import {
 } from "../../../services/api";
 import { PlanContextData } from "../../../types/types";
 import uuid from "react-native-uuid";
+import { resolveErrorMessage } from "../../../utils/utils";
 
 interface UsePlansScreenProps {
   plans: PlansCollection | null;
@@ -66,7 +67,11 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
           year: selectedYear,
         }).unwrap();
       } catch (error) {
-        Alert.alert(t("common.error"), t("errors.generic"));
+        const message =
+          resolveErrorMessage(error) ??
+          t("errors.generic", "An error occurred");
+
+        Alert.alert(t("common.error"), message);
         throw error;
       } finally {
         resetState();
@@ -128,7 +133,13 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         } catch (error) {
           console.log("Haptics not available");
         }
-      } catch (error) {}
+      } catch (error) {
+        const message =
+          resolveErrorMessage(error) ??
+          t("errors.generic", "An error occurred");
+
+        Alert.alert(t("common.error"), message);
+      }
     },
     [
       plans,
@@ -173,7 +184,11 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
                 year: selectedYear,
               }).unwrap();
             } catch (error) {
-              Alert.alert(t("common.error"), t("errors.generic"));
+              const message =
+                resolveErrorMessage(error) ??
+                t("errors.generic", "An error occurred");
+
+              Alert.alert(t("common.error"), message);
             }
           },
         },
@@ -234,8 +249,12 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
           console.log("Haptics not available");
         }
       } catch (error) {
+        const message =
+          resolveErrorMessage(error) ??
+          t("errors.generic", "An error occurred");
+
         console.error("Failed to save plan completion:", error);
-        Alert.alert(t("common.error"), t("errors.generic"));
+        Alert.alert(t("common.error"), message);
       } finally {
         resetState();
       }
@@ -268,7 +287,11 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
           console.log("Haptics not available");
         }
       } catch (error) {
-        Alert.alert(t("common.error"), t("errors.generic"));
+        const message =
+          resolveErrorMessage(error) ??
+          t("errors.generic", "An error occurred");
+
+        Alert.alert(t("common.error"), message);
       }
     },
     [plans, saveTaskByCategory, selectedYear, t]
@@ -348,7 +371,11 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
           console.log("Haptics not available");
         }
       } catch (error) {
-        Alert.alert(t("common.error"), t("errors.generic"));
+        const message =
+          resolveErrorMessage(error) ??
+          t("errors.generic", "An error occurred");
+
+        Alert.alert(t("common.error"), message);
       }
     },
     [plans, selectedYear, saveTaskByCategory, getUserData, currentUser?.uid, t]

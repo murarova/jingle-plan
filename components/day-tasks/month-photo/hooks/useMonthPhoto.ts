@@ -13,6 +13,7 @@ import {
   useRemoveTaskMutation,
 } from "../../../../services/api";
 import { useImage } from "../../../../hooks/useImage";
+import { resolveErrorMessage } from "../../../../utils/utils";
 
 interface UseMonthPhotoProps {
   context: string;
@@ -65,7 +66,11 @@ export const useMonthPhoto = ({ context, data }: UseMonthPhotoProps) => {
             setText("");
             setImage(null);
           } catch (error) {
-            Alert.alert(t("common.error"), t("errors.generic"));
+            const message =
+              resolveErrorMessage(error) ??
+              t("errors.generic", "An error occurred");
+
+            Alert.alert(t("common.error"), message);
           }
         },
       },
@@ -117,7 +122,10 @@ export const useMonthPhoto = ({ context, data }: UseMonthPhotoProps) => {
 
       setIsEditing(false);
     } catch (error) {
-      Alert.alert(t("common.error"), t("errors.generic"));
+      const message =
+        resolveErrorMessage(error) ?? t("errors.generic", "An error occurred");
+
+      Alert.alert(t("common.error"), message);
     }
   }, [
     image,

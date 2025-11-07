@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/withTypes";
 import { setSelectedYear, selectSelectedYear } from "../store/appReducer";
 import { YEARS } from "../constants/constants";
+import { useLazyGetUserDataQuery } from "../services/api";
 import {
   Box,
   Text,
@@ -18,46 +20,116 @@ import { ChevronDown } from "lucide-react-native";
 export const YearSelector = () => {
   const dispatch = useAppDispatch();
   const selectedYear = useAppSelector(selectSelectedYear);
+  const userUid = useAppSelector((state) => state.auth.userUid);
+  const currentYear = YEARS[YEARS.length - 1];
+  const [availableYears, setAvailableYears] = useState<string[]>([currentYear]);
+  const [fetchUserYearData] = useLazyGetUserDataQuery();
+
+  useEffect(() => {
+    if (!userUid) {
+      setAvailableYears([currentYear]);
+      return;
+    }
+    let isActive = true;
+
+    const loadYears = async (uid: string) => {
+      const yearsWithData: string[] = [];
+
+      for (const year of YEARS) {
+        try {
+          const request = fetchUserYearData({ uid, year }, true);
+          const data = await request.unwrap();
+          if (data) {
+            yearsWithData.push(year);
+          }
+        } catch (error) {
+          // ignore errors per year; we'll keep existing list
+        }
+      }
+
+      if (!isActive) return;
+
+      setAvailableYears(yearsWithData.length ? yearsWithData : [currentYear]);
+    };
+
+    loadYears(userUid);
+
+    return () => {
+      isActive = false;
+    };
+  }, [userUid, fetchUserYearData, currentYear]);
+
+  useEffect(() => {
+    if (!availableYears.length) return;
+    if (!availableYears.includes(selectedYear)) {
+      dispatch(setSelectedYear(availableYears[availableYears.length - 1]));
+    }
+  }, [availableYears, selectedYear, dispatch]);
 
   const handleYearChange = (value: string) => {
     dispatch(setSelectedYear(value));
   };
 
+  const singleYear = availableYears.length === 1 ? availableYears[0] : null;
+
   return (
     <Box paddingLeft={16}>
-      <Select
-        key={selectedYear}
-        selectedValue={selectedYear}
-        onValueChange={handleYearChange}
-      >
-        <SelectTrigger borderWidth={0}>
-          <Box
-            backgroundColor="$white"
-            paddingHorizontal="$3"
-            paddingVertical="$2"
-            minWidth={60}
-            alignItems="center"
-            flexDirection="row"
-            gap="$1"
-          >
-            <Text fontSize="$lg" fontWeight="$semibold" color="$warmGray800">
-              {selectedYear}
-            </Text>
-            <ChevronDown size={16} color="#999999" />
-          </Box>
-        </SelectTrigger>
-        <SelectPortal>
-          <SelectBackdrop />
-          <SelectContent paddingBottom="$10">
-            <SelectDragIndicatorWrapper>
-              <SelectDragIndicator />
-            </SelectDragIndicatorWrapper>
-            {YEARS.map((year) => (
-              <SelectItem key={year} label={year} value={year} />
-            ))}
-          </SelectContent>
-        </SelectPortal>
-      </Select>
+      {singleYear ? (
+        <Box
+          backgroundColor="$white"
+          paddingHorizontal="$3"
+          paddingVertical="$2"
+          minWidth={60}
+          alignItems="center"
+        >
+          <Text fontSize="$lg" fontWeight="$semibold" color="$warmGray800">
+            {singleYear}
+          </Text>
+        </Box>
+      ) : (
+        <Select
+          key={selectedYear}
+          selectedValue={selectedYear}
+          onValueChange={handleYearChange}
+        >
+          <SelectTrigger borderWidth={0}>
+            <Box
+              backgroundColor="$white"
+              paddingHorizontal="$3"
+              paddingVertical="$2"
+              minWidth={60}
+              alignItems="center"
+              flexDirection="row"
+              gap="$1"
+            >
+              <Text fontSize="$lg" fontWeight="$semibold" color="$warmGray800">
+                {selectedYear}
+              </Text>
+              <ChevronDown size={16} color="#999999" />
+            </Box>
+          </SelectTrigger>
+          <SelectPortal>
+            <SelectBackdrop />
+            <SelectContent paddingBottom="$10">
+              <SelectDragIndicatorWrapper>
+                <SelectDragIndicator />
+              </SelectDragIndicatorWrapper>
+              {availableYears.length ? (
+                availableYears.map((year) => (
+                  <SelectItem key={year} label={year} value={year} />
+                ))
+              ) : (
+                <SelectItem
+                  isDisabled
+                  key="no-data"
+                  label={selectedYear}
+                  value={selectedYear}
+                />
+              )}
+            </SelectContent>
+          </SelectPortal>
+        </Select>
+      )}
     </Box>
   );
 };

@@ -37,9 +37,18 @@ const firebaseQuery = async (args: any, api: any): Promise<any> => {
         await firebase
           .app()
           .database(EXPO_PUBLIC_DB)
-          .ref(`/${args.year}/users/${args.uid}`)
-          .set({ userProfile: { name: args.name } });
+          .ref(`/usersProfiles/${args.uid}`)
+          .set({ name: args.name, email: args.email });
         return { data: null };
+
+      case "getUserProfile":
+        if (!currentUser) throw new Error("No user provided");
+        const profileResponse = await firebase
+          .app()
+          .database(EXPO_PUBLIC_DB)
+          .ref(`/usersProfiles/${currentUser.uid}`)
+          .once("value");
+        return { data: profileResponse.val() || null };
 
       case "saveTaskByCategory":
         if (!currentUser) throw new Error("No user provided");
@@ -133,15 +142,20 @@ export const api = createApi({
     }),
 
     // User Profile
+    getUserProfile: builder.query<any, { uid: string }>({
+      query: ({ uid }) => ({ type: "getUserProfile", uid }),
+      providesTags: ["UserProfile"],
+    }),
+
     createProfile: builder.mutation<
       void,
-      { uid: string; name: string; year: string }
+      { uid: string; name: string; email: string }
     >({
-      query: ({ uid, name, year }) => ({
+      query: ({ uid, name, email }) => ({
         type: "createProfile",
         uid,
         name,
-        year,
+        email,
       }),
       invalidatesTags: ["UserProfile"],
     }),
@@ -223,6 +237,8 @@ export const {
   useGetConfigurationQuery,
   useGetUserDataQuery,
   useLazyGetUserDataQuery,
+  useGetUserProfileQuery,
+  useLazyGetUserProfileQuery,
   useCreateProfileMutation,
   useSaveTaskByCategoryMutation,
   useSaveMoodTaskMutation,

@@ -30,6 +30,7 @@ import { useAppSelector, useAppDispatch } from "../store/withTypes";
 import { convertToSerializableUser } from "../types/user";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
+import { resolveErrorMessage } from "../utils/utils";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Login">;
 
@@ -69,13 +70,12 @@ export const LoginScreen = () => {
       dispatch(setUser(convertToSerializableUser(user)));
       nav.replace(SCREENS.HOME);
     } catch (error) {
-      dispatch(
-        setAuthError(error instanceof Error ? error.message : "Sign in failed")
-      );
-      Alert.alert(
-        t("screens.loginScreen.errorTitle"),
-        t("screens.loginScreen.errorMessage")
-      );
+      const message =
+        resolveErrorMessage(error) ??
+        t("errors.generic", "An error occurred");
+
+      dispatch(setAuthError(message));
+      Alert.alert(t("common.error"), message);
     }
   };
 

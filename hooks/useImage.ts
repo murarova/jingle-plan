@@ -4,6 +4,7 @@ import { ImageData } from "../types/types";
 import { useSaveImageMutation, useLazyGetImageUrlQuery } from "../services/api";
 import { useAppSelector } from "../store/withTypes";
 import { useTranslation } from "react-i18next";
+import { resolveErrorMessage } from "../utils/utils";
 
 export function useImage() {
   const { t } = useTranslation();
@@ -23,7 +24,11 @@ export function useImage() {
       }).unwrap();
       return result;
     } catch (error) {
-      Alert.alert(t("common.error"), t("errors.generic"));
+      const message =
+        resolveErrorMessage(error) ??
+        t("errors.generic", "An error occurred");
+
+      Alert.alert(t("common.error"), message);
     }
   }
 

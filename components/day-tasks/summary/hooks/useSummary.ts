@@ -11,6 +11,7 @@ import {
 } from "../../../../services/api";
 import { useAppSelector } from "../../../../store/withTypes";
 import { SummaryContextData } from "../../../../types/types";
+import { resolveErrorMessage } from "../../../../utils/utils";
 
 interface UseSummaryProps {
   context: string;
@@ -102,7 +103,11 @@ export const useSummary = ({ context, data }: UseSummaryProps) => {
         console.log("Haptics not available");
       }
     } catch (error) {
-      Alert.alert(t("common.error"), t("errors.generic"));
+      const message =
+        resolveErrorMessage(error) ??
+        t("errors.generic", "An error occurred");
+
+      Alert.alert(t("common.error"), message);
     }
   }, [text, rate, contextData, saveTaskByCategory, context, t, selectedYear]);
 
@@ -122,7 +127,11 @@ export const useSummary = ({ context, data }: UseSummaryProps) => {
             setText("");
             setRate(50);
           } catch (error) {
-            Alert.alert(t("common.error"), t("errors.generic"));
+            const message =
+              resolveErrorMessage(error) ??
+              t("errors.generic", "An error occurred");
+
+            Alert.alert(t("common.error"), message);
           }
         },
       },

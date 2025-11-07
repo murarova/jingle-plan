@@ -11,6 +11,7 @@ import {
 } from "../../../../services/api";
 import { useAppSelector } from "../../../../store/withTypes";
 import { TextData } from "../../../../types/types";
+import { resolveErrorMessage } from "../../../../utils/utils";
 
 interface UseGoalsProps {
   context: string;
@@ -63,7 +64,11 @@ export const useGoals = ({ context, data }: UseGoalsProps) => {
           console.log("Haptics not available");
         }
       } catch (error) {
-        Alert.alert(t("common.error"), t("errors.generic"));
+        const message =
+          resolveErrorMessage(error) ??
+          t("errors.generic", "An error occurred");
+
+        Alert.alert(t("common.error"), message);
         console.error("Failed to save goal:", error);
       }
     },
@@ -86,7 +91,11 @@ export const useGoals = ({ context, data }: UseGoalsProps) => {
             setText("");
             setIsEditing(true);
           } catch (error) {
-            Alert.alert(t("common.error"), t("errors.generic"));
+            const message =
+              resolveErrorMessage(error) ??
+              t("errors.generic", "An error occurred");
+
+            Alert.alert(t("common.error"), message);
           }
         },
       },

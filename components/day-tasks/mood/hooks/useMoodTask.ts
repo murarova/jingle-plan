@@ -13,6 +13,7 @@ import {
 import { useAppSelector } from "../../../../store/withTypes";
 import { useImage } from "../../../../hooks/useImage";
 import { MoodTaskData, TextImageData } from "../../../../types/types";
+import { resolveErrorMessage } from "../../../../utils/utils";
 
 interface UseMoodTaskProps {
   data: MoodTaskData | null;
@@ -75,7 +76,11 @@ export const useMoodTask = ({
             setText("");
             setImage(null);
           } catch (error) {
-            Alert.alert(t("common.error"), t("errors.generic"));
+            const message =
+              resolveErrorMessage(error) ??
+              t("errors.generic", "An error occurred");
+
+            Alert.alert(t("common.error"), message);
           }
         },
       },
@@ -167,7 +172,11 @@ export const useMoodTask = ({
         console.log("Haptics not available");
       }
     } catch (error) {
-      Alert.alert(t("common.error"), t("errors.generic"));
+      const message =
+        resolveErrorMessage(error) ??
+        t("errors.generic", "An error occurred");
+
+      Alert.alert(t("common.error"), message);
     }
   }, [
     taskOutputType,
@@ -179,7 +188,6 @@ export const useMoodTask = ({
     day,
     t,
     selectedYear,
-    isEditable,
   ]);
 
   return {

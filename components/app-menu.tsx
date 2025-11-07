@@ -19,21 +19,25 @@ import {
   useSignOutMutation,
   useDeleteCurrentUserMutation,
 } from "../services/auth-api-rtk";
-import { useGetUserDataQuery } from "../services/api";
+import { useGetUserProfileQuery } from "../services/api";
 import { RootStackParamList } from "../App";
+import { resolveErrorMessage } from "../utils/utils";
 
 export function AppMenu() {
   const { t } = useTranslation();
   const nav = useNavigation<NavigationProp<RootStackParamList>>();
   const dispatch = useAppDispatch();
   const { currentUser } = useAppSelector((state) => state.auth);
-  const { selectedYear } = useAppSelector((state) => state.app);
-  const { data: userData } = useGetUserDataQuery(
-    { uid: currentUser?.uid!, year: selectedYear },
-    { skip: !currentUser?.uid || !selectedYear }
-  );
+
   const [signOut] = useSignOutMutation();
   const [deleteCurrentUser] = useDeleteCurrentUserMutation();
+
+  const { data: userProfile } = useGetUserProfileQuery(
+    { uid: currentUser?.uid! },
+    {
+      skip: !currentUser?.uid,
+    }
+  );
 
   async function handleLogout() {
     try {
@@ -64,10 +68,12 @@ export function AppMenu() {
               await deleteCurrentUser().unwrap();
               nav.navigate(SCREENS.INTRO);
             } catch (error) {
-              Alert.alert(
-                t("common.error"),
-                error instanceof Error ? error.message : "An error occurred"
-              );
+              console.log("error", error);
+              const message =
+                resolveErrorMessage(error) ??
+                t("errors.generic", "An error occurred");
+
+              Alert.alert(t("common.error"), message);
             }
           },
         },
@@ -103,7 +109,7 @@ export function AppMenu() {
               {t("common.welcome")}
             </Text>
             <Text fontSize="$md" fontWeight="$semibold" color="$warmGray800">
-              {userData?.userProfile?.name || "User"}
+              {userProfile?.name || "User"}
             </Text>
           </Box>
         </MenuItem>

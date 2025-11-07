@@ -26,6 +26,7 @@ import { convertToSerializableUser } from "../types/user";
 import { useCreateProfileMutation } from "../services/api";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
+import { resolveErrorMessage } from "../utils/utils";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Register">;
 
@@ -99,18 +100,18 @@ export const RegisterScreen = () => {
         await createProfile({
           uid: user.uid,
           name: trimmedName,
-          year: new Date().getFullYear().toString(),
+          email: user.email || "",
         }).unwrap();
 
         dispatch(setUser(serializableUser));
         nav.replace(SCREENS.HOME);
       } catch (error) {
-        dispatch(
-          setAuthError(
-            error instanceof Error ? error.message : "Registration failed"
-          )
-        );
-        Alert.alert("Oops", t("screens.registerScreen.errorMessage"));
+        const message =
+          resolveErrorMessage(error) ??
+          t("errors.generic", "An error occurred");
+
+        dispatch(setAuthError(message));
+        Alert.alert(t("common.error"), message);
       }
     }
   };

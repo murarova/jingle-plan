@@ -23,7 +23,7 @@ export const Calendar = memo(({ pressHandler }: CalendarProps) => {
   const locale = "uk";
 
   setupCalendarLocale(locale);
-  const { getDayConfig, isAdmin } = useCalendarDayManager();
+  const { getDayConfig, isAdmin, isLoading } = useCalendarDayManager();
 
   const minDate = useMemo(
     () => moment(`${selectedYear}-12-01`).format("YYYY-MM-DD"),
@@ -51,6 +51,7 @@ export const Calendar = memo(({ pressHandler }: CalendarProps) => {
           onPress={pressHandler}
           currentDate={currentDate}
           progress={progress ?? 0}
+          isLoading={isLoading}
         />
       );
     },

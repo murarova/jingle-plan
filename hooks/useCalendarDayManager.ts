@@ -1,6 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo } from "react";
 import { useAppSelector } from "../store/withTypes";
-import { useGetConfigurationQuery, useGetUserDataQuery } from "../services/api";
+import {
+  useGetConfigurationQuery,
+  useGetUserDataQuery,
+  useGetUserProfileQuery,
+} from "../services/api";
 import {
   DayData,
   DayTaskProgress,
@@ -22,7 +26,15 @@ export const useCalendarDayManager = () => {
     data: configuration,
     isLoading: isConfigLoading,
     error: configError,
-  } = useGetConfigurationQuery({ year: selectedYear }, { skip: !selectedYear });
+  } = useGetConfigurationQuery(
+    { year: selectedYear },
+    {
+      skip: !selectedYear,
+      refetchOnMountOrArgChange: false,
+      refetchOnFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
 
   const {
     data: userData,
@@ -31,12 +43,24 @@ export const useCalendarDayManager = () => {
     refetch: refetchUserData,
   } = useGetUserDataQuery(
     { uid: currentUser?.uid!, year: selectedYear },
-    { skip: !currentUser?.uid || !selectedYear }
+    {
+      skip: !currentUser?.uid || !selectedYear,
+      refetchOnMountOrArgChange: false,
+      refetchOnFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
+  const { data: userProfile } = useGetUserProfileQuery(
+    { uid: currentUser?.uid! },
+    {
+      skip: !currentUser?.uid,
+    }
   );
 
   const isLoading = isConfigLoading || isUserDataLoading;
   const error = configError || userDataError;
-  const isAdmin = userData?.userProfile?.role === "admin" || false;
+  const isAdmin = userProfile?.role === "admin" || false;
 
   const refresh = useCallback(() => {
     refetchUserData();

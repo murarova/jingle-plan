@@ -11,6 +11,7 @@ import uuid from "react-native-uuid";
 import { PlanData } from "../../../../types/types";
 import { useAppSelector } from "../../../../store/withTypes";
 import { useSaveTaskByCategoryMutation } from "../../../../services/api";
+import { resolveErrorMessage } from "../../../../utils/utils";
 
 interface UsePlansProps {
   context: string;
@@ -56,7 +57,11 @@ export function usePlans({ data, context }: UsePlansProps) {
         console.log("Haptics not available");
       }
     } catch (error) {
-      Alert.alert(t("common.error"), t("errors.generic"));
+      const message =
+        resolveErrorMessage(error) ??
+        t("errors.generic", "An error occurred");
+
+      Alert.alert(t("common.error"), message);
     } finally {
       setLoading(false);
     }
@@ -81,7 +86,11 @@ export function usePlans({ data, context }: UsePlansProps) {
         console.log("Haptics not available");
       }
     } catch (error) {
-      Alert.alert(t("common.error"), t("errors.generic"));
+      const message =
+        resolveErrorMessage(error) ??
+        t("errors.generic", "An error occurred");
+
+      Alert.alert(t("common.error"), message);
     } finally {
       setUpdatedData(null);
       setLoading(false);
@@ -113,7 +122,11 @@ export function usePlans({ data, context }: UsePlansProps) {
               year: selectedYear,
             }).unwrap();
           } catch (error) {
-            Alert.alert(t("common.error"), t("errors.generic"));
+            const message =
+              resolveErrorMessage(error) ??
+              t("errors.generic", "An error occurred");
+
+            Alert.alert(t("common.error"), message);
           } finally {
             setLoading(false);
           }
