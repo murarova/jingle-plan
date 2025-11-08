@@ -46,10 +46,6 @@ export const SummaryScreen: React.FC = () => {
     handleEdit,
   } = useSummaryScreen({ summary });
 
-  if (!userData) {
-    return null;
-  }
-
   if (!summary) {
     return <EmptyScreen />;
   }

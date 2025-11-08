@@ -83,6 +83,14 @@ export default {
       errorMessage: "Перевірте свої дані та спробуйте ще раз.",
       emptyFieldsMessage:
         "Поля електронної пошти та пароля не можуть бути порожніми.",
+      rememberMe: "Запам'ятати мене",
+      forgotPassword: "Забули пароль?",
+      resetSuccess: "Ми надіслали інструкції для відновлення на {{email}}.",
+      invalidEmailPrompt:
+        "Будь ласка, введіть дійсну пошту перед відновленням.",
+      resetEmailRequired:
+        "Введіть вашу електронну адресу, щоб отримати інструкції.",
+      resetEmailNotFound: "Акаунт із такою електронною адресою не знайдено.",
     },
     registerScreen: {
       title: "Реєстрація",
@@ -100,6 +108,10 @@ export default {
       passwordMatchError: "Паролі не збігаються",
       invalidEmail: "Будь ласка, введіть дійсну електронну адресу",
       emptyName: "Ім'я обов'язкове",
+      savePasswordTitle: "Зберегти пароль?",
+      savePasswordMessage:
+        "Запам'ятати ці дані, щоб швидко увійти наступного разу?",
+      savePasswordConfirm: "Так, зберегти",
     },
     emptyScreen: "На сьогодні завдань немає",
     processText: "Виконано:",

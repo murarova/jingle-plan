@@ -31,7 +31,7 @@ import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { months, PlansViewOptions } from "../../../constants/constants";
 import { PlanScreenData } from "../../../types/types";
-import { CompletePlanProps } from "../plans-context-view";
+import { CompletePlanProps } from "../context-view/types";
 
 interface PlansListProps {
   plans: PlanScreenData[];
@@ -106,7 +106,7 @@ export function PlansList({
                 <Box flex={1}>
                   <Checkbox
                     value={item?.text}
-                    defaultIsChecked={isDone}
+                    isChecked={isDone}
                     onChange={(value) =>
                       handleCompletePlan({
                         plan: item,

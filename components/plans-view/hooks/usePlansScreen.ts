@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import {
   PlanScreenData,
   PlansCollection,
@@ -9,11 +9,12 @@ import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
 import { findPlanContextById, getPlansList } from "../../../utils/plans-utils";
 import { SheetRef } from "../../common";
-import { CompletePlanProps } from "../plans-context-view";
+import { CompletePlanProps } from "../context-view/types";
 import {
   allMonths,
   PlansViewOptions,
   TASK_CATEGORY,
+  TASK_CONTEXT,
 } from "../../../constants/constants";
 import { Alert } from "react-native";
 import {
@@ -23,12 +24,30 @@ import {
 import { PlanContextData } from "../../../types/types";
 import uuid from "react-native-uuid";
 import { resolveErrorMessage } from "../../../utils/utils";
+import { groupPlansByMonth } from "../month-view/helpers";
+import { PlansContextEntry } from "../context-view/types";
+import { PlansMonthData } from "../month-view/types";
 
 interface UsePlansScreenProps {
   plans: PlansCollection | null;
 }
 
 export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
+  const contextEntries = useMemo<PlansContextEntry[]>(() => {
+    if (!plans) return [];
+    return (Object.values(TASK_CONTEXT) as TaskContext[])
+      .map((context) => ({
+        context,
+        plans: [...(plans?.[context] ?? [])],
+      }))
+      .filter(({ plans }) => plans.length);
+  }, [plans]);
+
+  const monthlyPlans = useMemo<PlansMonthData>(() => {
+    if (!plans) return {};
+    return groupPlansByMonth(plans);
+  }, [plans]);
+
   const [updatedData, setUpdatedData] = useState<PlanScreenData | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>();
@@ -235,6 +254,8 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         item.id === plan.id ? updatedPlan : item
       );
 
+      console.log("updatedPlans", updatedPlans);
+
       try {
         await saveTaskByCategory({
           category: TASK_CATEGORY.PLANS,
@@ -400,6 +421,8 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
     selectedMonth,
     setSelectedMonth,
     sheetRef,
+    contextEntries,
+    monthlyPlans,
   };
 };
 

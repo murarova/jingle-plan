@@ -27,6 +27,10 @@ import { useCreateProfileMutation } from "../services/api";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
 import { resolveErrorMessage } from "../utils/utils";
+import {
+  saveCredentials,
+  clearCredentials,
+} from "../services/password-storage";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Register">;
 
@@ -81,27 +85,56 @@ export const RegisterScreen = () => {
 
   const handleRegister = async () => {
     const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
     if (
       !emailError &&
       !passwordError &&
       !passwordMatchError &&
       !nameError &&
-      email &&
+      trimmedEmail &&
       password &&
       repeatPassword &&
       trimmedName
     ) {
       try {
         dispatch(setAuthLoading());
-        const user = await createUser({ email, password }).unwrap();
+        const user = await createUser({ email: trimmedEmail, password }).unwrap();
         const serializableUser = convertToSerializableUser(user, trimmedName);
 
         // Create profile
         await createProfile({
           uid: user.uid,
           name: trimmedName,
-          email: user.email || "",
+          email: user.email || trimmedEmail,
         }).unwrap();
+
+        const shouldRemember = await new Promise<boolean>((resolve) => {
+          Alert.alert(
+            t("screens.registerScreen.savePasswordTitle"),
+            t("screens.registerScreen.savePasswordMessage"),
+            [
+              {
+                text: t("common.cancel"),
+                style: "cancel",
+                onPress: () => {
+                  clearCredentials().finally(() => resolve(false));
+                },
+              },
+              {
+                text: t("screens.registerScreen.savePasswordConfirm"),
+                onPress: () => {
+                  saveCredentials(trimmedEmail, password)
+                    .then(() => resolve(true))
+                    .catch(() => resolve(false));
+                },
+              },
+            ]
+          );
+        });
+
+        if (!shouldRemember) {
+          await clearCredentials();
+        }
 
         dispatch(setUser(serializableUser));
         nav.replace(SCREENS.HOME);

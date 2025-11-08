@@ -156,7 +156,11 @@ export const useMonthPhoto = ({ context, data }: UseMonthPhotoProps) => {
       setImage(null);
     }
 
-    setIsEditing(false);
+    if (!contextData?.text || !contextData?.image) {
+      setIsEditing(true);
+    } else {
+      setIsEditing(false);
+    }
   }, [contextData, setImage]);
 
   const handleTextChange = useCallback((newText: string) => {

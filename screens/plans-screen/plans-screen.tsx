@@ -2,6 +2,7 @@ import { useState } from "react";
 import { EmptyScreen } from "../../components/empty-screen";
 import { usePlansScreen } from "../../components/plans-view/hooks/usePlansScreen";
 import { ButtonIcon, Fab, SafeAreaView } from "@gluestack-ui/themed";
+import * as Haptics from "expo-haptics";
 import { PlansViewOptions } from "../../constants/constants";
 import { PlanContextData, TextData } from "../../types/types";
 import { useAppSelector } from "../../store/withTypes";
@@ -35,13 +36,14 @@ export function PlansScreen() {
     <SafeAreaView flex={1}>
       {plans && <ViewSwitch onViewChange={setView} />}
       {globalGoal && <GlobalGoal text={globalGoal.text} />}
-      {plans && (
-        <PlansView plans={plans} plansProps={plansProps} viewType={view} />
-      )}
+      {plans && <PlansView plansProps={plansProps} viewType={view} />}
       <Fab
         size="lg"
         placement="bottom right"
         onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {
+            console.log("Haptics not available");
+          });
           plansProps.setShowModal(true);
         }}
       >

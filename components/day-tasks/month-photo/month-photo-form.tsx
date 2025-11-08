@@ -54,14 +54,16 @@ export const MonthPhotoForm = memo(
           />
         </Textarea>
         <HStack space="sm" mt="$2">
-          <Button
-            flex={1}
-            variant="outline"
-            onPress={onCancel}
-            borderRadius="$lg"
-          >
-            <ButtonText>{t("common.cancel")}</ButtonText>
-          </Button>
+          {text || image ? (
+            <Button
+              flex={1}
+              variant="outline"
+              onPress={onCancel}
+              borderRadius="$lg"
+            >
+              <ButtonText>{t("common.cancel")}</ButtonText>
+            </Button>
+          ) : null}
           <Button flex={1} onPress={onSubmit} borderRadius="$lg">
             <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
           </Button>

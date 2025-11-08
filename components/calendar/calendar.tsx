@@ -30,12 +30,23 @@ export const Calendar = memo(({ pressHandler }: CalendarProps) => {
     [selectedYear]
   );
 
+  const firstUnlockedDate = useMemo(
+    () => moment(`${selectedYear}-12-03`).format("YYYY-MM-DD"),
+    [selectedYear]
+  );
+
+  const baseMaxDate = useMemo(() => {
+    const today = moment(currentDate, "YYYY-MM-DD");
+    const thirdDay = moment(firstUnlockedDate, "YYYY-MM-DD");
+    return moment.max(today, thirdDay).format("YYYY-MM-DD");
+  }, [currentDate, firstUnlockedDate]);
+
   const maxDate = useMemo(
     () =>
       isAdmin
         ? moment(`${selectedYear}-12-31`).format("YYYY-MM-DD")
-        : currentDate,
-    [isAdmin, currentDate, selectedYear]
+        : baseMaxDate,
+    [isAdmin, baseMaxDate, selectedYear]
   );
 
   const renderDayComponent = useCallback(

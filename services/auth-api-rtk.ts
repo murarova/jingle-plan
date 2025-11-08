@@ -26,6 +26,14 @@ const authQuery = async (args: any) => {
         await auth().signOut();
         return { data: null };
 
+      case "sendPasswordResetEmail":
+        if (!args.email) {
+          throw new Error("Email is required");
+        }
+
+        await auth().sendPasswordResetEmail(String(args.email).trim());
+        return { data: null };
+
       case "deleteCurrentUser":
         const user = auth().currentUser;
         if (!user) {
@@ -38,8 +46,19 @@ const authQuery = async (args: any) => {
         throw new Error(`Unknown auth operation: ${args.type}`);
     }
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return { error: { status: "CUSTOM_ERROR", data: error.message } };
+    if (error && typeof error === "object") {
+      const errorCode = (error as { code?: string }).code;
+      const errorMessage = (error as { message?: string }).message;
+
+      if (errorCode === "auth/user-not-found") {
+        return {
+          error: { status: "CUSTOM_ERROR", data: "AUTH_EMAIL_NOT_FOUND" },
+        };
+      }
+
+      if (typeof errorMessage === "string") {
+        return { error: { status: "CUSTOM_ERROR", data: errorMessage } };
+      }
     }
     return { error: { status: "CUSTOM_ERROR", data: "Unknown error" } };
   }
@@ -77,6 +96,13 @@ export const authApi = createApi({
       invalidatesTags: ["Auth"],
     }),
 
+    sendPasswordReset: builder.mutation<
+      void,
+      { email: string }
+    >({
+      query: ({ email }) => ({ type: "sendPasswordResetEmail", email }),
+    }),
+
     deleteCurrentUser: builder.mutation<null, void>({
       query: () => ({ type: "deleteCurrentUser" }),
       invalidatesTags: ["Auth"],
@@ -88,5 +114,6 @@ export const {
   useCreateUserMutation,
   useSignInUserMutation,
   useSignOutMutation,
+  useSendPasswordResetMutation,
   useDeleteCurrentUserMutation,
 } = authApi;

@@ -3,6 +3,7 @@ import { Box } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import SwitchSelector from "react-native-switch-selector";
 import { PlansViewOptions } from "../../constants/constants";
+import * as Haptics from "expo-haptics";
 
 interface ViewSwitchProps {
   onViewChange: (value: PlansViewOptions) => void;
@@ -29,7 +30,12 @@ export const ViewSwitch = memo(({ onViewChange }: ViewSwitchProps) => {
     <Box mt="$4" mx="$2">
       <SwitchSelector
         initial={0}
-        onPress={onViewChange}
+        onPress={(value: PlansViewOptions) => {
+          onViewChange(value);
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {
+            console.log("Haptics not available");
+          });
+        }}
         textColor="#000"
         selectedColor="#000"
         buttonColor="#fff"

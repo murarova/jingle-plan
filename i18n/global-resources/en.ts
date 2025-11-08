@@ -80,6 +80,14 @@ export default {
       errorTitle: "Login Failed",
       errorMessage: "Please check your credentials and try again.",
       emptyFieldsMessage: "Email and password fields cannot be empty.",
+      rememberMe: "Remember me",
+      forgotPassword: "Forgot password?",
+      resetSuccess: "We've sent reset instructions to {{email}}.",
+      invalidEmailPrompt:
+        "Please enter a valid email before requesting a reset.",
+      resetEmailRequired:
+        "Enter your email address to receive reset instructions.",
+      resetEmailNotFound: "We couldn't find an account with that email.",
     },
     registerScreen: {
       title: "Register",
@@ -97,6 +105,10 @@ export default {
       passwordMatchError: "Passwords do not match",
       invalidEmail: "Please enter a valid email address",
       emptyName: "Name is required",
+      savePasswordTitle: "Save password?",
+      savePasswordMessage:
+        "Would you like us to remember these credentials for next time?",
+      savePasswordConfirm: "Yes, save",
     },
     processText: "You have completed:",
     periodOverview: {

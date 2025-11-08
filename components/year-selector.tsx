@@ -26,21 +26,21 @@ export const YearSelector = () => {
   const [fetchUserYearData] = useLazyGetUserDataQuery();
 
   useEffect(() => {
+    let isActive = true;
     if (!userUid) {
-      setAvailableYears([currentYear]);
       return;
     }
-    let isActive = true;
 
     const loadYears = async (uid: string) => {
-      const yearsWithData: string[] = [];
+      const yearsWithData = new Set<string>();
 
       for (const year of YEARS) {
+        if (year === currentYear) continue;
         try {
           const request = fetchUserYearData({ uid, year }, true);
           const data = await request.unwrap();
           if (data) {
-            yearsWithData.push(year);
+            yearsWithData.add(year);
           }
         } catch (error) {
           // ignore errors per year; we'll keep existing list
@@ -49,7 +49,11 @@ export const YearSelector = () => {
 
       if (!isActive) return;
 
-      setAvailableYears(yearsWithData.length ? yearsWithData : [currentYear]);
+      const orderedYears = YEARS.filter(
+        (year) => year === currentYear || yearsWithData.has(year)
+      );
+
+      orderedYears.length && setAvailableYears(orderedYears);
     };
 
     loadYears(userUid);
@@ -58,13 +62,6 @@ export const YearSelector = () => {
       isActive = false;
     };
   }, [userUid, fetchUserYearData, currentYear]);
-
-  useEffect(() => {
-    if (!availableYears.length) return;
-    if (!availableYears.includes(selectedYear)) {
-      dispatch(setSelectedYear(availableYears[availableYears.length - 1]));
-    }
-  }, [availableYears, selectedYear, dispatch]);
 
   const handleYearChange = (value: string) => {
     dispatch(setSelectedYear(value));
