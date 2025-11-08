@@ -68,7 +68,6 @@ export function AppMenu() {
               await deleteCurrentUser().unwrap();
               nav.navigate(SCREENS.INTRO);
             } catch (error) {
-              console.log("error", error);
               const message =
                 resolveErrorMessage(error) ??
                 t("errors.generic", "An error occurred");

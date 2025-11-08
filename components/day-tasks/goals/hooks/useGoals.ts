@@ -10,12 +10,14 @@ import {
   useSaveTaskByCategoryMutation,
 } from "../../../../services/api";
 import { useAppSelector } from "../../../../store/withTypes";
-import { TextData } from "../../../../types/types";
+import { TaskContext, TextData } from "../../../../types/types";
 import { resolveErrorMessage } from "../../../../utils/utils";
 
 interface UseGoalsProps {
-  context: string;
-  data: TextData | null;
+  context: TaskContext;
+  data: {
+    [key in TaskContext]?: TextData | null;
+  };
 }
 
 export const useGoals = ({ context, data }: UseGoalsProps) => {
@@ -25,11 +27,12 @@ export const useGoals = ({ context, data }: UseGoalsProps) => {
   const [saveTaskByCategory] = useSaveTaskByCategoryMutation();
   const [removeTask] = useRemoveTaskMutation();
   const { selectedYear } = useAppSelector((state) => state.app);
+  const globalGoal = data?.[context];
 
   useEffect(() => {
     setIsEditing(isEmpty(data));
-    if (data?.text) {
-      setText(data.text);
+    if (globalGoal?.text) {
+      setText(globalGoal.text);
     }
   }, [data]);
 
@@ -40,7 +43,7 @@ export const useGoals = ({ context, data }: UseGoalsProps) => {
         return;
       }
 
-      const id = data?.id ?? uuid.v4().toString();
+      const id = globalGoal?.id ?? uuid.v4().toString();
 
       const updatedGoal = {
         id,
@@ -72,7 +75,7 @@ export const useGoals = ({ context, data }: UseGoalsProps) => {
         console.error("Failed to save goal:", error);
       }
     },
-    [saveTaskByCategory, context, data?.id, t, selectedYear]
+    [saveTaskByCategory, context, globalGoal?.id, t, selectedYear]
   );
 
   const handleRemove = useCallback(async () => {
@@ -108,8 +111,8 @@ export const useGoals = ({ context, data }: UseGoalsProps) => {
 
   const handleCancel = useCallback(() => {
     // Reset form to original state
-    if (data?.text) {
-      setText(data.text);
+    if (globalGoal?.text) {
+      setText(globalGoal.text);
     } else {
       setText("");
     }

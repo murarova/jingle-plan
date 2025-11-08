@@ -254,8 +254,6 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         item.id === plan.id ? updatedPlan : item
       );
 
-      console.log("updatedPlans", updatedPlans);
-
       try {
         await saveTaskByCategory({
           category: TASK_CATEGORY.PLANS,

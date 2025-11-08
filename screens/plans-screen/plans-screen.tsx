@@ -23,8 +23,8 @@ export function PlansScreen() {
     { uid: currentUser?.uid!, year: selectedYear },
     { skip: !currentUser?.uid || !selectedYear }
   );
-  const plans = userData?.plans as PlanContextData | null;
-  const globalGoal = userData?.goals as TextData | null;
+  const plans = userData?.plans;
+  const globalGoal = userData?.goals?.globalGoal;
 
   const plansProps = usePlansScreen({ plans });
 
