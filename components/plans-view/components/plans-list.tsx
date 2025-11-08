@@ -20,22 +20,25 @@ import {
   BadgeText,
   BadgeIcon,
 } from "@gluestack-ui/themed";
-import { EditIcon, Trash2, Ellipsis, CalendarDays } from "lucide-react-native";
+import {
+  EditIcon,
+  Trash2,
+  Ellipsis,
+  CalendarDays,
+  Copy,
+} from "lucide-react-native";
 import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  allMonths,
-  months,
-  PlansViewOptions,
-} from "../../../constants/constants";
+import { months, PlansViewOptions } from "../../../constants/constants";
 import { PlanScreenData } from "../../../types/types";
-import { CompletePlanProps } from "../plans-context-view";
+import { CompletePlanProps } from "../context-view/types";
 
 interface PlansListProps {
   plans: PlanScreenData[];
   onEdit: (plan: PlanScreenData) => void;
   onDelete: (plan: PlanScreenData) => void;
   onMonthSelect: (plan: PlanScreenData) => void;
+  onCopyToNextYear?: (plan: PlanScreenData) => void;
   handleCompletePlan: (props: CompletePlanProps) => void;
   view?: PlansViewOptions;
   month?: string;
@@ -47,6 +50,7 @@ export function PlansList({
   onDelete,
   handleCompletePlan,
   onMonthSelect,
+  onCopyToNextYear,
   view,
   month,
 }: PlansListProps) {
@@ -102,7 +106,7 @@ export function PlansList({
                 <Box flex={1}>
                   <Checkbox
                     value={item?.text}
-                    defaultIsChecked={isDone}
+                    isChecked={isDone}
                     onChange={(value) =>
                       handleCompletePlan({
                         plan: item,
@@ -136,6 +140,13 @@ export function PlansList({
                   placement="top"
                   paddingVertical={0}
                   backgroundColor="$backgroundLight200"
+                  borderRadius="$lg"
+                  mr="$2"
+                  shadowColor="$black"
+                  shadowOffset={{ width: 0, height: 2 }}
+                  shadowOpacity={0.25}
+                  shadowRadius={3.84}
+                  elevation={5}
                   trigger={({ ...triggerProps }) => {
                     return (
                       <Box>
@@ -153,25 +164,22 @@ export function PlansList({
                     backgroundColor="#fff"
                     justifyContent="space-between"
                     mb="$px"
+                    p="$3"
+                    minHeight={48}
+                    borderTopLeftRadius="$lg"
+                    borderTopRightRadius="$lg"
                     onPress={() => onEdit(item)}
+                    sx={{
+                      ":active": {
+                        backgroundColor: "$coolGray200",
+                      },
+                      ":hover": {
+                        backgroundColor: "$coolGray100",
+                      },
+                    }}
                   >
-                    <MenuItemLabel size="sm">{t("common.edit")}</MenuItemLabel>
-                    <Icon as={EditIcon} size="sm" ml="$2" />
-                  </MenuItem>
-
-                  <MenuItem
-                    key="delete"
-                    mb="$px"
-                    textValue="delete"
-                    backgroundColor="#fff"
-                    display="flex"
-                    justifyContent="space-between"
-                    onPress={() => onDelete(item)}
-                  >
-                    <MenuItemLabel size="sm">
-                      {t("common.delete")}
-                    </MenuItemLabel>
-                    <Icon as={Trash2} size="sm" ml="$2" />
+                    <MenuItemLabel size="md">{t("common.edit")}</MenuItemLabel>
+                    <Icon as={EditIcon} size="sm" ml="$3" />
                   </MenuItem>
                   <MenuItem
                     key="selectMonth"
@@ -179,12 +187,75 @@ export function PlansList({
                     backgroundColor="#fff"
                     display="flex"
                     justifyContent="space-between"
+                    p="$3"
+                    mb="$px"
+                    minHeight={48}
                     onPress={() => onMonthSelect(item)}
+                    sx={{
+                      ":active": {
+                        backgroundColor: "$coolGray200",
+                      },
+                      ":hover": {
+                        backgroundColor: "$coolGray100",
+                      },
+                    }}
                   >
-                    <MenuItemLabel size="sm">
+                    <MenuItemLabel size="md">
                       {t("common.selectMonth")}
                     </MenuItemLabel>
-                    <Icon as={CalendarDays} size="sm" ml="$2" />
+                    <Icon as={CalendarDays} size="sm" ml="$3" />
+                  </MenuItem>
+                  {onCopyToNextYear && (
+                    <MenuItem
+                      key="copyToNextYear"
+                      textValue="copyToNextYear"
+                      backgroundColor="#fff"
+                      display="flex"
+                      justifyContent="space-between"
+                      p="$3"
+                      mb="$px"
+                      minHeight={48}
+                      onPress={() => onCopyToNextYear(item)}
+                      sx={{
+                        ":active": {
+                          backgroundColor: "$coolGray200",
+                        },
+                        ":hover": {
+                          backgroundColor: "$coolGray100",
+                        },
+                      }}
+                    >
+                      <MenuItemLabel size="md">
+                        {t("common.copyToNextYear")}
+                      </MenuItemLabel>
+                      <Icon as={Copy} size="sm" ml="$3" />
+                    </MenuItem>
+                  )}
+                  <MenuItem
+                    key="delete"
+                    mb="$px"
+                    textValue="delete"
+                    backgroundColor="#fff"
+                    display="flex"
+                    justifyContent="space-between"
+                    p="$3"
+                    borderBottomLeftRadius="$lg"
+                    borderBottomRightRadius="$lg"
+                    minHeight={48}
+                    onPress={() => onDelete(item)}
+                    sx={{
+                      ":active": {
+                        backgroundColor: "$red100",
+                      },
+                      ":hover": {
+                        backgroundColor: "$red50",
+                      },
+                    }}
+                  >
+                    <MenuItemLabel size="md" color="$red600">
+                      {t("common.delete")}
+                    </MenuItemLabel>
+                    <Icon as={Trash2} size="sm" ml="$3" color="$red600" />
                   </MenuItem>
                 </Menu>
               </HStack>

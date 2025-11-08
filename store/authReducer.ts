@@ -1,11 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  createProfileAsync,
-  createUserAsync,
-  signInUserAsync,
-  deleteCurrentUserAsync,
-  signOutAsync,
-} from "../services/auth-api";
 import { RootState } from "./store";
 import { SerializableUser } from "../types/user";
 import { saveUserToStorage, removeUserFromStorage } from "../services/storage";
@@ -38,89 +31,37 @@ const authSlice = createSlice({
       state.isLoggedIn = !!action.payload;
       state.status = "succeeded";
     },
-  },
-  extraReducers: (builder) => {
-    // createProfileAsync
-    builder.addCase(createProfileAsync.pending, (state) => {
-      state.status = "pending";
-    });
-    builder.addCase(createProfileAsync.fulfilled, (state) => {
+    setUser: (state, action: PayloadAction<SerializableUser>) => {
+      state.currentUser = action.payload;
+      state.userUid = action.payload.uid;
+      state.isLoggedIn = true;
       state.status = "succeeded";
-    });
-    builder.addCase(createProfileAsync.rejected, (state, action) => {
-      state.status = "failed";
-      state.error = action.error.message || "Failed to create profile";
-    });
-
-    // createUserAsync
-    builder.addCase(createUserAsync.pending, (state) => {
-      state.status = "pending";
-    });
-    builder.addCase(
-      createUserAsync.fulfilled,
-      (state, action: PayloadAction<SerializableUser>) => {
-        state.status = "succeeded";
-        state.currentUser = action.payload;
-      }
-    );
-    builder.addCase(createUserAsync.rejected, (state, action) => {
-      state.status = "failed";
-      state.error = action.error.message || "Failed to create user";
-    });
-
-    // signInUserAsync
-    builder.addCase(signInUserAsync.pending, (state) => {
-      state.status = "pending";
-    });
-    builder.addCase(
-      signInUserAsync.fulfilled,
-      (state, action: PayloadAction<SerializableUser>) => {
-        state.status = "succeeded";
-        state.isLoggedIn = true;
-        state.currentUser = action.payload;
-        state.userUid = action.payload.uid;
-        // Persist user data
-        saveUserToStorage(action.payload);
-      }
-    );
-    builder.addCase(signInUserAsync.rejected, (state, action) => {
-      state.status = "failed";
-      state.error = action.error.message || "Failed to sign in";
-    });
-
-    // deleteCurrentUserAsync
-    builder.addCase(deleteCurrentUserAsync.pending, (state) => {
-      state.status = "pending";
-    });
-    builder.addCase(deleteCurrentUserAsync.fulfilled, (state) => {
-      state.status = "succeeded";
-      state.currentUser = null;
-    });
-    builder.addCase(deleteCurrentUserAsync.rejected, (state, action) => {
-      state.status = "failed";
-      state.error = action.error.message || "Failed to delete user";
-    });
-
-    // signOutAsync
-    builder.addCase(signOutAsync.pending, (state) => {
-      state.status = "pending";
-    });
-    builder.addCase(signOutAsync.fulfilled, (state) => {
-      state.status = "succeeded";
-      state.isLoggedIn = false;
+      state.error = null;
+      // Persist user data
+      saveUserToStorage(action.payload);
+    },
+    clearUser: (state) => {
       state.currentUser = null;
       state.userUid = null;
+      state.isLoggedIn = false;
+      state.status = "idle";
+      state.error = null;
       // Remove persisted user data
       removeUserFromStorage();
-    });
-    builder.addCase(signOutAsync.rejected, (state, action) => {
+    },
+    setAuthError: (state, action: PayloadAction<string>) => {
+      state.error = action.payload;
       state.status = "failed";
-      state.error = action.error.message || "Failed to sign out";
-    });
+    },
+    setAuthLoading: (state) => {
+      state.status = "pending";
+      state.error = null;
+    },
   },
 });
 
-export const { hydrateAuth } = authSlice.actions;
+export const { hydrateAuth, setUser, clearUser, setAuthError, setAuthLoading } =
+  authSlice.actions;
 export const selectCurrentUser = (state: RootState) => state.auth.currentUser;
 export const isLoggedIn = (state: RootState) => state.auth.isLoggedIn;
 export const selectAuthStatus = (state: RootState) => state.auth.status;

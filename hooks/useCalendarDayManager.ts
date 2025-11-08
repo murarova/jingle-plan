@@ -1,6 +1,10 @@
-import { useCallback, useEffect, useMemo } from "react";
-import { useAppDispatch, useAppSelector } from "../store/withTypes";
-import { getConfigurationAsync, getUserDataAsync } from "../services/data-api";
+import { useCallback, useMemo } from "react";
+import { useAppSelector } from "../store/withTypes";
+import {
+  useGetConfigurationQuery,
+  useGetUserDataQuery,
+  useGetUserProfileQuery,
+} from "../services/api";
 import {
   DayData,
   DayTaskProgress,
@@ -13,27 +17,54 @@ import {
   DayConfig,
 } from "../types/types";
 import { TASK_CATEGORY } from "../constants/constants";
-import moment from "moment";
 
 export const useCalendarDayManager = () => {
-  const dispatch = useAppDispatch();
-  const { configuration, userData, status, error } = useAppSelector(
-    (state) => state.app
-  );
+  const { selectedYear } = useAppSelector((state) => state.app);
   const { currentUser } = useAppSelector((state) => state.auth);
-  const isLoading = status === "pending";
 
-  useEffect(() => {
-    if (currentUser && !userData && !configuration && status !== "pending") {
-      dispatch(getUserDataAsync());
-      dispatch(getConfigurationAsync());
+  const {
+    data: configuration,
+    isLoading: isConfigLoading,
+    error: configError,
+  } = useGetConfigurationQuery(
+    { year: selectedYear },
+    {
+      skip: !selectedYear,
+      refetchOnMountOrArgChange: false,
+      refetchOnFocus: false,
+      refetchOnReconnect: false,
     }
-  }, [status, userData, configuration, currentUser, dispatch]);
+  );
+
+  const {
+    data: userData,
+    isLoading: isUserDataLoading,
+    error: userDataError,
+    refetch: refetchUserData,
+  } = useGetUserDataQuery(
+    { uid: currentUser?.uid!, year: selectedYear },
+    {
+      skip: !currentUser?.uid || !selectedYear,
+      refetchOnMountOrArgChange: false,
+      refetchOnFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
+  const { data: userProfile } = useGetUserProfileQuery(
+    { uid: currentUser?.uid! },
+    {
+      skip: !currentUser?.uid,
+    }
+  );
+
+  const isLoading = isConfigLoading || isUserDataLoading;
+  const error = configError || userDataError;
+  const isAdmin = userProfile?.role === "admin" || false;
 
   const refresh = useCallback(() => {
-    dispatch(getUserDataAsync());
-    dispatch(getConfigurationAsync());
-  }, [dispatch]);
+    refetchUserData();
+  }, [refetchUserData]);
 
   const calculateTaskGradeByCategory = useCallback(
     (
@@ -89,23 +120,21 @@ export const useCalendarDayManager = () => {
 
   const calculateMoodTaskGrade = useCallback(
     (
-      dayNumber: string,
+      dayKey: string, // expects "DD"
       moodTaskConfig: { grade: number },
       userData: UserData | null
     ): number => {
       if (!userData) return 0;
 
       const moodData = userData[TASK_CATEGORY.MOOD] as MoodTaskData | undefined;
-      return moodData && moodData[moment(dayNumber).format("DD")]
-        ? moodTaskConfig.grade
-        : 0;
+      return moodData && moodData[dayKey] ? moodTaskConfig.grade : 0;
     },
     []
   );
 
   const getTaskGrade = useCallback(
     (
-      dayNumber: string,
+      dateString: string,
       userData: UserData | null,
       dayConfig: DayConfig
     ): DayTaskProgress => {
@@ -115,6 +144,7 @@ export const useCalendarDayManager = () => {
 
       const { dayTaskConfig, moodTaskConfig } = dayConfig;
       const context = dayTaskConfig.context as string;
+      const dayKey = dateString.substring(8, 10); // "DD"
 
       const dayTaskGrade = calculateTaskGradeByCategory(
         dayTaskConfig.category,
@@ -124,7 +154,7 @@ export const useCalendarDayManager = () => {
       );
 
       const moodTaskGrade = calculateMoodTaskGrade(
-        dayNumber,
+        dayKey,
         moodTaskConfig,
         userData
       );
@@ -141,8 +171,8 @@ export const useCalendarDayManager = () => {
     (date: string, language: "ua" | "en" = "ua"): DayData | null => {
       if (!configuration) return null;
 
-      const dayNumber = moment(date).format("DD");
-      const dayConfig = configuration[dayNumber]?.[language];
+      const dayKey = date.substring(8, 10); // "DD"
+      const dayConfig = configuration[dayKey]?.[language];
 
       if (!dayConfig) return null;
 
@@ -152,12 +182,12 @@ export const useCalendarDayManager = () => {
         config: dayConfig,
       };
     },
-    [configuration, userData, getTaskGrade]
+    [configuration, userData, getTaskGrade, selectedYear]
   );
 
   const hasData = useMemo(
     () => Boolean(configuration && userData),
-    [configuration, userData]
+    [configuration, userData, selectedYear]
   );
   const shouldRetry = useMemo(
     () => Boolean(error && !isLoading),
@@ -170,9 +200,9 @@ export const useCalendarDayManager = () => {
     configuration,
     userData,
     getDayConfig,
-    status,
     refresh,
     hasData,
     shouldRetry,
+    isAdmin,
   };
 };

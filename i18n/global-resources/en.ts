@@ -16,11 +16,18 @@ export default {
     edit: "Edit",
     delete: "Delete",
     selectMonth: "Select month",
+    copyToNextYear: "Copy to next year",
     error: "Error",
     save: "Save",
+    welcome: "Welcome",
+  },
+  messages: {
+    confirmDeletePlan: "Are you sure you want to delete this plan?",
+    confirmDeleteTask: "Are you sure you want to delete this task?",
   },
   errors: {
     emptyText: "Text field cannot be empty",
+    emptyImage: "Please select an image",
     generic: "Something went wrong. Please try again.",
   },
   context: {
@@ -73,6 +80,14 @@ export default {
       errorTitle: "Login Failed",
       errorMessage: "Please check your credentials and try again.",
       emptyFieldsMessage: "Email and password fields cannot be empty.",
+      rememberMe: "Remember me",
+      forgotPassword: "Forgot password?",
+      resetSuccess: "We've sent reset instructions to {{email}}.",
+      invalidEmailPrompt:
+        "Please enter a valid email before requesting a reset.",
+      resetEmailRequired:
+        "Enter your email address to receive reset instructions.",
+      resetEmailNotFound: "We couldn't find an account with that email.",
     },
     registerScreen: {
       title: "Register",
@@ -89,6 +104,11 @@ export default {
         "Password must be at least 8 characters long and contain at least one number and at least one letter",
       passwordMatchError: "Passwords do not match",
       invalidEmail: "Please enter a valid email address",
+      emptyName: "Name is required",
+      savePasswordTitle: "Save password?",
+      savePasswordMessage:
+        "Would you like us to remember these credentials for next time?",
+      savePasswordConfirm: "Yes, save",
     },
     processText: "You have completed:",
     periodOverview: {
@@ -107,6 +127,7 @@ export default {
         showAll: "Show all",
         hideAll: "Hide all",
       },
+      goToPlansBtn: "To plans",
     },
     tasksOfTheDay: {
       dayTitle: "Task for today",

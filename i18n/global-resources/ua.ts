@@ -17,10 +17,12 @@ export default {
     save: "Зберегти",
     delete: "Видалити",
     selectMonth: "Обрати місяць",
+    copyToNextYear: "Скопіювати у наступний рік",
     logout: "Вийти",
     deleteAccount: "Видалити акаунт",
     error: "Помилка",
     submitBtnText: "Готово",
+    welcome: "Ласкаво просимо",
   },
   context: {
     health: "Тіло",
@@ -49,8 +51,13 @@ export default {
     december: "Грудень",
     every: "Кожного місяця",
   },
+  messages: {
+    confirmDeletePlan: "Ви впевнені, що хочете видалити цей план?",
+    confirmDeleteTask: "Ви впевнені, що хочете видалити це завдання?",
+  },
   errors: {
     emptyText: "Текстове поле не може бути порожнім",
+    emptyImage: "Будь ласка, оберіть зображення",
     generic: "Щось пішло не так. Спробуйте ще раз.",
   },
   screens: {
@@ -76,6 +83,14 @@ export default {
       errorMessage: "Перевірте свої дані та спробуйте ще раз.",
       emptyFieldsMessage:
         "Поля електронної пошти та пароля не можуть бути порожніми.",
+      rememberMe: "Запам'ятати мене",
+      forgotPassword: "Забули пароль?",
+      resetSuccess: "Ми надіслали інструкції для відновлення на {{email}}.",
+      invalidEmailPrompt:
+        "Будь ласка, введіть дійсну пошту перед відновленням.",
+      resetEmailRequired:
+        "Введіть вашу електронну адресу, щоб отримати інструкції.",
+      resetEmailNotFound: "Акаунт із такою електронною адресою не знайдено.",
     },
     registerScreen: {
       title: "Реєстрація",
@@ -92,9 +107,14 @@ export default {
         "Пароль має складатись із щонайменше 8 символів і містити хоча б одну цифру та хоча б одну літеру",
       passwordMatchError: "Паролі не збігаються",
       invalidEmail: "Будь ласка, введіть дійсну електронну адресу",
+      emptyName: "Ім'я обов'язкове",
+      savePasswordTitle: "Зберегти пароль?",
+      savePasswordMessage:
+        "Запам'ятати ці дані, щоб швидко увійти наступного разу?",
+      savePasswordConfirm: "Так, зберегти",
     },
     emptyScreen: "На сьогодні завдань немає",
-    processText: "Ти виконав:",
+    processText: "Виконано:",
     periodOverview: {
       title: "Завдання",
     },
@@ -111,6 +131,7 @@ export default {
         showAll: "Показати всі",
         hideAll: "Сховати всі",
       },
+      goToPlansBtn: "До планів",
     },
     tasksOfTheDay: {
       dayTitle: "Завдання дня",

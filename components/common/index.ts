@@ -1,4 +1,5 @@
 export { Loader } from "./loader";
+export { GlobalLoader } from "./global-loader";
 export { AnimatedView } from "./animated-view";
 export { ImagePicker } from "./image-picker";
 export { ActionButtons } from "./action-buttons";

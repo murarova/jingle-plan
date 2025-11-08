@@ -18,13 +18,19 @@ import { Alert, Keyboard } from "react-native";
 import { SCREENS, EMAIL_REGEX, PASSWORD_REGEX } from "../constants/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
-import { Loader } from "../components/common";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useAppDispatch, useAppSelector } from "../store/withTypes";
-import { selectAuthStatus } from "../store/authReducer";
-import { createUserAsync, createProfileAsync } from "../services/auth-api";
+import { useAppDispatch } from "../store/withTypes";
+import { setUser, setAuthError, setAuthLoading } from "../store/authReducer";
+import { useCreateUserMutation } from "../services/auth-api-rtk";
+import { convertToSerializableUser } from "../types/user";
+import { useCreateProfileMutation } from "../services/api";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
+import { resolveErrorMessage } from "../utils/utils";
+import {
+  saveCredentials,
+  clearCredentials,
+} from "../services/password-storage";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Register">;
 
@@ -37,9 +43,11 @@ export const RegisterScreen = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [passwordMatchError, setPasswordMatchError] = useState("");
+  const [nameError, setNameError] = useState("");
 
   const dispatch = useAppDispatch();
-  const authStatus = useAppSelector(selectAuthStatus);
+  const [createUser] = useCreateUserMutation();
+  const [createProfile] = useCreateProfileMutation();
 
   const { t } = useTranslation();
   const nav = useNavigation<NavigationProp>();
@@ -66,30 +74,78 @@ export const RegisterScreen = () => {
     }
   };
 
-  const handleRegister = () => {
+  const validateName = (name: string) => {
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      setNameError(t("screens.registerScreen.emptyName"));
+    } else {
+      setNameError("");
+    }
+  };
+
+  const handleRegister = async () => {
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
     if (
       !emailError &&
       !passwordError &&
       !passwordMatchError &&
-      email &&
+      !nameError &&
+      trimmedEmail &&
       password &&
-      repeatPassword
+      repeatPassword &&
+      trimmedName
     ) {
-      dispatch(createUserAsync({ email, password }))
-        .unwrap()
-        .then((result) => {
-          dispatch(createProfileAsync({ uid: result.uid, name }))
-            .unwrap()
-            .then(() => {
-              nav.replace(SCREENS.HOME);
-            })
-            .catch(() => {
-              Alert.alert("Oops", t("screens.registerScreen.errorMessage"));
-            });
-        })
-        .catch(() => {
-          Alert.alert("Oops", t("screens.registerScreen.errorMessage"));
+      try {
+        dispatch(setAuthLoading());
+        const user = await createUser({ email: trimmedEmail, password }).unwrap();
+        const serializableUser = convertToSerializableUser(user, trimmedName);
+
+        // Create profile
+        await createProfile({
+          uid: user.uid,
+          name: trimmedName,
+          email: user.email || trimmedEmail,
+        }).unwrap();
+
+        const shouldRemember = await new Promise<boolean>((resolve) => {
+          Alert.alert(
+            t("screens.registerScreen.savePasswordTitle"),
+            t("screens.registerScreen.savePasswordMessage"),
+            [
+              {
+                text: t("common.cancel"),
+                style: "cancel",
+                onPress: () => {
+                  clearCredentials().finally(() => resolve(false));
+                },
+              },
+              {
+                text: t("screens.registerScreen.savePasswordConfirm"),
+                onPress: () => {
+                  saveCredentials(trimmedEmail, password)
+                    .then(() => resolve(true))
+                    .catch(() => resolve(false));
+                },
+              },
+            ]
+          );
         });
+
+        if (!shouldRemember) {
+          await clearCredentials();
+        }
+
+        dispatch(setUser(serializableUser));
+        nav.replace(SCREENS.HOME);
+      } catch (error) {
+        const message =
+          resolveErrorMessage(error) ??
+          t("errors.generic", "An error occurred");
+
+        dispatch(setAuthError(message));
+        Alert.alert(t("common.error"), message);
+      }
     }
   };
 
@@ -105,11 +161,15 @@ export const RegisterScreen = () => {
     );
   };
 
+  const handleNameChange = (value: string) => {
+    setName(value);
+    validateName(value);
+  };
+
   return (
     <Pressable flex={1} onPress={Keyboard.dismiss}>
       <KeyboardAwareScrollView>
         <SafeAreaView flex={1}>
-          {authStatus === "pending" && <Loader />}
           <Box p={10}>
             <Box pb={10}>
               <Heading>{t("screens.registerScreen.title")}</Heading>
@@ -131,11 +191,18 @@ export const RegisterScreen = () => {
                 <Input>
                   <InputField
                     value={name}
-                    onChangeText={setName}
+                    onChangeText={handleNameChange}
+                    onBlur={() => validateName(name)}
+                    onFocus={() => setNameError("")}
                     inputMode="text"
                     placeholder={t("screens.registerScreen.name")}
                   />
                 </Input>
+                {nameError ? (
+                  <Text size="sm" color="$red500">
+                    {nameError}
+                  </Text>
+                ) : null}
               </VStack>
               <VStack space="sm" mb={20}>
                 <Text>{t("screens.registerScreen.email")}</Text>
@@ -200,7 +267,9 @@ export const RegisterScreen = () => {
               size="md"
               variant="solid"
               action="primary"
-              isDisabled={!email || !password || !repeatPassword || !name}
+              isDisabled={
+                !email || !password || !repeatPassword || !name.trim()
+              }
               onPress={handleRegister}
             >
               <ButtonText>{t("screens.registerScreen.registerBtn")}</ButtonText>

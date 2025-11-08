@@ -10,8 +10,8 @@ export const GlobalGoal = memo(({ text }: GlobalGoalProps) => {
   const { t } = useTranslation();
 
   return (
-    <Center pt="$5" pb="$5">
-      <Text pb="$5">{t("screens.plansScreen.globalGoalTitle")}</Text>
+    <Center pt="$4" pb="$2">
+      <Text pb="$2">{t("screens.plansScreen.globalGoalTitle")}</Text>
       <Heading textAlign="center" size="sm">
         {text}
       </Heading>

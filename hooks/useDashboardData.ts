@@ -6,10 +6,16 @@ import {
   calculateTotalData,
   isDataEmpty as checkDataEmpty,
 } from "../utils/dashboard-utils";
+import { useGetUserDataQuery } from "../services/api";
 
 // Create a custom hook for dashboard data
 export const useDashboardData = () => {
-  const { userData, status } = useAppSelector((state) => state.app);
+  const { currentUser } = useAppSelector((state) => state.auth);
+  const { selectedYear } = useAppSelector((state) => state.app);
+  const { data: userData, isLoading } = useGetUserDataQuery(
+    { uid: currentUser?.uid!, year: selectedYear },
+    { skip: !currentUser?.uid || !selectedYear }
+  );
   const plans = userData?.plans as PlanContextData | null;
 
   const totalData = useMemo(
@@ -28,6 +34,6 @@ export const useDashboardData = () => {
     totalData,
     contextData,
     isEmpty,
-    status,
+    isLoading,
   };
 };

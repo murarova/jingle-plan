@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { useState, useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Box,
   ButtonText,
@@ -13,18 +13,27 @@ import {
   Button,
   InputSlot,
 } from "@gluestack-ui/themed";
-import { Alert, Keyboard } from "react-native";
+import { Alert, Keyboard, Switch } from "react-native";
 import { SCREENS, EMAIL_REGEX } from "../constants/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { InputIcon } from "@gluestack-ui/themed";
-import { Loader } from "../components/common";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { signInUserAsync } from "../services/auth-api";
-import { selectAuthStatus, isLoggedIn } from "../store/authReducer";
-import { useAppSelector, useAppDispatch } from "../store/withTypes";
+import {
+  useSignInUserMutation,
+  useSendPasswordResetMutation,
+} from "../services/auth-api-rtk";
+import { setUser, setAuthError, setAuthLoading } from "../store/authReducer";
+import { useAppDispatch } from "../store/withTypes";
+import { convertToSerializableUser } from "../types/user";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
+import { resolveErrorMessage } from "../utils/utils";
+import {
+  saveCredentials,
+  loadCredentials,
+  clearCredentials,
+} from "../services/password-storage";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Login">;
 
@@ -33,9 +42,11 @@ export const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
-
+  const [rememberMe, setRememberMe] = useState(false);
   const dispatch = useAppDispatch();
-  const authStatus = useAppSelector(selectAuthStatus);
+  const [signInUser] = useSignInUserMutation();
+  const [sendPasswordReset, { isLoading: isResetLoading }] =
+    useSendPasswordResetMutation();
 
   const { t } = useTranslation();
   const nav = useNavigation<NavigationProp>();
@@ -57,25 +68,89 @@ export const LoginScreen = () => {
   };
   const handleState = () => setShowPassword((prevState) => !prevState);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    (async () => {
+      const stored = await loadCredentials();
+      if (!isMounted || !stored) return;
+
+      setEmail(stored.email);
+      setPassword(stored.password);
+      setRememberMe(true);
+    })();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleRememberToggle = useCallback((value: boolean) => {
+    setRememberMe(value);
+    if (!value) {
+      clearCredentials();
+    }
+  }, []);
+
   const goToMainFlow = async () => {
-    dispatch(signInUserAsync({ email, password }))
-      .unwrap()
-      .then(() => {
-        nav.replace(SCREENS.HOME);
-      })
-      .catch(() => {
-        Alert.alert(
-          t("screens.loginScreen.errorTitle"),
-          t("screens.loginScreen.errorMessage")
-        );
-      });
+    try {
+      dispatch(setAuthLoading());
+      const user = await signInUser({ email, password }).unwrap();
+      dispatch(setUser(convertToSerializableUser(user)));
+      if (rememberMe) {
+        await saveCredentials(email, password);
+      } else {
+        await clearCredentials();
+      }
+      nav.replace(SCREENS.HOME);
+    } catch (error) {
+      const message =
+        resolveErrorMessage(error) ?? t("errors.generic", "An error occurred");
+
+      dispatch(setAuthError(message));
+      Alert.alert(t("common.error"), message);
+    }
   };
+
+  const handlePasswordReset = useCallback(async () => {
+    if (!email) {
+      Alert.alert(
+        t("common.error"),
+        t("screens.loginScreen.resetEmailRequired")
+      );
+      return;
+    }
+
+    if (emailError) {
+      Alert.alert(
+        t("common.error"),
+        t("screens.loginScreen.invalidEmailPrompt")
+      );
+      return;
+    }
+
+    try {
+      await sendPasswordReset({ email }).unwrap();
+      Alert.alert(
+        t("common.done"),
+        t("screens.loginScreen.resetSuccess", { email })
+      );
+    } catch (error) {
+      let message =
+        resolveErrorMessage(error) ?? t("errors.generic", "An error occurred");
+
+      if (message === "AUTH_EMAIL_NOT_FOUND") {
+        message = t("screens.loginScreen.resetEmailNotFound");
+      }
+
+      Alert.alert(t("common.error"), message);
+    }
+  }, [email, emailError, sendPasswordReset, t]);
 
   return (
     <Pressable flex={1} onPress={Keyboard.dismiss}>
       <KeyboardAwareScrollView>
         <SafeAreaView>
-          {authStatus === "pending" && <Loader />}
           <Box p={10} pt={30} row-direction="column" justifyContent="center">
             <Box pb={10}>
               <Heading>{t("screens.loginScreen.title")}</Heading>
@@ -111,7 +186,7 @@ export const LoginScreen = () => {
                   </Text>
                 ) : null}
               </VStack>
-              <VStack space="sm" mb={30}>
+              <VStack space="sm" mb={20}>
                 <Text>{t("screens.loginScreen.password")}</Text>
                 <Input>
                   <InputField
@@ -129,6 +204,30 @@ export const LoginScreen = () => {
                 </Input>
               </VStack>
             </Box>
+            <Box
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="space-between"
+              mb={20}
+            >
+              <Text>{t("screens.loginScreen.rememberMe")}</Text>
+              <Switch
+                testID="remember-me-switch"
+                value={rememberMe}
+                onValueChange={handleRememberToggle}
+              />
+            </Box>
+            <Button
+              variant="link"
+              alignSelf="flex-end"
+              mb={20}
+              onPress={handlePasswordReset}
+              isDisabled={isResetLoading}
+            >
+              <ButtonText color="$black">
+                {t("screens.loginScreen.forgotPassword")}
+              </ButtonText>
+            </Button>
             <Button
               mb={30}
               size="md"

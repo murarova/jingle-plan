@@ -1,4 +1,3 @@
-import { Alert } from "react-native";
 import * as ExpoImagePicker from "expo-image-picker";
 import { Box, ButtonText, Button, ImageBackground } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
@@ -40,8 +39,6 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
         height: result.assets[0].height,
       };
       setImage(newImage);
-    } else {
-      Alert.alert("Canceled");
     }
   };
 

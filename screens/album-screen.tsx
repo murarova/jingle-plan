@@ -17,8 +17,8 @@ import { albumScreenmMonthOrder, months } from "../constants/constants";
 import { AlbumScreenMonth, MonthlyData, MonthPhotoData } from "../types/types";
 import { useAppSelector } from "../store/withTypes";
 import { EmptyScreen } from "../components/empty-screen";
-import { Loader } from "../components/common";
 import { useTranslation } from "react-i18next";
+import { useGetUserDataQuery } from "../services/api";
 
 const { width: windowWidth } = Dimensions.get("window");
 const SCREEN_PADDING = 30;
@@ -136,7 +136,12 @@ export const AlbumScreen = memo(() => {
   const [activeSlide, setActiveSlide] = useState(0);
   const carouselRef = useRef<CarouselRefType>(null);
 
-  const { userData, status } = useAppSelector((state) => state.app);
+  const { currentUser } = useAppSelector((state) => state.auth);
+  const { selectedYear } = useAppSelector((state) => state.app);
+  const { data: userData, isLoading } = useGetUserDataQuery(
+    { uid: currentUser?.uid!, year: selectedYear },
+    { skip: !currentUser?.uid || !selectedYear }
+  );
   const monthPhoto = userData?.monthPhoto as MonthPhotoData | null;
 
   const photos = useMemo(
@@ -173,7 +178,6 @@ export const AlbumScreen = memo(() => {
 
   return (
     <SafeAreaView flex={1} backgroundColor="$backgroundLight50">
-      {status === "pending" && <Loader absolute />}
       <Box flex={1} pt={20} alignItems="center">
         <Carousel<MonthlyData>
           ref={carouselRef}

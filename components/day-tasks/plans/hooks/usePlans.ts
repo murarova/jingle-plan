@@ -6,10 +6,12 @@ import {
 import isEmpty from "lodash/isEmpty";
 import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
+import * as Haptics from "expo-haptics";
 import uuid from "react-native-uuid";
 import { PlanData } from "../../../../types/types";
-import { useAppDispatch } from "../../../../store/withTypes";
-import { saveTaskByCategoryAsync } from "../../../../services/data-api";
+import { useAppSelector } from "../../../../store/withTypes";
+import { useSaveTaskByCategoryMutation } from "../../../../services/api";
+import { resolveErrorMessage } from "../../../../utils/utils";
 
 interface UsePlansProps {
   context: string;
@@ -18,7 +20,9 @@ interface UsePlansProps {
 
 export function usePlans({ data, context }: UsePlansProps) {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
+  const [saveTaskByCategory, { isLoading: isSaving }] =
+    useSaveTaskByCategoryMutation();
+  const { selectedYear } = useAppSelector((state) => state.app);
   const [updatedData, setUpdatedData] = useState<PlanData | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -28,7 +32,7 @@ export function usePlans({ data, context }: UsePlansProps) {
     setUpdatedData(null);
   }, []);
 
-  function handleAddPlan(text: string) {
+  async function handleAddPlan(text: string) {
     setLoading(true);
     const id = uuid.v4();
     const updatedPlans = [
@@ -40,35 +44,53 @@ export function usePlans({ data, context }: UsePlansProps) {
       },
     ];
     try {
-      dispatch(
-        saveTaskByCategoryAsync({
-          category: TASK_CATEGORY.PLANS,
-          data: updatedPlans,
-          context,
-        })
-      );
+      await saveTaskByCategory({
+        category: TASK_CATEGORY.PLANS,
+        data: updatedPlans,
+        context,
+        year: selectedYear,
+      }).unwrap();
+
+      try {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } catch (error) {
+        console.log("Haptics not available");
+      }
     } catch (error) {
-      Alert.alert("Oops", "Something wrong");
+      const message =
+        resolveErrorMessage(error) ??
+        t("errors.generic", "An error occurred");
+
+      Alert.alert(t("common.error"), message);
     } finally {
       setLoading(false);
     }
   }
 
-  function handleUpdatePlan(id: string, text: string) {
+  async function handleUpdatePlan(id: string, text: string) {
     setLoading(true);
     const updatedPlans = (data ?? []).map((item) =>
       item.id === id ? { ...item, text } : item
     );
     try {
-      dispatch(
-        saveTaskByCategoryAsync({
-          category: TASK_CATEGORY.PLANS,
-          data: updatedPlans,
-          context,
-        })
-      );
+      await saveTaskByCategory({
+        category: TASK_CATEGORY.PLANS,
+        data: updatedPlans,
+        context,
+        year: selectedYear,
+      }).unwrap();
+
+      try {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } catch (error) {
+        console.log("Haptics not available");
+      }
     } catch (error) {
-      Alert.alert("Oops", "Something wrong");
+      const message =
+        resolveErrorMessage(error) ??
+        t("errors.generic", "An error occurred");
+
+      Alert.alert(t("common.error"), message);
     } finally {
       setUpdatedData(null);
       setLoading(false);
@@ -81,27 +103,39 @@ export function usePlans({ data, context }: UsePlansProps) {
   }
 
   async function handleDeletePlan(planItem: PlanData) {
-    setLoading(true);
-    const updatedPlans = (data ?? []).filter((item) => item.id !== planItem.id);
-    if (isEmpty(updatedPlans)) {
-    }
+    Alert.alert(t("common.delete"), t("messages.confirmDeletePlan"), [
+      { text: t("common.cancel"), style: "cancel" },
+      {
+        text: t("common.delete"),
+        style: "destructive",
+        onPress: async () => {
+          setLoading(true);
+          const updatedPlans = (data ?? []).filter(
+            (item) => item.id !== planItem.id
+          );
 
-    try {
-      await dispatch(
-        saveTaskByCategoryAsync({
-          category: TASK_CATEGORY.PLANS,
-          data: updatedPlans,
-          context,
-        })
-      );
-    } catch (error) {
-      Alert.alert("Oops", "Something wrong");
-    } finally {
-      setLoading(false);
-    }
+          try {
+            await saveTaskByCategory({
+              category: TASK_CATEGORY.PLANS,
+              data: updatedPlans,
+              context,
+              year: selectedYear,
+            }).unwrap();
+          } catch (error) {
+            const message =
+              resolveErrorMessage(error) ??
+              t("errors.generic", "An error occurred");
+
+            Alert.alert(t("common.error"), message);
+          } finally {
+            setLoading(false);
+          }
+        },
+      },
+    ]);
   }
 
-  function handleAddPlanBtn() {
+  async function handleAddPlanBtn() {
     if (data?.length === MAX_PLANS_AMOUNT) {
       Alert.alert(t("screens.plansScreen.maxPlansError"));
       return;
@@ -117,7 +151,7 @@ export function usePlans({ data, context }: UsePlansProps) {
     handleEditPlan,
     handleDeletePlan,
     handleAddPlanBtn,
-    isLoading,
+    isLoading: isLoading || isSaving,
     closeModal,
   };
 }

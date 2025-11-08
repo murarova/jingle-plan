@@ -1,24 +1,34 @@
 import { useState } from "react";
 import { Alert } from "react-native";
 import { ImageData } from "../types/types";
-import { getImageUrlAsync, saveImageAsync } from "../services/data-api";
-import { useAppDispatch } from "../store/withTypes";
+import { useSaveImageMutation, useLazyGetImageUrlQuery } from "../services/api";
+import { useAppSelector } from "../store/withTypes";
+import { useTranslation } from "react-i18next";
+import { resolveErrorMessage } from "../utils/utils";
 
 export function useImage() {
+  const { t } = useTranslation();
   const [image, setImage] = useState<ImageData | null>(null);
-  const [isImageLoading, setIsImageLoading] = useState(false);
-  const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const { selectedYear } = useAppSelector((state) => state.app);
+  const [saveImage, { isLoading: isSaving }] = useSaveImageMutation();
+  const [getImageUrl, { isLoading: isUrlLoading }] = useLazyGetImageUrlQuery();
 
   async function saveUserImage() {
     if (!image) return;
     try {
-      setIsImageLoading(true);
-      await dispatch(saveImageAsync({ image })).unwrap();
-      return await dispatch(getImageUrlAsync({ id: image.id })).unwrap();
+      await saveImage({ image, year: selectedYear }).unwrap();
+      const result = await getImageUrl({
+        id: image.id,
+        year: selectedYear,
+      }).unwrap();
+      return result;
     } catch (error) {
-      Alert.alert("Oops", "Image was not saved");
-    } finally {
-      setIsImageLoading(false);
+      const message =
+        resolveErrorMessage(error) ??
+        t("errors.generic", "An error occurred");
+
+      Alert.alert(t("common.error"), message);
     }
   }
 
@@ -26,7 +36,7 @@ export function useImage() {
     saveImage: saveUserImage,
     image,
     setImage,
-    setIsLoading: setIsImageLoading,
-    isLoading: isImageLoading,
+    isLoading: isSaving || isUrlLoading || isLoading,
+    setIsLoading,
   };
 }

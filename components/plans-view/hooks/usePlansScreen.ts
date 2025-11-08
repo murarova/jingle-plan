@@ -1,33 +1,64 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import {
   PlanScreenData,
   PlansCollection,
   TaskContext,
 } from "../../../types/types";
-import { useAppDispatch } from "../../../store/withTypes";
+import { useAppSelector } from "../../../store/withTypes";
 import { useTranslation } from "react-i18next";
-import {
-  findPlanContextById,
-  getPlansList,
-  savePlans,
-} from "../../../utils/plans-utils";
+import * as Haptics from "expo-haptics";
+import { findPlanContextById, getPlansList } from "../../../utils/plans-utils";
 import { SheetRef } from "../../common";
-import { CompletePlanProps } from "../plans-context-view";
-import { allMonths, PlansViewOptions } from "../../../constants/constants";
+import { CompletePlanProps } from "../context-view/types";
+import {
+  allMonths,
+  PlansViewOptions,
+  TASK_CATEGORY,
+  TASK_CONTEXT,
+} from "../../../constants/constants";
+import { Alert } from "react-native";
+import {
+  useSaveTaskByCategoryMutation,
+  useLazyGetUserDataQuery,
+} from "../../../services/api";
+import { PlanContextData } from "../../../types/types";
+import uuid from "react-native-uuid";
+import { resolveErrorMessage } from "../../../utils/utils";
+import { groupPlansByMonth } from "../month-view/helpers";
+import { PlansContextEntry } from "../context-view/types";
+import { PlansMonthData } from "../month-view/types";
 
 interface UsePlansScreenProps {
   plans: PlansCollection | null;
 }
 
 export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
+  const contextEntries = useMemo<PlansContextEntry[]>(() => {
+    if (!plans) return [];
+    return (Object.values(TASK_CONTEXT) as TaskContext[])
+      .map((context) => ({
+        context,
+        plans: [...(plans?.[context] ?? [])],
+      }))
+      .filter(({ plans }) => plans.length);
+  }, [plans]);
+
+  const monthlyPlans = useMemo<PlansMonthData>(() => {
+    if (!plans) return {};
+    return groupPlansByMonth(plans);
+  }, [plans]);
+
   const [updatedData, setUpdatedData] = useState<PlanScreenData | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>();
   const [context, setContext] = useState<TaskContext | null>(null);
   const sheetRef = useRef<SheetRef>(null);
 
-  const dispatch = useAppDispatch();
   const { t } = useTranslation();
+  const { selectedYear } = useAppSelector((state) => state.app);
+  const { currentUser } = useAppSelector((state) => state.auth);
+  const [saveTaskByCategory] = useSaveTaskByCategoryMutation();
+  const [getUserData] = useLazyGetUserDataQuery();
 
   const resetState = useCallback(() => {
     setUpdatedData(null);
@@ -48,12 +79,24 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
   const updatePlan = useCallback(
     async (context: TaskContext, updatedPlans: PlanScreenData[]) => {
       try {
-        await savePlans(dispatch, context, updatedPlans, t);
+        await saveTaskByCategory({
+          category: TASK_CATEGORY.PLANS,
+          data: updatedPlans,
+          context,
+          year: selectedYear,
+        }).unwrap();
+      } catch (error) {
+        const message =
+          resolveErrorMessage(error) ??
+          t("errors.generic", "An error occurred");
+
+        Alert.alert(t("common.error"), message);
+        throw error;
       } finally {
         resetState();
       }
     },
-    [dispatch, t, resetState]
+    [saveTaskByCategory, selectedYear, t, resetState]
   );
 
   const handleUpdatePlan = useCallback(
@@ -67,14 +110,24 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         if (isContextChanged) {
           const oldPlansList = getPlansList(plans, oldContext);
           const updatedOldPlans = oldPlansList.filter((item) => item.id !== id);
-          await savePlans(dispatch, oldContext, updatedOldPlans, t);
+          await saveTaskByCategory({
+            category: TASK_CATEGORY.PLANS,
+            data: updatedOldPlans,
+            context: oldContext,
+            year: selectedYear,
+          }).unwrap();
 
           const newPlansList = getPlansList(plans, context);
           const updatedNewPlans = [
             ...newPlansList,
             { ...updatedData, text, context, month: selectedMonth },
           ];
-          await savePlans(dispatch, context, updatedNewPlans, t);
+          await saveTaskByCategory({
+            category: TASK_CATEGORY.PLANS,
+            data: updatedNewPlans,
+            context,
+            year: selectedYear,
+          }).unwrap();
         } else {
           const plansList = getPlansList(plans, context);
           const updatedPlans =
@@ -86,11 +139,35 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
                 )
               : [{ ...updatedData, text, context, month: selectedMonth }];
 
-          await savePlans(dispatch, context, updatedPlans, t);
+          await saveTaskByCategory({
+            category: TASK_CATEGORY.PLANS,
+            data: updatedPlans,
+            context,
+            year: selectedYear,
+          }).unwrap();
         }
-      } catch (error) {}
+
+        try {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        } catch (error) {
+          console.log("Haptics not available");
+        }
+      } catch (error) {
+        const message =
+          resolveErrorMessage(error) ??
+          t("errors.generic", "An error occurred");
+
+        Alert.alert(t("common.error"), message);
+      }
     },
-    [plans, context, updatedData, selectedMonth, dispatch, t]
+    [
+      plans,
+      context,
+      updatedData,
+      selectedMonth,
+      saveTaskByCategory,
+      selectedYear,
+    ]
   );
 
   const handleEditPlan = useCallback(
@@ -110,12 +187,33 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
     async (id: string, planContext: TaskContext) => {
       if (!plans) return;
 
-      const plansList = getPlansList(plans, planContext);
-      const updatedPlans = plansList.filter((item) => item.id !== id);
+      Alert.alert(t("common.delete"), t("messages.confirmDeletePlan"), [
+        { text: t("common.cancel"), style: "cancel" },
+        {
+          text: t("common.delete"),
+          style: "destructive",
+          onPress: async () => {
+            const plansList = getPlansList(plans, planContext);
+            const updatedPlans = plansList.filter((item) => item.id !== id);
+            try {
+              await saveTaskByCategory({
+                category: TASK_CATEGORY.PLANS,
+                data: updatedPlans,
+                context: planContext,
+                year: selectedYear,
+              }).unwrap();
+            } catch (error) {
+              const message =
+                resolveErrorMessage(error) ??
+                t("errors.generic", "An error occurred");
 
-      await savePlans(dispatch, planContext, updatedPlans, t);
+              Alert.alert(t("common.error"), message);
+            }
+          },
+        },
+      ]);
     },
-    [plans, dispatch, t]
+    [plans, saveTaskByCategory, selectedYear, t]
   );
 
   const handleCompletePlan = useCallback(
@@ -156,15 +254,33 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         item.id === plan.id ? updatedPlan : item
       );
 
+      console.log("updatedPlans", updatedPlans);
+
       try {
-        await savePlans(dispatch, planContext, updatedPlans, t);
+        await saveTaskByCategory({
+          category: TASK_CATEGORY.PLANS,
+          data: updatedPlans,
+          context: planContext,
+          year: selectedYear,
+        }).unwrap();
+
+        try {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        } catch (error) {
+          console.log("Haptics not available");
+        }
       } catch (error) {
+        const message =
+          resolveErrorMessage(error) ??
+          t("errors.generic", "An error occurred");
+
         console.error("Failed to save plan completion:", error);
+        Alert.alert(t("common.error"), message);
       } finally {
         resetState();
       }
     },
-    [plans, dispatch, t, resetState]
+    [plans, saveTaskByCategory, selectedYear, t, resetState]
   );
 
   const handleAddPlan = useCallback(
@@ -178,9 +294,28 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         { id, text, isDone: false, month, context },
       ];
 
-      await savePlans(dispatch, context, updatedPlans, t);
+      try {
+        await saveTaskByCategory({
+          category: TASK_CATEGORY.PLANS,
+          data: updatedPlans,
+          context,
+          year: selectedYear,
+        }).unwrap();
+
+        try {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        } catch (error) {
+          console.log("Haptics not available");
+        }
+      } catch (error) {
+        const message =
+          resolveErrorMessage(error) ??
+          t("errors.generic", "An error occurred");
+
+        Alert.alert(t("common.error"), message);
+      }
     },
-    [plans, dispatch, t]
+    [plans, saveTaskByCategory, selectedYear, t]
   );
 
   const openMonthSelect = useCallback(
@@ -209,8 +344,62 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         item.id === data.id ? { ...data, month } : item
       );
       await updatePlan(context, updatedPlans);
+
+      try {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } catch (error) {
+        console.log("Haptics not available");
+      }
     },
     [plans, context, updatedData, updatePlan]
+  );
+
+  const handleCopyToNextYear = useCallback(
+    async (plan: PlanScreenData, planContext: TaskContext) => {
+      if (!plans || !currentUser?.uid) return;
+
+      const nextYear = (parseInt(selectedYear) + 1).toString();
+      const newPlanId = uuid.v4().toString();
+      const newPlan: PlanScreenData = {
+        ...plan,
+        id: newPlanId,
+        isDone: false,
+      };
+
+      try {
+        const result = await getUserData({
+          uid: currentUser.uid,
+          year: nextYear,
+        }).unwrap();
+
+        const nextYearUserData = result?.data ?? [];
+
+        const existingPlans = ((nextYearUserData?.plans as PlanContextData)?.[
+          planContext
+        ] || []) as PlanScreenData[];
+        const updatedPlans = [...existingPlans, newPlan];
+
+        await saveTaskByCategory({
+          category: TASK_CATEGORY.PLANS,
+          data: updatedPlans,
+          context: planContext,
+          year: nextYear,
+        }).unwrap();
+
+        try {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        } catch (error) {
+          console.log("Haptics not available");
+        }
+      } catch (error) {
+        const message =
+          resolveErrorMessage(error) ??
+          t("errors.generic", "An error occurred");
+
+        Alert.alert(t("common.error"), message);
+      }
+    },
+    [plans, selectedYear, saveTaskByCategory, getUserData, currentUser?.uid, t]
   );
 
   return {
@@ -220,6 +409,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
     handleCompletePlan,
     openMonthSelect,
     handleMonthSelect,
+    handleCopyToNextYear,
     showModal,
     context,
     updatedData,
@@ -231,6 +421,8 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
     selectedMonth,
     setSelectedMonth,
     sheetRef,
+    contextEntries,
+    monthlyPlans,
   };
 };
 

@@ -1,8 +1,11 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
 import { House } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
+import * as Haptics from "expo-haptics";
 import { SCREENS } from "../constants/constants";
 import PeriodOverviewScreen from "./period-overview-screen";
+import DayOverviewScreen from "./day-overview-screen";
 import { AppMenu } from "../components/app-menu";
 import { SummaryScreen } from "./summary-screen";
 import { PlansScreen } from "./plans-screen/plans-screen";
@@ -12,8 +15,40 @@ import Album from "../assets/svg/album";
 import Dashboard from "../assets/svg/dashboard";
 import { AlbumScreen } from "./album-screen";
 import { DashboardScreen } from "./dashboard-screen/dashboard-screen";
+import { YearSelector } from "../components/year-selector";
+import { CommonActions } from "@react-navigation/native";
+
+export type HomeStackParamList = {
+  PeriodOverviewMain: undefined;
+  DayOverview: { currentDay: string };
+};
 
 const Tab = createBottomTabNavigator();
+const HomeStack = createStackNavigator<HomeStackParamList>();
+
+function HomeStackNavigator() {
+  const { t } = useTranslation();
+  return (
+    <HomeStack.Navigator>
+      <HomeStack.Screen
+        name="PeriodOverviewMain"
+        component={PeriodOverviewScreen}
+        options={{
+          title: t("screens.periodOverview.title"),
+          headerLeft: YearSelector,
+          headerRight: AppMenu,
+        }}
+      />
+      <HomeStack.Screen
+        name="DayOverview"
+        component={DayOverviewScreen}
+        options={{
+          headerBackTitle: t("common.back"),
+        }}
+      />
+    </HomeStack.Navigator>
+  );
+}
 
 export const HomeScreen = () => {
   const { t } = useTranslation();
@@ -21,7 +56,6 @@ export const HomeScreen = () => {
     <Tab.Navigator
       initialRouteName={SCREENS.PERIOD_OVERVIEW}
       screenOptions={{
-        headerRight: AppMenu,
         tabBarActiveTintColor: "#fe434c",
         tabBarInactiveTintColor: "#999999",
         tabBarStyle: {
@@ -37,11 +71,36 @@ export const HomeScreen = () => {
           tabBarIcon: ({ focused }) => (
             <House color={focused ? "#fe434c" : "#999999"} />
           ),
-          title: t("screens.periodOverview.title"),
           tabBarLabel: t("common.home"),
+          headerShown: false,
         }}
         name={SCREENS.PERIOD_OVERVIEW}
-        component={PeriodOverviewScreen}
+        component={HomeStackNavigator}
+        listeners={({ navigation }) => ({
+          tabPress: async (e) => {
+            e.preventDefault();
+
+            try {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            } catch (error) {
+              console.log("Haptics not available");
+            }
+
+            // Always reset to the main calendar screen
+            navigation.navigate(SCREENS.PERIOD_OVERVIEW);
+            // Reset the nested stack to show only PeriodOverviewMain
+            setTimeout(() => {
+              navigation.dispatch(
+                CommonActions.navigate({
+                  name: SCREENS.PERIOD_OVERVIEW,
+                  params: {
+                    screen: "PeriodOverviewMain",
+                  },
+                })
+              );
+            }, 0);
+          },
+        })}
       />
       <Tab.Screen
         name={SCREENS.SUMMARY}
@@ -49,9 +108,20 @@ export const HomeScreen = () => {
         options={{
           title: t("common.summary"),
           tabBarLabel: t("common.summary"),
+          headerLeft: YearSelector,
+          headerRight: AppMenu,
           tabBarIcon: ({ focused }) => (
             <Medal color={focused ? "#fe434c" : "#999999"} />
           ),
+        }}
+        listeners={{
+          tabPress: async () => {
+            try {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            } catch (error) {
+              console.log("Haptics not available");
+            }
+          },
         }}
       />
       <Tab.Screen
@@ -60,9 +130,20 @@ export const HomeScreen = () => {
         options={{
           tabBarLabel: t("common.plans"),
           title: t("common.plans"),
+          headerLeft: YearSelector,
+          headerRight: AppMenu,
           tabBarIcon: ({ focused }) => (
             <Compas color={focused ? "#fe434c" : "#999999"} />
           ),
+        }}
+        listeners={{
+          tabPress: async () => {
+            try {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            } catch (error) {
+              console.log("Haptics not available");
+            }
+          },
         }}
       />
       <Tab.Screen
@@ -71,9 +152,20 @@ export const HomeScreen = () => {
         options={{
           tabBarLabel: t("common.album"),
           title: t("common.album"),
+          headerLeft: YearSelector,
+          headerRight: AppMenu,
           tabBarIcon: ({ focused }) => (
             <Album color={focused ? "#fe434c" : "#999999"} />
           ),
+        }}
+        listeners={{
+          tabPress: async () => {
+            try {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            } catch (error) {
+              console.log("Haptics not available");
+            }
+          },
         }}
       />
       <Tab.Screen
@@ -82,9 +174,20 @@ export const HomeScreen = () => {
         options={{
           tabBarLabel: t("common.dashboard"),
           title: t("screens.dashboardScreen.title"),
+          headerLeft: YearSelector,
+          headerRight: AppMenu,
           tabBarIcon: ({ focused }) => (
             <Dashboard color={focused ? "#fe434c" : "#999999"} />
           ),
+        }}
+        listeners={{
+          tabPress: async () => {
+            try {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            } catch (error) {
+              console.log("Haptics not available");
+            }
+          },
         }}
       />
     </Tab.Navigator>

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { EmptyScreen } from "../../components/empty-screen";
-import { Loader } from "../../components/common";
 import { usePlansScreen } from "../../components/plans-view/hooks/usePlansScreen";
 import { ButtonIcon, Fab, SafeAreaView } from "@gluestack-ui/themed";
+import * as Haptics from "expo-haptics";
 import { PlansViewOptions } from "../../constants/constants";
 import { PlanContextData, TextData } from "../../types/types";
 import { useAppSelector } from "../../store/withTypes";
@@ -12,14 +12,19 @@ import { MonthSelectModal } from "../../components/modals/month-select-modal";
 import { ViewSwitch } from "./view-switch";
 import { GlobalGoal } from "./global-goal";
 import { PlansView } from "./plans-view";
+import { useGetUserDataQuery } from "../../services/api";
 
 export function PlansScreen() {
   const [view, setView] = useState<PlansViewOptions>(PlansViewOptions.context);
 
-  const { userData, status } = useAppSelector((state) => state.app);
+  const { currentUser } = useAppSelector((state) => state.auth);
+  const { selectedYear } = useAppSelector((state) => state.app);
+  const { data: userData } = useGetUserDataQuery(
+    { uid: currentUser?.uid!, year: selectedYear },
+    { skip: !currentUser?.uid || !selectedYear }
+  );
   const plans = userData?.plans as PlanContextData | null;
   const globalGoal = userData?.goals as TextData | null;
-  const isLoading = status === "pending";
 
   const plansProps = usePlansScreen({ plans });
 
@@ -29,16 +34,16 @@ export function PlansScreen() {
 
   return (
     <SafeAreaView flex={1}>
-      {isLoading && <Loader absolute />}
       {plans && <ViewSwitch onViewChange={setView} />}
       {globalGoal && <GlobalGoal text={globalGoal.text} />}
-      {plans && (
-        <PlansView plans={plans} plansProps={plansProps} viewType={view} />
-      )}
+      {plans && <PlansView plansProps={plansProps} viewType={view} />}
       <Fab
         size="lg"
         placement="bottom right"
         onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {
+            console.log("Haptics not available");
+          });
           plansProps.setShowModal(true);
         }}
       >

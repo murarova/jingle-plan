@@ -43,6 +43,12 @@ export function PlansList({ plans, onEdit, onDelete, title }: PlansListProps) {
                   placement="top"
                   paddingVertical={0}
                   backgroundColor="$backgroundLight200"
+                  mr="$2"
+                  shadowColor="$black"
+                  shadowOffset={{ width: 0, height: 2 }}
+                  shadowOpacity={0.25}
+                  shadowRadius={3.84}
+                  elevation={5}
                   trigger={({ ...triggerProps }) => {
                     return (
                       <Box>
@@ -60,10 +66,22 @@ export function PlansList({ plans, onEdit, onDelete, title }: PlansListProps) {
                     backgroundColor="#fff"
                     justifyContent="space-between"
                     mb="$px"
+                    p="$3"
+                    minHeight={48}
+                    borderTopLeftRadius="$lg"
+                    borderTopRightRadius="$lg"
                     onPress={() => onEdit(item)}
+                    sx={{
+                      ":active": {
+                        backgroundColor: "$coolGray200",
+                      },
+                      ":hover": {
+                        backgroundColor: "$coolGray100",
+                      },
+                    }}
                   >
-                    <MenuItemLabel size="sm">{t("common.edit")}</MenuItemLabel>
-                    <Icon as={EditIcon} size="sm" ml="$2" />
+                    <MenuItemLabel size="md">{t("common.edit")}</MenuItemLabel>
+                    <Icon as={EditIcon} size="sm" ml="$3" />
                   </MenuItem>
 
                   <MenuItem
@@ -73,12 +91,24 @@ export function PlansList({ plans, onEdit, onDelete, title }: PlansListProps) {
                     backgroundColor="#fff"
                     display="flex"
                     justifyContent="space-between"
+                    p="$3"
+                    minHeight={48}
+                    borderBottomLeftRadius="$lg"
+                    borderBottomRightRadius="$lg"
                     onPress={() => onDelete(item)}
+                    sx={{
+                      ":active": {
+                        backgroundColor: "$red100",
+                      },
+                      ":hover": {
+                        backgroundColor: "$red50",
+                      },
+                    }}
                   >
-                    <MenuItemLabel size="sm">
+                    <MenuItemLabel size="md" color="$red600">
                       {t("common.delete")}
                     </MenuItemLabel>
-                    <Icon as={Trash2} size="sm" ml="$2" />
+                    <Icon as={Trash2} size="sm" ml="$3" color="$red600" />
                   </MenuItem>
                 </Menu>
               </HStack>
