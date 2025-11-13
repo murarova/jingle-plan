@@ -3,23 +3,35 @@ node_modules/
 .cursor/
 dist/
 npm-debug.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-*.orig.*
 web-build/
 
 # macOS
 .DS_Store
 
-
-# typescript
+# TypeScript
 *.tsbuildinfo
 
-firebase-key.json
+# Environment variables
 .env
+.env.local
+.env.*.local
 
+# Firebase & Google Services
+firebase-key.json
+google-services.json
+GoogleService-Info.plist
+**/google-services.json
+**/GoogleService-Info.plist
+
+# Keystore files
+*.jks
+*.keystore
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Android & iOS (native directories)
 android/
 ios/
