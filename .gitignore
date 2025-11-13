@@ -1,6 +1,7 @@
 node_modules/
 .expo/
 .cursor/
+.vscode/
 dist/
 npm-debug.*
 web-build/
@@ -9,8 +10,15 @@ web-build/
 .DS_Store
 
 # TypeScript
+# TypeScript
 *.tsbuildinfo
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Firebase & Google Services
 # Environment variables
 .env
 .env.local
@@ -22,6 +30,9 @@ google-services.json
 GoogleService-Info.plist
 **/google-services.json
 **/GoogleService-Info.plist
+
+# EAS Configuration (contains Apple credentials)
+eas.json
 
 # Keystore files
 *.jks
