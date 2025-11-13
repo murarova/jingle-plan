@@ -1,0 +1,30 @@
+{
+  "cli": {
+    "version": ">= 13.2.1",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "murarovalv@gmail.com",
+        "ascAppId": "6738605732",
+        "appleTeamId": "A9H7S68H33"
+      }
+    }
+  }
+}
