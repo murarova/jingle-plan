@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "jingle-plan",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
