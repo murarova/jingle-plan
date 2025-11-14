@@ -22,12 +22,12 @@ import { useAppSelector } from "../store/withTypes";
 import moment from "moment";
 import {
   DayTaskConfig,
-  TextData,
   TaskContext,
   MoodTaskData,
   MonthPhotoData,
   PlanContextData,
   SummaryContextData,
+  GoalsData,
 } from "../types/types";
 import { MoodTask } from "./day-tasks/mood/mood-task";
 import { useGetUserDataQuery } from "../services/api";
@@ -124,7 +124,7 @@ export function TaskItem({
               )}
               {taskConfig.category === TASK_CATEGORY.GOALS && (
                 <Goals
-                  data={(userData?.[taskConfig.category] as TextData) ?? null}
+                  data={(userData?.[taskConfig.category] as GoalsData) ?? null}
                   context={taskConfig.context as TaskContext}
                 />
               )}

@@ -50,6 +50,11 @@ export interface PlanScreenData extends PlanData {
   context: TaskContext;
 }
 
+export interface GoalsData {
+  globalGoal?: TextData | null;
+  supportWord?: TextData | null;
+}
+
 export type TaskContext =
   | (typeof TASK_CONTEXT)[keyof typeof TASK_CONTEXT]
   | (typeof taskMonths)[number];
@@ -100,7 +105,7 @@ export interface UserData {
   [TASK_CATEGORY.SUMMARY]?: SummaryContextData | null;
   [TASK_CATEGORY.PLANS]?: PlanContextData | null;
   [TASK_CATEGORY.MONTH_PHOTO]?: MonthPhotoData | null;
-  [TASK_CATEGORY.GOALS]?: TextData | null;
+  [TASK_CATEGORY.GOALS]?: GoalsData | null;
   userProfile: UserProfile;
 }
 

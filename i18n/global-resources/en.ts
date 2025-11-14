@@ -20,6 +20,7 @@ export default {
     error: "Error",
     save: "Save",
     welcome: "Welcome",
+    year: "Year",
   },
   messages: {
     confirmDeletePlan: "Are you sure you want to delete this plan?",
@@ -144,7 +145,7 @@ export default {
       everyMonthLabel: "Every month",
       byContext: "By Context",
       byMonth: "By Month",
-      globalGoalTitle: "My Global Goal 2025:",
+      globalGoalTitle: "My Global Goal {{year}}:",
     },
     plansModal: {
       addPlanTitle: "Add plan item",

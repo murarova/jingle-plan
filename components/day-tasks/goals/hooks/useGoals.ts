@@ -10,12 +10,12 @@ import {
   useSaveTaskByCategoryMutation,
 } from "../../../../services/api";
 import { useAppSelector } from "../../../../store/withTypes";
-import { TextData } from "../../../../types/types";
+import { GoalsData, TextData } from "../../../../types/types";
 import { resolveErrorMessage } from "../../../../utils/utils";
 
 interface UseGoalsProps {
   context: string;
-  data: TextData | null;
+  data: GoalsData | null;
 }
 
 export const useGoals = ({ context, data }: UseGoalsProps) => {
@@ -25,13 +25,13 @@ export const useGoals = ({ context, data }: UseGoalsProps) => {
   const [saveTaskByCategory] = useSaveTaskByCategoryMutation();
   const [removeTask] = useRemoveTaskMutation();
   const { selectedYear } = useAppSelector((state) => state.app);
-
+  const currentGoal = data?.[context as keyof GoalsData] as TextData | null;
   useEffect(() => {
-    setIsEditing(isEmpty(data));
-    if (data?.text) {
-      setText(data.text);
+    setIsEditing(isEmpty(currentGoal));
+    if (currentGoal?.text) {
+      setText(currentGoal.text);
     }
-  }, [data]);
+  }, [currentGoal]);
 
   const handleSubmit = useCallback(
     async (submittedText: string) => {
@@ -40,7 +40,7 @@ export const useGoals = ({ context, data }: UseGoalsProps) => {
         return;
       }
 
-      const id = data?.id ?? uuid.v4().toString();
+      const id = currentGoal?.id ?? uuid.v4().toString();
 
       const updatedGoal = {
         id,
@@ -72,7 +72,7 @@ export const useGoals = ({ context, data }: UseGoalsProps) => {
         console.error("Failed to save goal:", error);
       }
     },
-    [saveTaskByCategory, context, data?.id, t, selectedYear]
+    [saveTaskByCategory, context, currentGoal?.id, t, selectedYear]
   );
 
   const handleRemove = useCallback(async () => {
@@ -108,13 +108,13 @@ export const useGoals = ({ context, data }: UseGoalsProps) => {
 
   const handleCancel = useCallback(() => {
     // Reset form to original state
-    if (data?.text) {
-      setText(data.text);
+    if (currentGoal?.text) {
+      setText(currentGoal.text);
     } else {
       setText("");
     }
     setIsEditing(false);
-  }, [data]);
+  }, [currentGoal]);
 
   return {
     isEditing,

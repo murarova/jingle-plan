@@ -1,15 +1,8 @@
-import {
-  Box,
-  Button,
-  ButtonText,
-  Textarea,
-  TextareaInput,
-  VStack,
-} from "@gluestack-ui/themed";
+import { Box, Button, ButtonText, VStack } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
 import { TaskOutputType } from "../../../constants/constants";
-import { ImagePicker } from "../../common";
+import { AutoGrowingTextarea, ImagePicker } from "../../common";
 
 interface MoodFormProps {
   text: string;
@@ -48,13 +41,12 @@ export const MoodForm = memo(
     return (
       <VStack space="md" width="100%">
         {showText && (
-          <Textarea width="100%" mb="$4">
-            <TextareaInput
-              onChangeText={onTextChange}
-              value={text}
-              placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-            />
-          </Textarea>
+          <AutoGrowingTextarea
+            value={text}
+            onChangeText={onTextChange}
+            placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
+            style={{ marginBottom: 16 }}
+          />
         )}
 
         {showImage && (

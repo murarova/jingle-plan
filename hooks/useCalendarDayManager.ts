@@ -11,10 +11,10 @@ import {
   UserData,
   MonthPhotoData,
   PlanContextData,
-  TextData,
   MoodTaskData,
   SummaryContextData,
   DayConfig,
+  GoalsData,
 } from "../types/types";
 import { TASK_CATEGORY } from "../constants/constants";
 
@@ -63,7 +63,7 @@ export const useCalendarDayManager = () => {
   const isAdmin = userProfile?.role === "admin" || false;
 
   const refresh = useCallback(() => {
-    refetchUserData();
+    return refetchUserData();
   }, [refetchUserData]);
 
   const calculateTaskGradeByCategory = useCallback(
@@ -107,8 +107,10 @@ export const useCalendarDayManager = () => {
         }
 
         case TASK_CATEGORY.GOALS: {
-          const goalsData = userData[TASK_CATEGORY.GOALS] as TextData | null;
-          return goalsData ? grade : 0;
+          const goalsData = userData[TASK_CATEGORY.GOALS] as GoalsData | null;
+          if (!goalsData) return 0;
+          const goalEntry = goalsData[context as keyof GoalsData];
+          return goalEntry ? grade : 0;
         }
 
         default:

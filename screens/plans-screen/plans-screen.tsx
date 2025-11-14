@@ -4,7 +4,7 @@ import { usePlansScreen } from "../../components/plans-view/hooks/usePlansScreen
 import { ButtonIcon, Fab, SafeAreaView } from "@gluestack-ui/themed";
 import * as Haptics from "expo-haptics";
 import { PlansViewOptions } from "../../constants/constants";
-import { PlanContextData, TextData } from "../../types/types";
+import { GoalsData, PlanContextData } from "../../types/types";
 import { useAppSelector } from "../../store/withTypes";
 import { Plus } from "lucide-react-native";
 import { AddPlanModal } from "../../components/day-tasks/plans/add-plan-modal";
@@ -24,7 +24,8 @@ export function PlansScreen() {
     { skip: !currentUser?.uid || !selectedYear }
   );
   const plans = userData?.plans as PlanContextData | null;
-  const globalGoal = userData?.goals as TextData | null;
+  const goalsData = userData?.goals as GoalsData | null;
+  const globalGoal = goalsData?.globalGoal ?? null;
 
   const plansProps = usePlansScreen({ plans });
 
@@ -35,7 +36,9 @@ export function PlansScreen() {
   return (
     <SafeAreaView flex={1}>
       {plans && <ViewSwitch onViewChange={setView} />}
-      {globalGoal && <GlobalGoal text={globalGoal.text} />}
+      {globalGoal && selectedYear && (
+        <GlobalGoal text={globalGoal.text} year={selectedYear} />
+      )}
       {plans && <PlansView plansProps={plansProps} viewType={view} />}
       <Fab
         size="lg"

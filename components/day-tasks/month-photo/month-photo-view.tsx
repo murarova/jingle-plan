@@ -53,7 +53,7 @@ export const MonthPhotoView = memo(
           </Box>
         )}
         {text && (
-          <Box mt="$2">
+          <Box mt="$3">
             <Text>{text}</Text>
           </Box>
         )}

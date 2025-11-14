@@ -205,7 +205,7 @@ export function PlansList({
                     </MenuItemLabel>
                     <Icon as={CalendarDays} size="sm" ml="$3" />
                   </MenuItem>
-                  {onCopyToNextYear && (
+                  {/* {onCopyToNextYear && (
                     <MenuItem
                       key="copyToNextYear"
                       textValue="copyToNextYear"
@@ -230,7 +230,7 @@ export function PlansList({
                       </MenuItemLabel>
                       <Icon as={Copy} size="sm" ml="$3" />
                     </MenuItem>
-                  )}
+                  )} */}
                   <MenuItem
                     key="delete"
                     mb="$px"

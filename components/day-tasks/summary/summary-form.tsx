@@ -1,14 +1,8 @@
 import { memo } from "react";
-import {
-  Textarea,
-  TextareaInput,
-  Button,
-  ButtonText,
-  VStack,
-  HStack,
-} from "@gluestack-ui/themed";
+import { Button, ButtonText, VStack, HStack } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { HappySlider } from "./happy-slider";
+import { AutoGrowingTextarea } from "../../common";
 
 interface SummaryFormProps {
   text: string;
@@ -33,14 +27,12 @@ export const SummaryForm = memo(
     return (
       <VStack space="md" width="100%">
         <HappySlider rate={rate} setRate={onRateChange} isDisabled={false} />
-        <Textarea width="100%">
-          <TextareaInput
-            onChangeText={onTextChange}
-            value={text}
-            numberOfLines={4}
-            placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-          />
-        </Textarea>
+        <AutoGrowingTextarea
+          value={text}
+          onChangeText={onTextChange}
+          placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
+          minHeight={120}
+        />
         <HStack space="sm" mt="$2">
           <Button
             flex={1}

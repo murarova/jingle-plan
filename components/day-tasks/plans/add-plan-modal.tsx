@@ -4,8 +4,6 @@ import {
   ModalFooter,
   Text,
   VStack,
-  Textarea,
-  TextareaInput,
   ButtonText,
   Modal,
   ModalBackdrop,
@@ -27,6 +25,7 @@ import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
 import { PlanData, PlanScreenData, TaskContext } from "../../../types/types";
 import { allMonths, TASK_CONTEXT } from "../../../constants/constants";
+import { AutoGrowingTextarea } from "../../common";
 
 interface AddPlanModalProps {
   isPlanScreen?: boolean;
@@ -102,14 +101,12 @@ export function AddPlanModal({
         </ModalHeader>
         <ModalBody>
           <VStack space="md">
-            <Textarea w="100%" size="md">
-              <TextareaInput
-                onChangeText={setText}
-                defaultValue={text}
-                placeholder={t("screens.plansModal.placeholder")}
-                onSubmitEditing={handleSubmit}
-              />
-            </Textarea>
+            <AutoGrowingTextarea
+              value={text}
+              onChangeText={setText}
+              placeholder={t("screens.plansModal.placeholder")}
+              onSubmitEditing={handleSubmit}
+            />
             {isPlanScreen && (
               <>
                 <VStack space="xs">

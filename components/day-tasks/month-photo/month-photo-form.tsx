@@ -3,14 +3,12 @@ import {
   Button,
   ButtonText,
   Text,
-  Textarea,
-  TextareaInput,
   VStack,
   HStack,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
-import { ImagePicker } from "../../common";
+import { AutoGrowingTextarea, ImagePicker } from "../../common";
 import { ImageData } from "../../../types/types";
 
 interface MonthPhotoFormProps {
@@ -46,13 +44,12 @@ export const MonthPhotoForm = memo(
           setImage={onImageChange}
           image={image}
         />
-        <Textarea width="100%" mt="$4">
-          <TextareaInput
-            onChangeText={onTextChange}
-            value={text}
-            placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-          />
-        </Textarea>
+        <AutoGrowingTextarea
+          placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
+          value={text}
+          onChangeText={onTextChange}
+          style={{ marginTop: 16 }}
+        />
         <HStack space="sm" mt="$2">
           {text || image ? (
             <Button
