@@ -54,7 +54,7 @@ export const Calendar = memo(
     );
 
     const renderDayComponent = useCallback(
-      ({ date, state }: { date: DateData; state: string }) => {
+      ({ date, state }: { date?: DateData; state?: string }) => {
         if (!date?.dateString) return null;
         const dayConfig = getDayConfig(date.dateString);
         const progress = calculateTotalProgress(dayConfig?.progress);
@@ -62,7 +62,7 @@ export const Calendar = memo(
         return (
           <DayComponent
             date={date}
-            state={state}
+            state={state ?? ""}
             onPress={pressHandler}
             currentDate={currentDate}
             progress={progress ?? 0}
@@ -84,7 +84,7 @@ export const Calendar = memo(
           hideArrows
           minDate={minDate}
           maxDate={maxDate}
-          theme={calendarTheme}
+          theme={calendarTheme as any}
           testID="advent-calendar"
         />
       </Box>

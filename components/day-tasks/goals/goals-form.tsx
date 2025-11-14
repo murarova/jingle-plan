@@ -1,13 +1,7 @@
 import { memo, useCallback, useState } from "react";
-import {
-  Textarea,
-  TextareaInput,
-  Button,
-  ButtonText,
-  VStack,
-  HStack,
-} from "@gluestack-ui/themed";
+import { Button, ButtonText, VStack, HStack } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
+import { AutoGrowingTextarea } from "../../common";
 
 interface GoalsFormProps {
   initialText: string;
@@ -34,14 +28,12 @@ export const GoalsForm = memo(
 
     return (
       <VStack space="md" width="100%">
-        <Textarea width="100%">
-          <TextareaInput
-            onChangeText={setText}
-            value={text}
-            placeholder={placeholderText}
-            onSubmitEditing={handleSubmit}
-          />
-        </Textarea>
+        <AutoGrowingTextarea
+          value={text}
+          onChangeText={setText}
+          placeholder={placeholderText}
+          onSubmitEditing={handleSubmit}
+        />
         <HStack space="sm" mt="$2">
           <Button
             flex={1}

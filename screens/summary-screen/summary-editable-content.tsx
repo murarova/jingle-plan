@@ -1,13 +1,8 @@
 import { memo } from "react";
-import {
-  Textarea,
-  TextareaInput,
-  Button,
-  ButtonText,
-  HStack,
-} from "@gluestack-ui/themed";
+import { Button, ButtonText, HStack } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { TaskContext } from "../../types/types";
+import { AutoGrowingTextarea } from "../../components/common";
 
 interface EditableContentProps {
   context: TaskContext;
@@ -23,13 +18,11 @@ export const EditableContent = memo(
 
     return (
       <>
-        <Textarea width="100%">
-          <TextareaInput
-            onChangeText={onTextChange}
-            value={text}
-            placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-          />
-        </Textarea>
+        <AutoGrowingTextarea
+          value={text}
+          onChangeText={onTextChange}
+          placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
+        />
         <HStack space="sm" mt="$2">
           <Button
             flex={1}

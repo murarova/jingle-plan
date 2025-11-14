@@ -8,7 +8,7 @@ export function YoutubePlayer({ videoId }: { videoId: string }) {
   const [playing, setPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const onStateChange = useCallback((state) => {
+  const onStateChange = useCallback((state: string) => {
     if (state === "ended") {
       setPlaying(false);
       // Alert.alert("video has finished playing!");

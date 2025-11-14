@@ -50,7 +50,7 @@ export const setupCalendarLocale = (locale: string): void => {
   LocaleConfig.defaultLocale = "en";
 };
 
-export const calendarTheme = {
+export const calendarTheme: Record<string, any> = {
   textDayHeaderFontWeight: "600",
   "stylesheet.calendar.main": {
     week: {
