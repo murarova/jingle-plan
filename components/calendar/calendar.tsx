@@ -3,7 +3,6 @@ import { Calendar as NativeCalendar, DateData } from "react-native-calendars";
 import { memo, useCallback, useMemo } from "react";
 import { Box } from "@gluestack-ui/themed";
 import { calculateTotalProgress } from "../../utils/utils";
-import { useCalendarDayManager } from "../../hooks/useCalendarDayManager";
 import { useAppSelector } from "../../store/withTypes";
 import { selectSelectedYear } from "../../store/appReducer";
 import { calendarTheme, setupCalendarLocale } from "../../utils/calendar-utils";
@@ -11,80 +10,86 @@ import { DayComponent } from "./day-component";
 
 interface CalendarProps {
   pressHandler: (dateString: string) => void;
+  getDayConfig: ReturnType<
+    typeof import("../../hooks/useCalendarDayManager")["useCalendarDayManager"]
+  >["getDayConfig"];
+  isAdmin: boolean;
+  isLoading: boolean;
 }
 
-export const Calendar = memo(({ pressHandler }: CalendarProps) => {
-  const selectedYear = useAppSelector(selectSelectedYear);
-  const currentDate = moment().format("YYYY-MM-DD");
-  // const { i18n } = useTranslation();
-  // const resolvedLanguage =
-  //   (i18n.resolvedLanguage as keyof typeof LANGUAGES) || "en";
+export const Calendar = memo(
+  ({ pressHandler, getDayConfig, isAdmin, isLoading }: CalendarProps) => {
+    const selectedYear = useAppSelector(selectSelectedYear);
+    const currentDate = moment().format("YYYY-MM-DD");
+    // const { i18n } = useTranslation();
+    // const resolvedLanguage =
+    //   (i18n.resolvedLanguage as keyof typeof LANGUAGES) || "en";
 
-  const locale = "uk";
+    const locale = "uk";
 
-  setupCalendarLocale(locale);
-  const { getDayConfig, isAdmin, isLoading } = useCalendarDayManager();
+    setupCalendarLocale(locale);
 
-  const minDate = useMemo(
-    () => moment(`${selectedYear}-12-01`).format("YYYY-MM-DD"),
-    [selectedYear]
-  );
+    const minDate = useMemo(
+      () => moment(`${selectedYear}-12-01`).format("YYYY-MM-DD"),
+      [selectedYear]
+    );
 
-  const firstUnlockedDate = useMemo(
-    () => moment(`${selectedYear}-12-03`).format("YYYY-MM-DD"),
-    [selectedYear]
-  );
+    const firstUnlockedDate = useMemo(
+      () => moment(`${selectedYear}-12-03`).format("YYYY-MM-DD"),
+      [selectedYear]
+    );
 
-  const baseMaxDate = useMemo(() => {
-    const today = moment(currentDate, "YYYY-MM-DD");
-    const thirdDay = moment(firstUnlockedDate, "YYYY-MM-DD");
-    return moment.max(today, thirdDay).format("YYYY-MM-DD");
-  }, [currentDate, firstUnlockedDate]);
+    const baseMaxDate = useMemo(() => {
+      const today = moment(currentDate, "YYYY-MM-DD");
+      const thirdDay = moment(firstUnlockedDate, "YYYY-MM-DD");
+      return moment.max(today, thirdDay).format("YYYY-MM-DD");
+    }, [currentDate, firstUnlockedDate]);
 
-  const maxDate = useMemo(
-    () =>
-      isAdmin
-        ? moment(`${selectedYear}-12-31`).format("YYYY-MM-DD")
-        : baseMaxDate,
-    [isAdmin, baseMaxDate, selectedYear]
-  );
+    const maxDate = useMemo(
+      () =>
+        isAdmin
+          ? moment(`${selectedYear}-12-31`).format("YYYY-MM-DD")
+          : baseMaxDate,
+      [isAdmin, baseMaxDate, selectedYear]
+    );
 
-  const renderDayComponent = useCallback(
-    ({ date, state }: { date: DateData; state: string }) => {
-      if (!date?.dateString) return null;
-      const dayConfig = getDayConfig(date.dateString);
-      const progress = calculateTotalProgress(dayConfig?.progress);
+    const renderDayComponent = useCallback(
+      ({ date, state }: { date: DateData; state: string }) => {
+        if (!date?.dateString) return null;
+        const dayConfig = getDayConfig(date.dateString);
+        const progress = calculateTotalProgress(dayConfig?.progress);
 
-      return (
-        <DayComponent
-          date={date}
-          state={state}
-          onPress={pressHandler}
-          currentDate={currentDate}
-          progress={progress ?? 0}
-          isLoading={isLoading}
+        return (
+          <DayComponent
+            date={date}
+            state={state}
+            onPress={pressHandler}
+            currentDate={currentDate}
+            progress={progress ?? 0}
+            isLoading={isLoading}
+          />
+        );
+      },
+      [getDayConfig, pressHandler, currentDate]
+    );
+
+    return (
+      <Box position="relative">
+        <NativeCalendar
+          initialDate={minDate}
+          firstDay={1}
+          key={`${locale}-${selectedYear}`}
+          hideExtraDays
+          dayComponent={renderDayComponent}
+          hideArrows
+          minDate={minDate}
+          maxDate={maxDate}
+          theme={calendarTheme}
+          testID="advent-calendar"
         />
-      );
-    },
-    [getDayConfig, pressHandler, currentDate]
-  );
-
-  return (
-    <Box position="relative">
-      <NativeCalendar
-        initialDate={minDate}
-        firstDay={1}
-        key={`${locale}-${selectedYear}`}
-        hideExtraDays
-        dayComponent={renderDayComponent}
-        hideArrows
-        minDate={minDate}
-        maxDate={maxDate}
-        theme={calendarTheme}
-        testID="advent-calendar"
-      />
-    </Box>
-  );
-});
+      </Box>
+    );
+  }
+);
 
 Calendar.displayName = "Calendar";

@@ -24,8 +24,8 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
   const { t } = useTranslation();
 
   const pickImage = async () => {
-    let result = await ExpoImagePicker.launchImageLibraryAsync({
-      mediaTypes: ExpoImagePicker.MediaTypeOptions.All,
+    const result = await ExpoImagePicker.launchImageLibraryAsync({
+      mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
       quality: 1,
     });
 

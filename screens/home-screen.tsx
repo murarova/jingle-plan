@@ -16,15 +16,56 @@ import Dashboard from "../assets/svg/dashboard";
 import { AlbumScreen } from "./album-screen";
 import { DashboardScreen } from "./dashboard-screen/dashboard-screen";
 import { YearSelector } from "../components/year-selector";
-import { CommonActions } from "@react-navigation/native";
+import {
+  CommonActions,
+  NavigationState,
+  useNavigationState,
+} from "@react-navigation/native";
+import { Text } from "react-native";
+
+const Tab = createBottomTabNavigator();
+const HomeStack = createStackNavigator<HomeStackParamList>();
+
+const INACTIVE_COLOR = "#999999";
+const ACTIVE_COLOR = "#fe434c";
+
+const useIsDayOverviewActive = () => {
+  const isDayOverviewActive = useNavigationState((state) => {
+    if (!state) return false;
+    const homeRoute = state.routes.find(
+      (route) => route.name === SCREENS.PERIOD_OVERVIEW
+    );
+    const nestedState = homeRoute?.state as NavigationState | undefined;
+    if (!nestedState?.routes?.length) return false;
+    const currentNestedRoute = nestedState.routes[nestedState.index ?? 0]?.name;
+    return currentNestedRoute === "DayOverview";
+  });
+
+  return isDayOverviewActive;
+};
+
+const HomeTabIcon = ({ focused }: { focused: boolean }) => {
+  const isDayOverviewActive = useIsDayOverviewActive();
+  const color = focused && !isDayOverviewActive ? ACTIVE_COLOR : INACTIVE_COLOR;
+  return <House color={color} />;
+};
+
+const HomeTabLabel = ({
+  focused,
+  label,
+}: {
+  focused: boolean;
+  label: string;
+}) => {
+  const isDayOverviewActive = useIsDayOverviewActive();
+  const color = focused && !isDayOverviewActive ? ACTIVE_COLOR : INACTIVE_COLOR;
+  return <Text style={{ color, paddingTop: 10, fontSize: 12 }}>{label}</Text>;
+};
 
 export type HomeStackParamList = {
   PeriodOverviewMain: undefined;
   DayOverview: { currentDay: string };
 };
-
-const Tab = createBottomTabNavigator();
-const HomeStack = createStackNavigator<HomeStackParamList>();
 
 function HomeStackNavigator() {
   const { t } = useTranslation();
@@ -52,6 +93,7 @@ function HomeStackNavigator() {
 
 export const HomeScreen = () => {
   const { t } = useTranslation();
+
   return (
     <Tab.Navigator
       initialRouteName={SCREENS.PERIOD_OVERVIEW}
@@ -68,10 +110,10 @@ export const HomeScreen = () => {
     >
       <Tab.Screen
         options={{
-          tabBarIcon: ({ focused }) => (
-            <House color={focused ? "#fe434c" : "#999999"} />
+          tabBarIcon: ({ focused }) => <HomeTabIcon focused={focused} />,
+          tabBarLabel: ({ focused }) => (
+            <HomeTabLabel focused={focused} label={t("common.home")} />
           ),
-          tabBarLabel: t("common.home"),
           headerShown: false,
         }}
         name={SCREENS.PERIOD_OVERVIEW}

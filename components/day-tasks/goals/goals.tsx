@@ -1,14 +1,14 @@
 import { memo, useMemo } from "react";
 import { Box } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
-import { TextData } from "../../../types/types";
+import { GoalsData } from "../../../types/types";
 import { useGoals } from "./hooks/useGoals";
 import { GoalsForm } from "./goals-form";
 import { GoalsView } from "./goals-view";
 
 interface GoalsProps {
   context: string;
-  data: TextData | null;
+  data: GoalsData | null;
 }
 
 export const Goals = memo(({ context, data }: GoalsProps) => {
