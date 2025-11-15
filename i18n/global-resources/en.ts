@@ -161,6 +161,9 @@ export default {
       btn: "Cool",
     },
   },
+  calendar: {
+    lockedDayMessage: "This day unlocks on {{date}}.",
+  },
   rating: {
     bad: "Bad",
     notVeryGood: "Not very good",

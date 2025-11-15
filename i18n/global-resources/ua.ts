@@ -25,6 +25,9 @@ export default {
     welcome: "Ласкаво просимо",
     year: "Рік",
   },
+  calendar: {
+    lockedDayMessage: "Цей день відкриється {{date}}.",
+  },
   context: {
     health: "Тіло",
     learning: "Навчання",

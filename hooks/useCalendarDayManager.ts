@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useAppSelector } from "../store/withTypes";
+import { useTranslation } from "react-i18next";
 import {
   useGetConfigurationQuery,
   useGetUserDataQuery,
