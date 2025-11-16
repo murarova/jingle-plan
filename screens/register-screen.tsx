@@ -15,6 +15,7 @@ import {
   InputIcon,
 } from "@gluestack-ui/themed";
 import { Alert, Keyboard } from "react-native";
+import * as Haptics from "expo-haptics";
 import { SCREENS, EMAIL_REGEX, PASSWORD_REGEX } from "../constants/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
@@ -97,6 +98,9 @@ export const RegisterScreen = () => {
       trimmedName
     ) {
       try {
+        try {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        } catch {}
         dispatch(setAuthLoading());
         const user = await createUser({ email: trimmedEmail, password }).unwrap();
         const serializableUser = convertToSerializableUser(user, trimmedName);
@@ -180,7 +184,12 @@ export const RegisterScreen = () => {
                 size="md"
                 variant="link"
                 action="primary"
-                onPress={() => nav.push(SCREENS.LOGIN)}
+                onPress={() => {
+                  try {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  } catch {}
+                  nav.push(SCREENS.LOGIN);
+                }}
               >
                 <ButtonText>{t("screens.registerScreen.loginBtn")}</ButtonText>
               </Button>

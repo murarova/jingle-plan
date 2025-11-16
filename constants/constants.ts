@@ -16,6 +16,7 @@ export const SCREENS = {
   PLANS: "Plans",
   ALBUM: "Album",
   DASHBOARD: "Dashboard",
+  PAYWALL: "Paywall",
 } as const;
 
 export const LANGUAGES = {

@@ -1,11 +1,4 @@
-import {
-  useLayoutEffect,
-  useState,
-  useEffect,
-  memo,
-  useCallback,
-  useRef,
-} from "react";
+import { useLayoutEffect, useState, useEffect, memo, useCallback } from "react";
 import { TasksList } from "../components/tasks-list";
 import {
   Box,

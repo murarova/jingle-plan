@@ -15,6 +15,7 @@ import { config } from "../../config/gluestack-ui.config";
 import CircularProgress from "react-native-circular-progress-indicator";
 import { DateData } from "react-native-calendars";
 import { LockKeyhole } from "lucide-react-native";
+import { SCREENS } from "../../constants/constants";
 
 export interface DayComponentProps {
   date: DateData;
@@ -24,6 +25,8 @@ export interface DayComponentProps {
   progress: number;
   isLoading?: boolean;
   unlockMessage?: string;
+  isSubscriber?: boolean;
+  navigateToPaywall?: () => void;
 }
 
 export const DayComponent = memo(
@@ -35,6 +38,8 @@ export const DayComponent = memo(
     progress,
     isLoading,
     unlockMessage,
+    isSubscriber = false,
+    navigateToPaywall,
   }: DayComponentProps) => {
     const today = date?.dateString === currentDate;
     const disabled = state === "disabled";
@@ -54,6 +59,10 @@ export const DayComponent = memo(
 
     const handlePress = useCallback(async () => {
       if (disabled) {
+        if (!isSubscriber && navigateToPaywall) {
+          navigateToPaywall();
+          return;
+        }
         if (tooltipTimer.current) {
           clearTimeout(tooltipTimer.current);
         }
@@ -171,7 +180,7 @@ export const DayComponent = memo(
           </Pressable>
         )}
       >
-        <PopoverContent maxWidth="$64">
+        <PopoverContent pb="$3" maxWidth="$64">
           <PopoverArrow />
           <PopoverBody>
             <Text fontSize="$sm">{popoverMessage}</Text>

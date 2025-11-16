@@ -7,6 +7,9 @@ import { useAppSelector } from "../../store/withTypes";
 import { selectSelectedYear } from "../../store/appReducer";
 import { calendarTheme, setupCalendarLocale } from "../../utils/calendar-utils";
 import { DayComponent } from "./day-component";
+import { useIAP } from "../../hooks/useIAP";
+import { useNavigation } from "@react-navigation/native";
+import { SCREENS } from "../../constants/constants";
 
 interface CalendarProps {
   pressHandler: (dateString: string) => void;
@@ -21,6 +24,8 @@ export const Calendar = memo(
   ({ pressHandler, getDayConfig, isAdmin, isLoading }: CalendarProps) => {
     const selectedYear = useAppSelector(selectSelectedYear);
     const currentDate = moment().format("YYYY-MM-DD");
+    const navigation = useNavigation();
+    const { isSubscriber } = useIAP();
     // const { i18n } = useTranslation();
     // const resolvedLanguage =
     //   (i18n.resolvedLanguage as keyof typeof LANGUAGES) || "en";
@@ -67,10 +72,14 @@ export const Calendar = memo(
             currentDate={currentDate}
             progress={progress ?? 0}
             isLoading={isLoading}
+            isSubscriber={isSubscriber}
+            navigateToPaywall={() =>
+              navigation.navigate(SCREENS.PAYWALL as never)
+            }
           />
         );
       },
-      [getDayConfig, pressHandler, currentDate]
+      [getDayConfig, pressHandler, currentDate, isSubscriber, navigation]
     );
 
     return (
