@@ -5,11 +5,11 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { Alert } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useIAP as useExpoIAP, type Product, ErrorCode } from "expo-iap";
 import type { IapContextValue } from "../types/iap";
 import { SUBSCRIPTION_IDS } from "../config/iap";
+import { AppEventsLogger } from "react-native-fbsdk-next";
 
 const IapContext = createContext<IapContextValue | null>(null);
 
@@ -48,6 +48,27 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
         await finishTransaction({ purchase, isConsumable: false });
         setActiveProductId(purchase.productId ?? null);
         setHasActiveSubscription(true);
+
+        try {
+          const product = products.find((p) => p.id === purchase.productId);
+          if (product) {
+            const price =
+              typeof product.price === "number"
+                ? product.price
+                : typeof product.price === "string"
+                ? parseFloat(product.price)
+                : 0;
+            const currency = product.currency || "USD";
+
+            if (price > 0) {
+              AppEventsLogger.logPurchase(price, currency);
+              AppEventsLogger.logEvent("Subscribe", {
+                value: price,
+                currency: currency,
+              });
+            }
+          }
+        } catch (fbError) {}
       } catch (error) {
         setErrorMessage(
           error instanceof Error
