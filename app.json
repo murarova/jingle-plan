@@ -59,7 +59,8 @@
         "react-native-fbsdk-next",
         {
           "appID": "819298757617808",
-          "clientToken": "24717df3aeae47ec2954662bd71dcb3a"
+          "clientToken": "24717df3aeae47ec2954662bd71dcb3a",
+          "displayName": "Jingle Plan"
         }
       ]
     ],

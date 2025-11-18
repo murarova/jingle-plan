@@ -50,22 +50,24 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
         setHasActiveSubscription(true);
 
         try {
-          const product = products.find((p) => p.id === purchase.productId);
-          if (product) {
-            const price =
-              typeof product.price === "number"
-                ? product.price
-                : typeof product.price === "string"
-                ? parseFloat(product.price)
-                : 0;
-            const currency = product.currency || "USD";
+          if (products && Array.isArray(products)) {
+            const product = products.find((p) => p.id === purchase.productId);
+            if (product) {
+              const price =
+                typeof product.price === "number"
+                  ? product.price
+                  : typeof product.price === "string"
+                  ? parseFloat(product.price)
+                  : 0;
+              const currency = product.currency || "USD";
 
-            if (price > 0) {
-              AppEventsLogger.logPurchase(price, currency);
-              AppEventsLogger.logEvent("Subscribe", {
-                value: price,
-                currency: currency,
-              });
+              if (price > 0) {
+                AppEventsLogger.logPurchase(price, currency);
+                AppEventsLogger.logEvent("Subscribe", {
+                  value: price,
+                  currency: currency,
+                });
+              }
             }
           }
         } catch (fbError) {}
