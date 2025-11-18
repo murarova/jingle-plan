@@ -8,7 +8,7 @@ import {
   Icon,
   Text,
 } from "@gluestack-ui/themed";
-import { LogOut, Trash2 } from "lucide-react-native";
+import { LogOut, Trash2, Crown } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { SCREENS } from "../constants/constants";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
@@ -50,6 +50,10 @@ export function AppMenu() {
         error instanceof Error ? error.message : "An error occurred"
       );
     }
+  }
+
+  function handleManageSubscription() {
+    nav.navigate(SCREENS.PAYWALL as never);
   }
 
   function handleDeleteAccount() {
@@ -128,6 +132,24 @@ export function AppMenu() {
           <MenuItemLabel size="sm">{LANGUAGES[lng].nativeName}</MenuItemLabel>
         </MenuItem>
       ))} */}
+        <MenuItem
+          key="subscription"
+          onPress={handleManageSubscription}
+          textValue="Subscription"
+          p="$3"
+          minHeight={48}
+          sx={{
+            ":active": {
+              backgroundColor: "$coolGray100",
+            },
+            ":hover": {
+              backgroundColor: "$coolGray50",
+            },
+          }}
+        >
+          <Icon as={Crown} size="sm" mr="$3" color="$amber500" />
+          <Text fontSize="$md">{t("common.manageSubscription")}</Text>
+        </MenuItem>
         <MenuItem
           key="Logout"
           onPress={handleLogout}

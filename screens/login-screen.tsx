@@ -34,6 +34,7 @@ import {
   loadCredentials,
   clearCredentials,
 } from "../services/password-storage";
+import * as Haptics from "expo-haptics";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Login">;
 
@@ -64,6 +65,9 @@ export const LoginScreen = () => {
   };
 
   const goToRegistration = () => {
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    } catch {}
     nav.push(SCREENS.REGISTER);
   };
   const handleState = () => setShowPassword((prevState) => !prevState);
@@ -94,6 +98,9 @@ export const LoginScreen = () => {
 
   const goToMainFlow = async () => {
     try {
+      try {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      } catch {}
       dispatch(setAuthLoading());
       const user = await signInUser({ email, password }).unwrap();
       dispatch(setUser(convertToSerializableUser(user)));
@@ -113,6 +120,9 @@ export const LoginScreen = () => {
   };
 
   const handlePasswordReset = useCallback(async () => {
+    try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    } catch {}
     if (!email) {
       Alert.alert(
         t("common.error"),

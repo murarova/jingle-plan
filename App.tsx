@@ -4,6 +4,7 @@ import { RegisterScreen } from "./screens/register-screen";
 import { LoadingScreen } from "./screens/loading-screen";
 import { LoginScreen } from "./screens/login-screen";
 import { HomeScreen } from "./screens/home-screen";
+import { PaywallScreen } from "./screens/paywall-screen";
 import { IntroScreen } from "./screens/intro-screen";
 import { GluestackUIProvider } from "@gluestack-ui/themed";
 import { config } from "./config/gluestack-ui.config";
@@ -19,7 +20,10 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Loader, GlobalLoader } from "./components/common";
-import { StatusBar } from "react-native";
+import { StatusBar, Platform } from "react-native";
+import { IAPProvider } from "./hooks/useIAP";
+import * as TrackingTransparency from "expo-tracking-transparency";
+import { AppEventsLogger } from "react-native-fbsdk-next";
 
 (globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
 
@@ -39,14 +43,31 @@ export type RootStackParamList = {
   Login: undefined;
   Loading: undefined;
   Home: { screen?: string } | undefined;
+  Paywall: undefined;
 };
+
+async function requestTrackingPermission() {
+  if (Platform.OS !== "ios") return;
+  try {
+    await TrackingTransparency.requestTrackingPermissionsAsync();
+  } catch (error) {}
+}
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 function AppContent() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
+
   useFirebaseMessaging();
+
+  useEffect(() => {
+    requestTrackingPermission();
+    try {
+      AppEventsLogger.logEvent("AppLaunch");
+    } catch (error) {}
+  }, []);
+
   useEffect(() => {
     const loadPersistedUser = async () => {
       try {
@@ -102,6 +123,14 @@ function AppContent() {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name={SCREENS.PAYWALL}
+            component={PaywallScreen}
+            options={{
+              headerTitle: "",
+              headerBackTitleVisible: false,
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
       <GlobalLoader />
@@ -115,11 +144,13 @@ export default function App() {
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Provider store={store}>
-          <SafeAreaProvider>
-            <BottomSheetModalProvider>
-              <AppContent />
-            </BottomSheetModalProvider>
-          </SafeAreaProvider>
+          <IAPProvider>
+            <SafeAreaProvider>
+              <BottomSheetModalProvider>
+                <AppContent />
+              </BottomSheetModalProvider>
+            </SafeAreaProvider>
+          </IAPProvider>
         </Provider>
       </GestureHandlerRootView>
     </GluestackUIProvider>

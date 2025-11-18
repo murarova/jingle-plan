@@ -24,6 +24,31 @@ export default {
     submitBtnText: "Готово",
     welcome: "Ласкаво просимо",
     year: "Рік",
+    manageSubscription: "Керувати підпискою",
+  },
+  calendar: {
+    lockedDayMessage: "Цей день відкриється {{date}}.",
+  },
+  paywall: {
+    title: "Відкрийте доступ Jingle Plan+",
+    subtitle: "Отримуйте всі завдання, нагадування та доступ на рік.",
+    planName: "Jingle Plan+",
+    pricePlaceholder: "$12.99",
+    billingPeriod: "Щорічна підписка.",
+    benefitOne: "Доступ до всіх завдань",
+    benefitFour: "Формування планів на рік за усіма важливими сферами життя",
+    benefitTwo:
+      "Push-нагадування щодня у грудні та впродовж року раз на місяць",
+    benefitThree: "Моніторинг персонального прогресу в реальному часі",
+    cta: "Оформити підписку",
+    alreadySubscribed: "Підписка активна",
+    processing: "Будь ласка, зачекайте...",
+    disclaimer:
+      "Оплата стягується з вашого Apple ID. Підписка автоматично поновлюється, якщо не скасувати її за 24 години до завершення періоду.",
+    lockedCalendarTitle: "Відкрий усі дні з Jingle Plan+",
+    lockedCalendarDescription:
+      "Лише підписники отримують доступ до всіх завдань календаря.",
+    goToStore: "Оформити підписку",
   },
   context: {
     health: "Тіло",

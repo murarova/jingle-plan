@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SCREENS } from "../constants/constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
+import * as Haptics from "expo-haptics";
 
 const { width: screenWidth } = Dimensions.get("window");
 type NavigationProp = StackNavigationProp<RootStackParamList, "INTRO">;
@@ -89,11 +90,24 @@ export function IntroScreen() {
           </Box>
         </Box>
         <Box width={screenWidth - 60} alignSelf="center">
-          <Button onPress={() => nav.replace(SCREENS.REGISTER)} mt="$2">
+          <Button
+            onPress={async () => {
+              try {
+                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              } catch {}
+              nav.replace(SCREENS.REGISTER);
+            }}
+            mt="$2"
+          >
             <ButtonText>{t("screens.intro.loginBtn")}</ButtonText>
           </Button>
           <Button
-            onPress={() => nav.replace(SCREENS.LOGIN)}
+            onPress={async () => {
+              try {
+                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              } catch {}
+              nav.replace(SCREENS.LOGIN);
+            }}
             mt="$2"
             variant="outline"
           >

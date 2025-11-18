@@ -21,6 +21,7 @@ export default {
     save: "Save",
     welcome: "Welcome",
     year: "Year",
+    manageSubscription: "Manage subscription",
   },
   messages: {
     confirmDeletePlan: "Are you sure you want to delete this plan?",
@@ -160,6 +161,29 @@ export default {
       text: "You have completed 100% of the tasks for today. Now it's time to rest, you deserve it!",
       btn: "Cool",
     },
+  },
+  calendar: {
+    lockedDayMessage: "This day unlocks on {{date}}.",
+  },
+  paywall: {
+    title: "Unlock Premium Access",
+    subtitle: "Get unlimited access to all advent content and yearly updates.",
+    planName: "Jingle Plan+",
+    pricePlaceholder: "$12.99",
+    billingPeriod: "Billed monthly. Cancel anytime.",
+    benefitOne: "Access to all current and upcoming seasons",
+    benefitTwo: "Priority notifications and reminders",
+    benefitThree: "Unlimited media uploads & backup",
+    benefitFour: "Year-round planning tools across all life areas",
+    cta: "Start Subscription",
+    alreadySubscribed: "Active Subscription",
+    processing: "Please wait...",
+    disclaimer:
+      "Payment will be charged to your Apple ID account. Subscription automatically renews unless canceled at least 24 hours before the end of the period.",
+    lockedCalendarTitle: "Unlock every day with Premium",
+    lockedCalendarDescription:
+      "Only subscribers can open all calendar days and view daily reflections as soon as they’re available.",
+    goToStore: "Upgrade now",
   },
   rating: {
     bad: "Bad",
