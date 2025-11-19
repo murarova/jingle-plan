@@ -23,9 +23,7 @@ import { Loader, GlobalLoader } from "./components/common";
 import { StatusBar, Platform } from "react-native";
 import { IAPProvider } from "./hooks/useIAP";
 import * as TrackingTransparency from "expo-tracking-transparency";
-import { AppEventsLogger } from "react-native-fbsdk-next";
-
-(globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
+import * as Facebook from "expo-facebook";
 
 const MyTheme = {
   ...DefaultTheme,
@@ -49,7 +47,16 @@ export type RootStackParamList = {
 async function requestTrackingPermission() {
   if (Platform.OS !== "ios") return;
   try {
-    await TrackingTransparency.requestTrackingPermissionsAsync();
+    const { status } =
+      await TrackingTransparency.requestTrackingPermissionsAsync();
+
+    if (status === "granted") {
+      try {
+        await Facebook.setAdvertiserTrackingEnabledAsync(true);
+      } catch (error) {}
+    }
+
+    return status;
   } catch (error) {}
 }
 
@@ -62,10 +69,16 @@ function AppContent() {
   useFirebaseMessaging();
 
   useEffect(() => {
-    requestTrackingPermission();
-    try {
-      AppEventsLogger.logEvent("AppLaunch");
-    } catch (error) {}
+    (async () => {
+      try {
+        await Facebook.initializeAsync({
+          appId: "819298757617808",
+          appName: "Jingle Plan",
+        });
+        await requestTrackingPermission();
+        await Facebook.logEventAsync("AppLaunch");
+      } catch (error) {}
+    })();
   }, []);
 
   useEffect(() => {
