@@ -1,145 +1,145 @@
-import { createStyle } from '@gluestack-style/react';
+import { createStyle } from "@gluestack-style/react";
 
 export const Textarea = createStyle({
-  'w': '100%',
-  'borderWidth': 1,
-  'backgroundColor': "#fff",
-  'borderColor': '$backgroundLight300',
-  'borderRadius': '$sm',
-  'h': 100,
-  '_input': {
-    p: '$3',
+  w: "100%",
+  borderWidth: 1,
+  backgroundColor: "#fff",
+  borderColor: "$backgroundLight300",
+  borderRadius: "$sm",
+  h: 100,
+  _input: {
+    p: "$3",
     _web: {
       outlineWidth: 0,
-      outline: 'none',
+      outline: "none",
     },
   },
-  ':hover': {
-    borderColor: '$borderLight400',
-  },
-
-  ':focus': {
-    'borderColor': '$primary600',
-    ':hover': {
-      borderColor: '$primary600',
-    },
+  ":hover": {
+    borderColor: "$borderLight400",
   },
 
-  ':disabled': {
-    'opacity': 0.4,
-    ':hover': {
-      borderColor: '$backgroundLight300',
+  ":focus": {
+    borderColor: "$borderLight400",
+    ":hover": {
+      borderColor: "$borderLight400",
     },
   },
-  '_dark': {
-    'borderColor': '$borderDark700',
-    ':hover': {
-      borderColor: '$borderDark600',
+
+  ":disabled": {
+    opacity: 0.4,
+    ":hover": {
+      borderColor: "$backgroundLight300",
     },
-    ':focus': {
-      'borderColor': '$primary400',
-      ':hover': {
-        borderColor: '$primary400',
+  },
+  _dark: {
+    borderColor: "$borderDark700",
+    ":hover": {
+      borderColor: "$borderDark600",
+    },
+    ":focus": {
+      borderColor: "$borderLight400",
+      ":hover": {
+        borderColor: "$borderLight400",
       },
     },
-    ':disabled': {
-      ':hover': {
-        borderColor: '$borderDark700',
+    ":disabled": {
+      ":hover": {
+        borderColor: "$borderDark700",
       },
     },
   },
 
-  'variants': {
+  variants: {
     size: {
       xl: {
         _input: {
-          fontSize: '$xl',
+          fontSize: "$xl",
         },
       },
 
       lg: {
         _input: {
-          fontSize: '$lg',
+          fontSize: "$lg",
         },
       },
       md: {
         _input: {
-          fontSize: '$md',
+          fontSize: "$md",
         },
       },
       sm: {
         _input: {
-          fontSize: '$sm',
+          fontSize: "$sm",
         },
       },
     },
     variant: {
       default: {
-        '_input': {
+        _input: {
           _web: {
-            outlineWidth: '0',
-            outline: 'none',
+            outlineWidth: "0",
+            outline: "none",
           },
         },
-        ':focus': {
-          borderColor: '$primary600',
+        ":focus": {
+          borderColor: "$borderLight400",
           _web: {
-            boxShadow: 'inset 0 0 0 1px $primary600',
+            boxShadow: "inset 0 0 0 1px $borderLight400",
           },
         },
-        ':invalid': {
-          'borderColor': '$error700',
-          '_web': {
-            boxShadow: 'inset 0 0 0 1px $error700',
+        ":invalid": {
+          borderColor: "$error700",
+          _web: {
+            boxShadow: "inset 0 0 0 1px $error700",
           },
-          ':hover': {
-            borderColor: '$error700',
+          ":hover": {
+            borderColor: "$error700",
           },
-          ':focus': {
-            ':hover': {
-              borderColor: '$primary600',
+          ":focus": {
+            ":hover": {
+              borderColor: "$borderLight400",
               _web: {
-                boxShadow: 'inset 0 0 0 1px $primary600',
+                boxShadow: "inset 0 0 0 1px $borderLight400",
               },
             },
           },
-          ':disabled': {
-            ':hover': {
-              borderColor: '$error700',
+          ":disabled": {
+            ":hover": {
+              borderColor: "$error700",
               _web: {
-                boxShadow: 'inset 0 0 0 1px $error700',
+                boxShadow: "inset 0 0 0 1px $error700",
               },
             },
           },
         },
-        '_dark': {
-          ':focus': {
-            borderColor: '$primary400',
+        _dark: {
+          ":focus": {
+            borderColor: "$borderLight400",
             _web: {
-              boxShadow: 'inset 0 0 0 1px $primary400',
+              boxShadow: "inset 0 0 0 1px $borderLight400",
             },
           },
-          ':invalid': {
-            'borderColor': '$error400',
-            '_web': {
-              boxShadow: 'inset 0 0 0 1px $error400',
+          ":invalid": {
+            borderColor: "$error400",
+            _web: {
+              boxShadow: "inset 0 0 0 1px $error400",
             },
-            ':hover': {
-              borderColor: '$error400',
+            ":hover": {
+              borderColor: "$error400",
             },
-            ':focus': {
-              ':hover': {
-                borderColor: '$primary400',
+            ":focus": {
+              ":hover": {
+                borderColor: "$borderLight400",
                 _web: {
-                  boxShadow: 'inset 0 0 0 1px $primary400',
+                  boxShadow: "inset 0 0 0 1px $borderLight400",
                 },
               },
             },
-            ':disabled': {
-              ':hover': {
-                borderColor: '$error400',
+            ":disabled": {
+              ":hover": {
+                borderColor: "$error400",
                 _web: {
-                  boxShadow: 'inset 0 0 0 1px $error400',
+                  boxShadow: "inset 0 0 0 1px $error400",
                 },
               },
             },
@@ -149,8 +149,8 @@ export const Textarea = createStyle({
     },
   },
 
-  'defaultProps': {
-    variant: 'default',
-    size: 'md',
+  defaultProps: {
+    variant: "default",
+    size: "md",
   },
 });

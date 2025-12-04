@@ -27,6 +27,7 @@ export interface DayComponentProps {
   isSubscriber?: boolean;
   navigateToPaywall?: () => void;
   isAdmin: boolean;
+  maxDate: string;
 }
 
 export const DayComponent = memo(
@@ -40,10 +41,10 @@ export const DayComponent = memo(
     unlockMessage,
     isSubscriber = false,
     navigateToPaywall,
-    isAdmin = false,
+    maxDate,
   }: DayComponentProps) => {
     const today = date?.dateString === currentDate;
-    const disabled = state === "disabled" || (isAdmin && !isSubscriber);
+    const disabled = maxDate < date?.dateString;
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const tooltipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const { t, i18n } = useTranslation();
