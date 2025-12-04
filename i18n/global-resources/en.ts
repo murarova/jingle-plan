@@ -180,6 +180,8 @@ export default {
     processing: "Please wait...",
     disclaimer:
       "Payment will be charged to your Apple ID account. Subscription automatically renews unless canceled at least 24 hours before the end of the period.",
+    disclaimerAndroid:
+      "Payment will be charged to your Google Play account. Subscription automatically renews unless canceled at least 24 hours before the end of the period.",
     lockedCalendarTitle: "Unlock every day with Premium",
     lockedCalendarDescription:
       "Only subscribers can open all calendar days and view daily reflections as soon as they’re available.",

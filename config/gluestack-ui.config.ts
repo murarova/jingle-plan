@@ -1,6 +1,7 @@
 import { AnimationResolver } from "@gluestack-style/animation-resolver";
 import { MotionAnimationDriver } from "@gluestack-style/legend-motion-animation-driver";
 import { createConfig, createComponents } from "@gluestack-style/react";
+import { Platform } from "react-native";
 import * as componentsTheme from "./theme";
 
 export const gluestackUIConfig = createConfig({
@@ -540,9 +541,9 @@ export const gluestackUIConfig = createConfig({
       extraBlack: "950",
     },
     fonts: {
-      heading: undefined,
-      body: undefined,
-      mono: undefined,
+      heading: Platform.OS === "android" ? "sans-serif" : undefined,
+      body: Platform.OS === "android" ? "sans-serif" : undefined,
+      mono: Platform.OS === "android" ? "monospace" : undefined,
     },
     fontSizes: {
       "2xs": 10,

@@ -76,6 +76,7 @@ function HomeStackNavigator() {
         component={PeriodOverviewScreen}
         options={{
           title: t("screens.periodOverview.title"),
+          headerTitleAlign: "center",
           headerLeft: YearSelector,
           headerRight: AppMenu,
         }}
@@ -85,6 +86,7 @@ function HomeStackNavigator() {
         component={DayOverviewScreen}
         options={{
           headerBackTitle: t("common.back"),
+          headerTitleAlign: "center",
         }}
       />
     </HomeStack.Navigator>
@@ -149,6 +151,7 @@ export const HomeScreen = () => {
         component={SummaryScreen}
         options={{
           title: t("common.summary"),
+          headerTitleAlign: "center",
           tabBarLabel: t("common.summary"),
           headerLeft: YearSelector,
           headerRight: AppMenu,
@@ -172,6 +175,7 @@ export const HomeScreen = () => {
         options={{
           tabBarLabel: t("common.plans"),
           title: t("common.plans"),
+          headerTitleAlign: "center",
           headerLeft: YearSelector,
           headerRight: AppMenu,
           tabBarIcon: ({ focused }) => (
@@ -194,6 +198,7 @@ export const HomeScreen = () => {
         options={{
           tabBarLabel: t("common.album"),
           title: t("common.album"),
+          headerTitleAlign: "center",
           headerLeft: YearSelector,
           headerRight: AppMenu,
           tabBarIcon: ({ focused }) => (
@@ -216,6 +221,7 @@ export const HomeScreen = () => {
         options={{
           tabBarLabel: t("common.dashboard"),
           title: t("screens.dashboardScreen.title"),
+          headerTitleAlign: "center",
           headerLeft: YearSelector,
           headerRight: AppMenu,
           tabBarIcon: ({ focused }) => (

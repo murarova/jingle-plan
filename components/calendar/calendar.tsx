@@ -67,6 +67,7 @@ export const Calendar = memo(
         return (
           <DayComponent
             date={date}
+            isAdmin={isAdmin}
             state={state ?? ""}
             onPress={pressHandler}
             currentDate={currentDate}

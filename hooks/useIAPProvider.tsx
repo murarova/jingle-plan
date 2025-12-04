@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useIAP as useExpoIAP, type Product, ErrorCode } from "expo-iap";
 import type { IapContextValue } from "../types/iap";
 import { SUBSCRIPTION_IDS } from "../config/iap";
-import * as Facebook from "expo-facebook";
+import { AppEventsLogger } from "react-native-fbsdk-next";
 
 const IapContext = createContext<IapContextValue | null>(null);
 
@@ -62,15 +62,21 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
               const currency = product.currency || "USD";
 
               if (price > 0) {
-                await Facebook.logPurchaseAsync(price, currency);
-                await Facebook.logEventAsync("Subscribe", {
-                  value: price,
-                  currency: currency,
-                });
+                try {
+                  AppEventsLogger.logPurchase(price, currency);
+                  AppEventsLogger.logEvent("Subscribe", {
+                    value: price,
+                    currency: currency,
+                  });
+                } catch (fbError) {
+                  console.log("Failed to log Facebook purchase event:", fbError);
+                }
               }
             }
           }
-        } catch (fbError) {}
+        } catch (fbError) {
+          console.log("Error logging Facebook events:", fbError);
+        }
       } catch (error) {
         setErrorMessage(
           error instanceof Error

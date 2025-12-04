@@ -35,6 +35,11 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "splash": {
+        "image": "./assets/icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff"
+      },
       "permissions": ["android.permission.RECORD_AUDIO"],
       "package": "com.murarova.adventCalendar"
     },
@@ -54,16 +59,25 @@
         {
           "ios": {
             "useFrameworks": "static"
+          },
+          "android": {
+            "targetSdkVersion": 35,
+            "compileSdkVersion": 35
           }
         }
       ],
       "expo-localization",
       [
-        "expo-facebook",
+        "react-native-fbsdk-next",
         {
           "appID": "819298757617808",
-          "clientToken": "24717df3aeae47ec2954662bd71dcb3a",
-          "displayName": "Jingle Plan"
+          "clientToken": "0bc7ea62ce2e99a4e23477bf9ce9eea8",
+          "displayName": "JinglePlan",
+          "scheme": "fb819298757617808",
+          "advertiserIDCollectionEnabled": false,
+          "autoLogAppEventsEnabled": false,
+          "isAutoInitEnabled": true,
+          "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
         }
       ]
     ],

@@ -123,14 +123,20 @@ export const useCalendarDayManager = () => {
 
   const calculateMoodTaskGrade = useCallback(
     (
-      dayKey: string, // expects "DD"
+      dayKey: string,
       moodTaskConfig: { grade: number },
       userData: UserData | null
     ): number => {
       if (!userData) return 0;
 
       const moodData = userData[TASK_CATEGORY.MOOD] as MoodTaskData | undefined;
-      return moodData && moodData[dayKey] ? moodTaskConfig.grade : 0;
+      if (!moodData) return 0;
+
+      const dayKeyUnpadded = String(Number(dayKey));
+
+      return moodData[dayKey] || moodData[dayKeyUnpadded]
+        ? moodTaskConfig.grade
+        : 0;
     },
     []
   );
@@ -174,8 +180,12 @@ export const useCalendarDayManager = () => {
     (date: string, language: "ua" | "en" = "ua"): DayData | null => {
       if (!configuration) return null;
 
-      const dayKey = date.substring(8, 10); // "DD"
-      const dayConfig = configuration[dayKey]?.[language];
+      const dayKeyPadded = date.substring(8, 10);
+      const dayKeyUnpadded = String(Number(dayKeyPadded));
+
+      const dayConfig =
+        configuration[dayKeyPadded]?.[language] ||
+        configuration[dayKeyUnpadded]?.[language];
 
       if (!dayConfig) return null;
 

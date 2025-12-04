@@ -23,7 +23,7 @@ import { Loader, GlobalLoader } from "./components/common";
 import { StatusBar, Platform } from "react-native";
 import { IAPProvider } from "./hooks/useIAP";
 import * as TrackingTransparency from "expo-tracking-transparency";
-import * as Facebook from "expo-facebook";
+import { Settings, AppEventsLogger } from "react-native-fbsdk-next";
 
 const MyTheme = {
   ...DefaultTheme,
@@ -52,12 +52,44 @@ async function requestTrackingPermission() {
 
     if (status === "granted") {
       try {
-        await Facebook.setAdvertiserTrackingEnabledAsync(true);
-      } catch (error) {}
+        Settings.setAdvertiserTrackingEnabled(true);
+      } catch (error) {
+        console.log("Failed to set advertiser tracking:", error);
+      }
     }
 
     return status;
-  } catch (error) {}
+  } catch (error) {
+    console.log("Failed to request tracking permission:", error);
+  }
+}
+
+async function initializeFacebookSDK(): Promise<boolean> {
+  try {
+    Settings.setAppID("819298757617808");
+    Settings.setAppName("Jingle Plan");
+    Settings.initializeSDK();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return true;
+  } catch (error) {
+    console.error("Failed to initialize Facebook SDK:", error);
+    return false;
+  }
+}
+
+function logFacebookEvent(
+  eventName: string,
+  parameters?: Record<string, any>
+): void {
+  try {
+    if (parameters) {
+      AppEventsLogger.logEvent(eventName, parameters);
+    } else {
+      AppEventsLogger.logEvent(eventName);
+    }
+  } catch (error) {
+    console.log(`Failed to log Facebook event "${eventName}":`, error);
+  }
 }
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -71,13 +103,14 @@ function AppContent() {
   useEffect(() => {
     (async () => {
       try {
-        await Facebook.initializeAsync({
-          appId: "819298757617808",
-          appName: "Jingle Plan",
-        });
+        const sdkInitialized = await initializeFacebookSDK();
         await requestTrackingPermission();
-        await Facebook.logEventAsync("AppLaunch");
-      } catch (error) {}
+        if (sdkInitialized) {
+          logFacebookEvent("AppLaunch");
+        }
+      } catch (error) {
+        console.error("Error during app initialization:", error);
+      }
     })();
   }, []);
 

@@ -1,70 +1,17 @@
 import { useLayoutEffect, useState, useEffect, memo, useCallback } from "react";
 import { TasksList } from "../components/tasks-list";
-import {
-  Box,
-  Text,
-  Center,
-  Progress,
-  ProgressFilledTrack,
-  HStack,
-  VStack,
-  Button,
-  ButtonText,
-  SafeAreaView,
-} from "@gluestack-ui/themed";
+import { Box, SafeAreaView } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import { CompletedTaskModal } from "../components/modals/completed-task-modal";
-import { getProgressColorByValue } from "../utils/utils";
 import usePrevious from "../hooks/usePrevious";
 import { StackScreenProps } from "@react-navigation/stack";
 import isNil from "lodash/isNil";
 import { useDayTasks } from "../hooks/useDayTasks";
 import { HomeStackParamList } from "./home-screen";
+import { ProgressBar, EmptyState } from "../components/common";
 
 type Props = StackScreenProps<HomeStackParamList, "DayOverview">;
-
-interface ProgressBarProps {
-  total: number;
-  t: (key: string) => string;
-}
-
-const ProgressBar = memo(({ total, t }: ProgressBarProps) => (
-  <Box my="$2.5">
-    <HStack justifyContent="space-between">
-      <Text size="md">{t("screens.processText")}</Text>
-      <Text size="md">{`${total}%`}</Text>
-    </HStack>
-
-    <Center my="$2.5" mb="$2.5">
-      <Progress value={total} size="sm">
-        <ProgressFilledTrack bg={getProgressColorByValue(total)} />
-      </Progress>
-    </Center>
-  </Box>
-));
-
-ProgressBar.displayName = "ProgressBar";
-
-interface EmptyStateProps {
-  message: string;
-  onRetry?: () => void;
-}
-
-const EmptyState = memo(({ message, onRetry }: EmptyStateProps) => (
-  <Center flex={1}>
-    <VStack space="md" alignItems="center">
-      <Text fontSize="$xl">{message}</Text>
-      {onRetry && (
-        <Button onPress={onRetry}>
-          <ButtonText>Retry</ButtonText>
-        </Button>
-      )}
-    </VStack>
-  </Center>
-));
-
-EmptyState.displayName = "EmptyState";
 
 const DayOverviewScreen: React.FC<Props> = memo(({ route, navigation }) => {
   const { t } = useTranslation();

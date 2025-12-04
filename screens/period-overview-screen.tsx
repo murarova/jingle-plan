@@ -54,10 +54,11 @@ function PeriodOverviewScreen() {
             isLoading={isLoading}
           />
         </Box>
-        {!isSubscriber && isSubscriptionResolved && (
+        {!isSubscriber && isSubscriptionResolved && !isAdmin && (
           <Box
             mx="$6"
-            mt="$6"
+            mt="$3"
+            mb="$3"
             p="$4"
             borderRadius="$xl"
             backgroundColor="$green50"
