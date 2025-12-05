@@ -2,7 +2,7 @@
   "expo": {
     "name": "Jingle Plan",
     "slug": "jingle-plan",
-    "version": "1.1.2",
+    "version": "1.1.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
