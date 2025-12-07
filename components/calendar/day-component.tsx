@@ -82,7 +82,7 @@ export const DayComponent = memo(
       }
 
       onPress(date?.dateString!);
-    }, [disabled, date?.dateString, onPress]);
+    }, [disabled, date?.dateString, onPress, isSubscriber, navigateToPaywall]);
 
     useEffect(
       () => () => {

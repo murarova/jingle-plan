@@ -58,7 +58,7 @@ export const Calendar = memo(
       return isSubscriber
         ? today.format("YYYY-MM-DD")
         : thirdDay.format("YYYY-MM-DD");
-    }, [currentDate, firstUnlockedDate]);
+    }, [currentDate, firstUnlockedDate, isSubscriber]);
 
     const maxDate = useMemo(
       () =>
@@ -98,6 +98,9 @@ export const Calendar = memo(
         isSubscriber,
         navigation,
         selectedYear,
+        maxDate,
+        isAdmin,
+        isLoading,
       ]
     );
 
