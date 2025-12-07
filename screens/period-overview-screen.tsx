@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { SCREENS, YEARS } from "../constants/constants";
 import { useAppSelector } from "../store/withTypes";
 import { selectSelectedYear } from "../store/appReducer";
+import { useCurrentDate } from "../hooks/useCurrentDate";
 
 type NavigationProp = StackNavigationProp<
   HomeStackParamList,
@@ -26,7 +27,9 @@ type NavigationProp = StackNavigationProp<
 function PeriodOverviewScreen() {
   const nav = useNavigation<NavigationProp>();
   const { t } = useTranslation();
-  const { refresh, isLoading, getDayConfig, isAdmin } = useCalendarDayManager();
+  const [currentDate, updateCurrentDate] = useCurrentDate();
+  const { refresh, isLoading, getDayConfig, isAdmin } =
+    useCalendarDayManager(updateCurrentDate);
   const { isSubscriber, isSubscriptionResolved } = useIAP();
   const isRefreshing = useMemo(() => Boolean(isLoading), [isLoading]);
   const currentYear = YEARS[YEARS.length - 1];
@@ -58,6 +61,7 @@ function PeriodOverviewScreen() {
             isAdmin={isAdmin}
             isLoading={isLoading}
             currentYear={currentYear}
+            currentDate={currentDate}
           />
         </Box>
         {!isSubscriber && isSubscriptionResolved && !isAdmin && isLastYear && (

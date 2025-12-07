@@ -19,7 +19,7 @@ import {
 } from "../types/types";
 import { TASK_CATEGORY } from "../constants/constants";
 
-export const useCalendarDayManager = () => {
+export const useCalendarDayManager = (updateCurrentDate?: () => void) => {
   const { selectedYear } = useAppSelector((state) => state.app);
   const { currentUser } = useAppSelector((state) => state.auth);
 
@@ -64,8 +64,11 @@ export const useCalendarDayManager = () => {
   const isAdmin = userProfile?.role === "admin" || false;
 
   const refresh = useCallback(() => {
+    if (updateCurrentDate) {
+      updateCurrentDate();
+    }
     return refetchUserData();
-  }, [refetchUserData]);
+  }, [refetchUserData, updateCurrentDate]);
 
   const calculateTaskGradeByCategory = useCallback(
     (

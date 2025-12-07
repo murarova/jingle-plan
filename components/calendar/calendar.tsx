@@ -1,6 +1,6 @@
 import moment from "moment";
 import { Calendar as NativeCalendar, DateData } from "react-native-calendars";
-import { memo, useCallback, useMemo, useState, useEffect } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { Box } from "@gluestack-ui/themed";
 import { calculateTotalProgress } from "../../utils/utils";
 import { useAppSelector } from "../../store/withTypes";
@@ -19,6 +19,7 @@ interface CalendarProps {
   isAdmin: boolean;
   isLoading: boolean;
   currentYear: string;
+  currentDate: string;
 }
 
 export const Calendar = memo(
@@ -28,17 +29,11 @@ export const Calendar = memo(
     isAdmin,
     isLoading,
     currentYear,
+    currentDate,
   }: CalendarProps) => {
     const selectedYear = useAppSelector(selectSelectedYear);
-    const [currentDate, setCurrentDate] = useState(() =>
-      moment().format("YYYY-MM-DD")
-    );
     const navigation = useNavigation();
     const { isSubscriber } = useIAP();
-
-    useEffect(() => {
-      setCurrentDate(moment().format("YYYY-MM-DD"));
-    }, []);
     // const { i18n } = useTranslation();
     // const resolvedLanguage =
     //   (i18n.resolvedLanguage as keyof typeof LANGUAGES) || "en";
