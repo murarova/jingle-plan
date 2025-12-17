@@ -12,9 +12,7 @@
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": ["**/*"],
-    "facebookAppId": "819298757617808",
-    "facebookDisplayName": "Jingle Plan",
-    "facebookScheme": "fb819298757617808",
+
     "ios": {
       "icon": "./assets/icon.png",
       "supportsTablet": false,
@@ -66,6 +64,7 @@
           }
         }
       ],
+      "./plugins/withNotifeeMaven",
       "expo-localization",
       "expo-iap",
       [
