@@ -14,6 +14,7 @@ import { useAppSelector } from "../../../../store/withTypes";
 import { useImage } from "../../../../hooks/useImage";
 import { MoodTaskData, TextImageData } from "../../../../types/types";
 import { resolveErrorMessage } from "../../../../utils/utils";
+import { useUnsavedChangesBlocker } from "../../../../hooks/useUnsavedChangesBlocker";
 
 interface UseMoodTaskProps {
   data: MoodTaskData | null;
@@ -47,10 +48,14 @@ export const useMoodTask = ({
 
     if (dayMoodData?.text) {
       setText(dayMoodData.text);
+    } else {
+      setText("");
     }
 
     if (dayMoodData?.image) {
       setImage(dayMoodData?.image);
+    } else {
+      setImage(null);
     }
   }, [dayMoodData, setImage]);
 
@@ -96,7 +101,6 @@ export const useMoodTask = ({
   }, []);
 
   const handleCancel = useCallback(() => {
-    // Reset form to original state
     if (dayMoodData?.text) {
       setText(dayMoodData.text);
     } else {
@@ -109,8 +113,16 @@ export const useMoodTask = ({
       setImage(null);
     }
 
-    setIsEditing(false);
+    if (!dayMoodData?.text && !dayMoodData?.image) {
+      setIsEditing(true);
+    } else {
+      setIsEditing(false);
+    }
   }, [dayMoodData, setImage]);
+
+  const unsavedChanges = Boolean(isEditing && (text || image));
+
+  useUnsavedChangesBlocker(unsavedChanges);
 
   const needsText =
     taskOutputType === TaskOutputType.Text ||
@@ -122,7 +134,6 @@ export const useMoodTask = ({
   const isEditable = needsText || needsImage;
 
   const handleSubmit = useCallback(async () => {
-    // Validation: Check if required fields are empty
     if (needsText && !text.trim()) {
       Alert.alert(t("common.error"), t("errors.emptyText"));
       return;
@@ -133,7 +144,6 @@ export const useMoodTask = ({
       return;
     }
 
-    // Additional validation: if both text and image are required, at least one must be provided
     if (needsText && needsImage && !text.trim() && !image) {
       Alert.alert(t("common.error"), t("errors.emptyTextAndImage"));
       return;
@@ -152,7 +162,7 @@ export const useMoodTask = ({
         const uri = await saveImage();
         if (!uri) {
           Alert.alert(t("common.error"), t("errors.generic"));
-          return; // stop if image upload failed
+          return;
         }
         updatedData.image = { ...image, uri };
       }
@@ -173,8 +183,7 @@ export const useMoodTask = ({
       }
     } catch (error) {
       const message =
-        resolveErrorMessage(error) ??
-        t("errors.generic", "An error occurred");
+        resolveErrorMessage(error) ?? t("errors.generic", "An error occurred");
 
       Alert.alert(t("common.error"), message);
     }

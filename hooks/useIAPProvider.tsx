@@ -69,7 +69,10 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
                     currency: currency,
                   });
                 } catch (fbError) {
-                  console.log("Failed to log Facebook purchase event:", fbError);
+                  console.log(
+                    "Failed to log Facebook purchase event:",
+                    fbError
+                  );
                 }
               }
             }

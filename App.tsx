@@ -24,6 +24,25 @@ import { StatusBar, Platform } from "react-native";
 import { IAPProvider } from "./hooks/useIAP";
 import * as TrackingTransparency from "expo-tracking-transparency";
 import { Settings, AppEventsLogger } from "react-native-fbsdk-next";
+import { UnsavedChangesProvider } from "./contexts/UnsavedChangesContext";
+import messaging from "@react-native-firebase/messaging";
+import notifee, { AndroidImportance } from "@notifee/react-native";
+
+messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+  if (Platform.OS === "android") {
+    await notifee.createChannel({
+      id: "default",
+      name: "Default",
+      importance: AndroidImportance.DEFAULT,
+    });
+  }
+
+  await notifee.displayNotification({
+    title: remoteMessage.notification?.title || "Message",
+    body: remoteMessage.notification?.body || "",
+    android: { channelId: "default" },
+  });
+});
 
 const MyTheme = {
   ...DefaultTheme,
@@ -191,11 +210,13 @@ export default function App() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Provider store={store}>
           <IAPProvider>
-            <SafeAreaProvider>
-              <BottomSheetModalProvider>
-                <AppContent />
-              </BottomSheetModalProvider>
-            </SafeAreaProvider>
+            <UnsavedChangesProvider>
+              <SafeAreaProvider>
+                <BottomSheetModalProvider>
+                  <AppContent />
+                </BottomSheetModalProvider>
+              </SafeAreaProvider>
+            </UnsavedChangesProvider>
           </IAPProvider>
         </Provider>
       </GestureHandlerRootView>

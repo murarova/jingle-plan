@@ -12,6 +12,7 @@ import {
 import { useAppSelector } from "../../../../store/withTypes";
 import { GoalsData, TextData } from "../../../../types/types";
 import { resolveErrorMessage } from "../../../../utils/utils";
+import { useUnsavedChangesBlocker } from "../../../../hooks/useUnsavedChangesBlocker";
 
 interface UseGoalsProps {
   context: string;
@@ -27,9 +28,15 @@ export const useGoals = ({ context, data }: UseGoalsProps) => {
   const { selectedYear } = useAppSelector((state) => state.app);
   const currentGoal = data?.[context as keyof GoalsData] as TextData | null;
   useEffect(() => {
-    setIsEditing(isEmpty(currentGoal));
+    if (isEmpty(currentGoal)) {
+      setIsEditing(true);
+    } else {
+      setIsEditing(false);
+    }
     if (currentGoal?.text) {
       setText(currentGoal.text);
+    } else {
+      setText("");
     }
   }, [currentGoal]);
 
@@ -107,14 +114,26 @@ export const useGoals = ({ context, data }: UseGoalsProps) => {
   }, []);
 
   const handleCancel = useCallback(() => {
-    // Reset form to original state
     if (currentGoal?.text) {
       setText(currentGoal.text);
     } else {
       setText("");
     }
-    setIsEditing(false);
+
+    if (!currentGoal?.text) {
+      setIsEditing(true);
+    } else {
+      setIsEditing(false);
+    }
   }, [currentGoal]);
+
+  const handleTextChange = useCallback((newText: string) => {
+    setText(newText);
+  }, []);
+
+  const unsavedChanges = Boolean(isEditing && text.trim());
+
+  useUnsavedChangesBlocker(unsavedChanges);
 
   return {
     isEditing,
@@ -123,5 +142,6 @@ export const useGoals = ({ context, data }: UseGoalsProps) => {
     handleRemove,
     handleEdit,
     handleCancel,
+    handleTextChange,
   };
 };

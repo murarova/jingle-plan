@@ -21,7 +21,12 @@ import {
   NavigationState,
   useNavigationState,
 } from "@react-navigation/native";
+import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import type { EventArg } from "@react-navigation/native";
 import { Text } from "react-native";
+import { useCallback } from "react";
+import { useUnsavedChanges } from "../contexts/UnsavedChangesContext";
+import { showUnsavedChangesAlert } from "../utils/unsaved-changes-alert";
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createStackNavigator<HomeStackParamList>();
@@ -95,6 +100,52 @@ function HomeStackNavigator() {
 
 export const HomeScreen = () => {
   const { t } = useTranslation();
+  const { isUnsavedChanges, setUnsavedChanges } = useUnsavedChanges();
+
+  const handleTabPress = useCallback(
+    (
+      e: EventArg<"tabPress", true, undefined>,
+      navigation: BottomTabNavigationProp<Record<string, object | undefined>>,
+      targetScreen?: string,
+      isPeriodOverview = false
+    ) => {
+      if (isUnsavedChanges) {
+        e.preventDefault();
+
+        showUnsavedChangesAlert(t, async () => {
+          setUnsavedChanges(false);
+          try {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          } catch (error) {
+            console.log("Haptics not available");
+          }
+          if (isPeriodOverview) {
+            navigation.navigate(SCREENS.PERIOD_OVERVIEW);
+            setTimeout(() => {
+              navigation.dispatch(
+                CommonActions.navigate({
+                  name: SCREENS.PERIOD_OVERVIEW,
+                  params: {
+                    screen: "PeriodOverviewMain",
+                  },
+                })
+              );
+            }, 0);
+          } else if (targetScreen) {
+            navigation.navigate(targetScreen);
+          }
+        });
+        return;
+      }
+
+      try {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } catch (error) {
+        console.log("Haptics not available");
+      }
+    },
+    [isUnsavedChanges, setUnsavedChanges, t]
+  );
 
   return (
     <Tab.Navigator
@@ -122,27 +173,31 @@ export const HomeScreen = () => {
         component={HomeStackNavigator}
         listeners={({ navigation }) => ({
           tabPress: async (e) => {
-            e.preventDefault();
+            if (!isUnsavedChanges) {
+              e.preventDefault();
 
-            try {
-              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            } catch (error) {
-              console.log("Haptics not available");
+              try {
+                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              } catch (error) {
+                console.log("Haptics not available");
+              }
+
+              // Always reset to the main calendar screen
+              navigation.navigate(SCREENS.PERIOD_OVERVIEW);
+              // Reset the nested stack to show only PeriodOverviewMain
+              setTimeout(() => {
+                navigation.dispatch(
+                  CommonActions.navigate({
+                    name: SCREENS.PERIOD_OVERVIEW,
+                    params: {
+                      screen: "PeriodOverviewMain",
+                    },
+                  })
+                );
+              }, 0);
+            } else {
+              handleTabPress(e, navigation, SCREENS.PERIOD_OVERVIEW, true);
             }
-
-            // Always reset to the main calendar screen
-            navigation.navigate(SCREENS.PERIOD_OVERVIEW);
-            // Reset the nested stack to show only PeriodOverviewMain
-            setTimeout(() => {
-              navigation.dispatch(
-                CommonActions.navigate({
-                  name: SCREENS.PERIOD_OVERVIEW,
-                  params: {
-                    screen: "PeriodOverviewMain",
-                  },
-                })
-              );
-            }, 0);
           },
         })}
       />
@@ -159,15 +214,11 @@ export const HomeScreen = () => {
             <Medal color={focused ? "#fe434c" : "#999999"} />
           ),
         }}
-        listeners={{
-          tabPress: async () => {
-            try {
-              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            } catch (error) {
-              console.log("Haptics not available");
-            }
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            handleTabPress(e, navigation, SCREENS.SUMMARY);
           },
-        }}
+        })}
       />
       <Tab.Screen
         name={SCREENS.PLANS}
@@ -182,15 +233,11 @@ export const HomeScreen = () => {
             <Compas color={focused ? "#fe434c" : "#999999"} />
           ),
         }}
-        listeners={{
-          tabPress: async () => {
-            try {
-              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            } catch (error) {
-              console.log("Haptics not available");
-            }
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            handleTabPress(e, navigation, SCREENS.PLANS);
           },
-        }}
+        })}
       />
       <Tab.Screen
         name={SCREENS.ALBUM}
@@ -205,15 +252,11 @@ export const HomeScreen = () => {
             <Album color={focused ? "#fe434c" : "#999999"} />
           ),
         }}
-        listeners={{
-          tabPress: async () => {
-            try {
-              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            } catch (error) {
-              console.log("Haptics not available");
-            }
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            handleTabPress(e, navigation, SCREENS.ALBUM);
           },
-        }}
+        })}
       />
       <Tab.Screen
         name={SCREENS.DASHBOARD}
@@ -228,15 +271,11 @@ export const HomeScreen = () => {
             <Dashboard color={focused ? "#fe434c" : "#999999"} />
           ),
         }}
-        listeners={{
-          tabPress: async () => {
-            try {
-              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            } catch (error) {
-              console.log("Haptics not available");
-            }
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            handleTabPress(e, navigation, SCREENS.DASHBOARD);
           },
-        }}
+        })}
       />
     </Tab.Navigator>
   );

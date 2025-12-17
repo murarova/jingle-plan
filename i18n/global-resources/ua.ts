@@ -25,6 +25,7 @@ export default {
     welcome: "Ласкаво просимо",
     year: "Рік",
     manageSubscription: "Керувати підпискою",
+    proceed: "Продовжити",
   },
   calendar: {
     lockedDayMessage: "Цей день відкриється {{date}}.",
@@ -82,6 +83,8 @@ export default {
   messages: {
     confirmDeletePlan: "Ви впевнені, що хочете видалити цей план?",
     confirmDeleteTask: "Ви впевнені, що хочете видалити це завдання?",
+    unsavedChangesTitle: "Незбережені зміни",
+    unsavedChangesMessage: "У вас є незбережені дані. Ви хочете продовжити без збереження?",
   },
   errors: {
     emptyText: "Текстове поле не може бути порожнім",

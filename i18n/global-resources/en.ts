@@ -22,10 +22,13 @@ export default {
     welcome: "Welcome",
     year: "Year",
     manageSubscription: "Manage subscription",
+    proceed: "Proceed",
   },
   messages: {
     confirmDeletePlan: "Are you sure you want to delete this plan?",
     confirmDeleteTask: "Are you sure you want to delete this task?",
+    unsavedChangesTitle: "Unsaved Changes",
+    unsavedChangesMessage: "You have unsaved data. Do you want to proceed without saving?",
   },
   errors: {
     emptyText: "Text field cannot be empty",

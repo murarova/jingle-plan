@@ -14,6 +14,7 @@ import {
 } from "../../../../services/api";
 import { useImage } from "../../../../hooks/useImage";
 import { resolveErrorMessage } from "../../../../utils/utils";
+import { useUnsavedChangesBlocker } from "../../../../hooks/useUnsavedChangesBlocker";
 
 interface UseMonthPhotoProps {
   context: string;
@@ -78,13 +79,11 @@ export const useMonthPhoto = ({ context, data }: UseMonthPhotoProps) => {
   }, [deleteImage, removeTask, image, context, t, setImage, selectedYear]);
 
   const handleTaskSubmit = useCallback(async () => {
-    // Validation: Image is required for month photo
     if (!image) {
       Alert.alert(t("common.error"), t("errors.emptyImage"));
       return;
     }
 
-    // Optional: Validate text if provided (should not be just whitespace)
     if (text && !text.trim()) {
       Alert.alert(t("common.error"), t("errors.emptyText"));
       return;
@@ -143,7 +142,6 @@ export const useMonthPhoto = ({ context, data }: UseMonthPhotoProps) => {
   }, []);
 
   const handleCancel = useCallback(() => {
-    // Reset form to original state
     if (contextData?.text) {
       setText(contextData.text);
     } else {
@@ -166,6 +164,10 @@ export const useMonthPhoto = ({ context, data }: UseMonthPhotoProps) => {
   const handleTextChange = useCallback((newText: string) => {
     setText(newText);
   }, []);
+
+  const unsavedChanges = Boolean(isEditing && (text || image));
+
+  useUnsavedChangesBlocker(unsavedChanges);
 
   return {
     isEditing,

@@ -1,4 +1,4 @@
-import { Box, Divider } from "@gluestack-ui/themed";
+import { Box } from "@gluestack-ui/themed";
 import { memo } from "react";
 import { MonthPhotoData } from "../../../types/types";
 import { MonthPhotoForm } from "./month-photo-form";

@@ -12,6 +12,7 @@ import {
 import { useAppSelector } from "../../../../store/withTypes";
 import { SummaryContextData } from "../../../../types/types";
 import { resolveErrorMessage } from "../../../../utils/utils";
+import { useUnsavedChangesBlocker } from "../../../../hooks/useUnsavedChangesBlocker";
 
 interface UseSummaryProps {
   context: string;
@@ -104,8 +105,7 @@ export const useSummary = ({ context, data }: UseSummaryProps) => {
       }
     } catch (error) {
       const message =
-        resolveErrorMessage(error) ??
-        t("errors.generic", "An error occurred");
+        resolveErrorMessage(error) ?? t("errors.generic", "An error occurred");
 
       Alert.alert(t("common.error"), message);
     }
@@ -137,6 +137,10 @@ export const useSummary = ({ context, data }: UseSummaryProps) => {
       },
     ]);
   }, [removeTask, context, t, selectedYear]);
+
+  const unsavedChanges = Boolean(isEditing && text);
+
+  useUnsavedChangesBlocker(unsavedChanges);
 
   return {
     isEditing,

@@ -33,7 +33,6 @@ export interface DayComponentProps {
 export const DayComponent = memo(
   ({
     date,
-    state,
     onPress,
     currentDate,
     progress,

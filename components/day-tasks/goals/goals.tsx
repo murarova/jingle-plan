@@ -20,6 +20,7 @@ export const Goals = memo(({ context, data }: GoalsProps) => {
     handleRemove,
     handleEdit,
     handleCancel,
+    handleTextChange,
   } = useGoals({ context, data });
 
   const placeholderText = useMemo(
@@ -38,9 +39,10 @@ export const Goals = memo(({ context, data }: GoalsProps) => {
     <Box width="100%">
       {isEditing ? (
         <GoalsForm
-          initialText={text}
+          text={text}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
+          onTextChange={handleTextChange}
           placeholderText={placeholderText}
           submitButtonText={submitButtonText}
         />

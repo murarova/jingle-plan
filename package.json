@@ -6,13 +6,17 @@
     "start": "expo start",
     "android": "NODE_ENV=development bash -c 'source $HOME/.nvm/nvm.sh && nvm use 20 && expo run:android'",
     "ios": "expo run:ios",
+    "postbuild": "npx patch-package expo-iap || true",
     "web": "expo start --web",
     "postinstall": "patch-package",
-    "build:ios": "eas build --profile preview --platform ios",
-    "build:android": "eas build --profile preview --platform android"
+    "build:ios": "eas-cli build --profile preview --platform ios",
+    "build:android": "eas-cli build --profile preview --platform android"
   },
   "engines": {
     "node": ">=20"
+  },
+  "overrides": {
+    "jws": "^4.0.1"
   },
   "dependencies": {
     "@expo/vector-icons": "~14.0.4",
@@ -39,7 +43,7 @@
     "expo-dev-client": "~5.0.20",
     "expo-device": "~7.0.3",
     "expo-haptics": "~14.0.1",
-    "expo-iap": "^3.1.33",
+    "expo-iap": "^3.3.0-rc.4",
     "expo-image-picker": "~16.0.6",
     "expo-localization": "~16.0.1",
     "expo-notifications": "~0.29.14",
