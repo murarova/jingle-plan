@@ -64,7 +64,6 @@
           }
         }
       ],
-      "./plugins/withNotifeeMaven",
       "expo-localization",
       "expo-iap",
       [
