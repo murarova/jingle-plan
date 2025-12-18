@@ -13,6 +13,7 @@ export default {
     dashboard: "Прогрес",
     empty: "Поки що тут нічого немає",
     cancel: "Відмінити",
+    qwe: "Залишитись на сторінці",
     edit: "Редагувати",
     save: "Зберегти",
     delete: "Видалити",
@@ -84,7 +85,8 @@ export default {
     confirmDeletePlan: "Ви впевнені, що хочете видалити цей план?",
     confirmDeleteTask: "Ви впевнені, що хочете видалити це завдання?",
     unsavedChangesTitle: "Незбережені зміни",
-    unsavedChangesMessage: "У вас є незбережені дані. Ви хочете продовжити без збереження?",
+    unsavedChangesMessage:
+      "У вас є незбережені дані. Ви хочете продовжити без збереження?",
   },
   errors: {
     emptyText: "Текстове поле не може бути порожнім",

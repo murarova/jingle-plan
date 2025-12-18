@@ -18,7 +18,7 @@ export function showUnsavedChangesAlert(
     t("messages.unsavedChangesMessage"),
     [
       {
-        text: t("common.cancel"),
+        text: t("common.qwe"),
         style: "cancel",
         onPress: () => {
           isAlertShown = false;

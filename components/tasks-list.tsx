@@ -20,7 +20,13 @@ export function TasksList({
   currentDay,
 }: TaskListProps) {
   return (
-    <KeyboardAwareScrollView extraScrollHeight={180}>
+    <KeyboardAwareScrollView
+      extraScrollHeight={180}
+      enableResetScrollToCoords={false}
+      keyboardShouldPersistTaps="handled"
+      enableOnAndroid={true}
+      enableAutomaticScroll={true}
+    >
       <Box pb={30}>
         {videoText && <Text pb="$4">{videoText}</Text>}
         {videoId && <YoutubePlayer videoId={videoId} />}

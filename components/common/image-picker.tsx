@@ -30,6 +30,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
     });
 
     if (!result.canceled) {
+      setIsImageLoading(true);
       const id = image?.id ?? uuid.v4().toString();
 
       const newImage: ImageData = {
@@ -44,7 +45,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
 
   return (
     <Box>
-      {image && (
+      {(image || isImageLoading) && (
         <Box flex={1}>
           {isImageLoading && (
             <Box
@@ -60,17 +61,22 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
               <Loader size="large" />
             </Box>
           )}
-          <AnimatedView style={{ zIndex: 2 }} show={!isImageLoading}>
-            <Box height={300} width="100%" flex={1}>
-              <ImageBackground
-                style={{ flex: 1, justifyContent: "center" }}
-                source={{ uri: image.uri }}
-                onLoadStart={() => setIsImageLoading(true)}
-                onLoadEnd={() => setIsImageLoading(false)}
-                resizeMode="contain"
-              />
-            </Box>
-          </AnimatedView>
+          {image && (
+            <AnimatedView style={{ zIndex: 2 }} show={!isImageLoading}>
+              <Box height={300} width="100%" flex={1}>
+                <ImageBackground
+                  style={{ flex: 1, justifyContent: "center" }}
+                  source={{ uri: image.uri }}
+                  onLoadStart={() => setIsImageLoading(true)}
+                  onLoadEnd={() => setIsImageLoading(false)}
+                  resizeMode="contain"
+                />
+              </Box>
+            </AnimatedView>
+          )}
+          {!image && isImageLoading && (
+            <Box height={300} width="100%" flex={1} />
+          )}
         </Box>
       )}
       {edit && (

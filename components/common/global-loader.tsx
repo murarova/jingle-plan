@@ -9,19 +9,29 @@ export const GlobalLoader = () => {
     const apiState = state.api;
     const authApiState = state.authApi;
 
-    // Check if any queries are pending in main API
-    const hasApiQueries = Object.values(apiState.queries).some(
-      (query: any) => query?.status === "pending"
-    );
+    // Check if any queries are pending in main API (exclude refetches that have data)
+    const hasApiQueries = Object.values(apiState.queries).some((query: any) => {
+      // Only show loader for initial fetches, not refetches (if data exists, it's a refetch)
+      if (query?.status === "pending" && query?.data) {
+        return false;
+      }
+      return query?.status === "pending";
+    });
 
     // Check if any mutations are pending in main API
     const hasApiMutations = Object.values(apiState.mutations).some(
       (mutation: any) => mutation?.status === "pending"
     );
 
-    // Check if any queries are pending in auth API
+    // Check if any queries are pending in auth API (exclude refetches that have data)
     const hasAuthQueries = Object.values(authApiState.queries).some(
-      (query: any) => query?.status === "pending"
+      (query: any) => {
+        // Only show loader for initial fetches, not refetches (if data exists, it's a refetch)
+        if (query?.status === "pending" && query?.data) {
+          return false;
+        }
+        return query?.status === "pending";
+      }
     );
 
     // Check if any mutations are pending in auth API

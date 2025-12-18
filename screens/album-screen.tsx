@@ -129,7 +129,7 @@ const mapDataToCarousel = (inputDict: MonthPhotoData): MonthlyData[] => {
   );
 };
 
-type CarouselRefType = Carousel<MonthlyData>;
+type CarouselRefType = React.ComponentRef<typeof Carousel<MonthlyData>>;
 
 export const AlbumScreen = memo(() => {
   const { t } = useTranslation();
@@ -138,7 +138,7 @@ export const AlbumScreen = memo(() => {
 
   const { currentUser } = useAppSelector((state) => state.auth);
   const { selectedYear } = useAppSelector((state) => state.app);
-  const { data: userData, isLoading } = useGetUserDataQuery(
+  const { data: userData } = useGetUserDataQuery(
     { uid: currentUser?.uid!, year: selectedYear },
     { skip: !currentUser?.uid || !selectedYear }
   );
@@ -187,6 +187,7 @@ export const AlbumScreen = memo(() => {
           data={photos}
           firstItem={activeSlide}
           renderItem={renderItem}
+          vertical={false}
         />
         <NavigationControls
           onBack={handleBack}

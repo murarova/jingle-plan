@@ -28,6 +28,7 @@ import {
   Copy,
 } from "lucide-react-native";
 import { Fragment } from "react";
+import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 import { months, PlansViewOptions } from "../../../constants/constants";
 import { PlanScreenData } from "../../../types/types";
@@ -103,7 +104,7 @@ export function PlansList({
                 </HStack>
               )}
               <HStack justifyContent="space-between" alignItems="center">
-                <Box flex={1}>
+                <Box flex={1} mr="$2">
                   <Checkbox
                     value={item?.text}
                     isChecked={isDone}
@@ -149,8 +150,19 @@ export function PlansList({
                   elevation={5}
                   trigger={({ ...triggerProps }) => {
                     return (
-                      <Box>
-                        <Button variant="link" {...triggerProps}>
+                      <Box paddingHorizontal="$3">
+                        <Button
+                          variant="link"
+                          {...triggerProps}
+                          onPress={(e) => {
+                            try {
+                              Haptics.impactAsync(
+                                Haptics.ImpactFeedbackStyle.Light
+                              );
+                            } catch {}
+                            triggerProps.onPress?.(e);
+                          }}
+                        >
                           <ButtonIcon color="$black" as={Ellipsis} />
                         </Button>
                       </Box>

@@ -53,7 +53,14 @@ export const SummaryScreen: React.FC = () => {
   return (
     <SafeAreaView flex={1}>
       <Box p="$2" flex={1}>
-        <KeyboardAwareScrollView ref={scrollViewRef} extraScrollHeight={100}>
+        <KeyboardAwareScrollView
+          ref={scrollViewRef}
+          extraScrollHeight={100}
+          enableResetScrollToCoords={false}
+          keyboardShouldPersistTaps="handled"
+          enableOnAndroid={true}
+          enableAutomaticScroll={true}
+        >
           <ScrollView>
             <Accordion
               key="summary"
