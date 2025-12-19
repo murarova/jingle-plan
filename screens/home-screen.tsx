@@ -7,7 +7,7 @@ import { SCREENS } from "../constants/constants";
 import PeriodOverviewScreen from "./period-overview-screen";
 import DayOverviewScreen from "./day-overview-screen";
 import { AppMenu } from "../components/app-menu";
-import { SummaryScreen } from "./summary-screen";
+import { SummaryScreen } from "./summary-screen/summary-screen";
 import { PlansScreen } from "./plans-screen/plans-screen";
 import Medal from "../assets/svg/medal";
 import Compas from "../assets/svg/compas";
