@@ -14,7 +14,10 @@ import { Calendar } from "../components/calendar/calendar";
 import { useCalendarDayManager } from "../hooks/useCalendarDayManager";
 import { useIAP } from "../hooks/useIAP";
 import { useTranslation } from "react-i18next";
-import { SCREENS } from "../constants/constants";
+import { SCREENS, YEARS } from "../constants/constants";
+import { useAppSelector } from "../store/withTypes";
+import { selectSelectedYear } from "../store/appReducer";
+import { useCurrentDate } from "../hooks/useCurrentDate";
 
 type NavigationProp = StackNavigationProp<
   HomeStackParamList,
@@ -24,9 +27,14 @@ type NavigationProp = StackNavigationProp<
 function PeriodOverviewScreen() {
   const nav = useNavigation<NavigationProp>();
   const { t } = useTranslation();
-  const { refresh, isLoading, getDayConfig, isAdmin } = useCalendarDayManager();
+  const [currentDate, updateCurrentDate] = useCurrentDate();
+  const { refresh, isLoading, getDayConfig, isAdmin } =
+    useCalendarDayManager(updateCurrentDate);
   const { isSubscriber, isSubscriptionResolved } = useIAP();
   const isRefreshing = useMemo(() => Boolean(isLoading), [isLoading]);
+  const currentYear = YEARS[YEARS.length - 1];
+  const selectedYear = useAppSelector(selectSelectedYear);
+  const isLastYear = selectedYear === currentYear;
 
   const handleRefresh = useCallback(async () => {
     await refresh();
@@ -52,12 +60,15 @@ function PeriodOverviewScreen() {
             getDayConfig={getDayConfig}
             isAdmin={isAdmin}
             isLoading={isLoading}
+            currentYear={currentYear}
+            currentDate={currentDate}
           />
         </Box>
-        {!isSubscriber && isSubscriptionResolved && (
+        {!isSubscriber && isSubscriptionResolved && !isAdmin && isLastYear && (
           <Box
             mx="$6"
-            mt="$6"
+            mt="$3"
+            mb="$3"
             p="$4"
             borderRadius="$xl"
             backgroundColor="$green50"

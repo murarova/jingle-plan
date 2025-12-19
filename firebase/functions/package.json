@@ -18,6 +18,9 @@
     "firebase-functions": "^4.7.0",
     "jsonwebtoken": "^9.0.2"
   },
+  "overrides": {
+    "jws": "^4.0.1"
+  },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.7",

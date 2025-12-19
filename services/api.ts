@@ -113,6 +113,19 @@ const firebaseQuery = async (args: any, api: any): Promise<any> => {
         const url = await urlRef.getDownloadURL();
         return { data: url };
 
+      case "saveFCMToken":
+        if (!currentUser) throw new Error("No user provided");
+        await firebase
+          .app()
+          .database(EXPO_PUBLIC_DB)
+          .ref(`/fcmTokens/${currentUser.uid}`)
+          .set({
+            token: args.token,
+            platform: args.platform,
+            updatedAt: new Date().toISOString(),
+          });
+        return { data: null };
+
       default:
         throw new Error(`Unknown operation type: ${args.type}`);
     }
@@ -230,6 +243,14 @@ export const api = createApi({
     getImageUrl: builder.query<string, { id: string; year: string }>({
       query: ({ id, year }) => ({ type: "getImageUrl", id, year }),
     }),
+
+    saveFCMToken: builder.mutation<void, { token: string; platform: string }>({
+      query: ({ token, platform }) => ({
+        type: "saveFCMToken",
+        token,
+        platform,
+      }),
+    }),
   }),
 });
 
@@ -247,4 +268,5 @@ export const {
   useDeleteImageMutation,
   useGetImageUrlQuery,
   useLazyGetImageUrlQuery,
+  useSaveFCMTokenMutation,
 } = api;

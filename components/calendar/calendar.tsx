@@ -9,7 +9,7 @@ import { calendarTheme, setupCalendarLocale } from "../../utils/calendar-utils";
 import { DayComponent } from "./day-component";
 import { useIAP } from "../../hooks/useIAP";
 import { useNavigation } from "@react-navigation/native";
-import { SCREENS } from "../../constants/constants";
+import { SCREENS, YEARS } from "../../constants/constants";
 
 interface CalendarProps {
   pressHandler: (dateString: string) => void;
@@ -18,12 +18,20 @@ interface CalendarProps {
   >["getDayConfig"];
   isAdmin: boolean;
   isLoading: boolean;
+  currentYear: string;
+  currentDate: string;
 }
 
 export const Calendar = memo(
-  ({ pressHandler, getDayConfig, isAdmin, isLoading }: CalendarProps) => {
+  ({
+    pressHandler,
+    getDayConfig,
+    isAdmin,
+    isLoading,
+    currentYear,
+    currentDate,
+  }: CalendarProps) => {
     const selectedYear = useAppSelector(selectSelectedYear);
-    const currentDate = moment().format("YYYY-MM-DD");
     const navigation = useNavigation();
     const { isSubscriber } = useIAP();
     // const { i18n } = useTranslation();
@@ -40,15 +48,17 @@ export const Calendar = memo(
     );
 
     const firstUnlockedDate = useMemo(
-      () => moment(`${selectedYear}-12-03`).format("YYYY-MM-DD"),
-      [selectedYear]
+      () => moment(`${currentYear}-12-03`).format("YYYY-MM-DD"),
+      [currentYear]
     );
 
     const baseMaxDate = useMemo(() => {
       const today = moment(currentDate, "YYYY-MM-DD");
       const thirdDay = moment(firstUnlockedDate, "YYYY-MM-DD");
-      return moment.max(today, thirdDay).format("YYYY-MM-DD");
-    }, [currentDate, firstUnlockedDate]);
+      return isSubscriber
+        ? today.format("YYYY-MM-DD")
+        : thirdDay.format("YYYY-MM-DD");
+    }, [currentDate, firstUnlockedDate, isSubscriber]);
 
     const maxDate = useMemo(
       () =>
@@ -67,6 +77,8 @@ export const Calendar = memo(
         return (
           <DayComponent
             date={date}
+            maxDate={maxDate}
+            isAdmin={isAdmin}
             state={state ?? ""}
             onPress={pressHandler}
             currentDate={currentDate}
@@ -79,7 +91,17 @@ export const Calendar = memo(
           />
         );
       },
-      [getDayConfig, pressHandler, currentDate, isSubscriber, navigation]
+      [
+        getDayConfig,
+        pressHandler,
+        currentDate,
+        isSubscriber,
+        navigation,
+        selectedYear,
+        maxDate,
+        isAdmin,
+        isLoading,
+      ]
     );
 
     return (

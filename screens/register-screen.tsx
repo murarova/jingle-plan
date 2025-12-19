@@ -102,7 +102,10 @@ export const RegisterScreen = () => {
           await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         } catch {}
         dispatch(setAuthLoading());
-        const user = await createUser({ email: trimmedEmail, password }).unwrap();
+        const user = await createUser({
+          email: trimmedEmail,
+          password,
+        }).unwrap();
         const serializableUser = convertToSerializableUser(user, trimmedName);
 
         // Create profile
@@ -172,7 +175,12 @@ export const RegisterScreen = () => {
 
   return (
     <Pressable flex={1} onPress={Keyboard.dismiss}>
-      <KeyboardAwareScrollView>
+      <KeyboardAwareScrollView
+        enableResetScrollToCoords={false}
+        keyboardShouldPersistTaps="handled"
+        enableOnAndroid={true}
+        enableAutomaticScroll={true}
+      >
         <SafeAreaView flex={1}>
           <Box p={10}>
             <Box pb={10}>

@@ -159,7 +159,12 @@ export const LoginScreen = () => {
 
   return (
     <Pressable flex={1} onPress={Keyboard.dismiss}>
-      <KeyboardAwareScrollView>
+      <KeyboardAwareScrollView
+        enableResetScrollToCoords={false}
+        keyboardShouldPersistTaps="handled"
+        enableOnAndroid={true}
+        enableAutomaticScroll={true}
+      >
         <SafeAreaView>
           <Box p={10} pt={30} row-direction="column" justifyContent="center">
             <Box pb={10}>

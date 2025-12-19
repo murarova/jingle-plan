@@ -14,6 +14,7 @@ import {
 } from "../../../services/api";
 import { useTranslation } from "react-i18next";
 import { resolveErrorMessage } from "../../../utils/utils";
+import { useUnsavedChangesBlocker } from "../../../hooks/useUnsavedChangesBlocker";
 
 interface UseSummaryScreenProps {
   summary: SummaryContextData | null;
@@ -114,6 +115,9 @@ export const useSummaryScreen = ({ summary }: UseSummaryScreenProps) => {
     },
     [summary]
   );
+
+  const unsavedChanges = Boolean(editContext && text);
+  useUnsavedChangesBlocker(unsavedChanges);
 
   return {
     editContext,

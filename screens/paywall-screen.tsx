@@ -12,10 +12,16 @@ import {
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { useIAP } from "../hooks/useIAP";
-import { EXPO_PUBLIC_IOS_SUBSCRIPTION_ID } from "@env";
-import { Alert, Linking } from "react-native";
+import {
+  EXPO_PUBLIC_IOS_SUBSCRIPTION_ID,
+  EXPO_PUBLIC_ANDROID_SUBSCRIPTION_ID,
+} from "@env";
+import { Alert, Linking, Platform } from "react-native";
 
-const MANAGE_SUBSCRIPTION_URL = "https://apps.apple.com/account/subscriptions";
+const MANAGE_SUBSCRIPTION_URL_IOS =
+  "https://apps.apple.com/account/subscriptions";
+const MANAGE_SUBSCRIPTION_URL_ANDROID =
+  "https://play.google.com/store/account/subscriptions";
 
 export const PaywallScreen = memo(() => {
   const { t } = useTranslation();
@@ -29,7 +35,10 @@ export const PaywallScreen = memo(() => {
     isSubscriber,
     isStoreReady,
   } = useIAP();
-  const fallbackProductId = EXPO_PUBLIC_IOS_SUBSCRIPTION_ID || "";
+  const fallbackProductId =
+    Platform.OS === "android"
+      ? EXPO_PUBLIC_ANDROID_SUBSCRIPTION_ID || ""
+      : EXPO_PUBLIC_IOS_SUBSCRIPTION_ID || "";
   const resolvedProductId = subscriptions[0]?.id ?? fallbackProductId;
   const displayedPrice = priceLabel ?? t("paywall.pricePlaceholder");
   const subscribeButtonLabel =
@@ -39,9 +48,14 @@ export const PaywallScreen = memo(() => {
 
   const handleManageSubscription = useCallback(async () => {
     try {
-      const supported = await Linking.canOpenURL(MANAGE_SUBSCRIPTION_URL);
+      const manageSubscriptionUrl =
+        Platform.OS === "android"
+          ? MANAGE_SUBSCRIPTION_URL_ANDROID
+          : MANAGE_SUBSCRIPTION_URL_IOS;
+
+      const supported = await Linking.canOpenURL(manageSubscriptionUrl);
       if (supported) {
-        await Linking.openURL(MANAGE_SUBSCRIPTION_URL);
+        await Linking.openURL(manageSubscriptionUrl);
       } else {
         throw new Error("Unsupported URL");
       }
@@ -127,7 +141,11 @@ export const PaywallScreen = memo(() => {
           </Button>
 
           <Text fontSize="$xs" color="$warmGray500">
-            {t("paywall.disclaimer")}
+            {t(
+              Platform.OS === "android"
+                ? "paywall.disclaimerAndroid"
+                : "paywall.disclaimer"
+            )}
           </Text>
         </VStack>
       </ScrollView>

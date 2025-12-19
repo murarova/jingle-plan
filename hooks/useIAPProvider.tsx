@@ -62,15 +62,24 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
               const currency = product.currency || "USD";
 
               if (price > 0) {
-                AppEventsLogger.logPurchase(price, currency);
-                AppEventsLogger.logEvent("Subscribe", {
-                  value: price,
-                  currency: currency,
-                });
+                try {
+                  AppEventsLogger.logPurchase(price, currency);
+                  AppEventsLogger.logEvent("Subscribe", {
+                    value: price,
+                    currency: currency,
+                  });
+                } catch (fbError) {
+                  console.log(
+                    "Failed to log Facebook purchase event:",
+                    fbError
+                  );
+                }
               }
             }
           }
-        } catch (fbError) {}
+        } catch (fbError) {
+          console.log("Error logging Facebook events:", fbError);
+        }
       } catch (error) {
         setErrorMessage(
           error instanceof Error

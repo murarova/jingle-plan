@@ -13,6 +13,7 @@ export default {
     dashboard: "Прогрес",
     empty: "Поки що тут нічого немає",
     cancel: "Відмінити",
+    qwe: "Залишитись на сторінці",
     edit: "Редагувати",
     save: "Зберегти",
     delete: "Видалити",
@@ -25,6 +26,7 @@ export default {
     welcome: "Ласкаво просимо",
     year: "Рік",
     manageSubscription: "Керувати підпискою",
+    proceed: "Продовжити",
   },
   calendar: {
     lockedDayMessage: "Цей день відкриється {{date}}.",
@@ -45,6 +47,8 @@ export default {
     processing: "Будь ласка, зачекайте...",
     disclaimer:
       "Оплата стягується з вашого Apple ID. Підписка автоматично поновлюється, якщо не скасувати її за 24 години до завершення періоду.",
+    disclaimerAndroid:
+      "Оплата стягується з вашого облікового запису Google Play. Підписка автоматично поновлюється, якщо не скасувати її за 24 години до завершення періоду.",
     lockedCalendarTitle: "Відкрий усі дні з Jingle Plan+",
     lockedCalendarDescription:
       "Лише підписники отримують доступ до всіх завдань календаря.",
@@ -80,6 +84,9 @@ export default {
   messages: {
     confirmDeletePlan: "Ви впевнені, що хочете видалити цей план?",
     confirmDeleteTask: "Ви впевнені, що хочете видалити це завдання?",
+    unsavedChangesTitle: "Незбережені зміни",
+    unsavedChangesMessage:
+      "У вас є незбережені дані. Ви хочете продовжити без збереження?",
   },
   errors: {
     emptyText: "Текстове поле не може бути порожнім",

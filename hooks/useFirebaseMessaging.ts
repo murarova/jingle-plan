@@ -1,17 +1,51 @@
 import messaging from "@react-native-firebase/messaging";
-import notifee from "@notifee/react-native";
+import notifee, { AndroidImportance } from "@notifee/react-native";
 import { useEffect } from "react";
+import { Platform } from "react-native";
+import { saveTokenToFirebase } from "../services/messaging";
 
 export function useFirebaseMessaging() {
   useEffect(() => {
     async function setupFCM() {
-      await messaging().requestPermission();
-      messaging().getToken();
+      try {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+        if (!enabled) {
+          console.log("Notification permission not granted");
+          return;
+        }
+
+        if (Platform.OS === "android") {
+          await notifee.createChannel({
+            id: "default",
+            name: "Default",
+            importance: AndroidImportance.DEFAULT,
+          });
+        }
+
+        const token = await messaging().getToken();
+        if (token) {
+          await saveTokenToFirebase(token, Platform.OS);
+        }
+      } catch (error) {
+        console.error("Failed to setup FCM:", error);
+      }
     }
 
     setupFCM();
 
-    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+    const unsubscribeTokenRefresh = messaging().onTokenRefresh(
+      async (token) => {
+        if (token) {
+          await saveTokenToFirebase(token, Platform.OS);
+        }
+      }
+    );
+
+    const unsubscribeMessage = messaging().onMessage(async (remoteMessage) => {
       await notifee.displayNotification({
         title: remoteMessage.notification?.title || "Message",
         body: remoteMessage.notification?.body || "",
@@ -19,8 +53,24 @@ export function useFirebaseMessaging() {
       });
     });
 
+    const unsubscribeNotificationOpened = messaging().onNotificationOpenedApp(
+      async (remoteMessage) => {
+        console.log("Notification opened app:", remoteMessage);
+      }
+    );
+
+    messaging()
+      .getInitialNotification()
+      .then((remoteMessage) => {
+        if (remoteMessage) {
+          console.log("Notification caused app to open:", remoteMessage);
+        }
+      });
+
     return () => {
-      unsubscribe();
+      unsubscribeTokenRefresh();
+      unsubscribeMessage();
+      unsubscribeNotificationOpened();
     };
   }, []);
 }

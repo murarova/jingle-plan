@@ -23,9 +23,26 @@ import { Loader, GlobalLoader } from "./components/common";
 import { StatusBar, Platform } from "react-native";
 import { IAPProvider } from "./hooks/useIAP";
 import * as TrackingTransparency from "expo-tracking-transparency";
-import { AppEventsLogger } from "react-native-fbsdk-next";
+import { Settings, AppEventsLogger } from "react-native-fbsdk-next";
+import { UnsavedChangesProvider } from "./contexts/UnsavedChangesContext";
+import messaging from "@react-native-firebase/messaging";
+import notifee, { AndroidImportance } from "@notifee/react-native";
 
-(globalThis as any).RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
+messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+  if (Platform.OS === "android") {
+    await notifee.createChannel({
+      id: "default",
+      name: "Default",
+      importance: AndroidImportance.DEFAULT,
+    });
+  }
+
+  await notifee.displayNotification({
+    title: remoteMessage.notification?.title || "Message",
+    body: remoteMessage.notification?.body || "",
+    android: { channelId: "default" },
+  });
+});
 
 const MyTheme = {
   ...DefaultTheme,
@@ -49,8 +66,49 @@ export type RootStackParamList = {
 async function requestTrackingPermission() {
   if (Platform.OS !== "ios") return;
   try {
-    await TrackingTransparency.requestTrackingPermissionsAsync();
-  } catch (error) {}
+    const { status } =
+      await TrackingTransparency.requestTrackingPermissionsAsync();
+
+    if (status === "granted") {
+      try {
+        Settings.setAdvertiserTrackingEnabled(true);
+      } catch (error) {
+        console.log("Failed to set advertiser tracking:", error);
+      }
+    }
+
+    return status;
+  } catch (error) {
+    console.log("Failed to request tracking permission:", error);
+  }
+}
+
+async function initializeFacebookSDK(): Promise<boolean> {
+  try {
+    Settings.setAppID("819298757617808");
+    Settings.setAppName("Jingle Plan");
+    Settings.initializeSDK();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return true;
+  } catch (error) {
+    console.error("Failed to initialize Facebook SDK:", error);
+    return false;
+  }
+}
+
+function logFacebookEvent(
+  eventName: string,
+  parameters?: Record<string, any>
+): void {
+  try {
+    if (parameters) {
+      AppEventsLogger.logEvent(eventName, parameters);
+    } else {
+      AppEventsLogger.logEvent(eventName);
+    }
+  } catch (error) {
+    console.log(`Failed to log Facebook event "${eventName}":`, error);
+  }
 }
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -62,10 +120,17 @@ function AppContent() {
   useFirebaseMessaging();
 
   useEffect(() => {
-    requestTrackingPermission();
-    try {
-      AppEventsLogger.logEvent("AppLaunch");
-    } catch (error) {}
+    (async () => {
+      try {
+        const sdkInitialized = await initializeFacebookSDK();
+        await requestTrackingPermission();
+        if (sdkInitialized) {
+          logFacebookEvent("AppLaunch");
+        }
+      } catch (error) {
+        console.error("Error during app initialization:", error);
+      }
+    })();
   }, []);
 
   useEffect(() => {
@@ -145,11 +210,13 @@ export default function App() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Provider store={store}>
           <IAPProvider>
-            <SafeAreaProvider>
-              <BottomSheetModalProvider>
-                <AppContent />
-              </BottomSheetModalProvider>
-            </SafeAreaProvider>
+            <UnsavedChangesProvider>
+              <SafeAreaProvider>
+                <BottomSheetModalProvider>
+                  <AppContent />
+                </BottomSheetModalProvider>
+              </SafeAreaProvider>
+            </UnsavedChangesProvider>
           </IAPProvider>
         </Provider>
       </GestureHandlerRootView>

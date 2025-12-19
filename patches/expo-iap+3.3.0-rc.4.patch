@@ -1,0 +1,30 @@
+diff --git a/node_modules/expo-iap/android/src/main/java/expo/modules/iap/ExpoIapModule.kt b/node_modules/expo-iap/android/src/main/java/expo/modules/iap/ExpoIapModule.kt
+index 8826146..7f7b59e 100644
+--- a/node_modules/expo-iap/android/src/main/java/expo/modules/iap/ExpoIapModule.kt
++++ b/node_modules/expo-iap/android/src/main/java/expo/modules/iap/ExpoIapModule.kt
+@@ -67,9 +67,7 @@ class ExpoIapModule : Module() {
+         ModuleDefinition {
+             Name("ExpoIap")
+ 
+-            Constant("ERROR_CODES") {
+-                OpenIapError.getAllErrorCodes()
+-            }
++            Constants("ERROR_CODES" to OpenIapError.getAllErrorCodes())
+ 
+             Events(EVENT_PURCHASE_UPDATED, EVENT_PURCHASE_ERROR, EVENT_USER_CHOICE_BILLING)
+ 
+diff --git a/node_modules/expo-iap/ios/ExpoIapModule.swift b/node_modules/expo-iap/ios/ExpoIapModule.swift
+index 48563ed..bbb989a 100644
+--- a/node_modules/expo-iap/ios/ExpoIapModule.swift
++++ b/node_modules/expo-iap/ios/ExpoIapModule.swift
+@@ -13,9 +13,7 @@ public final class ExpoIapModule: Module {
+     nonisolated public func definition() -> ModuleDefinition {
+         Name("ExpoIap")
+ 
+-        Constant("ERROR_CODES") {
+-            OpenIapSerialization.errorCodes()
+-        }
++        Constants(["ERROR_CODES": OpenIapSerialization.errorCodes()])
+ 
+         Events(
+             OpenIapEvent.purchaseUpdated.rawValue,

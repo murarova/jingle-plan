@@ -1,26 +1,27 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback } from "react";
 import { Button, ButtonText, VStack, HStack } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { AutoGrowingTextarea } from "../../common";
 
 interface GoalsFormProps {
-  initialText: string;
+  text: string;
   onSubmit: (text: string) => void;
   onCancel: () => void;
+  onTextChange: (text: string) => void;
   placeholderText: string;
   submitButtonText: string;
 }
 
 export const GoalsForm = memo(
   ({
-    initialText,
+    text,
     onSubmit,
     onCancel,
+    onTextChange,
     placeholderText,
     submitButtonText,
   }: GoalsFormProps) => {
     const { t } = useTranslation();
-    const [text, setText] = useState(initialText);
 
     const handleSubmit = useCallback(() => {
       onSubmit(text);
@@ -30,7 +31,7 @@ export const GoalsForm = memo(
       <VStack space="md" width="100%">
         <AutoGrowingTextarea
           value={text}
-          onChangeText={setText}
+          onChangeText={onTextChange}
           placeholder={placeholderText}
           onSubmitEditing={handleSubmit}
         />

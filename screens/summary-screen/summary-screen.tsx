@@ -10,17 +10,17 @@ import {
   SafeAreaView,
 } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
-import { EmptyScreen } from "../components/empty-screen";
-import { TASK_CONTEXT } from "../constants/constants";
-import { useRating } from "../hooks/useRating";
+import { EmptyScreen } from "../../components/empty-screen";
+import { TASK_CONTEXT } from "../../constants/constants";
+import { useRating } from "../../hooks/useRating";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { SummaryContextData } from "../types/types";
-import { useAppSelector } from "../store/withTypes";
-import { useGetUserDataQuery } from "../services/api";
-import { useSummaryScreen } from "./summary-screen/hooks/useSummaryScreen";
-import { EditableContent } from "./summary-screen/summary-editable-content";
-import { ContentView } from "./summary-screen/summary-content-view";
-import { AccordionHeaderContent } from "./summary-screen/summary-accordion-header";
+import { SummaryContextData } from "../../types/types";
+import { useAppSelector } from "../../store/withTypes";
+import { useGetUserDataQuery } from "../../services/api";
+import { useSummaryScreen } from "./hooks/useSummaryScreen";
+import { EditableContent } from "./summary-editable-content";
+import { ContentView } from "./summary-content-view";
+import { AccordionHeaderContent } from "./summary-accordion-header";
 
 export const SummaryScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -53,7 +53,14 @@ export const SummaryScreen: React.FC = () => {
   return (
     <SafeAreaView flex={1}>
       <Box p="$2" flex={1}>
-        <KeyboardAwareScrollView ref={scrollViewRef} extraScrollHeight={100}>
+        <KeyboardAwareScrollView
+          ref={scrollViewRef}
+          extraScrollHeight={100}
+          enableResetScrollToCoords={false}
+          keyboardShouldPersistTaps="handled"
+          enableOnAndroid={true}
+          enableAutomaticScroll={true}
+        >
           <ScrollView>
             <Accordion
               key="summary"

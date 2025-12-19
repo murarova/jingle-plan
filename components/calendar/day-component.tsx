@@ -15,7 +15,6 @@ import { config } from "../../config/gluestack-ui.config";
 import CircularProgress from "react-native-circular-progress-indicator";
 import { DateData } from "react-native-calendars";
 import { LockKeyhole } from "lucide-react-native";
-import { SCREENS } from "../../constants/constants";
 
 export interface DayComponentProps {
   date: DateData;
@@ -27,12 +26,13 @@ export interface DayComponentProps {
   unlockMessage?: string;
   isSubscriber?: boolean;
   navigateToPaywall?: () => void;
+  isAdmin: boolean;
+  maxDate: string;
 }
 
 export const DayComponent = memo(
   ({
     date,
-    state,
     onPress,
     currentDate,
     progress,
@@ -40,9 +40,10 @@ export const DayComponent = memo(
     unlockMessage,
     isSubscriber = false,
     navigateToPaywall,
+    maxDate,
   }: DayComponentProps) => {
     const today = date?.dateString === currentDate;
-    const disabled = state === "disabled";
+    const disabled = maxDate < date?.dateString;
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const tooltipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const { t, i18n } = useTranslation();
@@ -69,7 +70,7 @@ export const DayComponent = memo(
         setIsTooltipOpen(true);
         tooltipTimer.current = setTimeout(() => {
           setIsTooltipOpen(false);
-        }, 2500);
+        }, 2000);
         return;
       }
 
@@ -80,7 +81,7 @@ export const DayComponent = memo(
       }
 
       onPress(date?.dateString!);
-    }, [disabled, date?.dateString, onPress]);
+    }, [disabled, date?.dateString, onPress, isSubscriber, navigateToPaywall]);
 
     useEffect(
       () => () => {
