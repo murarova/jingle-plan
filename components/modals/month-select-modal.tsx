@@ -29,6 +29,8 @@ export function MonthSelectModal({
     }
   }, [month]);
 
+  console.log(months);
+
   const { t } = useTranslation();
   const [selectedMonth, setSelectedMonth] = useState<string>("");
 
@@ -69,7 +71,7 @@ export function MonthSelectModal({
         </VStack>
       </BottomSheetFooter>
     ),
-    [selectedMonth, handleDone, t]
+    [selectedMonth, handleDone, t],
   );
 
   const snapPoints = useMemo(() => ["70%", "90%"], []);
