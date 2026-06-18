@@ -2,11 +2,35 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import axios from "axios";
 import jwt from "jsonwebtoken";
+import {
+  runDecemberDailyNotifications,
+  runMonthlyNotifications,
+} from "./notifications";
 
-admin.initializeApp();
+const DATABASE_URL =
+  "https://advent-calendar-12-default-rtdb.europe-west1.firebasedatabase.app";
+
+admin.initializeApp({ databaseURL: DATABASE_URL });
+
+export const sendMonthlyNotifications = functions
+  .region("us-central1")
+  .pubsub.schedule("0 11 1 * *")
+  .timeZone("Europe/Kyiv")
+  .onRun(async () => {
+    await runMonthlyNotifications();
+  });
+
+export const sendDecemberDailyNotifications = functions
+  .region("us-central1")
+  .pubsub.schedule("0 11 1-31 12 *")
+  .timeZone("Europe/Kyiv")
+  .onRun(async () => {
+    await runDecemberDailyNotifications();
+  });
 
 const APPLE_API_BASE = "https://api.storekit.itunes.apple.com/inApps/v1";
-const APPLE_TEST_API_BASE = "https://api.storekit-sandbox.itunes.apple.com/inApps/v1";
+const APPLE_TEST_API_BASE =
+  "https://api.storekit-sandbox.itunes.apple.com/inApps/v1";
 
 const getConfigValue = (key: string) => {
   const value = functions.config()?.iap?.[key];
@@ -53,7 +77,12 @@ export const validateSubscription = functions
       return;
     }
 
-    const { transactionId, receipt, environment = "production", uid } = req.body ?? {};
+    const {
+      transactionId,
+      receipt,
+      environment = "production",
+      uid,
+    } = req.body ?? {};
 
     if (!transactionId && !receipt) {
       res.status(400).send("Missing transactionId or receipt");
@@ -82,7 +111,7 @@ export const validateSubscription = functions
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         responseData = response.data;
       }
@@ -96,7 +125,7 @@ export const validateSubscription = functions
             receiptStatus: "valid",
             payload: responseData,
           },
-          { merge: true }
+          { merge: true },
         );
       }
 
@@ -105,21 +134,29 @@ export const validateSubscription = functions
       console.error("Validation error", error);
 
       if (uid) {
-        await admin.firestore().collection("iapEntitlements").doc(uid).set(
-          {
-            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-            transactionId,
-            environment,
-            receiptStatus: "invalid",
-            errorMessage: error instanceof Error ? error.message : "Unknown error",
-          },
-          { merge: true }
-        );
+        await admin
+          .firestore()
+          .collection("iapEntitlements")
+          .doc(uid)
+          .set(
+            {
+              updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+              transactionId,
+              environment,
+              receiptStatus: "invalid",
+              errorMessage:
+                error instanceof Error ? error.message : "Unknown error",
+            },
+            { merge: true },
+          );
       }
 
-      res.status(500).send(
-        error instanceof Error ? error.message : "Failed to validate subscription"
-      );
+      res
+        .status(500)
+        .send(
+          error instanceof Error
+            ? error.message
+            : "Failed to validate subscription",
+        );
     }
   });
-

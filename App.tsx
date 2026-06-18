@@ -16,6 +16,10 @@ import { useEffect, useState } from "react";
 import { getUserFromStorage } from "./services/storage";
 import { hydrateAuth } from "./store/authReducer";
 import { useFirebaseMessaging } from "./hooks/useFirebaseMessaging";
+import { useFcmEligibilitySync } from "./hooks/useFcmEligibilitySync";
+import { useIAP } from "./hooks/useIAP";
+import { useGetUserProfileQuery } from "./services/api";
+import { useAppSelector } from "./store/withTypes";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -116,8 +120,16 @@ const Stack = createStackNavigator<RootStackParamList>();
 function AppContent() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
+  const { currentUser } = useAppSelector((state) => state.auth);
+  const { isSubscriber, isSubscriptionResolved } = useIAP();
+  const { data: userProfile } = useGetUserProfileQuery(
+    { uid: currentUser?.uid! },
+    { skip: !currentUser?.uid }
+  );
+  const isAdmin = userProfile?.role === "admin" || false;
 
   useFirebaseMessaging();
+  useFcmEligibilitySync(isSubscriber, isAdmin, isSubscriptionResolved);
 
   useEffect(() => {
     (async () => {
