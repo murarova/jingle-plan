@@ -1,6 +1,15 @@
-import messaging from "@react-native-firebase/messaging";
+import {
+  AuthorizationStatus,
+  getInitialNotification,
+  getMessaging,
+  getToken,
+  onMessage,
+  onNotificationOpenedApp,
+  onTokenRefresh,
+  requestPermission,
+} from "@react-native-firebase/messaging";
 import notifee, { AndroidImportance } from "@notifee/react-native";
-import auth from "@react-native-firebase/auth";
+import { getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 import {
@@ -8,6 +17,8 @@ import {
   saveTokenToFirebase,
   unsubscribeFromPremiumTopic,
 } from "../services/messaging";
+
+const messaging = getMessaging();
 
 async function ensureAndroidChannel() {
   if (Platform.OS === "android") {
@@ -20,10 +31,10 @@ async function ensureAndroidChannel() {
 }
 
 async function registerFcmToken() {
-  const authStatus = await messaging().requestPermission();
+  const authStatus = await requestPermission(messaging);
   const enabled =
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    authStatus === AuthorizationStatus.AUTHORIZED ||
+    authStatus === AuthorizationStatus.PROVISIONAL;
 
   if (!enabled) {
     return;
@@ -31,7 +42,7 @@ async function registerFcmToken() {
 
   await ensureAndroidChannel();
 
-  const token = await messaging().getToken();
+  const token = await getToken(messaging);
   if (token) {
     await saveTokenToFirebase(token, Platform.OS);
   }
@@ -39,15 +50,16 @@ async function registerFcmToken() {
 
 export function useFirebaseMessaging() {
   useEffect(() => {
-    let previousUid: string | null = auth().currentUser?.uid ?? null;
+    const auth = getAuth();
+    let previousUid: string | null = auth.currentUser?.uid ?? null;
 
-    if (auth().currentUser) {
+    if (auth.currentUser) {
       registerFcmToken().catch((error) => {
         console.error("Failed to setup FCM:", error);
       });
     }
 
-    const unsubscribeAuth = auth().onAuthStateChanged(async (user) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
         previousUid = user.uid;
         try {
@@ -65,13 +77,13 @@ export function useFirebaseMessaging() {
       }
     });
 
-    const unsubscribeTokenRefresh = messaging().onTokenRefresh(async (token) => {
+    const unsubscribeTokenRefresh = onTokenRefresh(messaging, async (token) => {
       if (token) {
         await saveTokenToFirebase(token, Platform.OS);
       }
     });
 
-    const unsubscribeMessage = messaging().onMessage(async (remoteMessage) => {
+    const unsubscribeMessage = onMessage(messaging, async (remoteMessage) => {
       await notifee.displayNotification({
         title: remoteMessage.notification?.title || "Message",
         body: remoteMessage.notification?.body || "",
@@ -79,19 +91,18 @@ export function useFirebaseMessaging() {
       });
     });
 
-    const unsubscribeNotificationOpened = messaging().onNotificationOpenedApp(
+    const unsubscribeNotificationOpened = onNotificationOpenedApp(
+      messaging,
       async (remoteMessage) => {
         console.log("Notification opened app:", remoteMessage);
       }
     );
 
-    messaging()
-      .getInitialNotification()
-      .then((remoteMessage) => {
-        if (remoteMessage) {
-          console.log("Notification caused app to open:", remoteMessage);
-        }
-      });
+    getInitialNotification(messaging).then((remoteMessage) => {
+      if (remoteMessage) {
+        console.log("Notification caused app to open:", remoteMessage);
+      }
+    });
 
     return () => {
       unsubscribeAuth();

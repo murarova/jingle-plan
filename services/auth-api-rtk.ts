@@ -1,46 +1,60 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  FirebaseAuthTypes,
+  getAuth,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut,
+} from "@react-native-firebase/auth";
 import { convertToSerializableUser } from "../types/user";
 
-// Custom base query for Firebase Auth operations
+const auth = getAuth();
+
 const authQuery = async (args: any) => {
   try {
     switch (args.type) {
-      case "createUserWithEmailAndPassword":
-        const createResponse = await auth().createUserWithEmailAndPassword(
+      case "createUserWithEmailAndPassword": {
+        const createResponse = await createUserWithEmailAndPassword(
+          auth,
           args.email,
           args.password
         );
         return { data: convertToSerializableUser(createResponse.user) };
+      }
 
-      case "signInWithEmailAndPassword":
-        const signInResponse = await auth().signInWithEmailAndPassword(
+      case "signInWithEmailAndPassword": {
+        const signInResponse = await signInWithEmailAndPassword(
+          auth,
           args.email,
           args.password
         );
         return { data: convertToSerializableUser(signInResponse.user) };
+      }
 
-      case "signOut":
-        const currentUser = auth().currentUser;
+      case "signOut": {
+        const currentUser = auth.currentUser;
         if (!currentUser) return { data: null };
-        await auth().signOut();
+        await signOut(auth);
         return { data: null };
+      }
 
       case "sendPasswordResetEmail":
         if (!args.email) {
           throw new Error("Email is required");
         }
 
-        await auth().sendPasswordResetEmail(String(args.email).trim());
+        await sendPasswordResetEmail(auth, String(args.email).trim());
         return { data: null };
 
-      case "deleteCurrentUser":
-        const user = auth().currentUser;
+      case "deleteCurrentUser": {
+        const user = auth.currentUser;
         if (!user) {
           throw new Error("No user is currently logged in");
         }
         await user.delete();
         return { data: null };
+      }
 
       default:
         throw new Error(`Unknown auth operation: ${args.type}`);

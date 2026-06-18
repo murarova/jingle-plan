@@ -1,4 +1,4 @@
-import auth from "@react-native-firebase/auth";
+import { getAuth } from "@react-native-firebase/auth";
 import { useEffect } from "react";
 import {
   syncPremiumTopicSubscription,
@@ -11,7 +11,7 @@ export function useFcmEligibilitySync(
   isSubscriptionResolved: boolean
 ) {
   useEffect(() => {
-    if (!isSubscriptionResolved || !auth().currentUser) {
+    if (!isSubscriptionResolved || !getAuth().currentUser) {
       return;
     }
 
