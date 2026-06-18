@@ -27,9 +27,6 @@ web-build/
 # Firebase & Google Services
 firebase-key.json
 
-# EAS Configuration (contains Apple credentials)
-eas.json
-
 # Keystore files
 *.jks
 *.keystore
