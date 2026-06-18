@@ -1,49 +1,75 @@
 import messaging from "@react-native-firebase/messaging";
 import notifee, { AndroidImportance } from "@notifee/react-native";
+import auth from "@react-native-firebase/auth";
 import { useEffect } from "react";
 import { Platform } from "react-native";
-import { saveTokenToFirebase } from "../services/messaging";
+import {
+  removeTokenFromFirebase,
+  saveTokenToFirebase,
+  unsubscribeFromPremiumTopic,
+} from "../services/messaging";
+
+async function ensureAndroidChannel() {
+  if (Platform.OS === "android") {
+    await notifee.createChannel({
+      id: "default",
+      name: "Default",
+      importance: AndroidImportance.DEFAULT,
+    });
+  }
+}
+
+async function registerFcmToken() {
+  const authStatus = await messaging().requestPermission();
+  const enabled =
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+  if (!enabled) {
+    return;
+  }
+
+  await ensureAndroidChannel();
+
+  const token = await messaging().getToken();
+  if (token) {
+    await saveTokenToFirebase(token, Platform.OS);
+  }
+}
 
 export function useFirebaseMessaging() {
   useEffect(() => {
-    async function setupFCM() {
-      try {
-        const authStatus = await messaging().requestPermission();
-        const enabled =
-          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    let previousUid: string | null = auth().currentUser?.uid ?? null;
 
-        if (!enabled) {
-          console.log("Notification permission not granted");
-          return;
-        }
-
-        if (Platform.OS === "android") {
-          await notifee.createChannel({
-            id: "default",
-            name: "Default",
-            importance: AndroidImportance.DEFAULT,
-          });
-        }
-
-        const token = await messaging().getToken();
-        if (token) {
-          await saveTokenToFirebase(token, Platform.OS);
-        }
-      } catch (error) {
+    if (auth().currentUser) {
+      registerFcmToken().catch((error) => {
         console.error("Failed to setup FCM:", error);
-      }
+      });
     }
 
-    setupFCM();
-
-    const unsubscribeTokenRefresh = messaging().onTokenRefresh(
-      async (token) => {
-        if (token) {
-          await saveTokenToFirebase(token, Platform.OS);
+    const unsubscribeAuth = auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        previousUid = user.uid;
+        try {
+          await registerFcmToken();
+        } catch (error) {
+          console.error("Failed to setup FCM:", error);
         }
+        return;
       }
-    );
+
+      if (previousUid) {
+        await unsubscribeFromPremiumTopic();
+        await removeTokenFromFirebase(previousUid);
+        previousUid = null;
+      }
+    });
+
+    const unsubscribeTokenRefresh = messaging().onTokenRefresh(async (token) => {
+      if (token) {
+        await saveTokenToFirebase(token, Platform.OS);
+      }
+    });
 
     const unsubscribeMessage = messaging().onMessage(async (remoteMessage) => {
       await notifee.displayNotification({
@@ -68,6 +94,7 @@ export function useFirebaseMessaging() {
       });
 
     return () => {
+      unsubscribeAuth();
       unsubscribeTokenRefresh();
       unsubscribeMessage();
       unsubscribeNotificationOpened();

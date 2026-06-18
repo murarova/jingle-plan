@@ -161,13 +161,20 @@ export function AddPlanModal({
                       <SelectDragIndicatorWrapper>
                         <SelectDragIndicator />
                       </SelectDragIndicatorWrapper>
-                      {[...allMonths, "every"].map((month) => (
+                      <VStack w="$full" pb="$16">
+                        {allMonths.map((month) => (
+                          <SelectItem
+                            key={month}
+                            label={t(`months.${month}`)}
+                            value={month}
+                          />
+                        ))}
                         <SelectItem
-                          key={month}
-                          label={t(`months.${month}`)}
-                          value={month}
+                          key="every"
+                          label={t("monthSelect.everyMonth")}
+                          value="every"
                         />
-                      ))}
+                      </VStack>
                     </SelectContent>
                   </SelectPortal>
                 </Select>
