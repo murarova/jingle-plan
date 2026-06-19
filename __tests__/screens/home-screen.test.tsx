@@ -1,5 +1,5 @@
 import React from "react";
-import { screen } from "@testing-library/react-native";
+import { act, screen } from "@testing-library/react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { HomeScreen } from "../../screens/home-screen";
 import { renderWithProviders } from "../utils/render";
@@ -59,6 +59,17 @@ function renderHomeScreen() {
   );
 }
 describe("HomeScreen", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
+    jest.useRealTimers();
+  });
+
   it("renders tab navigation labels", () => {
     renderHomeScreen();
     expect(screen.getByText("Головна")).toBeTruthy();

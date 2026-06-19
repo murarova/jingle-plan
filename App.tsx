@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { RegisterScreen } from "./screens/register-screen";
@@ -210,7 +211,7 @@ function AppContent() {
             component={PaywallScreen}
             options={{
               headerTitle: "",
-              headerBackTitleVisible: false,
+              headerBackButtonDisplayMode: "minimal",
             }}
           />
         </Stack.Navigator>

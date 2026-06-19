@@ -17,16 +17,29 @@ jest.mock("@react-navigation/native", () => {
   };
 });
 
-jest.mock("react-native-snap-carousel", () => {
-  const { View, Text } = require("react-native");
-  const Carousel = ({ data, renderItem }: { data: unknown[]; renderItem: (args: { item: unknown }) => React.ReactNode }) => (
-    <View testID="intro-carousel">
+jest.mock("react-native-reanimated-carousel", () => {
+  const { View } = require("react-native");
+  const Carousel = ({
+    data,
+    renderItem,
+    testID,
+  }: {
+    data: unknown[];
+    renderItem: (args: { item: unknown; index: number }) => React.ReactNode;
+    testID?: string;
+  }) => (
+    <View testID={testID ?? "intro-carousel"}>
       {data.map((item, index) => (
-        <View key={index}>{renderItem({ item })}</View>
+        <View key={index}>{renderItem({ item, index })}</View>
       ))}
     </View>
   );
-  const Pagination = () => <View testID="intro-pagination" />;
+  const Pagination = {
+    Basic: () => {
+      const { View } = require("react-native");
+      return <View testID="intro-pagination" />;
+    },
+  };
   return { __esModule: true, default: Carousel, Pagination };
 });
 

@@ -12,7 +12,7 @@ import {
   SafeAreaView,
   Image,
 } from "@gluestack-ui/themed";
-import Carousel from "react-native-snap-carousel";
+import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 import { albumScreenmMonthOrder, months } from "../constants/constants";
 import { AlbumScreenMonth, MonthlyData, MonthPhotoData } from "../types/types";
 import { useAppSelector } from "../store/withTypes";
@@ -20,9 +20,10 @@ import { EmptyScreen } from "../components/empty-screen";
 import { useTranslation } from "react-i18next";
 import { useGetUserDataQuery } from "../services/api";
 
-const { width: windowWidth } = Dimensions.get("window");
+const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 const SCREEN_PADDING = 30;
 const screenWidth = windowWidth - SCREEN_PADDING * 2;
+const carouselHeight = windowHeight * 0.55;
 
 interface RenderItemProps {
   item: MonthlyData;
@@ -37,7 +38,7 @@ const imageStyle: ImageStyle = {
 };
 
 const CarouselItem = memo(({ item }: RenderItemProps) => (
-  <Box flex={1} width={screenWidth}>
+  <Box flex={1} width={screenWidth} height={carouselHeight}>
     <Box
       flexGrow={1}
       backgroundColor="$white"
@@ -129,12 +130,10 @@ const mapDataToCarousel = (inputDict: MonthPhotoData): MonthlyData[] => {
   );
 };
 
-type CarouselRefType = React.ComponentRef<typeof Carousel<MonthlyData>>;
-
 export const AlbumScreen = memo(() => {
   const { t } = useTranslation();
   const [activeSlide, setActiveSlide] = useState(0);
-  const carouselRef = useRef<CarouselRefType>(null);
+  const carouselRef = useRef<ICarouselInstance>(null);
 
   const { currentUser } = useAppSelector((state) => state.auth);
   const { selectedYear } = useAppSelector((state) => state.app);
@@ -156,11 +155,11 @@ export const AlbumScreen = memo(() => {
   }, [photos, activeSlide, t]);
 
   const handleForward = useCallback(() => {
-    carouselRef.current?.snapToNext();
+    carouselRef.current?.next();
   }, []);
 
   const handleBack = useCallback(() => {
-    carouselRef.current?.snapToPrev();
+    carouselRef.current?.prev();
   }, []);
 
   const handleSnapToItem = useCallback((index: number) => {
@@ -168,7 +167,9 @@ export const AlbumScreen = memo(() => {
   }, []);
 
   const renderItem = useCallback(
-    (itemProps: RenderItemProps) => <CarouselItem {...itemProps} />,
+    ({ item, index }: RenderItemProps) => (
+      <CarouselItem item={item} index={index} />
+    ),
     []
   );
 
@@ -179,15 +180,16 @@ export const AlbumScreen = memo(() => {
   return (
     <SafeAreaView flex={1} backgroundColor="$backgroundLight50">
       <Box flex={1} pt={20} alignItems="center">
-        <Carousel<MonthlyData>
+        <Carousel
           ref={carouselRef}
-          sliderWidth={windowWidth}
-          onSnapToItem={handleSnapToItem}
+          loop={false}
+          pagingEnabled
+          snapEnabled
+          style={{ width: windowWidth, height: carouselHeight }}
           itemWidth={screenWidth}
           data={photos}
-          firstItem={activeSlide}
+          onSnapToItem={handleSnapToItem}
           renderItem={renderItem}
-          vertical={false}
         />
         <NavigationControls
           onBack={handleBack}

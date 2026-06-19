@@ -27,7 +27,7 @@ jest.mock("../../hooks/useIAP", () => ({
 
 const defaultProps = {
   pressHandler: jest.fn(),
-  getDayConfig: jest.fn(() => undefined),
+  getDayConfig: jest.fn(() => null),
   isAdmin: false,
   isLoading: false,
   currentYear: "2025",

@@ -8,7 +8,7 @@ import type { DayTaskConfig } from "../../types/types";
 
 jest.mock("../../services/api", () => ({
   ...jest.requireActual("../../services/api"),
-  useGetUserDataQuery: (...args: unknown[]) => mockGetUserDataQuery(...args),
+  useGetUserDataQuery: () => mockGetUserDataQuery(),
 }));
 
 jest.mock("../../components/day-tasks/plans/plans", () => ({
@@ -30,7 +30,7 @@ jest.mock("../../components/day-tasks/goals/goals", () => ({
 const baseTaskConfig: DayTaskConfig = {
   category: TASK_CATEGORY.SUMMARY,
   grade: 1,
-  context: "morning",
+  context: "health",
   taskOutputType: TaskOutputType.Text,
   text: "Task description text",
   title: "My Task Title",

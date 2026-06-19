@@ -1,4 +1,7 @@
-import * as admin from "firebase-admin";
+import { getDatabase } from "firebase-admin/database";
+import { getMessaging } from "firebase-admin/messaging";
+import type { DataSnapshot } from "firebase-admin/database";
+import type { SendResponse } from "firebase-admin/messaging";
 
 const KYIV_TIMEZONE = "Europe/Kyiv";
 
@@ -18,7 +21,7 @@ type DecemberDailyConfig = {
 
 type TokenEntry = { uid: string; token: string };
 
-const db = () => admin.database();
+const db = () => getDatabase();
 
 function applyTemplate(text: string, vars: Record<string, string>): string {
   return Object.entries(vars).reduce(
@@ -54,7 +57,7 @@ async function getEligibleTokens(): Promise<TokenEntry[]> {
   }
 
   const tokenEntries: TokenEntry[] = [];
-  tokensSnapshot.forEach((child) => {
+  tokensSnapshot.forEach((child: DataSnapshot) => {
     const data = child.val();
     if (!data?.token) {
       return;
@@ -82,13 +85,13 @@ async function sendNotification(
 
   const tokens = tokenEntries.map((entry) => entry.token);
 
-  const response = await admin.messaging().sendEachForMulticast({
+  const response = await getMessaging().sendEachForMulticast({
     tokens,
     notification,
   });
 
   const invalidTokenUids: string[] = [];
-  response.responses.forEach((res, idx) => {
+  response.responses.forEach((res: SendResponse, idx: number) => {
     if (!res.success) {
       const code = res.error?.code;
       if (

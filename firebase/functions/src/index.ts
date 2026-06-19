@@ -1,5 +1,7 @@
-import * as functions from "firebase-functions";
-import * as admin from "firebase-admin";
+import * as functions from "firebase-functions/v1";
+import { defineSecret, defineString } from "firebase-functions/params";
+import { initializeApp } from "firebase-admin/app";
+import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import {
@@ -10,7 +12,11 @@ import {
 const DATABASE_URL =
   "https://advent-calendar-12-default-rtdb.europe-west1.firebasedatabase.app";
 
-admin.initializeApp({ databaseURL: DATABASE_URL });
+initializeApp({ databaseURL: DATABASE_URL });
+
+const applePrivateKey = defineSecret("IAP_APPLE_PRIVATE_KEY");
+const appleIssuerId = defineString("IAP_APPLE_ISSUER_ID");
+const appleKeyId = defineString("IAP_APPLE_KEY_ID");
 
 export const sendMonthlyNotifications = functions
   .region("us-central1")
@@ -32,18 +38,16 @@ const APPLE_API_BASE = "https://api.storekit.itunes.apple.com/inApps/v1";
 const APPLE_TEST_API_BASE =
   "https://api.storekit-sandbox.itunes.apple.com/inApps/v1";
 
-const getConfigValue = (key: string) => {
-  const value = functions.config()?.iap?.[key];
-  if (!value) {
-    throw new Error(`Missing functions config value: iap.${key}`);
-  }
-  return value as string;
-};
-
 const getAppStoreToken = (): string => {
-  const privateKey = getConfigValue("apple_private_key").replace(/\\n/g, "\n");
-  const issuerId = getConfigValue("apple_issuer_id");
-  const keyId = getConfigValue("apple_key_id");
+  const privateKey = applePrivateKey.value().replace(/\\n/g, "\n");
+  const issuerId = appleIssuerId.value();
+  const keyId = appleKeyId.value();
+
+  if (!privateKey || !issuerId || !keyId) {
+    throw new Error(
+      "Missing IAP params: IAP_APPLE_PRIVATE_KEY, IAP_APPLE_ISSUER_ID, IAP_APPLE_KEY_ID",
+    );
+  }
 
   const now = Math.floor(Date.now() / 1000);
 
@@ -70,6 +74,7 @@ const buildAppleUrl = (path: string, useSandbox: boolean) => {
 };
 
 export const validateSubscription = functions
+  .runWith({ secrets: [applePrivateKey] })
   .region("us-central1")
   .https.onRequest(async (req, res) => {
     if (req.method !== "POST") {
@@ -117,9 +122,9 @@ export const validateSubscription = functions
       }
 
       if (uid) {
-        await admin.firestore().collection("iapEntitlements").doc(uid).set(
+        await getFirestore().collection("iapEntitlements").doc(uid).set(
           {
-            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: FieldValue.serverTimestamp(),
             transactionId,
             environment,
             receiptStatus: "valid",
@@ -134,13 +139,12 @@ export const validateSubscription = functions
       console.error("Validation error", error);
 
       if (uid) {
-        await admin
-          .firestore()
+        await getFirestore()
           .collection("iapEntitlements")
           .doc(uid)
           .set(
             {
-              updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+              updatedAt: FieldValue.serverTimestamp(),
               transactionId,
               environment,
               receiptStatus: "invalid",

@@ -1,19 +1,21 @@
-import { memo, forwardRef, ComponentProps } from "react";
+import {
+  memo,
+  forwardRef,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
 import {
   StyleSheet,
   StyleProp,
   TextStyle,
-  TextInputProps,
   TextInput,
+  TextInputProps,
+  NativeSyntheticEvent,
+  TextInputContentSizeChangeEventData,
 } from "react-native";
-import { AutoGrowingTextInput } from "react-native-autogrow-textinput";
 
-type AutoInputProps = ComponentProps<typeof AutoGrowingTextInput>;
-
-type Props = Omit<
-  AutoInputProps,
-  "style" | "defaultHeight" | "minHeight" | "maxHeight"
-> & {
+type Props = Omit<TextInputProps, "multiline" | "style"> & {
   minHeight?: number;
   maxHeight?: number;
   style?: StyleProp<TextStyle>;
@@ -21,18 +23,46 @@ type Props = Omit<
 
 export const AutoGrowingTextarea = memo(
   forwardRef<TextInput, Props>(
-    ({ style, minHeight = 100, maxHeight = 250, ...rest }, ref) => (
-      <AutoGrowingTextInput
-        ref={ref}
-        style={[styles.textarea, { minHeight }, style]}
-        defaultHeight={minHeight}
-        minHeight={minHeight}
-        maxHeight={maxHeight}
-        underlineColorAndroid="transparent"
-        {...rest}
-      />
-    )
-  )
+    (
+      {
+        style,
+        minHeight = 100,
+        maxHeight = 250,
+        onContentSizeChange,
+        ...rest
+      },
+      ref,
+    ) => {
+      const [height, setHeight] = useState(minHeight);
+
+      useEffect(() => {
+        setHeight(minHeight);
+      }, [minHeight]);
+
+      const handleContentSizeChange = useCallback(
+        (event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
+          const contentHeight = event.nativeEvent.contentSize.height;
+          setHeight(
+            Math.min(maxHeight, Math.max(minHeight, contentHeight)),
+          );
+          onContentSizeChange?.(event);
+        },
+        [maxHeight, minHeight, onContentSizeChange],
+      );
+
+      return (
+        <TextInput
+          ref={ref}
+          multiline
+          style={[styles.textarea, { height, minHeight }, style]}
+          onContentSizeChange={handleContentSizeChange}
+          underlineColorAndroid="transparent"
+          textAlignVertical="top"
+          {...rest}
+        />
+      );
+    },
+  ),
 );
 
 const styles = StyleSheet.create({

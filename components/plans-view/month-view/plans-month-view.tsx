@@ -86,7 +86,7 @@ export const PlansMonthView = memo(
                 >
                   <AccordionHeader>
                     <AccordionTrigger>
-                      {({ isExpanded }) => (
+                      {({ isExpanded }: { isExpanded: boolean }) => (
                         <AccordionHeaderContent
                           monthName={month.long}
                           plansCount={monthPlans.length}

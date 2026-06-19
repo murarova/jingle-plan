@@ -20,7 +20,7 @@ export function MonthSelectModal({
 }: {
   onMonthSelect: (month: string) => void;
   closeMonthModal: () => void;
-  sheetRef: React.RefObject<SheetRef>;
+  sheetRef: React.RefObject<SheetRef | null>;
   month?: string;
 }) {
   useEffect(() => {
