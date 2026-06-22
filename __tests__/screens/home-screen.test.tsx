@@ -24,7 +24,7 @@ jest.mock("../../screens/plans-screen/plans-screen", () => ({
     return <Text>PlansMock</Text>;
   },
 }));
-jest.mock("../../screens/album-screen", () => ({
+jest.mock("../../screens/album-screen/album-screen", () => ({
   AlbumScreen: () => {
     const { Text } = require("react-native");
     return <Text>AlbumMock</Text>;

@@ -28,7 +28,9 @@ export const sendMonthlyNotifications = functions
 
 export const sendDecemberDailyNotifications = functions
   .region("us-central1")
-  .pubsub.schedule("0 11 1-31 12 *")
+  //TODO: Change to the actual schedule
+  // .pubsub.schedule("0 11 1-31 12 *")
+  .pubsub.schedule("0 11 20-30 6 *")
   .timeZone("Europe/Kyiv")
   .onRun(async () => {
     await runDecemberDailyNotifications();
