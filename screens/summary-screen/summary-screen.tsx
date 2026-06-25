@@ -81,7 +81,7 @@ export const SummaryScreen: React.FC = () => {
                   >
                     <AccordionHeader>
                       <AccordionTrigger>
-                        {({ isExpanded }) => {
+                        {({ isExpanded }: { isExpanded: boolean }) => {
                           return (
                             <AccordionHeaderContent
                               context={context}

@@ -1,19 +1,22 @@
-import { firebase } from "@react-native-firebase/database";
-import auth from "@react-native-firebase/auth";
-import messaging from "@react-native-firebase/messaging";
+import { getDatabase, ref } from "@react-native-firebase/database";
+import { getAuth } from "@react-native-firebase/auth";
+import {
+  getMessaging,
+  subscribeToTopic,
+  unsubscribeFromTopic,
+} from "@react-native-firebase/messaging";
 import { EXPO_PUBLIC_DB } from "@env";
 
 export const PREMIUM_NOTIFICATION_TOPIC = "jingle-plan-premium";
 
+const messaging = getMessaging();
+
 function fcmTokenRef(uid: string) {
-  return firebase
-    .app()
-    .database(EXPO_PUBLIC_DB)
-    .ref(`/fcmTokens/${uid}`);
+  return ref(getDatabase(undefined, EXPO_PUBLIC_DB), `/fcmTokens/${uid}`);
 }
 
 export async function saveTokenToFirebase(token: string, platform: string) {
-  const currentUser = auth().currentUser;
+  const currentUser = getAuth().currentUser;
   if (!currentUser) return;
 
   try {
@@ -39,7 +42,7 @@ export async function updateFcmEligibility(eligibility: {
   isSubscriber: boolean;
   isAdmin: boolean;
 }) {
-  const currentUser = auth().currentUser;
+  const currentUser = getAuth().currentUser;
   if (!currentUser) return;
 
   try {
@@ -56,11 +59,11 @@ export async function updateFcmEligibility(eligibility: {
 export async function syncPremiumTopicSubscription(isEligible: boolean) {
   try {
     if (isEligible) {
-      await messaging().subscribeToTopic(PREMIUM_NOTIFICATION_TOPIC);
+      await subscribeToTopic(messaging, PREMIUM_NOTIFICATION_TOPIC);
       return;
     }
 
-    await messaging().unsubscribeFromTopic(PREMIUM_NOTIFICATION_TOPIC);
+    await unsubscribeFromTopic(messaging, PREMIUM_NOTIFICATION_TOPIC);
   } catch (error) {
     console.error("Failed to sync premium notification topic:", error);
   }
@@ -68,7 +71,7 @@ export async function syncPremiumTopicSubscription(isEligible: boolean) {
 
 export async function unsubscribeFromPremiumTopic() {
   try {
-    await messaging().unsubscribeFromTopic(PREMIUM_NOTIFICATION_TOPIC);
+    await unsubscribeFromTopic(messaging, PREMIUM_NOTIFICATION_TOPIC);
   } catch (error) {
     console.error("Failed to unsubscribe from premium topic:", error);
   }

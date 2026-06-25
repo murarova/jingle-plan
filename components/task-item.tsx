@@ -58,7 +58,7 @@ export function TaskItem({
           <View ref={accordionHeaderRef}>
             <AccordionHeader>
               <AccordionTrigger>
-                {({ isExpanded }) => {
+                {({ isExpanded }: { isExpanded: boolean }) => {
                   return (
                     <>
                       <AccordionTitleText>

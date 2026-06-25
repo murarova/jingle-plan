@@ -13,12 +13,12 @@ import Medal from "../assets/svg/medal";
 import Compas from "../assets/svg/compas";
 import Album from "../assets/svg/album";
 import Dashboard from "../assets/svg/dashboard";
-import { AlbumScreen } from "./album-screen";
+import { AlbumScreen } from "./album-screen/album-screen";
 import { DashboardScreen } from "./dashboard-screen/dashboard-screen";
 import { YearSelector } from "../components/year-selector";
 import {
-  CommonActions,
   NavigationState,
+  StackActions,
   useNavigationState,
 } from "@react-navigation/native";
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
@@ -38,7 +38,7 @@ const useIsDayOverviewActive = () => {
   const isDayOverviewActive = useNavigationState((state) => {
     if (!state) return false;
     const homeRoute = state.routes.find(
-      (route) => route.name === SCREENS.PERIOD_OVERVIEW
+      (route) => route.name === SCREENS.PERIOD_OVERVIEW,
     );
     const nestedState = homeRoute?.state as NavigationState | undefined;
     if (!nestedState?.routes?.length) return false;
@@ -64,7 +64,7 @@ const HomeTabLabel = ({
 }) => {
   const isDayOverviewActive = useIsDayOverviewActive();
   const color = focused && !isDayOverviewActive ? ACTIVE_COLOR : INACTIVE_COLOR;
-  return <Text style={{ color, paddingTop: 10, fontSize: 12 }}>{label}</Text>;
+  return <Text style={{ color, fontSize: 12 }}>{label}</Text>;
 };
 
 export type HomeStackParamList = {
@@ -98,6 +98,36 @@ function HomeStackNavigator() {
   );
 }
 
+const navigateToPeriodOverview = (
+  navigation: BottomTabNavigationProp<Record<string, object | undefined>>,
+): boolean => {
+  const state = navigation.getState();
+  const homeTabIndex = state.routes.findIndex(
+    (route) => route.name === SCREENS.PERIOD_OVERVIEW,
+  );
+  const homeRoute = state.routes[homeTabIndex];
+  const nestedState = homeRoute?.state as NavigationState | undefined;
+  const needsPop = (nestedState?.index ?? 0) > 0;
+  const isHomeFocused = state.index === homeTabIndex;
+
+  if (!needsPop) {
+    return false;
+  }
+
+  if (!isHomeFocused) {
+    navigation.navigate(SCREENS.PERIOD_OVERVIEW);
+  }
+
+  if (nestedState?.key) {
+    navigation.dispatch({
+      ...StackActions.popToTop(),
+      target: nestedState.key,
+    });
+  }
+
+  return true;
+};
+
 export const HomeScreen = () => {
   const { t } = useTranslation();
   const { isUnsavedChanges, setUnsavedChanges } = useUnsavedChanges();
@@ -107,7 +137,7 @@ export const HomeScreen = () => {
       e: EventArg<"tabPress", true, undefined>,
       navigation: BottomTabNavigationProp<Record<string, object | undefined>>,
       targetScreen?: string,
-      isPeriodOverview = false
+      isPeriodOverview = false,
     ) => {
       if (isUnsavedChanges) {
         e.preventDefault();
@@ -120,17 +150,15 @@ export const HomeScreen = () => {
             console.log("Haptics not available");
           }
           if (isPeriodOverview) {
-            navigation.navigate(SCREENS.PERIOD_OVERVIEW);
-            setTimeout(() => {
-              navigation.dispatch(
-                CommonActions.navigate({
-                  name: SCREENS.PERIOD_OVERVIEW,
-                  params: {
-                    screen: "PeriodOverviewMain",
-                  },
-                })
-              );
-            }, 0);
+            const state = navigation.getState();
+            const homeTabIndex = state.routes.findIndex(
+              (route) => route.name === SCREENS.PERIOD_OVERVIEW,
+            );
+            const isHomeFocused = state.index === homeTabIndex;
+
+            if (!navigateToPeriodOverview(navigation) && !isHomeFocused) {
+              navigation.navigate(SCREENS.PERIOD_OVERVIEW);
+            }
           } else if (targetScreen) {
             navigation.navigate(targetScreen);
           }
@@ -144,7 +172,7 @@ export const HomeScreen = () => {
         console.log("Haptics not available");
       }
     },
-    [isUnsavedChanges, setUnsavedChanges, t]
+    [isUnsavedChanges, setUnsavedChanges, t],
   );
 
   return (
@@ -153,12 +181,6 @@ export const HomeScreen = () => {
       screenOptions={{
         tabBarActiveTintColor: "#fe434c",
         tabBarInactiveTintColor: "#999999",
-        tabBarStyle: {
-          height: 75,
-          paddingBottom: 30,
-          paddingTop: 15,
-        },
-        tabBarLabelStyle: { paddingTop: 10 },
       }}
     >
       <Tab.Screen
@@ -168,35 +190,25 @@ export const HomeScreen = () => {
             <HomeTabLabel focused={focused} label={t("common.home")} />
           ),
           headerShown: false,
+          popToTopOnBlur: true,
         }}
         name={SCREENS.PERIOD_OVERVIEW}
         component={HomeStackNavigator}
         listeners={({ navigation }) => ({
-          tabPress: async (e) => {
-            if (!isUnsavedChanges) {
-              e.preventDefault();
-
-              try {
-                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              } catch (error) {
-                console.log("Haptics not available");
-              }
-
-              // Always reset to the main calendar screen
-              navigation.navigate(SCREENS.PERIOD_OVERVIEW);
-              // Reset the nested stack to show only PeriodOverviewMain
-              setTimeout(() => {
-                navigation.dispatch(
-                  CommonActions.navigate({
-                    name: SCREENS.PERIOD_OVERVIEW,
-                    params: {
-                      screen: "PeriodOverviewMain",
-                    },
-                  })
-                );
-              }, 0);
-            } else {
+          tabPress: (e) => {
+            if (isUnsavedChanges) {
               handleTabPress(e, navigation, SCREENS.PERIOD_OVERVIEW, true);
+              return;
+            }
+
+            if (navigateToPeriodOverview(navigation)) {
+              e.preventDefault();
+            }
+
+            try {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            } catch (error) {
+              console.log("Haptics not available");
             }
           },
         })}

@@ -7,8 +7,8 @@ import {
   SafeAreaView,
 } from "@gluestack-ui/themed";
 import { SnowAngel, Decorating, Dog, SkiingSantaSvg } from "../assets/svg";
-import Carousel, { Pagination } from "react-native-snap-carousel";
-import { useRef, useState, ReactNode } from "react";
+import Carousel, { Pagination } from "react-native-reanimated-carousel";
+import { useRef, ReactNode } from "react";
 import { Dimensions } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -16,8 +16,11 @@ import { SCREENS } from "../constants/constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
 import * as Haptics from "expo-haptics";
+import { useSharedValue } from "react-native-reanimated";
 
 const { width: screenWidth } = Dimensions.get("window");
+const itemWidth = screenWidth - 60;
+const carouselHeight = 380;
 type NavigationProp = StackNavigationProp<RootStackParamList, "INTRO">;
 
 interface IntroScreenItem {
@@ -29,7 +32,7 @@ export function IntroScreen() {
   const { t } = useTranslation();
   const nav = useNavigation<NavigationProp>();
   const carouselRef = useRef(null);
-  const [activeSlide, setActiveSlide] = useState(0);
+  const progress = useSharedValue(0);
   const data: IntroScreenItem[] = [
     {
       title: t("screens.intro.firstScreenText"),
@@ -51,7 +54,7 @@ export function IntroScreen() {
 
   function renderItem({ item }: { item: IntroScreenItem }) {
     return (
-      <Box alignItems="center">
+      <Box alignItems="center" width={itemWidth}>
         <Center mb="$5">{item.image}</Center>
         <Heading verticalAlign="middle" textAlign="center">
           {item.title}
@@ -65,18 +68,25 @@ export function IntroScreen() {
         <Box>
           <Carousel
             ref={carouselRef}
-            sliderWidth={screenWidth}
-            sliderHeight={screenWidth}
-            onSnapToItem={setActiveSlide}
-            itemWidth={screenWidth - 60}
+            loop={false}
+            pagingEnabled
+            snapEnabled
+            mode="parallax"
+            modeConfig={{
+              parallaxScrollingScale: 0.9,
+              parallaxScrollingOffset: 30,
+            }}
+            style={{ width: screenWidth, height: carouselHeight }}
+            itemWidth={itemWidth}
             data={data}
-            firstItem={activeSlide}
-            renderItem={renderItem}
+            onProgressChange={progress}
+            renderItem={({ item }) => renderItem({ item })}
+            testID="intro-carousel"
           />
           <Box>
-            <Pagination
-              dotsLength={data.length}
-              activeDotIndex={activeSlide}
+            <Pagination.Basic
+              progress={progress}
+              data={data}
               dotStyle={{
                 width: 8,
                 height: 8,
@@ -84,12 +94,18 @@ export function IntroScreen() {
                 marginHorizontal: -2,
                 backgroundColor: "rgba(0, 0, 0, 0.75)",
               }}
-              inactiveDotOpacity={0.4}
-              inactiveDotScale={1}
+              activeDotStyle={{
+                width: 8,
+                height: 8,
+                borderRadius: 5,
+                marginHorizontal: -2,
+                backgroundColor: "rgba(0, 0, 0, 0.75)",
+              }}
+              containerStyle={{ gap: 8, marginTop: 8 }}
             />
           </Box>
         </Box>
-        <Box width={screenWidth - 60} alignSelf="center">
+        <Box width={itemWidth} alignSelf="center">
           <Button
             onPress={async () => {
               try {

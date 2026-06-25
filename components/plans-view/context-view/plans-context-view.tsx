@@ -72,7 +72,7 @@ export const PlansContextView = memo(
                 >
                   <AccordionHeader>
                     <AccordionTrigger>
-                      {({ isExpanded }) => (
+                      {({ isExpanded }: { isExpanded: boolean }) => (
                         <AccordionHeaderContent
                           context={context}
                           isExpanded={isExpanded}

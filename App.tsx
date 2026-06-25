@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { RegisterScreen } from "./screens/register-screen";
@@ -29,10 +30,15 @@ import { IAPProvider } from "./hooks/useIAP";
 import * as TrackingTransparency from "expo-tracking-transparency";
 import { Settings, AppEventsLogger } from "react-native-fbsdk-next";
 import { UnsavedChangesProvider } from "./contexts/UnsavedChangesContext";
-import messaging from "@react-native-firebase/messaging";
+import {
+  getMessaging,
+  setBackgroundMessageHandler,
+} from "@react-native-firebase/messaging";
 import notifee, { AndroidImportance } from "@notifee/react-native";
 
-messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+const messaging = getMessaging();
+
+setBackgroundMessageHandler(messaging, async (remoteMessage) => {
   if (Platform.OS === "android") {
     await notifee.createChannel({
       id: "default",
@@ -205,7 +211,7 @@ function AppContent() {
             component={PaywallScreen}
             options={{
               headerTitle: "",
-              headerBackTitleVisible: false,
+              headerBackButtonDisplayMode: "minimal",
             }}
           />
         </Stack.Navigator>

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Jingle Plan",
     "slug": "jingle-plan",
-    "version": "1.1.7",
+    "version": "1.1.8",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -12,7 +12,7 @@
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": ["**/*"],
-
+    "newArchEnabled": true,
     "ios": {
       "icon": "./assets/icon.png",
       "supportsTablet": false,
@@ -56,11 +56,22 @@
         "expo-build-properties",
         {
           "ios": {
-            "useFrameworks": "static"
+            "useFrameworks": "static",
+            "forceStaticLinking": [
+              "RNFBApp",
+              "RNFBAuth",
+              "RNFBDatabase",
+              "RNFBMessaging",
+              "RNFBStorage"
+            ]
           },
           "android": {
             "targetSdkVersion": 35,
-            "compileSdkVersion": 35
+            "compileSdkVersion": 35,
+            "kotlinVersion": "2.1.20",
+            "extraMavenRepos": [
+              "../../node_modules/@notifee/react-native/android/libs"
+            ]
           }
         }
       ],
@@ -78,7 +89,12 @@
           "isAutoInitEnabled": true,
           "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
         }
-      ]
+      ],
+      "expo-tracking-transparency",
+      "expo-font",
+      "./plugins/with-android-build-fixes.js",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/messaging"
     ],
     "extra": {
       "eas": {

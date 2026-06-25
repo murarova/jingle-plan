@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "a315efd8-6ae9-46e7-b4fb-f6fbcbf967e2"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.murarova.iapfunctions",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    }
+  }
+}
