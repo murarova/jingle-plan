@@ -1,18 +1,36 @@
+export const signInTrigger = jest.fn(() => ({
+  unwrap: () => Promise.resolve({ uid: "test-uid", email: "test@example.com" }),
+}));
+
+export const sendPasswordResetTrigger = jest.fn(() => ({
+  unwrap: () => Promise.resolve(null),
+}));
+
+export const createUserTrigger = jest.fn(() => ({
+  unwrap: () =>
+    Promise.resolve({ uid: "new-uid", email: "test@example.com" }),
+}));
+
 export const mockSignInUserMutation = jest.fn(() => [
-  jest.fn(() => ({ unwrap: jest.fn(() => Promise.resolve({ uid: "test-uid" })) })),
+  signInTrigger,
   { isLoading: false },
 ]);
 
 export const mockSendPasswordResetMutation = jest.fn(() => [
-  jest.fn(() => ({ unwrap: jest.fn(() => Promise.resolve(null)) })),
+  sendPasswordResetTrigger,
   { isLoading: false },
 ]);
 
 export const mockCreateUserMutation = jest.fn(() => [
-  jest.fn(() => ({
-    unwrap: jest.fn(() =>
-      Promise.resolve({ uid: "new-uid", email: "test@example.com" })
-    ),
-  })),
+  createUserTrigger,
   { isLoading: false },
 ]);
+
+export const resetAuthHookMocks = () => {
+  signInTrigger.mockClear();
+  sendPasswordResetTrigger.mockClear();
+  createUserTrigger.mockClear();
+  mockSignInUserMutation.mockClear();
+  mockSendPasswordResetMutation.mockClear();
+  mockCreateUserMutation.mockClear();
+};

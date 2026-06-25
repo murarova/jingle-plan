@@ -84,3 +84,17 @@ export function renderWithProviders(
 
   return { ...result, store };
 }
+
+export function createHookWrapper(preloadedState?: Partial<RootState>) {
+  const store = createTestStore(preloadedState);
+
+  return function HookWrapper({ children }: { children: React.ReactNode }) {
+    return (
+      <Provider store={store}>
+        <SafeAreaProvider>
+          <GluestackUIProvider config={config}>{children}</GluestackUIProvider>
+        </SafeAreaProvider>
+      </Provider>
+    );
+  };
+}

@@ -11,13 +11,9 @@ jest.mock("../../components/calendar/day-component", () => {
   };
 });
 
-jest.mock("@react-navigation/native", () => {
-  const actual = jest.requireActual("@react-navigation/native");
-  return {
-    ...actual,
-    useNavigation: () => ({ navigate: jest.fn() }),
-  };
-});
+jest.mock("@react-navigation/native", () =>
+  require("../mocks/navigation").mockNavigationModule()
+);
 
 jest.mock("../../hooks/useIAP", () => ({
   useIAP: () => ({
