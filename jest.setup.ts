@@ -50,7 +50,7 @@ jest.mock("@react-native-firebase/storage", () => ({
 }));
 
 jest.mock("expo-haptics", () => ({
-  impactAsync: jest.fn(),
+  impactAsync: jest.fn(() => Promise.resolve()),
   ImpactFeedbackStyle: { Light: "light", Medium: "medium" },
 }));
 

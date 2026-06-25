@@ -3,19 +3,9 @@ import { screen } from "@testing-library/react-native";
 import { IntroScreen } from "../../screens/intro-screen";
 import { renderWithProviders } from "../utils/render";
 
-const mockReplace = jest.fn();
-
-jest.mock("@react-navigation/native", () => {
-  const actual = jest.requireActual("@react-navigation/native");
-  return {
-    ...actual,
-    useNavigation: () => ({
-      navigate: jest.fn(),
-      replace: mockReplace,
-      push: jest.fn(),
-    }),
-  };
-});
+jest.mock("@react-navigation/native", () =>
+  require("../mocks/navigation").mockNavigationModule()
+);
 
 jest.mock("react-native-reanimated-carousel", () => {
   const { View } = require("react-native");

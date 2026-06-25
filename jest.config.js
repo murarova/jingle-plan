@@ -9,4 +9,20 @@ module.exports = {
     "^@env$": "<rootDir>/__tests__/mocks/env.ts",
   },
   testPathIgnorePatterns: ["/node_modules/", "/firebase/"],
+  collectCoverageFrom: [
+    "components/**/*.{ts,tsx}",
+    "screens/**/*.{ts,tsx}",
+    "store/**/*.{ts,tsx}",
+    "utils/**/*.{ts,tsx}",
+    "hooks/**/*.{ts,tsx}",
+    "services/**/*.{ts,tsx}",
+    "!**/*.d.ts",
+    "!**/index.{ts,tsx}",
+    "!config/**",
+  ],
+  coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "/__tests__/",
+    "/firebase/",
+  ],
 };
