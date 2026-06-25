@@ -2,11 +2,11 @@ import { useCallback, useMemo } from "react";
 import { RefreshControl } from "react-native";
 import {
   Box,
-  SafeAreaView,
   ScrollView,
   Text,
   Button,
 } from "@gluestack-ui/themed";
+import { SafeAreaView } from "../components/common/safe-area-view";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList } from "./home-screen";

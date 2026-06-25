@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { EmptyScreen } from "../../components/empty-screen";
 import { usePlansScreen } from "../../components/plans-view/hooks/usePlansScreen";
-import { ButtonIcon, Fab, SafeAreaView } from "@gluestack-ui/themed";
+import { ButtonIcon, Fab } from "@gluestack-ui/themed";
+import { SafeAreaView } from "../../components/common/safe-area-view";
 import * as Haptics from "expo-haptics";
 import { PlansViewOptions } from "../../constants/constants";
 import { GoalsData, PlanContextData } from "../../types/types";

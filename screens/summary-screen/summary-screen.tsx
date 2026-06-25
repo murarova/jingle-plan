@@ -7,8 +7,8 @@ import {
   AccordionTrigger,
   AccordionContent,
   ScrollView,
-  SafeAreaView,
 } from "@gluestack-ui/themed";
+import { SafeAreaView } from "../../components/common/safe-area-view";
 import { useTranslation } from "react-i18next";
 import { EmptyScreen } from "../../components/empty-screen";
 import { TASK_CONTEXT } from "../../constants/constants";

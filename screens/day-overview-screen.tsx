@@ -1,6 +1,7 @@
 import { useLayoutEffect, useState, useEffect, memo, useCallback } from "react";
 import { TasksList } from "../components/tasks-list";
-import { Box, SafeAreaView } from "@gluestack-ui/themed";
+import { Box } from "@gluestack-ui/themed";
+import { SafeAreaView } from "../components/common/safe-area-view";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import { CompletedTaskModal } from "../components/modals/completed-task-modal";

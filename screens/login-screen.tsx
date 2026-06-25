@@ -7,12 +7,12 @@ import {
   Input,
   InputField,
   Pressable,
-  SafeAreaView,
   Text,
   VStack,
   Button,
   InputSlot,
 } from "@gluestack-ui/themed";
+import { SafeAreaView } from "../components/common/safe-area-view";
 import { Alert, Keyboard, Switch } from "react-native";
 import { SCREENS, EMAIL_REGEX } from "../constants/constants";
 import { useTranslation } from "react-i18next";

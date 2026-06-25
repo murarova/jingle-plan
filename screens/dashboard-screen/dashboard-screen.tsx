@@ -1,7 +1,8 @@
 import { memo, useRef } from "react";
 import { useDashboardData } from "../../hooks/useDashboardData";
 import { EmptyScreen } from "../../components/empty-screen";
-import { SafeAreaView, ScrollView, Box } from "@gluestack-ui/themed";
+import { ScrollView, Box } from "@gluestack-ui/themed";
+import { SafeAreaView } from "../../components/common/safe-area-view";
 import { DashboardStats } from "./dashboard-stats";
 import { ContextSections } from "./context-sections";
 

@@ -1,7 +1,6 @@
 import { memo, useCallback } from "react";
 import {
   Box,
-  SafeAreaView,
   Text,
   Button,
   ButtonText,
@@ -10,6 +9,7 @@ import {
   Divider,
   ScrollView,
 } from "@gluestack-ui/themed";
+import { SafeAreaView } from "../components/common/safe-area-view";
 import { useTranslation } from "react-i18next";
 import { useIAP } from "../hooks/useIAP";
 import {

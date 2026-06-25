@@ -4,8 +4,8 @@ import {
   Center,
   Button,
   ButtonText,
-  SafeAreaView,
 } from "@gluestack-ui/themed";
+import { SafeAreaView } from "../components/common/safe-area-view";
 import { SnowAngel, Decorating, Dog, SkiingSantaSvg } from "../assets/svg";
 import Carousel, { Pagination } from "react-native-reanimated-carousel";
 import { useRef, ReactNode } from "react";

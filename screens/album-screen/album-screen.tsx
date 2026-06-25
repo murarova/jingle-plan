@@ -1,5 +1,6 @@
 import { memo, useCallback } from "react";
-import { Box, SafeAreaView } from "@gluestack-ui/themed";
+import { Box } from "@gluestack-ui/themed";
+import { SafeAreaView } from "../../components/common/safe-area-view";
 import Carousel from "react-native-reanimated-carousel";
 import { EmptyScreen } from "../../components/empty-screen";
 import { MonthlyData } from "../../types/types";
