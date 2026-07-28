@@ -21,7 +21,7 @@ import { setUser, setAuthError, setAuthLoading } from "../../store/authReducer";
 import { useAppDispatch } from "../../store/withTypes";
 import { convertToSerializableUser } from "../../types/user";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../../App";
+import { RootStackParamList } from "@/navigation/types";
 import { resolveErrorMessage } from "../../utils/utils";
 import {
   saveCredentials,

@@ -15,7 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SCREENS } from "../../constants/constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TaskContext } from "../../types/types";
-import { RootStackParamList } from "../../App";
+import { RootStackParamList } from "@/navigation/types";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 

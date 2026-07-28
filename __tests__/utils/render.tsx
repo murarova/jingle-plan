@@ -11,7 +11,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createTestStore } from "./test-store";
 import type { RootState } from "../../store/store";
 import type { AppStore } from "../../store/store";
-import { UnsavedChangesProvider } from "../../contexts/UnsavedChangesContext";
+import { UnsavedChangesProvider } from "@/providers";
 
 const Stack = createStackNavigator();
 

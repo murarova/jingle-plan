@@ -20,7 +20,7 @@ import { useCreateUserMutation } from "../../services/auth-api-rtk";
 import { convertToSerializableUser } from "../../types/user";
 import { useCreateProfileMutation } from "../../services/api";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../../App";
+import { RootStackParamList } from "@/navigation/types";
 import { resolveErrorMessage } from "../../utils/utils";
 import {
   saveCredentials,
