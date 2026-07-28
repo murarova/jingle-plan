@@ -8,8 +8,8 @@ import {
   saveTaskByCategoryTrigger,
   resetApiHookMocks,
 } from "../mocks/api-hooks";
-import { PlansViewOptions, TASK_CATEGORY } from "../../constants/constants";
-import type { PlanContextData, PlanScreenData } from "../../types/types";
+import { PlansViewOptions, TASK_CATEGORY } from "@/constants";
+import type { PlanContextData, PlanScreenData } from "@/types";
 
 jest.mock("../../services/api", () => ({
   ...jest.requireActual("../../services/api"),

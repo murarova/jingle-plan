@@ -1,4 +1,4 @@
-import { PlansCollection, TaskContext } from "../../../types/types";
+import { PlansCollection, TaskContext } from "@/types";
 import { PlanWithContext, PlansMonthData } from "./types";
 
 export const groupPlansByMonth = (plans: PlansCollection): PlansMonthData => {

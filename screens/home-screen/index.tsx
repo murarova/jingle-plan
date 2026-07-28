@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { House } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
-import { SCREENS } from "../../constants/constants";
+import { SCREENS } from "@/constants";
 import PeriodOverviewScreen from "../period-overview-screen";
 import DayOverviewScreen from "../day-overview-screen";
 import { AppMenu } from "../../components/navigation/app-menu";

@@ -1,19 +1,19 @@
 import { useCallback, useState } from "react";
 import { Alert } from "react-native";
 import * as Haptics from "expo-haptics";
-import { TASK_CATEGORY } from "../../../constants/constants";
+import { TASK_CATEGORY } from "@/constants";
 import {
   TaskContext,
   SummaryData,
   SummaryContextData,
-} from "../../../types/types";
+} from "@/types";
 import { useAppSelector } from "../../../store/withTypes";
 import {
   useRemoveTaskMutation,
   useSaveTaskByCategoryMutation,
 } from "../../../services/api";
 import { useTranslation } from "react-i18next";
-import { resolveErrorMessage } from "../../../utils/utils";
+import { resolveErrorMessage } from "@/utils";
 import { useUnsavedChangesBlocker } from "../../../hooks/useUnsavedChangesBlocker";
 
 interface UseSummaryScreenProps {

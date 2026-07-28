@@ -9,7 +9,7 @@ import { useCallback, useRef, useState, ComponentType } from "react";
 import { LayoutChangeEvent } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import { SCREENS } from "../../constants/constants";
+import { SCREENS } from "@/constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/navigation/types";
 import * as Haptics from "expo-haptics";

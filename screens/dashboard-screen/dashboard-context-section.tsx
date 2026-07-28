@@ -10,11 +10,11 @@ import { useTranslation } from "react-i18next";
 import {
   getProgressBackgroundColor,
   getProgressColorByValue,
-} from "../../utils/utils";
+} from "@/utils";
 import { useNavigation } from "@react-navigation/native";
-import { SCREENS } from "../../constants/constants";
+import { SCREENS } from "@/constants";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { TaskContext } from "../../types/types";
+import { TaskContext } from "@/types";
 import { RootStackParamList } from "@/navigation/types";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Home">;

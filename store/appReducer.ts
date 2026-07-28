@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // RTK Query now handles all data operations
 // This reducer only manages local app state
-import { CalendarConfig } from "../types/types";
-import { YEARS } from "../constants/constants";
+import { CalendarConfig } from "@/types";
+import { YEARS } from "@/constants";
 
 export type RequestStatus = "idle" | "pending" | "succeeded" | "failed";
 

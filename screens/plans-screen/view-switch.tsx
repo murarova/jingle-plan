@@ -2,7 +2,7 @@ import { Box } from "@/ui/box";
 import { useMemo, memo } from "react";
 import { useTranslation } from "react-i18next";
 import SwitchSelector from "react-native-switch-selector";
-import { PlansViewOptions } from "../../constants/constants";
+import { PlansViewOptions } from "@/constants";
 import * as Haptics from "expo-haptics";
 
 interface ViewSwitchProps {

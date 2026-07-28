@@ -10,7 +10,7 @@ import { useState } from "react";
 import { SafeAreaView } from "../../components/common/safe-area-view";
 import { Alert, Keyboard } from "react-native";
 import * as Haptics from "expo-haptics";
-import { SCREENS, EMAIL_REGEX, PASSWORD_REGEX } from "../../constants/constants";
+import { SCREENS, EMAIL_REGEX, PASSWORD_REGEX } from "@/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -21,7 +21,7 @@ import { convertToSerializableUser } from "../../types/user";
 import { useCreateProfileMutation } from "../../services/api";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/navigation/types";
-import { resolveErrorMessage } from "../../utils/utils";
+import { resolveErrorMessage } from "@/utils";
 import {
   saveCredentials,
   clearCredentials,

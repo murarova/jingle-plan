@@ -5,7 +5,7 @@ import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
 import { useTranslation } from "react-i18next";
 import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { months } from "../../constants/constants";
+import { months } from "@/constants";
 import { ChevronLeft } from "lucide-react-native";
 import { Sheet, SheetRef, RadioButton } from "../common";
 import { BottomSheetScrollView, BottomSheetFooter } from "@gorhom/bottom-sheet";

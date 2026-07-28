@@ -1,7 +1,7 @@
 import {
   groupPlansByMonth,
 } from "../../screens/plans-screen/month-view/helpers";
-import type { PlansCollection } from "../../types/types";
+import type { PlansCollection } from "@/types";
 
 describe("groupPlansByMonth", () => {
   it("returns an empty object for empty plans", () => {

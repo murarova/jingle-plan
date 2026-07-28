@@ -2,7 +2,7 @@ import { Box } from "@/ui/box";
 import { AccordionContent } from "@/ui/accordion";
 import { memo } from "react";
 import { PlansList } from "../components/plans-list";
-import { PlansViewOptions } from "../../../constants/constants";
+import { PlansViewOptions } from "@/constants";
 import { CompletePlanProps } from "../context-view/types";
 import { PlanWithContext } from "./types";
 

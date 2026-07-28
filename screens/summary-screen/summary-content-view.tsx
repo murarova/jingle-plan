@@ -3,7 +3,7 @@ import { Box } from "@/ui/box";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { ActionButtons } from "../../components/common";
-import { TaskContext } from "../../types/types";
+import { TaskContext } from "@/types";
 
 interface ContentViewProps {
   text: string;

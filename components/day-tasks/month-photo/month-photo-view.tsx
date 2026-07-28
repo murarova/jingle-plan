@@ -3,7 +3,7 @@ import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
 import { memo } from "react";
 import { ActionButtons, AnimatedView, Loader } from "../../common";
-import { ImageData } from "../../../types/types";
+import { ImageData } from "@/types";
 
 interface MonthPhotoViewProps {
   image: ImageData | null;

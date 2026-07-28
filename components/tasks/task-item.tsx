@@ -14,7 +14,7 @@ import {
 } from "@/ui/accordion";
 
 import { useTranslation } from "react-i18next";
-import { TaskOutputType, TASK_CATEGORY } from "../../constants/constants";
+import { TaskOutputType, TASK_CATEGORY } from "@/constants";
 import { Plans } from "../day-tasks/plans/plans";
 import { Summary } from "../day-tasks/summary/summary";
 import { MonthPhoto } from "../day-tasks/month-photo/month-photo";
@@ -29,7 +29,7 @@ import {
   PlanContextData,
   SummaryContextData,
   GoalsData,
-} from "../../types/types";
+} from "@/types";
 import { MoodTask } from "../day-tasks/mood/mood-task";
 import { useGetUserDataQuery } from "../../services/api";
 import { useRef } from "react";

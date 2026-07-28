@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { SCREENS } from "../../constants/constants";
+import { SCREENS } from "@/constants";
 import { useAppSelector } from "../../store/withTypes";
 import { isLoggedIn } from "../../store/authReducer";
 import { RootStackParamList } from "@/navigation/types";

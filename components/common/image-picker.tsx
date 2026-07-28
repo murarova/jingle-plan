@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import uuid from "react-native-uuid";
 import { Loader } from "./loader";
 import { AnimatedView } from "./animated-view";
-import { ImageData } from "../../types/types";
+import { ImageData } from "@/types";
 
 interface ImagePickerProps {
   image: ImageData | null;

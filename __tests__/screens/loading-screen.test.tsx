@@ -2,7 +2,7 @@ import React from "react";
 import { LoadingScreen } from "../../screens/loading-screen";
 import { renderWithProviders } from "../utils/render";
 import { mockNavigate, resetNavigationMocks } from "../mocks/navigation";
-import { SCREENS } from "../../constants/constants";
+import { SCREENS } from "@/constants";
 import type { SerializableUser } from "../../types/user";
 
 jest.mock("@react-navigation/native", () =>

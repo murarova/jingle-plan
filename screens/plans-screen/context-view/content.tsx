@@ -2,8 +2,8 @@ import { Box } from "@/ui/box";
 import { AccordionContent } from "@/ui/accordion";
 import { memo } from "react";
 import { PlansList } from "../components/plans-list";
-import { PlanScreenData, TaskContext } from "../../../types/types";
-import { PlansViewOptions } from "../../../constants/constants";
+import { PlanScreenData, TaskContext } from "@/types";
+import { PlansViewOptions } from "@/constants";
 import { CompletePlanProps } from "./types";
 
 interface PlansAccordionContentProps {

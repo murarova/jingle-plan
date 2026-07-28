@@ -5,7 +5,7 @@ import { Button, ButtonIcon } from "@/ui/button";
 import { Menu, MenuItem } from "@/ui/menu";
 import { LogOut, Trash2, Crown } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { SCREENS } from "../../constants/constants";
+import { SCREENS } from "@/constants";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Alert } from "react-native";
 import { useAppDispatch, useAppSelector } from "../../store/withTypes";
@@ -16,7 +16,7 @@ import {
 } from "../../services/auth-api-rtk";
 import { useGetUserProfileQuery } from "../../services/api";
 import { RootStackParamList } from "@/navigation/types";
-import { resolveErrorMessage } from "../../utils/utils";
+import { resolveErrorMessage } from "@/utils";
 
 export function AppMenu() {
   const { t } = useTranslation();

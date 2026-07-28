@@ -1,4 +1,4 @@
-import { PlanScreenData, PlansCollection, TaskContext } from "../types/types";
+import { PlanScreenData, PlansCollection, TaskContext } from "@/types";
 
 export const findPlanContextById = (
   plans: PlansCollection,

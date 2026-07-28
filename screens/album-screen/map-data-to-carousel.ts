@@ -1,5 +1,5 @@
-import { albumScreenmMonthOrder } from "../../constants/constants";
-import { AlbumScreenMonth, MonthlyData, MonthPhotoData } from "../../types/types";
+import { albumScreenmMonthOrder } from "@/constants";
+import { AlbumScreenMonth, MonthlyData, MonthPhotoData } from "@/types";
 
 export const mapDataToCarousel = (inputDict: MonthPhotoData): MonthlyData[] => {
   const outputList = Object.entries(inputDict).reduce<MonthlyData[]>(

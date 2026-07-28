@@ -1,5 +1,5 @@
-import { PlanScreenData, TaskContext } from "../../../types/types";
-import { PlansViewOptions } from "../../../constants/constants";
+import { PlanScreenData, TaskContext } from "@/types";
+import { PlansViewOptions } from "@/constants";
 import { PlansMonthData } from "../month-view/types";
 
 export interface CompletePlanProps {

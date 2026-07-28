@@ -3,7 +3,7 @@ import { Progress, ProgressFilledTrack } from "@/ui/progress";
 import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
 import { memo } from "react";
-import { getProgressBackgroundColor, getProgressColorByValue } from "../../utils/utils";
+import { getProgressBackgroundColor, getProgressColorByValue } from "@/utils";
 
 interface ProgressBarProps {
   total: number;

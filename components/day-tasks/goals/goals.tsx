@@ -1,7 +1,7 @@
 import { Box } from "@/ui/box";
 import { memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { GoalsData } from "../../../types/types";
+import { GoalsData } from "@/types";
 import { useGoals } from "./hooks/useGoals";
 import { GoalsForm } from "./goals-form";
 import { GoalsView } from "./goals-view";

@@ -2,14 +2,14 @@ import { Box } from "@/ui/box";
 import moment from "moment";
 import { Calendar as NativeCalendar, DateData } from "react-native-calendars";
 import { memo, useCallback, useMemo } from "react";
-import { calculateTotalProgress } from "../../utils/utils";
+import { calculateTotalProgress } from "@/utils";
 import { useAppSelector } from "../../store/withTypes";
 import { selectSelectedYear } from "../../store/appReducer";
 import { calendarTheme, setupCalendarLocale } from "../../utils/calendar-utils";
 import { DayComponent } from "./day-component";
 import { useIAP } from "../../hooks/useIAP";
 import { useNavigation } from "@react-navigation/native";
-import { SCREENS, YEARS } from "../../constants/constants";
+import { SCREENS, YEARS } from "@/constants";
 
 interface CalendarProps {
   pressHandler: (dateString: string) => void;

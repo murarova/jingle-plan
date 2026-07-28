@@ -14,7 +14,7 @@ import { Box } from "@/ui/box";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/withTypes";
 import { setSelectedYear, selectSelectedYear } from "../../store/appReducer";
-import { YEARS } from "../../constants/constants";
+import { YEARS } from "@/constants";
 import { useLazyGetUserDataQuery } from "../../services/api";
 import { ChevronDown } from "lucide-react-native";
 

@@ -4,7 +4,7 @@ import {
   calculateTotalProgress,
   getPluralForm,
   resolveErrorMessage,
-} from "../../utils/utils";
+} from "@/utils";
 
 describe("getProgressBackgroundColor", () => {
   it("returns red below 30", () => {

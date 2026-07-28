@@ -20,8 +20,8 @@ import { ModalBody, ModalFooter, Modal, ModalBackdrop, ModalContent, ModalHeader
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
-import { PlanData, PlanScreenData, TaskContext } from "../../../types/types";
-import { allMonths, TASK_CONTEXT } from "../../../constants/constants";
+import { PlanData, PlanScreenData, TaskContext } from "@/types";
+import { allMonths, TASK_CONTEXT } from "@/constants";
 
 interface AddPlanModalProps {
   isPlanScreen?: boolean;

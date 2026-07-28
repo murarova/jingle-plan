@@ -32,8 +32,8 @@ Make sure you have the following installed on your system:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/murarova/advent-calendar.git
-   cd advent-calendar
+   git clone https://github.com/murarova/jingle-plan.git
+   cd jingle-plan
    ```
 
 2. Install dependencies:
@@ -78,6 +78,14 @@ The following scripts are available for development and testing:
 
 - Ensure you have the necessary environment set up for the platform you are targeting (e.g., Android Studio for Android, Xcode for iOS).
 - For detailed Expo documentation, refer to the [official Expo Docs](https://docs.expo.dev/).
+
+## Folder ownership
+
+- Every screen is a folder with `index.tsx` (`screens/<name>-screen/`).
+- Screen-only UI and hooks live under that screen folder.
+- `components/` is shared product UI only; Gluestack primitives live in `ui/`.
+- Shared/infra hooks live in `hooks/`; providers live in `providers/`.
+- Prefer `@/` imports. Split domain types/constants/utils by file — avoid catch-all magnets.
 
 ## License
 

@@ -1,5 +1,5 @@
 import { findPlanContextById, getPlansList } from "../../utils/plans-utils";
-import type { PlanScreenData, PlansCollection } from "../../types/types";
+import type { PlanScreenData, PlansCollection } from "@/types";
 
 const makePlan = (id: string, context: string): PlanScreenData =>
   ({

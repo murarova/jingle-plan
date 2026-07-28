@@ -16,8 +16,8 @@ import {
   SummaryContextData,
   DayConfig,
   GoalsData,
-} from "../types/types";
-import { TASK_CATEGORY } from "../constants/constants";
+} from "@/types";
+import { TASK_CATEGORY } from "@/constants";
 
 export const useCalendarDayManager = (updateCurrentDate?: () => void) => {
   const { selectedYear } = useAppSelector((state) => state.app);

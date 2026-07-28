@@ -1,6 +1,6 @@
 import { Box } from "@/ui/box";
 import { memo } from "react";
-import { MonthPhotoData } from "../../../types/types";
+import { MonthPhotoData } from "@/types";
 import { MonthPhotoForm } from "./month-photo-form";
 import { MonthPhotoView } from "./month-photo-view";
 import { useMonthPhoto } from "./hooks/useMonthPhoto";

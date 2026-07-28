@@ -2,7 +2,7 @@ import { HStack } from "@/ui/hstack";
 import { Button, ButtonText } from "@/ui/button";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { TaskContext } from "../../types/types";
+import { TaskContext } from "@/types";
 import { AutoGrowingTextarea } from "../../components/common";
 
 interface EditableContentProps {

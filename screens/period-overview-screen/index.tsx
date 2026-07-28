@@ -11,7 +11,7 @@ import { Calendar } from "../../components/calendar/calendar";
 import { useCalendarDayManager } from "../../hooks/useCalendarDayManager";
 import { useIAP } from "../../hooks/useIAP";
 import { useTranslation } from "react-i18next";
-import { SCREENS, YEARS } from "../../constants/constants";
+import { SCREENS, YEARS } from "@/constants";
 import { useAppSelector } from "../../store/withTypes";
 import { selectSelectedYear } from "../../store/appReducer";
 import { useCurrentDate } from "../../hooks/useCurrentDate";

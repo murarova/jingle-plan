@@ -12,7 +12,7 @@ import {
   removeTaskTrigger,
   resetApiHookMocks,
 } from "../mocks/api-hooks";
-import { TASK_CATEGORY } from "../../constants/constants";
+import { TASK_CATEGORY } from "@/constants";
 
 jest.mock("../../services/api", () => ({
   ...jest.requireActual("../../services/api"),

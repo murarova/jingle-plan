@@ -15,8 +15,8 @@ import {
   putFile,
   ref as storageRef,
 } from "@react-native-firebase/storage";
-import { TASK_CATEGORY } from "../constants/constants";
-import { CalendarConfig, ImageData } from "../types/types";
+import { TASK_CATEGORY } from "@/constants";
+import { CalendarConfig, ImageData } from "@/types";
 
 const db = getDatabase(undefined, EXPO_PUBLIC_DB);
 const storage = getStorage();
