@@ -4,6 +4,7 @@ export const SnowAngel = (props) => (
     xmlns="http://www.w3.org/2000/svg"
     width={291}
     height={289}
+    viewBox="0 0 291 289"
     fill="none"
     {...props}
   >

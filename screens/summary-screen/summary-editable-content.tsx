@@ -1,5 +1,6 @@
+import { HStack } from "@/components/ui/hstack";
+import { Button, ButtonText } from "@/components/ui/button";
 import { memo } from "react";
-import { Button, ButtonText, HStack } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { TaskContext } from "../../types/types";
 import { AutoGrowingTextarea } from "../../components/common";
@@ -23,16 +24,11 @@ export const EditableContent = memo(
           onChangeText={onTextChange}
           placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
         />
-        <HStack space="sm" mt="$2">
-          <Button
-            flex={1}
-            variant="outline"
-            onPress={onCancel}
-            borderRadius="$lg"
-          >
+        <HStack space="sm" className="mt-2">
+          <Button variant="outline" onPress={onCancel} className="flex-1 rounded-lg">
             <ButtonText>{t("common.cancel")}</ButtonText>
           </Button>
-          <Button flex={1} onPress={onSubmit} borderRadius="$lg">
+          <Button onPress={onSubmit} className="flex-1 rounded-lg">
             <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
           </Button>
         </HStack>

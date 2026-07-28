@@ -95,6 +95,15 @@ jest.mock("react-native-youtube-iframe", () => {
   return { __esModule: true, default: View };
 });
 
+jest.mock("nativewind", () => ({
+  cssInterop: (component: unknown) => component,
+  vars: (value: Record<string, string>) => value,
+  useColorScheme: () => ({
+    colorScheme: "light",
+    setColorScheme: jest.fn(),
+  }),
+}));
+
 jest.mock("react-native-safe-area-context", () => {
   const React = require("react");
   const { View } = require("react-native");

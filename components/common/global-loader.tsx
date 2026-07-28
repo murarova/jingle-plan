@@ -1,21 +1,29 @@
+import { Box } from "@/components/ui/box";
 import { ActivityIndicator } from "react-native";
-import { Box } from "@gluestack-ui/themed";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 
 export const GlobalLoader = () => {
-  // Check if any API query or mutation is pending
   const isApiLoading = useSelector((state: RootState) => {
     const apiState = state.api;
     const authApiState = state.authApi;
+    const selectedYear = state.app.selectedYear;
 
-    // Check if any queries are pending in main API (exclude refetches that have data)
     const hasApiQueries = Object.values(apiState.queries).some((query: any) => {
-      // Only show loader for initial fetches, not refetches (if data exists, it's a refetch)
-      if (query?.status === "pending" && query?.data) {
+      if (query?.status !== "pending") {
         return false;
       }
-      return query?.status === "pending";
+      if (query?.data) {
+        return false;
+      }
+      if (
+        query?.endpointName === "getUserData" &&
+        query?.originalArgs?.year &&
+        query.originalArgs.year !== selectedYear
+      ) {
+        return false;
+      }
+      return true;
     });
 
     // Check if any mutations are pending in main API
@@ -48,16 +56,7 @@ export const GlobalLoader = () => {
 
   return (
     <Box
-      position="absolute"
-      backgroundColor="rgba(255, 255, 255, 0.8)"
-      left={0}
-      right={0}
-      top={0}
-      bottom={0}
-      zIndex={9999}
-      justifyContent="center"
-      alignItems="center"
-    >
+      className="absolute bg-white/80 left-0 right-0 top-0 bottom-0 z-[9999] justify-center items-center">
       <ActivityIndicator size="large" />
     </Box>
   );

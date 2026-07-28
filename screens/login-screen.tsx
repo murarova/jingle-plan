@@ -1,23 +1,17 @@
+import { VStack } from "@/components/ui/vstack";
+import { Text } from "@/components/ui/text";
+import { Pressable } from "@/components/ui/pressable";
+import { Input, InputField, InputSlot, InputIcon } from "@/components/ui/input";
+import { Heading } from "@/components/ui/heading";
+import { ButtonText, Button } from "@/components/ui/button";
+import { Box } from "@/components/ui/box";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState, useCallback } from "react";
-import {
-  Box,
-  ButtonText,
-  Heading,
-  Input,
-  InputField,
-  Pressable,
-  SafeAreaView,
-  Text,
-  VStack,
-  Button,
-  InputSlot,
-} from "@gluestack-ui/themed";
+import { SafeAreaView } from "../components/common/safe-area-view";
 import { Alert, Keyboard, Switch } from "react-native";
 import { SCREENS, EMAIL_REGEX } from "../constants/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
-import { InputIcon } from "@gluestack-ui/themed";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import {
   useSignInUserMutation,
@@ -158,31 +152,29 @@ export const LoginScreen = () => {
   }, [email, emailError, sendPasswordReset, t]);
 
   return (
-    <Pressable flex={1} onPress={Keyboard.dismiss}>
+    <Pressable onPress={Keyboard.dismiss} className="flex-1">
       <KeyboardAwareScrollView
         enableResetScrollToCoords={false}
         keyboardShouldPersistTaps="handled"
         enableOnAndroid={true}
         enableAutomaticScroll={true}
       >
-        <SafeAreaView>
-          <Box p={10} pt={30} row-direction="column" justifyContent="center">
-            <Box pb={10}>
+        <SafeAreaView className="flex-1">
+          <Box className="flex-col p-[10px] pt-[30px] justify-center">
+            <Box className="pb-[10px]">
               <Heading>{t("screens.loginScreen.title")}</Heading>
             </Box>
-            <Box flexDirection="column" alignItems="flex-start" mt={20} mb={30}>
-              <Text mr={10}>{t("screens.loginScreen.noAccount")}</Text>
+            <Box className="flex-col items-start mt-[20px] mb-[30px]">
+              <Text className="mr-[10px]">{t("screens.loginScreen.noAccount")}</Text>
               <Button
-                size="md"
                 variant="link"
-                action="primary"
                 onPress={goToRegistration}
               >
                 <ButtonText>{t("screens.loginScreen.signUpButton")}</ButtonText>
               </Button>
             </Box>
             <Box>
-              <VStack space="sm" mb={30}>
+              <VStack space="sm" className="mb-[30px]">
                 <Text>{t("screens.loginScreen.email")}</Text>
                 <Input>
                   <InputField
@@ -196,12 +188,12 @@ export const LoginScreen = () => {
                   />
                 </Input>
                 {emailError ? (
-                  <Text size="sm" color="$red500">
+                  <Text size="sm" className="text-red-500">
                     {emailError}
                   </Text>
                 ) : null}
               </VStack>
-              <VStack space="sm" mb={20}>
+              <VStack space="sm" className="mb-[20px]">
                 <Text>{t("screens.loginScreen.password")}</Text>
                 <Input>
                   <InputField
@@ -210,21 +202,16 @@ export const LoginScreen = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder={t("screens.loginScreen.passwordPlaceholder")}
                   />
-                  <InputSlot pr="$3" onPress={handleState}>
+                  <InputSlot onPress={handleState} className="pr-3">
                     <InputIcon
                       as={showPassword ? EyeIcon : EyeOffIcon}
-                      color="$darkBlue500"
+                      className="text-darkBlue-500"
                     />
                   </InputSlot>
                 </Input>
               </VStack>
             </Box>
-            <Box
-              flexDirection="row"
-              alignItems="center"
-              justifyContent="space-between"
-              mb={20}
-            >
+            <Box className="flex-row items-center justify-between mb-[20px]">
               <Text>{t("screens.loginScreen.rememberMe")}</Text>
               <Switch
                 testID="remember-me-switch"
@@ -234,22 +221,18 @@ export const LoginScreen = () => {
             </Box>
             <Button
               variant="link"
-              alignSelf="flex-end"
-              mb={20}
               onPress={handlePasswordReset}
               isDisabled={isResetLoading}
-            >
-              <ButtonText color="$black">
+              className="self-end mb-[20px]">
+              <ButtonText className="text-black">
                 {t("screens.loginScreen.forgotPassword")}
               </ButtonText>
             </Button>
             <Button
-              mb={30}
-              size="md"
-              variant="solid"
-              action="primary"
+              variant="default"
               isDisabled={!email || !password || !!emailError}
               onPress={goToMainFlow}
+              className="mb-[30px]"
             >
               <ButtonText>{t("screens.loginScreen.loginButton")}</ButtonText>
             </Button>

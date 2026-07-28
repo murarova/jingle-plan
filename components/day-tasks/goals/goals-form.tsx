@@ -1,5 +1,7 @@
+import { HStack } from "@/components/ui/hstack";
+import { VStack } from "@/components/ui/vstack";
+import { Button, ButtonText } from "@/components/ui/button";
 import { memo, useCallback } from "react";
-import { Button, ButtonText, VStack, HStack } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { AutoGrowingTextarea } from "../../common";
 
@@ -28,28 +30,21 @@ export const GoalsForm = memo(
     }, [text, onSubmit]);
 
     return (
-      <VStack space="md" width="100%">
+      <VStack space="md" className="w-full">
         <AutoGrowingTextarea
           value={text}
           onChangeText={onTextChange}
           placeholder={placeholderText}
           onSubmitEditing={handleSubmit}
         />
-        <HStack space="sm" mt="$2">
-          <Button
-            flex={1}
-            variant="outline"
-            onPress={onCancel}
-            borderRadius="$lg"
-          >
+        <HStack space="sm" className="mt-2">
+          <Button variant="outline" onPress={onCancel} className="flex-1 rounded-lg">
             <ButtonText>{t("common.cancel")}</ButtonText>
           </Button>
           <Button
-            flex={1}
             onPress={handleSubmit}
-            borderRadius="$lg"
             accessibilityLabel="Save goals"
-          >
+            className="flex-1 rounded-lg">
             <ButtonText>{submitButtonText}</ButtonText>
           </Button>
         </HStack>

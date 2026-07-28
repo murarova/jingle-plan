@@ -1,5 +1,6 @@
+import { Box } from "@/components/ui/box";
+import { AccordionContent } from "@/components/ui/accordion";
 import { memo } from "react";
-import { AccordionContent, Box } from "@gluestack-ui/themed";
 import { PlansList } from "../components/plans-list";
 import { PlansViewOptions } from "../../../constants/constants";
 import { CompletePlanProps } from "../context-view/types";

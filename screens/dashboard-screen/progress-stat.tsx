@@ -1,6 +1,6 @@
+import { Text } from "@/components/ui/text";
+import { VStack } from "@/components/ui/vstack";
 import { memo } from "react";
-import { VStack, Text } from "@gluestack-ui/themed";
-import { config } from "../../config/gluestack-ui.config";
 
 interface ProgressStatProps {
   value: number;
@@ -8,11 +8,11 @@ interface ProgressStatProps {
 }
 
 export const ProgressStat = memo(({ value, label }: ProgressStatProps) => (
-  <VStack justifyContent="center" alignItems="center">
-    <Text size="xl" color={config.tokens.colors.warmGray900} fontWeight="bold">
+  <VStack className="justify-center items-center">
+    <Text size="xl" className="text-warmGray-900 font-bold">
       {value}
     </Text>
-    <Text color={config.tokens.colors.warmGray400}>{label}</Text>
+    <Text className="text-warmGray-400">{label}</Text>
   </VStack>
 ));
 

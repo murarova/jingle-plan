@@ -1,6 +1,6 @@
+import { Box } from "@/components/ui/box";
 import { useLayoutEffect, useState, useEffect, memo, useCallback } from "react";
 import { TasksList } from "../components/tasks-list";
-import { Box, SafeAreaView } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import { CompletedTaskModal } from "../components/modals/completed-task-modal";
@@ -39,17 +39,17 @@ const DayOverviewScreen: React.FC<Props> = memo(({ route, navigation }) => {
 
   if (error) {
     return (
-      <SafeAreaView flex={1}>
-        <Box flex={1}>
+      <Box className="flex-1">
+        <Box className="flex-1">
           <EmptyState message={t("common.error")} onRetry={handleRetry} />
         </Box>
-      </SafeAreaView>
+      </Box>
     );
   }
 
   return (
-    <SafeAreaView flex={1}>
-      <Box p="$2" flex={1}>
+    <Box className="flex-1">
+      <Box className="p-2 flex-1">
         {dayTasks ? (
           <>
             <ProgressBar total={total} t={t} />
@@ -62,7 +62,7 @@ const DayOverviewScreen: React.FC<Props> = memo(({ route, navigation }) => {
           <CompletedTaskModal setShowModal={setShowCompletedModal} />
         )}
       </Box>
-    </SafeAreaView>
+    </Box>
   );
 });
 

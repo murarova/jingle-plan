@@ -1,4 +1,5 @@
-import { Box, Divider } from "@gluestack-ui/themed";
+import { Divider } from "@/components/ui/divider";
+import { Box } from "@/components/ui/box";
 import { memo } from "react";
 import { TaskOutputType } from "../../../constants/constants";
 import { MoodTaskData } from "../../../types/types";

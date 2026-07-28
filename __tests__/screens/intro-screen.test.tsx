@@ -1,5 +1,5 @@
 import React from "react";
-import { screen } from "@testing-library/react-native";
+import { fireEvent, screen } from "@testing-library/react-native";
 import { IntroScreen } from "../../screens/intro-screen";
 import { renderWithProviders } from "../utils/render";
 
@@ -40,15 +40,23 @@ jest.mock("../../assets/svg", () => ({
   SkiingSantaSvg: () => null,
 }));
 
+const layoutCarousel = () => {
+  fireEvent(screen.getByTestId("intro-carousel-layout"), "layout", {
+    nativeEvent: { layout: { width: 300, height: 400, x: 0, y: 0 } },
+  });
+};
+
 describe("IntroScreen", () => {
   it("renders carousel slides", () => {
     renderWithProviders(<IntroScreen />);
+    layoutCarousel();
     expect(screen.getByTestId("intro-carousel")).toBeTruthy();
     expect(screen.getByTestId("intro-pagination")).toBeTruthy();
   });
 
   it("renders login and signup buttons", () => {
     renderWithProviders(<IntroScreen />);
+    layoutCarousel();
     expect(screen.getByText("Створити акаунт")).toBeTruthy();
     expect(screen.getByText("Увійти")).toBeTruthy();
   });

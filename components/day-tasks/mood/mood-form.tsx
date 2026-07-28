@@ -1,4 +1,6 @@
-import { Box, Button, ButtonText, VStack } from "@gluestack-ui/themed";
+import { VStack } from "@/components/ui/vstack";
+import { Button, ButtonText } from "@/components/ui/button";
+import { Box } from "@/components/ui/box";
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
 import { TaskOutputType } from "../../../constants/constants";
@@ -39,7 +41,7 @@ export const MoodForm = memo(
       taskOutputType === TaskOutputType.TextPhoto;
 
     return (
-      <VStack space="md" width="100%">
+      <VStack space="md" className="w-full">
         {showText && (
           <AutoGrowingTextarea
             value={text}
@@ -48,7 +50,6 @@ export const MoodForm = memo(
             style={{ marginBottom: 16 }}
           />
         )}
-
         {showImage && (
           <ImagePicker
             setIsImageLoading={setImageLoading}
@@ -58,9 +59,8 @@ export const MoodForm = memo(
             image={image}
           />
         )}
-
         {isEditable && (
-          <Button onPress={onSubmit} mt="$2" borderRadius="$lg">
+          <Button onPress={onSubmit} className="mt-2 rounded-lg">
             <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
           </Button>
         )}

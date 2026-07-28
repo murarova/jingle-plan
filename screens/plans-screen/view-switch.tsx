@@ -1,5 +1,5 @@
+import { Box } from "@/components/ui/box";
 import { useMemo, memo } from "react";
-import { Box } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import SwitchSelector from "react-native-switch-selector";
 import { PlansViewOptions } from "../../constants/constants";
@@ -27,7 +27,7 @@ export const ViewSwitch = memo(({ onViewChange }: ViewSwitchProps) => {
   );
 
   return (
-    <Box mt="$4" mx="$2">
+    <Box className="mt-4 mx-2">
       <SwitchSelector
         initial={0}
         onPress={(value: PlansViewOptions) => {

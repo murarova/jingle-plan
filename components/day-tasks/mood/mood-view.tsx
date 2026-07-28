@@ -1,8 +1,10 @@
-import { Box, Button, Divider, Text } from "@gluestack-ui/themed";
+import { ImageBackground } from "@/components/ui/image-background";
+import { Text } from "@/components/ui/text";
+import { Divider } from "@/components/ui/divider";
+import { Button, ButtonText } from "@/components/ui/button";
+import { Box } from "@/components/ui/box";
 import { memo } from "react";
 import { ActionButtons, AnimatedView, Loader } from "../../common";
-import { ImageBackground } from "@gluestack-ui/themed";
-import { ButtonText } from "@gluestack-ui/themed";
 
 interface MoodViewProps {
   text?: string;
@@ -25,31 +27,23 @@ export const MoodView = memo(
     <Box>
       {text && (
         <>
-          <Divider mb="$4" />
-          <Box mb="$2">
+          <Divider className="mb-4" />
+          <Box className="mb-2">
             <Text>{text}</Text>
           </Box>
         </>
       )}
 
       {image && (
-        <Box flex={1}>
+        <Box className="flex-1">
           {isImageLoading && (
             <Box
-              position="absolute"
-              backgroundColor="$blueGray100"
-              opacity="$60"
-              top="$0"
-              bottom="$0"
-              left="$0"
-              right="$0"
-              zIndex={2}
-            >
+              className="absolute bg-blueGray-100 opacity-60 top-0 bottom-0 left-0 right-0 z-2">
               <Loader size="large" />
             </Box>
           )}
           <AnimatedView style={{ zIndex: 1 }} show={!isImageLoading}>
-            <Box height={300} width="100%" flex={1}>
+              <Box className="h-[300px] w-full">
               <ImageBackground
                 style={{ flex: 1, justifyContent: "center" }}
                 src={image?.uri}

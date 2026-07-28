@@ -1,11 +1,8 @@
+import { Button, ButtonText } from "@/components/ui/button";
+import { VStack } from "@/components/ui/vstack";
+import { Center } from "@/components/ui/center";
+import { Text } from "@/components/ui/text";
 import { memo } from "react";
-import {
-  Text,
-  Center,
-  VStack,
-  Button,
-  ButtonText,
-} from "@gluestack-ui/themed";
 
 interface EmptyStateProps {
   message: string;
@@ -13,9 +10,9 @@ interface EmptyStateProps {
 }
 
 export const EmptyState = memo(({ message, onRetry }: EmptyStateProps) => (
-  <Center flex={1}>
-    <VStack space="md" alignItems="center">
-      <Text fontSize="$xl">{message}</Text>
+  <Center className="flex-1">
+    <VStack space="md" className="items-center">
+      <Text className="text-xl">{message}</Text>
       {onRetry && (
         <Button onPress={onRetry}>
           <ButtonText>Retry</ButtonText>

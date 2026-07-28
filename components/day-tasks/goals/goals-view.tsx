@@ -1,5 +1,6 @@
+import { Text } from "@/components/ui/text";
+import { Box } from "@/components/ui/box";
 import { memo } from "react";
-import { Box, Text } from "@gluestack-ui/themed";
 import { ActionButtons } from "../../common";
 
 interface GoalsViewProps {
@@ -12,7 +13,7 @@ interface GoalsViewProps {
 export const GoalsView = memo(
   ({ text, emptyText, onEdit, onDelete }: GoalsViewProps) => (
     <Box>
-      <Box mb="$2">
+      <Box className="mb-2">
         <Text>{text || emptyText}</Text>
       </Box>
       <ActionButtons onEdit={onEdit} onDelete={onDelete} />

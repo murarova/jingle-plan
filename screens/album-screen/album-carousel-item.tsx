@@ -1,6 +1,9 @@
+import { Image } from "@/components/ui/image";
+import { ScrollView } from "@/components/ui/scroll-view";
+import { Text } from "@/components/ui/text";
+import { Box } from "@/components/ui/box";
 import { memo } from "react";
 import { ImageStyle } from "react-native";
-import { Box, Text, ScrollView, Image } from "@gluestack-ui/themed";
 import { MonthlyData } from "../../types/types";
 
 interface AlbumCarouselItemProps {
@@ -18,32 +21,32 @@ export const AlbumCarouselItem = memo(({ item }: AlbumCarouselItemProps) => {
   const hasText = Boolean(item.text);
 
   return (
-    <Box flex={1} width="100%" height="100%" flexDirection="column">
+    <Box className="flex-1 w-full h-full flex-col">
       <Box
-        height={hasText ? "70%" : "100%"}
-        backgroundColor="$white"
-        p={10}
-        borderTopRightRadius={8}
-        borderTopLeftRadius={8}
-        borderBottomRightRadius={hasText ? 0 : 8}
-        borderBottomLeftRadius={hasText ? 0 : 8}
-        overflow="hidden"
+        className={`${hasText ? "h-[70%]" : "flex-1"} bg-white p-[10px] overflow-hidden`}
+        style={{
+          borderTopRightRadius: 8,
+          borderTopLeftRadius: 8,
+          borderBottomRightRadius: hasText ? 0 : 8,
+          borderBottomLeftRadius: hasText ? 0 : 8,
+        }}
       >
         <Image
           source={{ uri: item?.image?.uri }}
+          size="full"
           style={imageStyle}
           alt={`Photo for ${item.month}`}
         />
       </Box>
       {hasText && (
         <Box
-          height="30%"
-          backgroundColor="$white"
-          borderBottomRightRadius={8}
-          borderBottomLeftRadius={8}
-          overflow="hidden"
+          className="h-[30%] bg-white overflow-hidden"
+          style={{
+            borderBottomRightRadius: 8,
+            borderBottomLeftRadius: 8,
+          }}
         >
-          <ScrollView flex={1} p={10} showsVerticalScrollIndicator={false}>
+          <ScrollView showsVerticalScrollIndicator={false} className="flex-1 p-[10px]">
             <Text>{item.text}</Text>
           </ScrollView>
         </Box>

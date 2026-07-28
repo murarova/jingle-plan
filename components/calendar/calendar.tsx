@@ -1,7 +1,7 @@
+import { Box } from "@/components/ui/box";
 import moment from "moment";
 import { Calendar as NativeCalendar, DateData } from "react-native-calendars";
 import { memo, useCallback, useMemo } from "react";
-import { Box } from "@gluestack-ui/themed";
 import { calculateTotalProgress } from "../../utils/utils";
 import { useAppSelector } from "../../store/withTypes";
 import { selectSelectedYear } from "../../store/appReducer";
@@ -105,7 +105,7 @@ export const Calendar = memo(
     );
 
     return (
-      <Box position="relative">
+      <Box className="relative">
         <NativeCalendar
           initialDate={minDate}
           firstDay={1}

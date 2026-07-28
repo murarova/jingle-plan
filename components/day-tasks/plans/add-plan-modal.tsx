@@ -1,15 +1,7 @@
-import { useState } from "react";
+import { FormControlErrorText } from "@/components/ui/form-control";
+import { Textarea, TextareaInput } from "@/components/ui/textarea";
+
 import {
-  ModalBody,
-  ModalFooter,
-  Text,
-  VStack,
-  ButtonText,
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalHeader,
-  Button,
   Select,
   SelectTrigger,
   SelectInput,
@@ -19,10 +11,13 @@ import {
   SelectDragIndicator,
   SelectDragIndicatorWrapper,
   SelectItem,
-  Textarea,
-  TextareaInput,
-  FormControlErrorText,
-} from "@gluestack-ui/themed";
+} from "@/components/ui/select";
+
+import { ButtonText, Button } from "@/components/ui/button";
+import { VStack } from "@/components/ui/vstack";
+import { Text } from "@/components/ui/text";
+import { ModalBody, ModalFooter, Modal, ModalBackdrop, ModalContent, ModalHeader } from "@/components/ui/modal";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
 import { PlanData, PlanScreenData, TaskContext } from "../../../types/types";
@@ -92,8 +87,8 @@ export function AddPlanModal({
   return (
     <Modal avoidKeyboard isOpen onClose={closeModal}>
       <ModalBackdrop />
-      <ModalContent width="90%">
-        <ModalHeader mb={10}>
+      <ModalContent className="w-[90%]">
+        <ModalHeader className="mb-[10px]">
           <Text>
             {isEditMode
               ? t("screens.plansModal.editPlanTitle")
@@ -102,7 +97,7 @@ export function AddPlanModal({
         </ModalHeader>
         <ModalBody>
           <VStack space="md">
-            <Textarea w="100%" size="md">
+            <Textarea size="md" className="w-full">
               <TextareaInput
                 onChangeText={setText}
                 defaultValue={text}
@@ -117,7 +112,7 @@ export function AddPlanModal({
                     selectedValue={context ? t(`context.${context}`) : ""}
                     onValueChange={handleContextChange}
                   >
-                    <SelectTrigger bg="$white">
+                    <SelectTrigger className="bg-white">
                       <SelectInput
                         placeholder={t("screens.plansModal.selectContext")}
                       />
@@ -150,7 +145,7 @@ export function AddPlanModal({
                   }
                   onValueChange={setSelectedMonth}
                 >
-                  <SelectTrigger bg="$white">
+                  <SelectTrigger className="bg-white">
                     <SelectInput
                       placeholder={t("screens.plansModal.selectMonth")}
                     />
@@ -161,7 +156,7 @@ export function AddPlanModal({
                       <SelectDragIndicatorWrapper>
                         <SelectDragIndicator />
                       </SelectDragIndicatorWrapper>
-                      <VStack w="$full" pb="$16">
+                      <VStack className="w-full pb-16">
                         {allMonths.map((month) => (
                           <SelectItem
                             key={month}
@@ -183,10 +178,10 @@ export function AddPlanModal({
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button variant="outline" size="sm" mr="$3" onPress={closeModal}>
+          <Button variant="outline" size="sm" onPress={closeModal} className="mr-3">
             <ButtonText>{t("common.cancel")}</ButtonText>
           </Button>
-          <Button variant="solid" action="primary" onPress={handleSubmit}>
+          <Button variant="default" onPress={handleSubmit}>
             <ButtonText>
               {isEditMode ? t("common.save") : t("common.add")}
             </ButtonText>

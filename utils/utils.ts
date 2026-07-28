@@ -3,13 +3,25 @@ interface TaskProgress {
   moodTaskGrade: number;
 }
 
+export function getProgressBackgroundColor(value: number): string {
+  if (value < 30) {
+    return "#FF656C";
+  }
+
+  if (value < 70) {
+    return "#FAC515";
+  }
+
+  return "#4bb4ad";
+}
+
 export function getProgressColorByValue(value: number): string {
   if (value < 30) {
-    return "$progressRed";
+    return "bg-progressRed";
   } else if (value >= 30 && value < 70) {
-    return "$progressYellow";
+    return "bg-progressYellow";
   } else {
-    return "$green400";
+    return "bg-green-400";
   }
 }
 

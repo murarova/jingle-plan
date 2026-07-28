@@ -5,6 +5,7 @@ export const Decorating = (props) => (
     xmlns="http://www.w3.org/2000/svg"
     width={289}
     height={288}
+    viewBox="0 0 289 288"
     fill="none"
     {...props}
   >

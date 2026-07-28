@@ -1,33 +1,26 @@
-import {
-  Box,
-  Heading,
-  Progress,
-  ProgressFilledTrack,
-  Text,
-  ChevronRightIcon,
-  Button,
-  ButtonIcon,
-  HStack,
-  VStack,
-  ButtonText,
-  Pressable,
-} from "@gluestack-ui/themed";
-import { config } from "../../config/gluestack-ui.config";
+import { Pressable } from "@/components/ui/pressable";
+import { VStack } from "@/components/ui/vstack";
+import { HStack } from "@/components/ui/hstack";
+import { Text } from "@/components/ui/text";
+import { Progress, ProgressFilledTrack } from "@/components/ui/progress";
+import { Heading } from "@/components/ui/heading";
+import { Box } from "@/components/ui/box";
+import { Icon, ChevronRightIcon } from "@/components/ui/icon";
 import { useTranslation } from "react-i18next";
-import { getProgressColorByValue, getPluralForm } from "../../utils/utils";
+import {
+  getProgressBackgroundColor,
+  getProgressColorByValue,
+} from "../../utils/utils";
 import { useNavigation } from "@react-navigation/native";
 import { SCREENS } from "../../constants/constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TaskContext } from "../../types/types";
 import { RootStackParamList } from "../../App";
-import { Icon } from "@gluestack-ui/themed/build/components/Badge/styled-components";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 
 export function DashboardContextSection({
   percentage,
-  totalTasks,
-  doneTasks,
   context,
 }: {
   percentage: number;
@@ -42,27 +35,27 @@ export function DashboardContextSection({
     <Pressable
       onPress={() => nav.navigate(SCREENS.HOME, { screen: SCREENS.PLANS })}
     >
-      <Box
-        p="$2"
-        m="$2"
-        backgroundColor={config.tokens.colors.warmGray100}
-        borderRadius="$xl"
-      >
-        <Heading size="sm" mb="$4">
+      <Box className="bg-warmGray-100 p-2 m-2 rounded-xl">
+        <Heading size="sm" className="mb-4">
           {t(`context.${context}`)}
         </Heading>
 
         <VStack space="sm">
           <Box>
-            <Progress value={percentage} size="sm">
-              <ProgressFilledTrack bg={getProgressColorByValue(percentage)} />
+            <Progress value={percentage} className="h-2">
+              <ProgressFilledTrack
+                className={getProgressColorByValue(percentage)}
+                style={{
+                  backgroundColor: getProgressBackgroundColor(percentage),
+                }}
+              />
             </Progress>
-            <HStack justifyContent="space-between" alignItems="center" mt="$1">
-              <Text size="sm" fontWeight="600">
+            <HStack className="justify-between items-center mt-5">
+              <Text size="sm" className="font-[600]">
                 {percentage}%
               </Text>
+              <Icon as={ChevronRightIcon} className="self-end" />
             </HStack>
-            <Icon alignSelf="flex-end" as={ChevronRightIcon} />
           </Box>
         </VStack>
       </Box>

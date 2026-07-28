@@ -1,5 +1,6 @@
+import { Text } from "@/components/ui/text";
+import { Box } from "@/components/ui/box";
 import { memo } from "react";
-import { Box, Text } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { ActionButtons } from "../../components/common";
 import { TaskContext } from "../../types/types";
@@ -17,7 +18,7 @@ export const ContentView = memo(
 
     return (
       <Box>
-        <Box mb="$2">
+        <Box className="mb-2">
           <Text>{text || t("common.empty")}</Text>
         </Box>
         <ActionButtons onEdit={onEdit} onDelete={onDelete} />

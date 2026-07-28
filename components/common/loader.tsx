@@ -1,5 +1,5 @@
+import { Box } from "@/components/ui/box";
 import { ActivityIndicator } from "react-native";
-import { Box } from "@gluestack-ui/themed";
 
 interface LoaderProps {
   size?: number | "small" | "large";
@@ -8,7 +8,7 @@ interface LoaderProps {
 
 export const Loader = ({ size, absolute }: LoaderProps) => {
   const BaseLoader = (
-    <Box flex={1} justifyContent="center" alignItems="center">
+    <Box className="flex-1 justify-center items-center">
       <ActivityIndicator size={size} />
     </Box>
   );
@@ -16,14 +16,7 @@ export const Loader = ({ size, absolute }: LoaderProps) => {
   if (absolute) {
     return (
       <Box
-        position="absolute"
-        backgroundColor="rgba(255, 255, 255, 0.5)"
-        left={0}
-        right={0}
-        top={0}
-        bottom={0}
-        zIndex={1}
-      >
+        className="absolute bg-white/50 left-0 right-0 top-0 bottom-0 z-[1]">
         {BaseLoader}
       </Box>
     );

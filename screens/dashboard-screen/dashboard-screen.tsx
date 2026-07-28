@@ -1,7 +1,8 @@
-import { memo, useRef } from "react";
+import { ScrollView } from "@/components/ui/scroll-view";
+import { Box } from "@/components/ui/box";
+import { memo } from "react";
 import { useDashboardData } from "../../hooks/useDashboardData";
 import { EmptyScreen } from "../../components/empty-screen";
-import { SafeAreaView, ScrollView, Box } from "@gluestack-ui/themed";
 import { DashboardStats } from "./dashboard-stats";
 import { ContextSections } from "./context-sections";
 
@@ -13,14 +14,15 @@ export const DashboardScreen = memo(() => {
   }
 
   return (
-    <SafeAreaView flex={1}>
-      <Box p="$2">
+    <Box className="flex-1">
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1, padding: 8 }}
+      >
         {totalData && <DashboardStats totalData={totalData} />}
-        <ScrollView>
-          {contextData && <ContextSections contextData={contextData} />}
-        </ScrollView>
-      </Box>
-    </SafeAreaView>
+        {contextData && <ContextSections contextData={contextData} />}
+      </ScrollView>
+    </Box>
   );
 });
 

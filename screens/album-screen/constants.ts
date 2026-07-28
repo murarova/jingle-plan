@@ -1,1 +1,1 @@
-export const SCREEN_PADDING = 30;
+export const SCREEN_PADDING = 10;

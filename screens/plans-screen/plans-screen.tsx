@@ -1,7 +1,8 @@
+import { Fab, FabIcon } from "@/components/ui/fab";
+import { Box } from "@/components/ui/box";
 import { useState } from "react";
 import { EmptyScreen } from "../../components/empty-screen";
 import { usePlansScreen } from "../../components/plans-view/hooks/usePlansScreen";
-import { ButtonIcon, Fab, SafeAreaView } from "@gluestack-ui/themed";
 import * as Haptics from "expo-haptics";
 import { PlansViewOptions } from "../../constants/constants";
 import { GoalsData, PlanContextData } from "../../types/types";
@@ -34,7 +35,7 @@ export function PlansScreen() {
   }
 
   return (
-    <SafeAreaView flex={1}>
+    <Box className="flex-1">
       {plans && <ViewSwitch onViewChange={setView} />}
       {globalGoal && selectedYear && (
         <GlobalGoal text={globalGoal.text} year={selectedYear} />
@@ -50,7 +51,7 @@ export function PlansScreen() {
           plansProps.setShowModal(true);
         }}
       >
-        <ButtonIcon as={Plus} />
+        <FabIcon as={Plus} />
       </Fab>
       {plansProps.showModal && (
         <AddPlanModal
@@ -71,6 +72,6 @@ export function PlansScreen() {
         onMonthSelect={plansProps.handleMonthSelect}
         month={plansProps.updatedData?.month}
       />
-    </SafeAreaView>
+    </Box>
   );
 }

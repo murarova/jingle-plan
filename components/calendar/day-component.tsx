@@ -1,17 +1,11 @@
+import { Text } from "@/components/ui/text";
+import { Box } from "@/components/ui/box";
+import { Pressable } from "react-native";
 import * as Haptics from "expo-haptics";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  Pressable,
-  Box,
-  Text,
-  Popover,
-  PopoverContent,
-  PopoverArrow,
-  PopoverBody,
-} from "@gluestack-ui/themed";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
-import { config } from "../../config/gluestack-ui.config";
+import { colors } from "../../constants/colors";
 import CircularProgress from "react-native-circular-progress-indicator";
 import { DateData } from "react-native-calendars";
 import { LockKeyhole } from "lucide-react-native";
@@ -92,102 +86,67 @@ export const DayComponent = memo(
       []
     );
 
-    const popoverMessage = unlockMessage ?? defaultLockedMessage;
+    const tooltipMessage = unlockMessage ?? defaultLockedMessage;
 
     return (
-      <Popover
-        isOpen={disabled && isTooltipOpen}
-        onClose={() => setIsTooltipOpen(false)}
-        placement="top"
-        trigger={(triggerProps) => (
-          <Pressable {...triggerProps} onPress={handlePress}>
-            {({ pressed }) => (
+      <Pressable onPress={handlePress}>
+        {({ pressed }) => (
+          <Box className="items-center justify-center">
+            {disabled ? (
+              <Box className="bg-warmGray-200 w-[50px] h-[50px] rounded-[25px] items-center justify-center">
+                <LockKeyhole
+                  size={24}
+                  color={colors.warmGray400}
+                  strokeWidth={2}
+                />
+              </Box>
+            ) : isLoading ? (
+              <Box className="w-[50px] h-[50px] items-center justify-center rounded-[25px] bg-transparent">
+                <Text
+                  className={`${today ? "font-bold" : "font-semibold"} text-[16px] text-warmGray-900`}
+                >
+                  {date?.day?.toString() || ""}
+                </Text>
+              </Box>
+            ) : (
+              <CircularProgress
+                value={progress}
+                activeStrokeColor={
+                  progress === 0 ? "transparent" : colors.green400
+                }
+                inActiveStrokeColor={colors.warmGray400}
+                inActiveStrokeOpacity={0.2}
+                circleBackgroundColor={
+                  pressed ? colors.backgroundLight100 : "transparent"
+                }
+                showProgressValue={false}
+                title={date?.day?.toString() || ""}
+                titleStyle={{
+                  fontSize: 16,
+                  fontWeight: today ? 700 : 500,
+                  color: "#292524",
+                }}
+                radius={25}
+                activeStrokeWidth={5}
+                inActiveStrokeWidth={5}
+              />
+            )}
+            {today && (
+              <Box className="bg-primary-500 absolute -top-3 w-[6px] h-[6px] rounded-[3px]" />
+            )}
+            {disabled && isTooltipOpen && (
               <Box
-                alignItems="center"
-                justifyContent="center"
-                position="relative"
+                className="absolute bg-warmGray-800 px-3 py-2 rounded-md z-50"
+                style={{ bottom: 56, width: 200, left: -75 }}
               >
-                {disabled ? (
-                  <Box
-                    width={50}
-                    height={50}
-                    borderRadius={25}
-                    backgroundColor={config.tokens.colors.warmGray200}
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <LockKeyhole
-                      size={24}
-                      color={config.tokens.colors.warmGray400}
-                      strokeWidth={2}
-                    />
-                  </Box>
-                ) : isLoading ? (
-                  <Box
-                    width={50}
-                    height={50}
-                    alignItems="center"
-                    justifyContent="center"
-                    borderRadius={25}
-                    backgroundColor="transparent"
-                  >
-                    <Text
-                      fontSize={16}
-                      fontWeight={today ? "$bold" : "$semibold"}
-                      color="$text900"
-                    >
-                      {date?.day?.toString() || ""}
-                    </Text>
-                  </Box>
-                ) : (
-                  <CircularProgress
-                    value={progress}
-                    activeStrokeColor={
-                      progress === 0
-                        ? "transparent"
-                        : config.tokens.colors.green400
-                    }
-                    inActiveStrokeColor={config.tokens.colors.warmGray400}
-                    inActiveStrokeOpacity={0.2}
-                    circleBackgroundColor={
-                      pressed
-                        ? config.tokens.colors.backgroundLight100
-                        : "transparent"
-                    }
-                    showProgressValue={false}
-                    title={date?.day?.toString() || ""}
-                    titleStyle={{
-                      fontSize: 16,
-                      fontWeight: today ? 700 : 500,
-                      color: "#292524",
-                    }}
-                    radius={25}
-                    activeStrokeWidth={5}
-                    inActiveStrokeWidth={5}
-                  />
-                )}
-                {today && (
-                  <Box
-                    position="absolute"
-                    top={-12}
-                    width={6}
-                    height={6}
-                    borderRadius={3}
-                    backgroundColor={config.tokens.colors.primary500}
-                  />
-                )}
+                <Text className="text-white text-xs text-center">
+                  {tooltipMessage}
+                </Text>
               </Box>
             )}
-          </Pressable>
+          </Box>
         )}
-      >
-        <PopoverContent pb="$3" maxWidth="$64">
-          <PopoverArrow />
-          <PopoverBody>
-            <Text fontSize="$sm">{popoverMessage}</Text>
-          </PopoverBody>
-        </PopoverContent>
-      </Popover>
+      </Pressable>
     );
   }
 );

@@ -68,9 +68,9 @@ export const AutoGrowingTextarea = memo(
 const styles = StyleSheet.create({
   textarea: {
     width: "100%",
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#D4D4D4",
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
