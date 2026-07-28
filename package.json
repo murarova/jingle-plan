@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "jingle-plan",
-  "version": "1.1.10",
+  "version": "1.1.11",
   "scripts": {
     "start": "expo start",
     "android": "NODE_ENV=development bash -c 'source $HOME/.nvm/nvm.sh && nvm use 20 && expo run:android'",
