@@ -20,8 +20,8 @@ export function YoutubePlayer({ videoId }: { videoId: string }) {
   }
 
   return (
-    <Box className="flex-1">
-      {true && (
+    <Box className="min-h-[250px]">
+      {isLoading && (
         <Box className="absolute top-0 bottom-0 left-0 right-0 z-1">
           <Loader size="large" />
         </Box>
