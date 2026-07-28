@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.13](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.1.12...jingle-plan-v1.1.13) (2026-07-28)
+
+
+### Refactoring
+
+* extract providers and navigation from App ([#45](https://github.com/murarova/jingle-plan/issues/45)) ([3b7fd43](https://github.com/murarova/jingle-plan/commit/3b7fd4349a38a93c5d190c4b89c24a8448858852))
+
 ## [1.1.12](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.1.11...jingle-plan-v1.1.12) (2026-07-28)
 
 
