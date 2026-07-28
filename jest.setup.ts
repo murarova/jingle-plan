@@ -23,6 +23,7 @@ jest.mock("@react-native-firebase/app", () => ({
 jest.mock("@react-native-firebase/auth", () => ({
   getAuth: jest.fn(() => ({ currentUser: null })),
   createUserWithEmailAndPassword: jest.fn(),
+  deleteUser: jest.fn(),
   signInWithEmailAndPassword: jest.fn(),
   signOut: jest.fn(),
   sendPasswordResetEmail: jest.fn(),
@@ -34,6 +35,7 @@ jest.mock("@react-native-firebase/database", () => ({
   ref: jest.fn(),
   remove: jest.fn(),
   set: jest.fn(),
+  update: jest.fn(),
 }));
 
 jest.mock("@react-native-firebase/messaging", () => ({

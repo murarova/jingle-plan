@@ -1,4 +1,9 @@
-import { getDatabase, ref } from "@react-native-firebase/database";
+import {
+  getDatabase,
+  ref,
+  remove,
+  update,
+} from "@react-native-firebase/database";
 import { getAuth } from "@react-native-firebase/auth";
 import {
   getMessaging,
@@ -20,7 +25,7 @@ export async function saveTokenToFirebase(token: string, platform: string) {
   if (!currentUser) return;
 
   try {
-    await fcmTokenRef(currentUser.uid).update({
+    await update(fcmTokenRef(currentUser.uid), {
       token,
       platform,
       updatedAt: new Date().toISOString(),
@@ -32,7 +37,7 @@ export async function saveTokenToFirebase(token: string, platform: string) {
 
 export async function removeTokenFromFirebase(uid: string) {
   try {
-    await fcmTokenRef(uid).remove();
+    await remove(fcmTokenRef(uid));
   } catch (error) {
     console.error("Failed to remove FCM token:", error);
   }
@@ -46,7 +51,7 @@ export async function updateFcmEligibility(eligibility: {
   if (!currentUser) return;
 
   try {
-    await fcmTokenRef(currentUser.uid).update({
+    await update(fcmTokenRef(currentUser.uid), {
       isSubscriber: eligibility.isSubscriber,
       isAdmin: eligibility.isAdmin,
       updatedAt: new Date().toISOString(),
