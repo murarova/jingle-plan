@@ -1,7 +1,7 @@
-import { Button, ButtonText } from "@/components/ui/button";
-import { Center } from "@/components/ui/center";
-import { Heading } from "@/components/ui/heading";
-import { Box } from "@/components/ui/box";
+import { Button, ButtonText } from "@/ui/button";
+import { Center } from "@/ui/center";
+import { Heading } from "@/ui/heading";
+import { Box } from "@/ui/box";
 import { SafeAreaView } from "../../components/common/safe-area-view";
 import { SnowAngel, Decorating, Dog, SkiingSantaSvg } from "../../assets/svg";
 import Carousel, { Pagination } from "react-native-reanimated-carousel";

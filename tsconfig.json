@@ -10,5 +10,5 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "nativewind-env.d.ts"],
-  "exclude": ["node_modules", "components/ui", "__tests__"]
+  "exclude": ["node_modules", "ui", "__tests__"]
 }

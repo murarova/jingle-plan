@@ -1,4 +1,4 @@
-import { Box } from "@/components/ui/box";
+import { Box } from "@/ui/box";
 import { useState, useCallback } from "react";
 import YoutubeIframe from "react-native-youtube-iframe";
 import { AnimatedView } from "./animated-view";

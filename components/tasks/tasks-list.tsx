@@ -1,9 +1,9 @@
-import { Text } from "@/components/ui/text";
-import { Box } from "@/components/ui/box";
-import { YoutubePlayer } from "./common";
+import { Text } from "@/ui/text";
+import { Box } from "@/ui/box";
+import { YoutubePlayer } from "../common";
 import { TaskItem } from "./task-item";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { DayTaskConfig } from "../types/types";
+import { DayTaskConfig } from "../../types/types";
 
 interface TaskListProps {
   videoText: string;

@@ -1,4 +1,4 @@
-import { Box } from "@/components/ui/box";
+import { Box } from "@/ui/box";
 import { useMemo, memo } from "react";
 import { useTranslation } from "react-i18next";
 import SwitchSelector from "react-native-switch-selector";

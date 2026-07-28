@@ -1,6 +1,6 @@
-import { ImageBackground } from "@/components/ui/image-background";
-import { Text } from "@/components/ui/text";
-import { Box } from "@/components/ui/box";
+import { ImageBackground } from "@/ui/image-background";
+import { Text } from "@/ui/text";
+import { Box } from "@/ui/box";
 import { memo } from "react";
 import { ActionButtons, AnimatedView, Loader } from "../../common";
 import { ImageData } from "../../../types/types";

@@ -1,6 +1,6 @@
-import { VStack } from "@/components/ui/vstack";
-import { Text } from "@/components/ui/text";
-import { Box } from "@/components/ui/box";
+import { VStack } from "@/ui/vstack";
+import { Text } from "@/ui/text";
+import { Box } from "@/ui/box";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { HappySlider } from "./happy-slider";

@@ -1,5 +1,5 @@
-import { Box } from "@/components/ui/box";
-import { AccordionContent } from "@/components/ui/accordion";
+import { Box } from "@/ui/box";
+import { AccordionContent } from "@/ui/accordion";
 import { memo } from "react";
 import { PlansList } from "../components/plans-list";
 import { PlanScreenData, TaskContext } from "../../../types/types";

@@ -6,7 +6,7 @@ import * as Haptics from "expo-haptics";
 import { SCREENS } from "../../constants/constants";
 import PeriodOverviewScreen from "../period-overview-screen";
 import DayOverviewScreen from "../day-overview-screen";
-import { AppMenu } from "../../components/app-menu";
+import { AppMenu } from "../../components/navigation/app-menu";
 import { SummaryScreen } from "../summary-screen";
 import { PlansScreen } from "../plans-screen";
 import Medal from "../../assets/svg/medal";
@@ -15,7 +15,7 @@ import Album from "../../assets/svg/album";
 import Dashboard from "../../assets/svg/dashboard";
 import { AlbumScreen } from "../album-screen";
 import { DashboardScreen } from "../dashboard-screen";
-import { YearSelector } from "../../components/year-selector";
+import { YearSelector } from "../../components/navigation/year-selector";
 import {
   NavigationState,
   StackActions,

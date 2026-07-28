@@ -36,10 +36,10 @@ jest.mock("../../screens/dashboard-screen", () => ({
     return <Text>DashboardMock</Text>;
   },
 }));
-jest.mock("../../components/year-selector", () => ({
+jest.mock("../../components/navigation/year-selector", () => ({
   YearSelector: () => null,
 }));
-jest.mock("../../components/app-menu", () => ({
+jest.mock("../../components/navigation/app-menu", () => ({
   AppMenu: () => null,
 }));
 jest.mock("../../services/api", () => ({

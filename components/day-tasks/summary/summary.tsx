@@ -1,4 +1,4 @@
-import { Box } from "@/components/ui/box";
+import { Box } from "@/ui/box";
 import { SummaryContextData } from "../../../types/types";
 import { useSummary } from "./hooks/useSummary";
 import { SummaryForm } from "./summary-form";

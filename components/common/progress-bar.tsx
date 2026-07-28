@@ -1,7 +1,7 @@
-import { HStack } from "@/components/ui/hstack";
-import { Progress, ProgressFilledTrack } from "@/components/ui/progress";
-import { Text } from "@/components/ui/text";
-import { Box } from "@/components/ui/box";
+import { HStack } from "@/ui/hstack";
+import { Progress, ProgressFilledTrack } from "@/ui/progress";
+import { Text } from "@/ui/text";
+import { Box } from "@/ui/box";
 import { memo } from "react";
 import { getProgressBackgroundColor, getProgressColorByValue } from "../../utils/utils";
 

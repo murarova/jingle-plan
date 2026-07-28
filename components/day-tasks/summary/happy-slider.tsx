@@ -1,14 +1,14 @@
-import { VStack } from "@/components/ui/vstack";
-import { HStack } from "@/components/ui/hstack";
-import { Box } from "@/components/ui/box";
-import { Text } from "@/components/ui/text";
+import { VStack } from "@/ui/vstack";
+import { HStack } from "@/ui/hstack";
+import { Box } from "@/ui/box";
+import { Text } from "@/ui/text";
 import {
   Slider,
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-} from "@/components/ui/slider";
-import { Center } from "@/components/ui/center";
+} from "@/ui/slider";
+import { Center } from "@/ui/center";
 import { useRating } from "../../../hooks/useRating";
 
 interface HappySliderProps {

@@ -1,6 +1,6 @@
-import { VStack } from "@/components/ui/vstack";
-import { Button, ButtonText } from "@/components/ui/button";
-import { Box } from "@/components/ui/box";
+import { VStack } from "@/ui/vstack";
+import { Button, ButtonText } from "@/ui/button";
+import { Box } from "@/ui/box";
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
 import { TaskOutputType } from "../../../constants/constants";

@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { ScrollView } from "@/components/ui/scroll-view";
-import { Box } from "@/components/ui/box";
+import { Button } from "@/ui/button";
+import { Text } from "@/ui/text";
+import { ScrollView } from "@/ui/scroll-view";
+import { Box } from "@/ui/box";
 import { useCallback, useState } from "react";
 import { RefreshControl } from "react-native";
 import { useNavigation } from "@react-navigation/native";

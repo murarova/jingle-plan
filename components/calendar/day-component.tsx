@@ -1,5 +1,5 @@
-import { Text } from "@/components/ui/text";
-import { Box } from "@/components/ui/box";
+import { Text } from "@/ui/text";
+import { Box } from "@/ui/box";
 import { Pressable } from "react-native";
 import * as Haptics from "expo-haptics";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";

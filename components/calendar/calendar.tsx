@@ -1,4 +1,4 @@
-import { Box } from "@/components/ui/box";
+import { Box } from "@/ui/box";
 import moment from "moment";
 import { Calendar as NativeCalendar, DateData } from "react-native-calendars";
 import { memo, useCallback, useMemo } from "react";

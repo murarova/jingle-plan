@@ -7,15 +7,15 @@ import {
   SelectDragIndicator,
   SelectDragIndicatorWrapper,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/ui/select";
 
-import { Text } from "@/components/ui/text";
-import { Box } from "@/components/ui/box";
+import { Text } from "@/ui/text";
+import { Box } from "@/ui/box";
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../store/withTypes";
-import { setSelectedYear, selectSelectedYear } from "../store/appReducer";
-import { YEARS } from "../constants/constants";
-import { useLazyGetUserDataQuery } from "../services/api";
+import { useAppDispatch, useAppSelector } from "../../store/withTypes";
+import { setSelectedYear, selectSelectedYear } from "../../store/appReducer";
+import { YEARS } from "../../constants/constants";
+import { useLazyGetUserDataQuery } from "../../services/api";
 import { ChevronDown } from "lucide-react-native";
 
 export const YearSelector = () => {

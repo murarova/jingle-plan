@@ -1,4 +1,4 @@
-import { ScrollView } from "@/components/ui/scroll-view";
+import { ScrollView } from "@/ui/scroll-view";
 
 import {
   Accordion,
@@ -6,12 +6,12 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/components/ui/accordion";
+} from "@/ui/accordion";
 
-import { Box } from "@/components/ui/box";
+import { Box } from "@/ui/box";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { EmptyScreen } from "../../components/empty-screen";
+import { EmptyScreen } from "../../components/common/empty-screen";
 import { TASK_CONTEXT } from "../../constants/constants";
 import { useRating } from "../../hooks/useRating";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";

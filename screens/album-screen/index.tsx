@@ -1,7 +1,7 @@
-import { Box } from "@/components/ui/box";
+import { Box } from "@/ui/box";
 import { memo, useCallback } from "react";
 import Carousel from "react-native-reanimated-carousel";
-import { EmptyScreen } from "../../components/empty-screen";
+import { EmptyScreen } from "../../components/common/empty-screen";
 import { MonthlyData } from "../../types/types";
 import { AlbumCarouselItem } from "./album-carousel-item";
 import { AlbumNavigationControls } from "./album-navigation-controls";

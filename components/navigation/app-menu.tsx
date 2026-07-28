@@ -1,22 +1,22 @@
-import { Text } from "@/components/ui/text";
-import { MenuIcon, Icon } from "@/components/ui/icon";
-import { Box } from "@/components/ui/box";
-import { Button, ButtonIcon } from "@/components/ui/button";
-import { Menu, MenuItem } from "@/components/ui/menu";
+import { Text } from "@/ui/text";
+import { MenuIcon, Icon } from "@/ui/icon";
+import { Box } from "@/ui/box";
+import { Button, ButtonIcon } from "@/ui/button";
+import { Menu, MenuItem } from "@/ui/menu";
 import { LogOut, Trash2, Crown } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { SCREENS } from "../constants/constants";
+import { SCREENS } from "../../constants/constants";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Alert } from "react-native";
-import { useAppDispatch, useAppSelector } from "../store/withTypes";
-import { clearUser } from "../store/authReducer";
+import { useAppDispatch, useAppSelector } from "../../store/withTypes";
+import { clearUser } from "../../store/authReducer";
 import {
   useSignOutMutation,
   useDeleteCurrentUserMutation,
-} from "../services/auth-api-rtk";
-import { useGetUserProfileQuery } from "../services/api";
-import { RootStackParamList } from "../App";
-import { resolveErrorMessage } from "../utils/utils";
+} from "../../services/auth-api-rtk";
+import { useGetUserProfileQuery } from "../../services/api";
+import { RootStackParamList } from "../../App";
+import { resolveErrorMessage } from "../../utils/utils";
 
 export function AppMenu() {
   const { t } = useTranslation();

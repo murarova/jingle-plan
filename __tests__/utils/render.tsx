@@ -6,7 +6,7 @@ import {
 import { Provider } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { GluestackUIProvider } from "../../components/ui/gluestack-ui-provider";
+import { GluestackUIProvider } from "../../ui/gluestack-ui-provider";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createTestStore } from "./test-store";
 import type { RootState } from "../../store/store";

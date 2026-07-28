@@ -1,6 +1,6 @@
 import React from "react";
 import { screen } from "@testing-library/react-native";
-import { TaskItem } from "../../components/task-item";
+import { TaskItem } from "../../components/tasks/task-item";
 import { renderWithProviders } from "../utils/render";
 import { mockGetUserDataQuery } from "../mocks/api-hooks";
 import { TASK_CATEGORY, TaskOutputType } from "../../constants/constants";

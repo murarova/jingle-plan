@@ -1,8 +1,8 @@
-import { ScrollView } from "@/components/ui/scroll-view";
-import { Box } from "@/components/ui/box";
+import { ScrollView } from "@/ui/scroll-view";
+import { Box } from "@/ui/box";
 import { memo } from "react";
 import { useDashboardData } from "./hooks/useDashboardData";
-import { EmptyScreen } from "../../components/empty-screen";
+import { EmptyScreen } from "../../components/common/empty-screen";
 import { DashboardStats } from "./dashboard-stats";
 import { ContextSections } from "./context-sections";
 

@@ -1,5 +1,5 @@
-import { Button, ButtonText } from "@/components/ui/button";
-import { Box } from "@/components/ui/box";
+import { Button, ButtonText } from "@/ui/button";
+import { Box } from "@/ui/box";
 import { useTranslation } from "react-i18next";
 import isEmpty from "lodash/isEmpty";
 import { AddPlanModal } from "./add-plan-modal";

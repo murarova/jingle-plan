@@ -1,5 +1,5 @@
-import { View } from "@/components/ui/view";
-import { HStack } from "@/components/ui/hstack";
+import { View } from "@/ui/view";
+import { HStack } from "@/ui/hstack";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { TaskProgress } from "../../types/types";
