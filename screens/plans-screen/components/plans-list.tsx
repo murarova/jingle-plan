@@ -29,8 +29,8 @@ import {
 import { Fragment } from "react";
 import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
-import { months, PlansViewOptions } from "../../../constants/constants";
-import { PlanScreenData } from "../../../types/types";
+import { months, PlansViewOptions } from "@/constants";
+import { PlanScreenData } from "@/types";
 import { CompletePlanProps } from "../context-view/types";
 
 interface PlansListProps {

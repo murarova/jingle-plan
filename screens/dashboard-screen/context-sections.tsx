@@ -1,8 +1,8 @@
 import { Box } from "@/ui/box";
 import { memo } from "react";
-import { TASK_CONTEXT } from "../../constants/constants";
+import { TASK_CONTEXT } from "@/constants";
 import { DashboardContextSection } from "./dashboard-context-section";
-import { TaskContext, TaskProgress } from "../../types/types";
+import { TaskContext, TaskProgress } from "@/types";
 
 interface ContextSectionsProps {
   contextData: Partial<Record<TaskContext, TaskProgress>>;

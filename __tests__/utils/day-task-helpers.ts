@@ -1,4 +1,4 @@
-import type { ImageData } from "../../types/types";
+import type { ImageData } from "@/types";
 import type { RootState } from "../../store/store";
 import type { SerializableUser } from "../../types/user";
 

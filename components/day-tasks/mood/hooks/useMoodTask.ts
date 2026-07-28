@@ -4,7 +4,7 @@ import { Alert } from "react-native";
 import * as Haptics from "expo-haptics";
 import uuid from "react-native-uuid";
 import isEmpty from "lodash/isEmpty";
-import { TASK_CATEGORY, TaskOutputType } from "../../../../constants/constants";
+import { TASK_CATEGORY, TaskOutputType } from "@/constants";
 import {
   useRemoveTaskMutation,
   useSaveMoodTaskMutation,
@@ -12,8 +12,8 @@ import {
 } from "../../../../services/api";
 import { useAppSelector } from "../../../../store/withTypes";
 import { useImage } from "../../../../hooks/useImage";
-import { MoodTaskData, TextImageData } from "../../../../types/types";
-import { resolveErrorMessage } from "../../../../utils/utils";
+import { MoodTaskData, TextImageData } from "@/types";
+import { resolveErrorMessage } from "@/utils";
 import { useUnsavedChangesBlocker } from "../../../../hooks/useUnsavedChangesBlocker";
 
 interface UseMoodTaskProps {

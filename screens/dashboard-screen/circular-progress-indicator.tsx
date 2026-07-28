@@ -1,7 +1,7 @@
 import { Text } from "@/ui/text";
 import { memo } from "react";
 import { CircularProgressBase } from "react-native-circular-progress-indicator";
-import { colors } from "../../constants/colors";
+import { colors } from "@/constants/colors";
 
 interface CircularProgressIndicatorProps {
   percentage: number;

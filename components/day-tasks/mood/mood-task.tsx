@@ -1,8 +1,8 @@
 import { Divider } from "@/ui/divider";
 import { Box } from "@/ui/box";
 import { memo } from "react";
-import { TaskOutputType } from "../../../constants/constants";
-import { MoodTaskData } from "../../../types/types";
+import { TaskOutputType } from "@/constants";
+import { MoodTaskData } from "@/types";
 import { MoodForm } from "./mood-form";
 import { MoodView } from "./mood-view";
 import { useMoodTask } from "./hooks/useMoodTask";

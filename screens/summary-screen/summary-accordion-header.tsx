@@ -4,7 +4,7 @@ import { Heading } from "@/ui/heading";
 import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
 import { memo } from "react";
-import { TaskContext, SummaryContextData } from "../../types/types";
+import { TaskContext, SummaryContextData } from "@/types";
 
 interface AccordionHeaderProps {
   context: TaskContext;

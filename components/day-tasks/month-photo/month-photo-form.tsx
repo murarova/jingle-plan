@@ -6,7 +6,7 @@ import { Box } from "@/ui/box";
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
 import { AutoGrowingTextarea, ImagePicker } from "../../common";
-import { ImageData } from "../../../types/types";
+import { ImageData } from "@/types";
 
 interface MonthPhotoFormProps {
   text: string;

@@ -5,7 +5,7 @@ import { Box } from "@/ui/box";
 import { AccordionTitleText, AccordionIcon } from "@/ui/accordion";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { TaskContext } from "../../../types/types";
+import { TaskContext } from "@/types";
 
 interface AccordionHeaderContentProps {
   context: TaskContext;

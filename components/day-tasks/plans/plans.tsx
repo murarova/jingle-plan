@@ -5,7 +5,7 @@ import isEmpty from "lodash/isEmpty";
 import { AddPlanModal } from "./add-plan-modal";
 import { PlansList } from "./plans-list";
 import { usePlans } from "./hooks/usePlans";
-import { PlanContextData, PlanData } from "../../../types/types";
+import { PlanContextData, PlanData } from "@/types";
 
 interface PlansProps {
   context: string;

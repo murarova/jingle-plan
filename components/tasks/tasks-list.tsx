@@ -3,7 +3,7 @@ import { Box } from "@/ui/box";
 import { YoutubePlayer } from "../common";
 import { TaskItem } from "./task-item";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { DayTaskConfig } from "../../types/types";
+import { DayTaskConfig } from "@/types";
 
 interface TaskListProps {
   videoText: string;

@@ -1,5 +1,5 @@
 import { mapDataToCarousel } from "../../screens/album-screen/map-data-to-carousel";
-import type { MonthPhotoData } from "../../types/types";
+import type { MonthPhotoData } from "@/types";
 
 describe("mapDataToCarousel", () => {
   it("returns an empty array for empty input", () => {

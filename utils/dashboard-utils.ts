@@ -1,4 +1,4 @@
-import { PlanContextData, TaskContext, TaskProgress } from "../types/types";
+import { PlanContextData, TaskContext, TaskProgress } from "@/types";
 
 export const calculateTotalData = (taskData: PlanContextData): TaskProgress => {
   const totals = Object.values(taskData).reduce<{

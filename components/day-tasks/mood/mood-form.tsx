@@ -3,7 +3,7 @@ import { Button, ButtonText } from "@/ui/button";
 import { Box } from "@/ui/box";
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
-import { TaskOutputType } from "../../../constants/constants";
+import { TaskOutputType } from "@/constants";
 import { AutoGrowingTextarea, ImagePicker } from "../../common";
 
 interface MoodFormProps {

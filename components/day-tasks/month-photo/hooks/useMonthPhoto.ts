@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
-import { TASK_CATEGORY } from "../../../../constants/constants";
+import { TASK_CATEGORY } from "@/constants";
 import isEmpty from "lodash/isEmpty";
 import uuid from "react-native-uuid";
-import { MonthPhotoData, TextImageData } from "../../../../types/types";
+import { MonthPhotoData, TextImageData } from "@/types";
 import { useAppSelector } from "../../../../store/withTypes";
 import {
   useSaveTaskByCategoryMutation,
@@ -13,7 +13,7 @@ import {
   useRemoveTaskMutation,
 } from "../../../../services/api";
 import { useImage } from "../../../../hooks/useImage";
-import { resolveErrorMessage } from "../../../../utils/utils";
+import { resolveErrorMessage } from "@/utils";
 import { useUnsavedChangesBlocker } from "../../../../hooks/useUnsavedChangesBlocker";
 
 interface UseMonthPhotoProps {

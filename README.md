@@ -32,8 +32,8 @@ Make sure you have the following installed on your system:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/murarova/advent-calendar.git
-   cd advent-calendar
+   git clone https://github.com/murarova/jingle-plan.git
+   cd jingle-plan
    ```
 
 2. Install dependencies:

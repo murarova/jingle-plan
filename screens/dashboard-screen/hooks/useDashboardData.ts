@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useAppSelector } from "../../../store/withTypes";
-import { PlanContextData } from "../../../types/types";
+import { PlanContextData } from "@/types";
 import {
   calculateContextData,
   calculateTotalData,

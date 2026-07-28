@@ -3,7 +3,7 @@ import {
   calculateContextData,
   isDataEmpty,
 } from "../../utils/dashboard-utils";
-import type { PlanContextData, PlanData } from "../../types/types";
+import type { PlanContextData, PlanData } from "@/types";
 
 const plan = (overrides: Partial<PlanData>): PlanData =>
   ({

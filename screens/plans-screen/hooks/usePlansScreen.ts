@@ -3,7 +3,7 @@ import {
   PlanScreenData,
   PlansCollection,
   TaskContext,
-} from "../../../types/types";
+} from "@/types";
 import { useAppSelector } from "../../../store/withTypes";
 import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
@@ -15,15 +15,15 @@ import {
   PlansViewOptions,
   TASK_CATEGORY,
   TASK_CONTEXT,
-} from "../../../constants/constants";
+} from "@/constants";
 import { Alert } from "react-native";
 import {
   useSaveTaskByCategoryMutation,
   useLazyGetUserDataQuery,
 } from "../../../services/api";
-import { PlanContextData } from "../../../types/types";
+import { PlanContextData } from "@/types";
 import uuid from "react-native-uuid";
-import { resolveErrorMessage } from "../../../utils/utils";
+import { resolveErrorMessage } from "@/utils";
 import { groupPlansByMonth } from "../month-view/helpers";
 import { PlansContextEntry } from "../context-view/types";
 import { PlansMonthData } from "../month-view/types";

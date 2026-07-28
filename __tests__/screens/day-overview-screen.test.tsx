@@ -2,7 +2,7 @@ import React from "react";
 import { act, fireEvent, screen, waitFor } from "@testing-library/react-native";
 import DayOverviewScreen from "../../screens/day-overview-screen";
 import { renderWithProviders } from "../utils/render";
-import { TASK_CATEGORY, TaskOutputType } from "../../constants/constants";
+import { TASK_CATEGORY, TaskOutputType } from "@/constants";
 
 jest.mock("../../screens/day-overview-screen/hooks/useDayTasks", () => ({
   useDayTasks: () => require("../utils/day-overview-test-state").getDayOverviewState(),

@@ -1,5 +1,5 @@
 import { Box } from "@/ui/box";
-import { SummaryContextData } from "../../../types/types";
+import { SummaryContextData } from "@/types";
 import { useSummary } from "./hooks/useSummary";
 import { SummaryForm } from "./summary-form";
 import { SummaryView } from "./summary-view";

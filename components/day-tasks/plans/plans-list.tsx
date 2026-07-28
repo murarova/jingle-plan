@@ -11,7 +11,7 @@ import { Box } from "@/ui/box";
 import { EditIcon, Trash2, Ellipsis } from "lucide-react-native";
 import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { PlanData } from "../../../types/types";
+import { PlanData } from "@/types";
 import * as Haptics from "expo-haptics";
 
 interface PlansListProps {

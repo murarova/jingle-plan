@@ -5,7 +5,7 @@ import * as Haptics from "expo-haptics";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
-import { colors } from "../../constants/colors";
+import { colors } from "@/constants/colors";
 import CircularProgress from "react-native-circular-progress-indicator";
 import { DateData } from "react-native-calendars";
 import { LockKeyhole } from "lucide-react-native";

@@ -2,7 +2,7 @@ import { ScrollView } from "@/ui/scroll-view";
 import { Box } from "@/ui/box";
 import { Accordion, AccordionHeader, AccordionItem, AccordionTrigger } from "@/ui/accordion";
 import { memo, useCallback } from "react";
-import { months, PlansViewOptions } from "../../../constants/constants";
+import { months, PlansViewOptions } from "@/constants";
 import { EmptyScreen } from "../../../components/common/empty-screen";
 import isEmpty from "lodash/isEmpty";
 import { AccordionHeaderContent } from "./header";

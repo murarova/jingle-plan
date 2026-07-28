@@ -5,7 +5,7 @@ import { renderWithProviders } from "../utils/render";
 import { loggedInPreloadedState } from "../utils/day-task-helpers";
 import { mockGetUserDataQuery, resetApiHookMocks } from "../mocks/api-hooks";
 import { mockNavigate, resetNavigationMocks } from "../mocks/navigation";
-import { SCREENS } from "../../constants/constants";
+import { SCREENS } from "@/constants";
 
 jest.mock("@react-navigation/native", () =>
   require("../mocks/navigation").mockNavigationModule()

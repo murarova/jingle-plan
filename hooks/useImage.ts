@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Alert } from "react-native";
-import { ImageData } from "../types/types";
+import { ImageData } from "@/types";
 import { useSaveImageMutation, useLazyGetImageUrlQuery } from "../services/api";
 import { useAppSelector } from "../store/withTypes";
 import { useTranslation } from "react-i18next";
-import { resolveErrorMessage } from "../utils/utils";
+import { resolveErrorMessage } from "@/utils";
 
 export function useImage() {
   const { t } = useTranslation();

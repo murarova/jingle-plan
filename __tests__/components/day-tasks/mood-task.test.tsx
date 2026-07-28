@@ -12,8 +12,8 @@ import {
   removeTaskTrigger,
   resetApiHookMocks,
 } from "../../mocks/api-hooks";
-import { TASK_CATEGORY, TaskOutputType } from "../../../constants/constants";
-import type { MoodTaskData } from "../../../types/types";
+import { TASK_CATEGORY, TaskOutputType } from "@/constants";
+import type { MoodTaskData } from "@/types";
 
 jest.mock("../../../services/api", () => ({
   ...jest.requireActual("../../../services/api"),

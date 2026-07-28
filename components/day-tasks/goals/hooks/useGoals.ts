@@ -4,14 +4,14 @@ import { Alert } from "react-native";
 import * as Haptics from "expo-haptics";
 import uuid from "react-native-uuid";
 import isEmpty from "lodash/isEmpty";
-import { TASK_CATEGORY } from "../../../../constants/constants";
+import { TASK_CATEGORY } from "@/constants";
 import {
   useRemoveTaskMutation,
   useSaveTaskByCategoryMutation,
 } from "../../../../services/api";
 import { useAppSelector } from "../../../../store/withTypes";
-import { GoalsData, TextData } from "../../../../types/types";
-import { resolveErrorMessage } from "../../../../utils/utils";
+import { GoalsData, TextData } from "@/types";
+import { resolveErrorMessage } from "@/utils";
 import { useUnsavedChangesBlocker } from "../../../../hooks/useUnsavedChangesBlocker";
 
 interface UseGoalsProps {

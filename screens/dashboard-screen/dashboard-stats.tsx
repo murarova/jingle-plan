@@ -2,10 +2,10 @@ import { View } from "@/ui/view";
 import { HStack } from "@/ui/hstack";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { TaskProgress } from "../../types/types";
+import { TaskProgress } from "@/types";
 import { ProgressStat } from "./progress-stat";
 import { CircularProgressIndicator } from "./circular-progress-indicator";
-import { getPluralForm } from "../../utils/utils";
+import { getPluralForm } from "@/utils";
 
 interface DashboardStatsProps {
   totalData: TaskProgress;

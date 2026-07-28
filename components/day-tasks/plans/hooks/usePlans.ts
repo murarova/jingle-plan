@@ -2,16 +2,16 @@ import { useCallback, useState } from "react";
 import {
   MAX_PLANS_AMOUNT,
   TASK_CATEGORY,
-} from "../../../../constants/constants";
+} from "@/constants";
 import isEmpty from "lodash/isEmpty";
 import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
 import * as Haptics from "expo-haptics";
 import uuid from "react-native-uuid";
-import { PlanData } from "../../../../types/types";
+import { PlanData } from "@/types";
 import { useAppSelector } from "../../../../store/withTypes";
 import { useSaveTaskByCategoryMutation } from "../../../../services/api";
-import { resolveErrorMessage } from "../../../../utils/utils";
+import { resolveErrorMessage } from "@/utils";
 
 interface UsePlansProps {
   context: string;

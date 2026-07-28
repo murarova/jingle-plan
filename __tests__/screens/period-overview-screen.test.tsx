@@ -4,7 +4,7 @@ import PeriodOverviewScreen from "../../screens/period-overview-screen";
 import { renderWithProviders } from "../utils/render";
 import { loggedInPreloadedState } from "../utils/day-task-helpers";
 import { mockNavigate, resetNavigationMocks } from "../mocks/navigation";
-import { SCREENS } from "../../constants/constants";
+import { SCREENS } from "@/constants";
 
 jest.mock("@react-navigation/native", () =>
   require("../mocks/navigation").mockNavigationModule()

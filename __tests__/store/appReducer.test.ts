@@ -3,8 +3,8 @@ import appReducer, {
   setConfiguration,
   selectSelectedYear,
 } from "../../store/appReducer";
-import { YEARS } from "../../constants/constants";
-import type { CalendarConfig } from "../../types/types";
+import { YEARS } from "@/constants";
+import type { CalendarConfig } from "@/types";
 
 const initialState = appReducer(undefined, { type: "@@INIT" });
 

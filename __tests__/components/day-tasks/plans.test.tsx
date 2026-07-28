@@ -9,8 +9,8 @@ import {
   saveTaskByCategoryTrigger,
   resetApiHookMocks,
 } from "../../mocks/api-hooks";
-import { MAX_PLANS_AMOUNT, TASK_CATEGORY } from "../../../constants/constants";
-import type { PlanContextData } from "../../../types/types";
+import { MAX_PLANS_AMOUNT, TASK_CATEGORY } from "@/constants";
+import type { PlanContextData } from "@/types";
 
 jest.mock("../../../services/api", () => ({
   ...jest.requireActual("../../../services/api"),
