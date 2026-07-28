@@ -1,4 +1,4 @@
-import { Box } from "@/components/ui/box";
+import { Box } from "@/ui/box";
 import { memo } from "react";
 import { PlansContextView } from "./context-view/plans-context-view";
 import { PlansMonthView } from "./month-view/plans-month-view";

@@ -1,10 +1,10 @@
-import { VStack } from "@/components/ui/vstack";
-import { Text } from "@/components/ui/text";
-import { Pressable } from "@/components/ui/pressable";
-import { Input, InputField, InputSlot, InputIcon } from "@/components/ui/input";
-import { Heading } from "@/components/ui/heading";
-import { ButtonText, Button } from "@/components/ui/button";
-import { Box } from "@/components/ui/box";
+import { VStack } from "@/ui/vstack";
+import { Text } from "@/ui/text";
+import { Pressable } from "@/ui/pressable";
+import { Input, InputField, InputSlot, InputIcon } from "@/ui/input";
+import { Heading } from "@/ui/heading";
+import { ButtonText, Button } from "@/ui/button";
+import { Box } from "@/ui/box";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState, useCallback } from "react";
 import { SafeAreaView } from "../../components/common/safe-area-view";

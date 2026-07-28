@@ -1,6 +1,6 @@
-import { ScrollView } from "@/components/ui/scroll-view";
-import { Box } from "@/components/ui/box";
-import { Accordion, AccordionHeader, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { ScrollView } from "@/ui/scroll-view";
+import { Box } from "@/ui/box";
+import { Accordion, AccordionHeader, AccordionItem, AccordionTrigger } from "@/ui/accordion";
 import { memo, useCallback } from "react";
 import { PlansViewOptions } from "../../../constants/constants";
 import { PlanScreenData, TaskContext } from "../../../types/types";

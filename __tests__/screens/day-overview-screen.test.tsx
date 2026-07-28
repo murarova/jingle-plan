@@ -8,7 +8,7 @@ jest.mock("../../screens/day-overview-screen/hooks/useDayTasks", () => ({
   useDayTasks: () => require("../utils/day-overview-test-state").getDayOverviewState(),
 }));
 
-jest.mock("../../components/tasks-list", () => ({
+jest.mock("../../components/tasks/tasks-list", () => ({
   TasksList: () => {
     const { Text } = require("react-native");
     return <Text>TasksListMock</Text>;

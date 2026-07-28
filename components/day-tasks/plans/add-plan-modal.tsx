@@ -1,5 +1,5 @@
-import { FormControlErrorText } from "@/components/ui/form-control";
-import { Textarea, TextareaInput } from "@/components/ui/textarea";
+import { FormControlErrorText } from "@/ui/form-control";
+import { Textarea, TextareaInput } from "@/ui/textarea";
 
 import {
   Select,
@@ -11,12 +11,12 @@ import {
   SelectDragIndicator,
   SelectDragIndicatorWrapper,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/ui/select";
 
-import { ButtonText, Button } from "@/components/ui/button";
-import { VStack } from "@/components/ui/vstack";
-import { Text } from "@/components/ui/text";
-import { ModalBody, ModalFooter, Modal, ModalBackdrop, ModalContent, ModalHeader } from "@/components/ui/modal";
+import { ButtonText, Button } from "@/ui/button";
+import { VStack } from "@/ui/vstack";
+import { Text } from "@/ui/text";
+import { ModalBody, ModalFooter, Modal, ModalBackdrop, ModalContent, ModalHeader } from "@/ui/modal";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";

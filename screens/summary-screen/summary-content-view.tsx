@@ -1,5 +1,5 @@
-import { Text } from "@/components/ui/text";
-import { Box } from "@/components/ui/box";
+import { Text } from "@/ui/text";
+import { Box } from "@/ui/box";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { ActionButtons } from "../../components/common";

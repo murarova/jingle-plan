@@ -1,6 +1,6 @@
-import { Box } from "@/components/ui/box";
+import { Box } from "@/ui/box";
 import { useLayoutEffect, useState, useEffect, memo, useCallback } from "react";
-import { TasksList } from "../../components/tasks-list";
+import { TasksList } from "../../components/tasks/tasks-list";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import { CompletedTaskModal } from "../../components/modals/completed-task-modal";

@@ -1,8 +1,8 @@
-import { ImageBackground } from "@/components/ui/image-background";
-import { Text } from "@/components/ui/text";
-import { Divider } from "@/components/ui/divider";
-import { Button, ButtonText } from "@/components/ui/button";
-import { Box } from "@/components/ui/box";
+import { ImageBackground } from "@/ui/image-background";
+import { Text } from "@/ui/text";
+import { Divider } from "@/ui/divider";
+import { Button, ButtonText } from "@/ui/button";
+import { Box } from "@/ui/box";
 import { memo } from "react";
 import { ActionButtons, AnimatedView, Loader } from "../../common";
 

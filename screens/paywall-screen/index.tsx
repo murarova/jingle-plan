@@ -1,10 +1,10 @@
-import { ScrollView } from "@/components/ui/scroll-view";
-import { Divider } from "@/components/ui/divider";
-import { HStack } from "@/components/ui/hstack";
-import { VStack } from "@/components/ui/vstack";
-import { Button, ButtonText } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { Box } from "@/components/ui/box";
+import { ScrollView } from "@/ui/scroll-view";
+import { Divider } from "@/ui/divider";
+import { HStack } from "@/ui/hstack";
+import { VStack } from "@/ui/vstack";
+import { Button, ButtonText } from "@/ui/button";
+import { Text } from "@/ui/text";
+import { Box } from "@/ui/box";
 import { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useIAP } from "../../hooks/useIAP";

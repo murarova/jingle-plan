@@ -5,7 +5,7 @@ import { useAppSelector } from "../../store/withTypes";
 import { isLoggedIn } from "../../store/authReducer";
 import { RootStackParamList } from "../../App";
 import { useCalendarDayManager } from "../../hooks/useCalendarDayManager";
-import { Box } from "@/components/ui/box";
+import { Box } from "@/ui/box";
 
 export const LoadingScreen = () => {
   const nav = useNavigation<NavigationProp<RootStackParamList>>();

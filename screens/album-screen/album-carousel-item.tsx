@@ -1,7 +1,7 @@
-import { Image } from "@/components/ui/image";
-import { ScrollView } from "@/components/ui/scroll-view";
-import { Text } from "@/components/ui/text";
-import { Box } from "@/components/ui/box";
+import { Image } from "@/ui/image";
+import { ScrollView } from "@/ui/scroll-view";
+import { Text } from "@/ui/text";
+import { Box } from "@/ui/box";
 import { memo } from "react";
 import { ImageStyle } from "react-native";
 import { MonthlyData } from "../../types/types";

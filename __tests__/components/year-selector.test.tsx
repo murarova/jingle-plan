@@ -1,6 +1,6 @@
 import React from "react";
 import { screen } from "@testing-library/react-native";
-import { YearSelector } from "../../components/year-selector";
+import { YearSelector } from "../../components/navigation/year-selector";
 import { renderWithProviders } from "../utils/render";
 
 describe("YearSelector", () => {

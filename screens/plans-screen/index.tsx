@@ -1,7 +1,7 @@
-import { Fab, FabIcon } from "@/components/ui/fab";
-import { Box } from "@/components/ui/box";
+import { Fab, FabIcon } from "@/ui/fab";
+import { Box } from "@/ui/box";
 import { useState } from "react";
-import { EmptyScreen } from "../../components/empty-screen";
+import { EmptyScreen } from "../../components/common/empty-screen";
 import { usePlansScreen } from "./hooks/usePlansScreen";
 import * as Haptics from "expo-haptics";
 import { PlansViewOptions } from "../../constants/constants";

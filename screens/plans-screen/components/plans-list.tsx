@@ -1,24 +1,24 @@
-import { Badge, BadgeText, BadgeIcon } from "@/components/ui/badge";
+import { Badge, BadgeText, BadgeIcon } from "@/ui/badge";
 import {
   Checkbox,
   CheckboxIndicator,
   CheckboxIcon,
   CheckboxLabel,
-} from "@/components/ui/checkbox";
-import { ScrollView } from "@/components/ui/scroll-view";
-import { Divider } from "@/components/ui/divider";
-import { Icon, CheckIcon } from "@/components/ui/icon";
+} from "@/ui/checkbox";
+import { ScrollView } from "@/ui/scroll-view";
+import { Divider } from "@/ui/divider";
+import { Icon, CheckIcon } from "@/ui/icon";
 import {
   Menu,
   MenuItem,
   MenuItemLabel,
   MenuSeparator,
-} from "@/components/ui/menu";
-import { Button, ButtonIcon } from "@/components/ui/button";
-import { VStack } from "@/components/ui/vstack";
-import { HStack } from "@/components/ui/hstack";
-import { Text } from "@/components/ui/text";
-import { Box } from "@/components/ui/box";
+} from "@/ui/menu";
+import { Button, ButtonIcon } from "@/ui/button";
+import { VStack } from "@/ui/vstack";
+import { HStack } from "@/ui/hstack";
+import { Text } from "@/ui/text";
+import { Box } from "@/ui/box";
 import {
   EditIcon,
   Trash2,

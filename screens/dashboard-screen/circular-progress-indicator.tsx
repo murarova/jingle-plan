@@ -1,4 +1,4 @@
-import { Text } from "@/components/ui/text";
+import { Text } from "@/ui/text";
 import { memo } from "react";
 import { CircularProgressBase } from "react-native-circular-progress-indicator";
 import { colors } from "../../constants/colors";

@@ -4,7 +4,7 @@ import {
   useSafeAreaInsets,
   type Edge,
 } from "react-native-safe-area-context";
-import { Box } from "@/components/ui/box";
+import { Box } from "@/ui/box";
 
 type SafeAreaViewProps = React.ComponentProps<typeof Box> & {
   edges?: readonly Edge[];

@@ -1,7 +1,7 @@
-import { Heading } from "@/components/ui/heading";
-import { Text } from "@/components/ui/text";
-import { Box } from "@/components/ui/box";
-import { ChevronUpIcon, ChevronDownIcon } from "@/components/ui/icon";
+import { Heading } from "@/ui/heading";
+import { Text } from "@/ui/text";
+import { Box } from "@/ui/box";
+import { ChevronUpIcon, ChevronDownIcon } from "@/ui/icon";
 
 import {
   Accordion,
@@ -11,15 +11,15 @@ import {
   AccordionTitleText,
   AccordionIcon,
   AccordionContent,
-} from "@/components/ui/accordion";
+} from "@/ui/accordion";
 
 import { useTranslation } from "react-i18next";
-import { TaskOutputType, TASK_CATEGORY } from "../constants/constants";
-import { Plans } from "./day-tasks/plans/plans";
-import { Summary } from "./day-tasks/summary/summary";
-import { MonthPhoto } from "./day-tasks/month-photo/month-photo";
-import { Goals } from "./day-tasks/goals/goals";
-import { useAppSelector } from "../store/withTypes";
+import { TaskOutputType, TASK_CATEGORY } from "../../constants/constants";
+import { Plans } from "../day-tasks/plans/plans";
+import { Summary } from "../day-tasks/summary/summary";
+import { MonthPhoto } from "../day-tasks/month-photo/month-photo";
+import { Goals } from "../day-tasks/goals/goals";
+import { useAppSelector } from "../../store/withTypes";
 import moment from "moment";
 import {
   DayTaskConfig,
@@ -29,9 +29,9 @@ import {
   PlanContextData,
   SummaryContextData,
   GoalsData,
-} from "../types/types";
-import { MoodTask } from "./day-tasks/mood/mood-task";
-import { useGetUserDataQuery } from "../services/api";
+} from "../../types/types";
+import { MoodTask } from "../day-tasks/mood/mood-task";
+import { useGetUserDataQuery } from "../../services/api";
 import { useRef } from "react";
 import { View } from "react-native";
 

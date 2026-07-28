@@ -1,4 +1,4 @@
-import { Box } from "@/components/ui/box";
+import { Box } from "@/ui/box";
 import { memo } from "react";
 import { TASK_CONTEXT } from "../../constants/constants";
 import { DashboardContextSection } from "./dashboard-context-section";

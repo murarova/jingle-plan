@@ -1,8 +1,8 @@
-import { ChevronUpIcon, ChevronDownIcon } from "@/components/ui/icon";
-import { Text } from "@/components/ui/text";
-import { Heading } from "@/components/ui/heading";
-import { Box } from "@/components/ui/box";
-import { AccordionTitleText, AccordionIcon } from "@/components/ui/accordion";
+import { ChevronUpIcon, ChevronDownIcon } from "@/ui/icon";
+import { Text } from "@/ui/text";
+import { Heading } from "@/ui/heading";
+import { Box } from "@/ui/box";
+import { AccordionTitleText, AccordionIcon } from "@/ui/accordion";
 import { memo } from "react";
 
 interface AccordionHeaderContentProps {

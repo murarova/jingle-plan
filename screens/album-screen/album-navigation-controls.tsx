@@ -1,8 +1,8 @@
-import { ChevronRightIcon, ChevronLeftIcon } from "@/components/ui/icon";
-import { Center } from "@/components/ui/center";
-import { Text } from "@/components/ui/text";
-import { Button, ButtonIcon } from "@/components/ui/button";
-import { Box } from "@/components/ui/box";
+import { ChevronRightIcon, ChevronLeftIcon } from "@/ui/icon";
+import { Center } from "@/ui/center";
+import { Text } from "@/ui/text";
+import { Button, ButtonIcon } from "@/ui/button";
+import { Box } from "@/ui/box";
 import { memo } from "react";
 
 interface AlbumNavigationControlsProps {

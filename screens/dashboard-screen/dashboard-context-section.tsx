@@ -1,11 +1,11 @@
-import { Pressable } from "@/components/ui/pressable";
-import { VStack } from "@/components/ui/vstack";
-import { HStack } from "@/components/ui/hstack";
-import { Text } from "@/components/ui/text";
-import { Progress, ProgressFilledTrack } from "@/components/ui/progress";
-import { Heading } from "@/components/ui/heading";
-import { Box } from "@/components/ui/box";
-import { Icon, ChevronRightIcon } from "@/components/ui/icon";
+import { Pressable } from "@/ui/pressable";
+import { VStack } from "@/ui/vstack";
+import { HStack } from "@/ui/hstack";
+import { Text } from "@/ui/text";
+import { Progress, ProgressFilledTrack } from "@/ui/progress";
+import { Heading } from "@/ui/heading";
+import { Box } from "@/ui/box";
+import { Icon, ChevronRightIcon } from "@/ui/icon";
 import { useTranslation } from "react-i18next";
 import {
   getProgressBackgroundColor,

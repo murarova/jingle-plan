@@ -1,8 +1,8 @@
-import { Text } from "@/components/ui/text";
-import { Heading } from "@/components/ui/heading";
-import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalFooter, ModalBody } from "@/components/ui/modal";
-import { Center } from "@/components/ui/center";
-import { Button, ButtonText } from "@/components/ui/button";
+import { Text } from "@/ui/text";
+import { Heading } from "@/ui/heading";
+import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalFooter, ModalBody } from "@/ui/modal";
+import { Center } from "@/ui/center";
+import { Button, ButtonText } from "@/ui/button";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import DeerSvg from "../../assets/svg/deer";

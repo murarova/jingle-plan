@@ -1,7 +1,7 @@
-import { Button, ButtonText } from "@/components/ui/button";
-import { VStack } from "@/components/ui/vstack";
-import { Center } from "@/components/ui/center";
-import { Text } from "@/components/ui/text";
+import { Button, ButtonText } from "@/ui/button";
+import { VStack } from "@/ui/vstack";
+import { Center } from "@/ui/center";
+import { Text } from "@/ui/text";
 import { memo } from "react";
 
 interface EmptyStateProps {

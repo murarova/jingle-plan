@@ -1,6 +1,6 @@
-import { ImageBackground } from "@/components/ui/image-background";
-import { ButtonText, Button } from "@/components/ui/button";
-import { Box } from "@/components/ui/box";
+import { ImageBackground } from "@/ui/image-background";
+import { ButtonText, Button } from "@/ui/button";
+import { Box } from "@/ui/box";
 import * as ExpoImagePicker from "expo-image-picker";
 import { useTranslation } from "react-i18next";
 import uuid from "react-native-uuid";

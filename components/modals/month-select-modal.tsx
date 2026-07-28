@@ -1,8 +1,8 @@
-import { Divider } from "@/components/ui/divider";
-import { VStack } from "@/components/ui/vstack";
-import { Button, ButtonText } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { Box } from "@/components/ui/box";
+import { Divider } from "@/ui/divider";
+import { VStack } from "@/ui/vstack";
+import { Button, ButtonText } from "@/ui/button";
+import { Text } from "@/ui/text";
+import { Box } from "@/ui/box";
 import { useTranslation } from "react-i18next";
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { months } from "../../constants/constants";

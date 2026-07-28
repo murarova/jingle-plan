@@ -1,6 +1,6 @@
-import { HStack } from "@/components/ui/hstack";
-import { VStack } from "@/components/ui/vstack";
-import { Button, ButtonText } from "@/components/ui/button";
+import { HStack } from "@/ui/hstack";
+import { VStack } from "@/ui/vstack";
+import { Button, ButtonText } from "@/ui/button";
 import { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { AutoGrowingTextarea } from "../../common";

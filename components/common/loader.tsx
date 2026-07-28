@@ -1,4 +1,4 @@
-import { Box } from "@/components/ui/box";
+import { Box } from "@/ui/box";
 import { ActivityIndicator } from "react-native";
 
 interface LoaderProps {
