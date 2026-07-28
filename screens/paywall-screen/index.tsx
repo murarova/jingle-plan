@@ -7,7 +7,7 @@ import { Text } from "@/components/ui/text";
 import { Box } from "@/components/ui/box";
 import { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useIAP } from "../hooks/useIAP";
+import { useIAP } from "../../hooks/useIAP";
 import {
   EXPO_PUBLIC_IOS_SUBSCRIPTION_ID,
   EXPO_PUBLIC_ANDROID_SUBSCRIPTION_ID,

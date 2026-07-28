@@ -1,7 +1,7 @@
 import React from "react";
 import { Alert } from "react-native";
 import { fireEvent, screen, waitFor } from "@testing-library/react-native";
-import { SummaryScreen } from "../../screens/summary-screen/summary-screen";
+import { SummaryScreen } from "../../screens/summary-screen";
 import { renderWithProviders } from "../utils/render";
 import { loggedInPreloadedState } from "../utils/day-task-helpers";
 import {

@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react-native";
-import { DashboardScreen } from "../../screens/dashboard-screen/dashboard-screen";
+import { DashboardScreen } from "../../screens/dashboard-screen";
 import { renderWithProviders } from "../utils/render";
 import { loggedInPreloadedState } from "../utils/day-task-helpers";
 import { mockGetUserDataQuery, resetApiHookMocks } from "../mocks/api-hooks";

@@ -3,19 +3,19 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { House } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
-import { SCREENS } from "../constants/constants";
-import PeriodOverviewScreen from "./period-overview-screen";
-import DayOverviewScreen from "./day-overview-screen";
-import { AppMenu } from "../components/app-menu";
-import { SummaryScreen } from "./summary-screen/summary-screen";
-import { PlansScreen } from "./plans-screen/plans-screen";
-import Medal from "../assets/svg/medal";
-import Compas from "../assets/svg/compas";
-import Album from "../assets/svg/album";
-import Dashboard from "../assets/svg/dashboard";
-import { AlbumScreen } from "./album-screen/album-screen";
-import { DashboardScreen } from "./dashboard-screen/dashboard-screen";
-import { YearSelector } from "../components/year-selector";
+import { SCREENS } from "../../constants/constants";
+import PeriodOverviewScreen from "../period-overview-screen";
+import DayOverviewScreen from "../day-overview-screen";
+import { AppMenu } from "../../components/app-menu";
+import { SummaryScreen } from "../summary-screen";
+import { PlansScreen } from "../plans-screen";
+import Medal from "../../assets/svg/medal";
+import Compas from "../../assets/svg/compas";
+import Album from "../../assets/svg/album";
+import Dashboard from "../../assets/svg/dashboard";
+import { AlbumScreen } from "../album-screen";
+import { DashboardScreen } from "../dashboard-screen";
+import { YearSelector } from "../../components/year-selector";
 import {
   NavigationState,
   StackActions,
@@ -25,8 +25,8 @@ import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import type { EventArg } from "@react-navigation/native";
 import { Text } from "react-native";
 import { useCallback } from "react";
-import { useUnsavedChanges } from "../contexts/UnsavedChangesContext";
-import { showUnsavedChangesAlert } from "../utils/unsaved-changes-alert";
+import { useUnsavedChanges } from "../../contexts/UnsavedChangesContext";
+import { showUnsavedChangesAlert } from "../../utils/unsaved-changes-alert";
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createStackNavigator<HomeStackParamList>();

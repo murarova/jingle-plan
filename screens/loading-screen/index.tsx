@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { SCREENS } from "../constants/constants";
-import { useAppSelector } from "../store/withTypes";
-import { isLoggedIn } from "../store/authReducer";
-import { RootStackParamList } from "../App";
-import { useCalendarDayManager } from "../hooks/useCalendarDayManager";
+import { SCREENS } from "../../constants/constants";
+import { useAppSelector } from "../../store/withTypes";
+import { isLoggedIn } from "../../store/authReducer";
+import { RootStackParamList } from "../../App";
+import { useCalendarDayManager } from "../../hooks/useCalendarDayManager";
 import { Box } from "@/components/ui/box";
 
 export const LoadingScreen = () => {

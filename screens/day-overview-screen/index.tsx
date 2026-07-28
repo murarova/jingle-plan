@@ -1,15 +1,15 @@
 import { Box } from "@/components/ui/box";
 import { useLayoutEffect, useState, useEffect, memo, useCallback } from "react";
-import { TasksList } from "../components/tasks-list";
+import { TasksList } from "../../components/tasks-list";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
-import { CompletedTaskModal } from "../components/modals/completed-task-modal";
-import usePrevious from "../hooks/usePrevious";
+import { CompletedTaskModal } from "../../components/modals/completed-task-modal";
+import usePrevious from "../../hooks/usePrevious";
 import { StackScreenProps } from "@react-navigation/stack";
 import isNil from "lodash/isNil";
-import { useDayTasks } from "../hooks/useDayTasks";
-import { HomeStackParamList } from "./home-screen";
-import { ProgressBar, EmptyState } from "../components/common";
+import { useDayTasks } from "./hooks/useDayTasks";
+import { HomeStackParamList } from "../home-screen";
+import { ProgressBar, EmptyState } from "../../components/common";
 
 type Props = StackScreenProps<HomeStackParamList, "DayOverview">;
 

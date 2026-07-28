@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react-native";
-import { AlbumScreen } from "../../screens/album-screen/album-screen";
+import { AlbumScreen } from "../../screens/album-screen";
 import { renderWithProviders } from "../utils/render";
 import { loggedInPreloadedState } from "../utils/day-task-helpers";
 import { mockGetUserDataQuery, resetApiHookMocks } from "../mocks/api-hooks";

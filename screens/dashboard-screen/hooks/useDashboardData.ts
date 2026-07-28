@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import { useAppSelector } from "../store/withTypes";
-import { PlanContextData } from "../types/types";
+import { useAppSelector } from "../../../store/withTypes";
+import { PlanContextData } from "../../../types/types";
 import {
   calculateContextData,
   calculateTotalData,
   isDataEmpty as checkDataEmpty,
-} from "../utils/dashboard-utils";
-import { useGetUserDataQuery } from "../services/api";
+} from "../../../utils/dashboard-utils";
+import { useGetUserDataQuery } from "../../../services/api";
 
 // Create a custom hook for dashboard data
 export const useDashboardData = () => {

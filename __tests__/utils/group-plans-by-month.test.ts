@@ -1,6 +1,6 @@
 import {
   groupPlansByMonth,
-} from "../../components/plans-view/month-view/helpers";
+} from "../../screens/plans-screen/month-view/helpers";
 import type { PlansCollection } from "../../types/types";
 
 describe("groupPlansByMonth", () => {
