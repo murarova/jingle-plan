@@ -2,7 +2,7 @@ import { Fab, FabIcon } from "@/components/ui/fab";
 import { Box } from "@/components/ui/box";
 import { useState } from "react";
 import { EmptyScreen } from "../../components/empty-screen";
-import { usePlansScreen } from "../../components/plans-view/hooks/usePlansScreen";
+import { usePlansScreen } from "./hooks/usePlansScreen";
 import * as Haptics from "expo-haptics";
 import { PlansViewOptions } from "../../constants/constants";
 import { GoalsData, PlanContextData } from "../../types/types";

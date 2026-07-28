@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { useCalendarDayManager } from "./useCalendarDayManager";
-import { calculateTotalProgress } from "../utils/utils";
+import { useCalendarDayManager } from "../../../hooks/useCalendarDayManager";
+import { calculateTotalProgress } from "../../../utils/utils";
 
 export const useDayTasks = (currentDay: string) => {
   const { getDayConfig, error, refresh, isLoading } = useCalendarDayManager();

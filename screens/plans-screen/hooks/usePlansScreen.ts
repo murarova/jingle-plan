@@ -8,7 +8,7 @@ import { useAppSelector } from "../../../store/withTypes";
 import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
 import { findPlanContextById, getPlansList } from "../../../utils/plans-utils";
-import { SheetRef } from "../../common";
+import { SheetRef } from "../../../components/common";
 import { CompletePlanProps } from "../context-view/types";
 import {
   allMonths,

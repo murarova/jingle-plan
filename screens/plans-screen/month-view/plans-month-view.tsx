@@ -3,7 +3,7 @@ import { Box } from "@/components/ui/box";
 import { Accordion, AccordionHeader, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { memo, useCallback } from "react";
 import { months, PlansViewOptions } from "../../../constants/constants";
-import { EmptyScreen } from "../../empty-screen";
+import { EmptyScreen } from "../../../components/empty-screen";
 import isEmpty from "lodash/isEmpty";
 import { AccordionHeaderContent } from "./header";
 import { MonthPlansContent } from "./content";

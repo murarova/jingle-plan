@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react-native";
-import { PlansScreen } from "../../screens/plans-screen/plans-screen";
+import { PlansScreen } from "../../screens/plans-screen";
 import { renderWithProviders } from "../utils/render";
 import { loggedInPreloadedState } from "../utils/day-task-helpers";
 import {

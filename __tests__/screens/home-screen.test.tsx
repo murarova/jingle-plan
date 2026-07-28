@@ -12,25 +12,25 @@ jest.mock("../../screens/day-overview-screen", () => {
   const { Text } = require("react-native");
   return { __esModule: true, default: () => <Text>DayOverviewMock</Text> };
 });
-jest.mock("../../screens/summary-screen/summary-screen", () => ({
+jest.mock("../../screens/summary-screen", () => ({
   SummaryScreen: () => {
     const { Text } = require("react-native");
     return <Text>SummaryMock</Text>;
   },
 }));
-jest.mock("../../screens/plans-screen/plans-screen", () => ({
+jest.mock("../../screens/plans-screen", () => ({
   PlansScreen: () => {
     const { Text } = require("react-native");
     return <Text>PlansMock</Text>;
   },
 }));
-jest.mock("../../screens/album-screen/album-screen", () => ({
+jest.mock("../../screens/album-screen", () => ({
   AlbumScreen: () => {
     const { Text } = require("react-native");
     return <Text>AlbumMock</Text>;
   },
 }));
-jest.mock("../../screens/dashboard-screen/dashboard-screen", () => ({
+jest.mock("../../screens/dashboard-screen", () => ({
   DashboardScreen: () => {
     const { Text } = require("react-native");
     return <Text>DashboardMock</Text>;

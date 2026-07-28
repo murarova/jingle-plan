@@ -4,7 +4,7 @@ import DayOverviewScreen from "../../screens/day-overview-screen";
 import { renderWithProviders } from "../utils/render";
 import { TASK_CATEGORY, TaskOutputType } from "../../constants/constants";
 
-jest.mock("../../hooks/useDayTasks", () => ({
+jest.mock("../../screens/day-overview-screen/hooks/useDayTasks", () => ({
   useDayTasks: () => require("../utils/day-overview-test-state").getDayOverviewState(),
 }));
 

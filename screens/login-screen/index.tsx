@@ -7,27 +7,27 @@ import { ButtonText, Button } from "@/components/ui/button";
 import { Box } from "@/components/ui/box";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState, useCallback } from "react";
-import { SafeAreaView } from "../components/common/safe-area-view";
+import { SafeAreaView } from "../../components/common/safe-area-view";
 import { Alert, Keyboard, Switch } from "react-native";
-import { SCREENS, EMAIL_REGEX } from "../constants/constants";
+import { SCREENS, EMAIL_REGEX } from "../../constants/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import {
   useSignInUserMutation,
   useSendPasswordResetMutation,
-} from "../services/auth-api-rtk";
-import { setUser, setAuthError, setAuthLoading } from "../store/authReducer";
-import { useAppDispatch } from "../store/withTypes";
-import { convertToSerializableUser } from "../types/user";
+} from "../../services/auth-api-rtk";
+import { setUser, setAuthError, setAuthLoading } from "../../store/authReducer";
+import { useAppDispatch } from "../../store/withTypes";
+import { convertToSerializableUser } from "../../types/user";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../App";
-import { resolveErrorMessage } from "../utils/utils";
+import { RootStackParamList } from "../../App";
+import { resolveErrorMessage } from "../../utils/utils";
 import {
   saveCredentials,
   loadCredentials,
   clearCredentials,
-} from "../services/password-storage";
+} from "../../services/password-storage";
 import * as Haptics from "expo-haptics";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Login">;

@@ -7,14 +7,14 @@ import { RefreshControl } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList } from "./home-screen";
-import { Calendar } from "../components/calendar/calendar";
-import { useCalendarDayManager } from "../hooks/useCalendarDayManager";
-import { useIAP } from "../hooks/useIAP";
+import { Calendar } from "../../components/calendar/calendar";
+import { useCalendarDayManager } from "../../hooks/useCalendarDayManager";
+import { useIAP } from "../../hooks/useIAP";
 import { useTranslation } from "react-i18next";
-import { SCREENS, YEARS } from "../constants/constants";
-import { useAppSelector } from "../store/withTypes";
-import { selectSelectedYear } from "../store/appReducer";
-import { useCurrentDate } from "../hooks/useCurrentDate";
+import { SCREENS, YEARS } from "../../constants/constants";
+import { useAppSelector } from "../../store/withTypes";
+import { selectSelectedYear } from "../../store/appReducer";
+import { useCurrentDate } from "../../hooks/useCurrentDate";
 
 type NavigationProp = StackNavigationProp<
   HomeStackParamList,

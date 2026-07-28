@@ -1,6 +1,6 @@
 import { Alert } from "react-native";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
-import { usePlansScreen } from "../../components/plans-view/hooks/usePlansScreen";
+import { usePlansScreen } from "../../screens/plans-screen/hooks/usePlansScreen";
 import { createHookWrapper } from "../utils/render";
 import { loggedInPreloadedState } from "../utils/day-task-helpers";
 import {

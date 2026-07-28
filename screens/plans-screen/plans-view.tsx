@@ -1,8 +1,9 @@
 import { Box } from "@/components/ui/box";
 import { memo } from "react";
-import { PlansContextView, PlansMonthView } from "../../components/plans-view";
+import { PlansContextView } from "./context-view/plans-context-view";
+import { PlansMonthView } from "./month-view/plans-month-view";
 import { PlansViewOptions } from "../../constants/constants";
-import { usePlansScreen } from "../../components/plans-view/hooks/usePlansScreen";
+import { usePlansScreen } from "./hooks/usePlansScreen";
 
 interface PlansViewComponentProps {
   plansProps: ReturnType<typeof usePlansScreen>;

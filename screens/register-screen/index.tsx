@@ -7,25 +7,25 @@ import { ButtonText, Button } from "@/components/ui/button";
 import { Box } from "@/components/ui/box";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import { SafeAreaView } from "../components/common/safe-area-view";
+import { SafeAreaView } from "../../components/common/safe-area-view";
 import { Alert, Keyboard } from "react-native";
 import * as Haptics from "expo-haptics";
-import { SCREENS, EMAIL_REGEX, PASSWORD_REGEX } from "../constants/constants";
+import { SCREENS, EMAIL_REGEX, PASSWORD_REGEX } from "../../constants/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useAppDispatch } from "../store/withTypes";
-import { setUser, setAuthError, setAuthLoading } from "../store/authReducer";
-import { useCreateUserMutation } from "../services/auth-api-rtk";
-import { convertToSerializableUser } from "../types/user";
-import { useCreateProfileMutation } from "../services/api";
+import { useAppDispatch } from "../../store/withTypes";
+import { setUser, setAuthError, setAuthLoading } from "../../store/authReducer";
+import { useCreateUserMutation } from "../../services/auth-api-rtk";
+import { convertToSerializableUser } from "../../types/user";
+import { useCreateProfileMutation } from "../../services/api";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../App";
-import { resolveErrorMessage } from "../utils/utils";
+import { RootStackParamList } from "../../App";
+import { resolveErrorMessage } from "../../utils/utils";
 import {
   saveCredentials,
   clearCredentials,
-} from "../services/password-storage";
+} from "../../services/password-storage";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Register">;
 
