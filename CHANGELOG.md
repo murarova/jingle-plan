@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.15](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.1.14...jingle-plan-v1.1.15) (2026-07-28)
+
+
+### Bug Fixes
+
+* day overview regressions after folder restructure ([#52](https://github.com/murarova/jingle-plan/issues/52)) ([464025f](https://github.com/murarova/jingle-plan/commit/464025f7865e9807572fb5d685ec7ff9f1167675))
+
 ## [1.1.14](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.1.13...jingle-plan-v1.1.14) (2026-07-28)
 
 
