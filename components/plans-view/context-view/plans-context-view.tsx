@@ -1,12 +1,7 @@
+import { ScrollView } from "@/components/ui/scroll-view";
+import { Box } from "@/components/ui/box";
+import { Accordion, AccordionHeader, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { memo, useCallback } from "react";
-import {
-  Accordion,
-  AccordionHeader,
-  AccordionItem,
-  AccordionTrigger,
-  Box,
-  ScrollView,
-} from "@gluestack-ui/themed";
 import { PlansViewOptions } from "../../../constants/constants";
 import { PlanScreenData, TaskContext } from "../../../types/types";
 import { AccordionHeaderContent } from "./header";
@@ -52,24 +47,13 @@ export const PlansContextView = memo(
 
     return (
       <ScrollView>
-        <Box p="$2" flex={1}>
-          <Accordion
-            key="context-view"
-            size="md"
-            my="$2"
-            type="multiple"
-            borderRadius="$lg"
-          >
+        <Box className="p-2 flex-1">
+          <Accordion key="context-view" type="multiple" className="my-2 rounded-lg">
             {contextEntries.map(({ context, plans }) => {
               if (!plans?.length) return null;
 
               return (
-                <AccordionItem
-                  key={context}
-                  value={context}
-                  borderRadius="$lg"
-                  mb="$5"
-                >
+                <AccordionItem key={context} value={context} className="rounded-lg mb-5">
                   <AccordionHeader>
                     <AccordionTrigger>
                       {({ isExpanded }: { isExpanded: boolean }) => (

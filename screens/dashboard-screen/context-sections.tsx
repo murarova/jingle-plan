@@ -1,5 +1,5 @@
+import { Box } from "@/components/ui/box";
 import { memo } from "react";
-import { Box } from "@gluestack-ui/themed";
 import { TASK_CONTEXT } from "../../constants/constants";
 import { DashboardContextSection } from "./dashboard-context-section";
 import { TaskContext, TaskProgress } from "../../types/types";
@@ -9,13 +9,13 @@ interface ContextSectionsProps {
 }
 
 export const ContextSections = memo(({ contextData }: ContextSectionsProps) => (
-  <Box mt={10} flexWrap="wrap" flexDirection="row">
+  <Box className="mt-[10px] flex-wrap flex-row">
     {Object.values(TASK_CONTEXT).map((context) => {
       const data = contextData[context];
       if (!data) return null;
 
       return (
-        <Box key={context} width="50%">
+        <Box key={context} className="w-[50%]">
           <DashboardContextSection
             context={context}
             percentage={data.donePercentage}

@@ -1,4 +1,5 @@
-import { Box, Text } from "@gluestack-ui/themed";
+import { Text } from "@/components/ui/text";
+import { Box } from "@/components/ui/box";
 import { YoutubePlayer } from "./common";
 import { TaskItem } from "./task-item";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -27,8 +28,8 @@ export function TasksList({
       enableOnAndroid={true}
       enableAutomaticScroll={true}
     >
-      <Box pb={30}>
-        {videoText && <Text pb="$4">{videoText}</Text>}
+      <Box className="pb-[30px]">
+        {videoText && <Text className="pb-4">{videoText}</Text>}
         {videoId && <YoutubePlayer videoId={videoId} />}
         {dayTaskConfig && (
           <TaskItem currentDay={currentDay} taskConfig={dayTaskConfig} />

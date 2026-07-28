@@ -1,5 +1,7 @@
+import { HStack } from "@/components/ui/hstack";
+import { VStack } from "@/components/ui/vstack";
+import { Button, ButtonText } from "@/components/ui/button";
 import { memo } from "react";
-import { Button, ButtonText, VStack, HStack } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { HappySlider } from "./happy-slider";
 import { AutoGrowingTextarea } from "../../common";
@@ -25,7 +27,7 @@ export const SummaryForm = memo(
     const { t } = useTranslation();
 
     return (
-      <VStack space="md" width="100%">
+      <VStack space="md" className="w-full">
         <HappySlider rate={rate} setRate={onRateChange} isDisabled={false} />
         <AutoGrowingTextarea
           value={text}
@@ -33,16 +35,11 @@ export const SummaryForm = memo(
           placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
           minHeight={120}
         />
-        <HStack space="sm" mt="$2">
-          <Button
-            flex={1}
-            variant="outline"
-            onPress={onCancel}
-            borderRadius="$lg"
-          >
+        <HStack space="sm" className="mt-2">
+          <Button variant="outline" onPress={onCancel} className="flex-1 rounded-lg">
             <ButtonText>{t("common.cancel")}</ButtonText>
           </Button>
-          <Button flex={1} onPress={onSubmit} borderRadius="$lg">
+          <Button onPress={onSubmit} className="flex-1 rounded-lg">
             <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
           </Button>
         </HStack>

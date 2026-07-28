@@ -30,7 +30,7 @@ describe("LoadingScreen", () => {
     mockUseCalendarDayManager.mockReturnValue({ isLoading: false });
   });
 
-  it("renders the loader", () => {
+  it("renders an empty screen while resolving auth", () => {
     const { toJSON } = renderWithProviders(<LoadingScreen />, {
       withNavigation: false,
     });

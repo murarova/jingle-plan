@@ -6,8 +6,7 @@ import {
 import { Provider } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { GluestackUIProvider } from "@gluestack-ui/themed";
-import { config } from "../../config/gluestack-ui.config";
+import { GluestackUIProvider } from "../../components/ui/gluestack-ui-provider";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createTestStore } from "./test-store";
 import type { RootState } from "../../store/store";
@@ -52,7 +51,7 @@ function Providers({
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-        <GluestackUIProvider config={config}>{content}</GluestackUIProvider>
+        <GluestackUIProvider mode="light">{content}</GluestackUIProvider>
       </SafeAreaProvider>
     </Provider>
   );
@@ -92,7 +91,7 @@ export function createHookWrapper(preloadedState?: Partial<RootState>) {
     return (
       <Provider store={store}>
         <SafeAreaProvider>
-          <GluestackUIProvider config={config}>{children}</GluestackUIProvider>
+          <GluestackUIProvider mode="light">{children}</GluestackUIProvider>
         </SafeAreaProvider>
       </Provider>
     );

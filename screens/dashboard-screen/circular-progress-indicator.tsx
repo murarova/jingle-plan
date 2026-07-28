@@ -1,6 +1,7 @@
+import { Text } from "@/components/ui/text";
 import { memo } from "react";
-import CircularProgress from "react-native-circular-progress-indicator";
-import { config } from "../../config/gluestack-ui.config";
+import { CircularProgressBase } from "react-native-circular-progress-indicator";
+import { colors } from "../../constants/colors";
 
 interface CircularProgressIndicatorProps {
   percentage: number;
@@ -8,17 +9,22 @@ interface CircularProgressIndicatorProps {
 
 export const CircularProgressIndicator = memo(
   ({ percentage }: CircularProgressIndicatorProps) => (
-    <CircularProgress
+    <CircularProgressBase
       value={percentage}
-      progressValueColor={config.tokens.colors.warmGray800}
-      activeStrokeColor={config.tokens.colors.green400}
-      inActiveStrokeColor={config.tokens.colors.warmGray400}
+      activeStrokeColor={colors.green400}
+      inActiveStrokeColor={colors.warmGray400}
       inActiveStrokeOpacity={0.2}
-      valueSuffix="%"
       radius={60}
       duration={1000}
       maxValue={100}
-    />
+    >
+      <Text
+        className="font-bold text-3xl text-warmGray-800"
+        style={{ lineHeight: 36 }}
+      >
+        {Math.round(percentage)}%
+      </Text>
+    </CircularProgressBase>
   )
 );
 

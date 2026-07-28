@@ -1,5 +1,7 @@
+import { ImageBackground } from "@/components/ui/image-background";
+import { ButtonText, Button } from "@/components/ui/button";
+import { Box } from "@/components/ui/box";
 import * as ExpoImagePicker from "expo-image-picker";
-import { Box, ButtonText, Button, ImageBackground } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import uuid from "react-native-uuid";
 import { Loader } from "./loader";
@@ -46,24 +48,16 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
   return (
     <Box>
       {(image || isImageLoading) && (
-        <Box flex={1}>
+        <Box className="flex-1">
           {isImageLoading && (
             <Box
-              position="absolute"
-              backgroundColor="$blueGray100"
-              opacity="$60"
-              top="$0"
-              bottom="$0"
-              left="$0"
-              right="$0"
-              zIndex={2}
-            >
+              className="absolute bg-blueGray-100 opacity-60 top-0 bottom-0 left-0 right-0 z-2">
               <Loader size="large" />
             </Box>
           )}
           {image && (
             <AnimatedView style={{ zIndex: 2 }} show={!isImageLoading}>
-              <Box height={300} width="100%" flex={1}>
+              <Box className="h-[300px] w-full">
                 <ImageBackground
                   style={{ flex: 1, justifyContent: "center" }}
                   source={{ uri: image.uri }}
@@ -75,7 +69,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
             </AnimatedView>
           )}
           {!image && isImageLoading && (
-            <Box height={300} width="100%" flex={1} />
+            <Box className="h-[300px] w-full" />
           )}
         </Box>
       )}

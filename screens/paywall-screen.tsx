@@ -1,15 +1,11 @@
+import { ScrollView } from "@/components/ui/scroll-view";
+import { Divider } from "@/components/ui/divider";
+import { HStack } from "@/components/ui/hstack";
+import { VStack } from "@/components/ui/vstack";
+import { Button, ButtonText } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { Box } from "@/components/ui/box";
 import { memo, useCallback } from "react";
-import {
-  Box,
-  Text,
-  Button,
-  ButtonText,
-  VStack,
-  HStack,
-  Divider,
-  ScrollView,
-} from "@gluestack-ui/themed";
-import { SafeAreaView } from "../components/common/safe-area-view";
 import { useTranslation } from "react-i18next";
 import { useIAP } from "../hooks/useIAP";
 import {
@@ -65,57 +61,48 @@ export const PaywallScreen = memo(() => {
   }, [t]);
 
   return (
-    <SafeAreaView flex={1} backgroundColor="$white">
+    <Box className="flex-1 bg-white">
       <ScrollView contentContainerStyle={{ padding: 24 }}>
-        <Box mb="$6">
-          <Text fontSize="$xl" fontWeight="$bold" mb="$1">
+        <Box className="mb-6">
+          <Text className="text-xl font-bold mb-1">
             {t("paywall.title")}
           </Text>
-          <Text fontSize="$md" color="$warmGray500">
+          <Text className="text-md text-warmGray-500">
             {t("paywall.subtitle")}
           </Text>
         </Box>
 
         <VStack space="md">
-          <Box
-            borderWidth={1}
-            borderColor="$warmGray200"
-            borderRadius="$2xl"
-            p="$5"
-            backgroundColor="$white"
-          >
-            <Text fontSize="$lg" fontWeight="$semibold" mb="$2">
+          <Box className="border border-warmGray-200 rounded-2xl p-5 bg-white">
+            <Text className="text-lg font-semibold mb-2">
               {t("paywall.planName")}
             </Text>
-            <Text fontSize="$2xl" fontWeight="$bold" mb="$1">
+            <Text className="text-2xl font-bold mb-1">
               {displayedPrice}
             </Text>
-            <Text fontSize="$sm" color="$warmGray500" mb="$4">
+            <Text className="text-sm text-warmGray-500 mb-4">
               {t("paywall.billingPeriod")}
             </Text>
-            <Divider my="$2" />
-            <VStack space="xs" mt="$3">
-              <HStack space="sm" mb="$2">
+            <Divider className="my-2" />
+            <VStack space="xs" className="mt-3">
+              <HStack space="sm" className="mb-2">
                 <Text>•</Text>
-                <Text flex={1}>{t("paywall.benefitOne")}</Text>
+                <Text className="flex-1">{t("paywall.benefitOne")}</Text>
               </HStack>
-              <HStack space="sm" mb="$2">
+              <HStack space="sm" className="mb-2">
                 <Text>•</Text>
-                <Text flex={1}>{t("paywall.benefitFour")}</Text>
+                <Text className="flex-1">{t("paywall.benefitFour")}</Text>
               </HStack>
-              <HStack space="sm" mb="$2">
+              <HStack space="sm" className="mb-2">
                 <Text>•</Text>
-                <Text flex={1}>{t("paywall.benefitThree")}</Text>
+                <Text className="flex-1">{t("paywall.benefitThree")}</Text>
               </HStack>
-              <HStack space="sm" mb="$2">
+              <HStack space="sm" className="mb-2">
                 <Text>•</Text>
-                <Text flex={1}>{t("paywall.benefitTwo")}</Text>
+                <Text className="flex-1">{t("paywall.benefitTwo")}</Text>
               </HStack>
             </VStack>
             <Button
-              mt="$6"
-              borderRadius="$xl"
-              bgColor={isSubscriber ? "$green600" : "$primary600"}
               isDisabled={
                 isLoading ||
                 !resolvedProductId ||
@@ -127,7 +114,7 @@ export const PaywallScreen = memo(() => {
                   subscribe(resolvedProductId);
                 }
               }}
-            >
+              className={` ${isSubscriber ? "bg-green-600" : "bg-primary-600"} mt-6 rounded-xl `}>
               <ButtonText>
                 {isLoading ? t("paywall.processing") : subscribeButtonLabel}
               </ButtonText>
@@ -135,12 +122,12 @@ export const PaywallScreen = memo(() => {
           </Box>
 
           <Button variant="link" onPress={handleManageSubscription}>
-            <ButtonText color="$primary600">
+            <ButtonText className="text-primary-600">
               {t("common.manageSubscription")}
             </ButtonText>
           </Button>
 
-          <Text fontSize="$xs" color="$warmGray500">
+          <Text className="text-xs text-warmGray-500">
             {t(
               Platform.OS === "android"
                 ? "paywall.disclaimerAndroid"
@@ -149,7 +136,7 @@ export const PaywallScreen = memo(() => {
           </Text>
         </VStack>
       </ScrollView>
-    </SafeAreaView>
+    </Box>
   );
 });
 

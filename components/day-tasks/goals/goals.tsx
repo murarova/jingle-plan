@@ -1,5 +1,5 @@
+import { Box } from "@/components/ui/box";
 import { memo, useMemo } from "react";
-import { Box } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { GoalsData } from "../../../types/types";
 import { useGoals } from "./hooks/useGoals";
@@ -36,7 +36,7 @@ export const Goals = memo(({ context, data }: GoalsProps) => {
   const emptyText = useMemo(() => t("common.empty"), [t]);
 
   return (
-    <Box width="100%">
+    <Box className="w-full">
       {isEditing ? (
         <GoalsForm
           text={text}

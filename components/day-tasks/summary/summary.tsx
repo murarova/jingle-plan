@@ -1,4 +1,4 @@
-import { Box } from "@gluestack-ui/themed";
+import { Box } from "@/components/ui/box";
 import { SummaryContextData } from "../../../types/types";
 import { useSummary } from "./hooks/useSummary";
 import { SummaryForm } from "./summary-form";

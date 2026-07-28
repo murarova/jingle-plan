@@ -1,13 +1,9 @@
+import { ChevronUpIcon, ChevronDownIcon } from "@/components/ui/icon";
+import { Text } from "@/components/ui/text";
+import { Heading } from "@/components/ui/heading";
+import { Box } from "@/components/ui/box";
+import { AccordionTitleText, AccordionIcon } from "@/components/ui/accordion";
 import { memo } from "react";
-import {
-  AccordionTitleText,
-  AccordionIcon,
-  Box,
-  Heading,
-  Text,
-  ChevronUpIcon,
-  ChevronDownIcon,
-} from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { TaskContext } from "../../../types/types";
 
@@ -24,8 +20,8 @@ export const AccordionHeaderContent = memo(
     return (
       <>
         <AccordionTitleText>
-          <Box flexDirection="row" alignItems="center">
-            <Heading size="sm" mr="$2">
+          <Box className="flex-row items-center">
+            <Heading size="sm" className="mr-2">
               {t(`context.${context}`)}
             </Heading>
             <Text>({plansCount})</Text>
@@ -33,7 +29,7 @@ export const AccordionHeaderContent = memo(
         </AccordionTitleText>
         <AccordionIcon
           as={isExpanded ? ChevronUpIcon : ChevronDownIcon}
-          ml="$3"
+          className="ml-3"
         />
       </>
     );

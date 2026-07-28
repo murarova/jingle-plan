@@ -1,14 +1,15 @@
-import { useRef } from "react";
+import { ScrollView } from "@/components/ui/scroll-view";
+
 import {
-  Box,
   Accordion,
   AccordionHeader,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-  ScrollView,
-} from "@gluestack-ui/themed";
-import { SafeAreaView } from "../../components/common/safe-area-view";
+} from "@/components/ui/accordion";
+
+import { Box } from "@/components/ui/box";
+import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { EmptyScreen } from "../../components/empty-screen";
 import { TASK_CONTEXT } from "../../constants/constants";
@@ -51,8 +52,8 @@ export const SummaryScreen: React.FC = () => {
   }
 
   return (
-    <SafeAreaView flex={1}>
-      <Box p="$2" flex={1}>
+    <Box className="flex-1">
+      <Box className="p-2 flex-1">
         <KeyboardAwareScrollView
           ref={scrollViewRef}
           extraScrollHeight={100}
@@ -62,23 +63,12 @@ export const SummaryScreen: React.FC = () => {
           enableAutomaticScroll={true}
         >
           <ScrollView>
-            <Accordion
-              key="summary"
-              size="md"
-              my="$2"
-              type="multiple"
-              borderRadius="$lg"
-            >
+            <Accordion key="summary" type="multiple" className="my-2 rounded-lg">
               {Object.values(TASK_CONTEXT).map((context) => {
                 if (!summary[context]) return null;
 
                 return (
-                  <AccordionItem
-                    key={context}
-                    value={context}
-                    borderRadius="$lg"
-                    mb="$5"
-                  >
+                  <AccordionItem key={context} value={context} className="rounded-lg mb-5">
                     <AccordionHeader>
                       <AccordionTrigger>
                         {({ isExpanded }: { isExpanded: boolean }) => {
@@ -123,6 +113,6 @@ export const SummaryScreen: React.FC = () => {
           </ScrollView>
         </KeyboardAwareScrollView>
       </Box>
-    </SafeAreaView>
+    </Box>
   );
 };

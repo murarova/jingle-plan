@@ -1,4 +1,5 @@
-import { Box, Button, ButtonText } from "@gluestack-ui/themed";
+import { Button, ButtonText } from "@/components/ui/button";
+import { Box } from "@/components/ui/box";
 import { useTranslation } from "react-i18next";
 import isEmpty from "lodash/isEmpty";
 import { AddPlanModal } from "./add-plan-modal";
@@ -32,11 +33,11 @@ export function Plans({ context, data }: PlansProps) {
 
   return (
     <Box>
-      <Button borderRadius="$lg" onPress={handleAddPlanBtn}>
+      <Button onPress={handleAddPlanBtn} className="rounded-lg">
         <ButtonText>{t("screens.tasksOfTheDay.addPlanItem")}</ButtonText>
       </Button>
       {!isEmpty(data) && (
-        <Box mt="$10">
+        <Box className="mt-10">
           <PlansList
             plans={contextData}
             title={t("screens.plansScreen.title")}
@@ -45,7 +46,6 @@ export function Plans({ context, data }: PlansProps) {
           />
         </Box>
       )}
-
       {showModal && (
         <AddPlanModal
           data={updatedData}

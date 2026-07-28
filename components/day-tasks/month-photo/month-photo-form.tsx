@@ -1,11 +1,8 @@
-import {
-  Box,
-  Button,
-  ButtonText,
-  Text,
-  VStack,
-  HStack,
-} from "@gluestack-ui/themed";
+import { HStack } from "@/components/ui/hstack";
+import { VStack } from "@/components/ui/vstack";
+import { Text } from "@/components/ui/text";
+import { Button, ButtonText } from "@/components/ui/button";
+import { Box } from "@/components/ui/box";
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
 import { AutoGrowingTextarea, ImagePicker } from "../../common";
@@ -36,7 +33,7 @@ export const MonthPhotoForm = memo(
     const { t } = useTranslation();
 
     return (
-      <VStack space="md" width="100%">
+      <VStack space="md" className="w-full">
         <ImagePicker
           setIsImageLoading={setImageLoading}
           isImageLoading={isImageLoading}
@@ -50,18 +47,13 @@ export const MonthPhotoForm = memo(
           onChangeText={onTextChange}
           style={{ marginTop: 16 }}
         />
-        <HStack space="sm" mt="$2">
+        <HStack space="sm" className="mt-2">
           {text || image ? (
-            <Button
-              flex={1}
-              variant="outline"
-              onPress={onCancel}
-              borderRadius="$lg"
-            >
+            <Button variant="outline" onPress={onCancel} className="flex-1 rounded-lg">
               <ButtonText>{t("common.cancel")}</ButtonText>
             </Button>
           ) : null}
-          <Button flex={1} onPress={onSubmit} borderRadius="$lg">
+          <Button onPress={onSubmit} className="flex-1 rounded-lg">
             <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
           </Button>
         </HStack>

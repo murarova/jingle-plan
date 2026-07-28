@@ -1,5 +1,7 @@
+import { Text } from "@/components/ui/text";
+import { Heading } from "@/components/ui/heading";
+import { Center } from "@/components/ui/center";
 import { memo } from "react";
-import { Center, Heading, Text } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 
 interface GlobalGoalProps {
@@ -11,11 +13,11 @@ export const GlobalGoal = memo(({ text, year }: GlobalGoalProps) => {
   const { t } = useTranslation();
 
   return (
-    <Center pt="$4" pb="$2">
-      <Text pb="$2">
+    <Center className="pt-4 pb-2">
+      <Text className="pb-2">
         {t("screens.plansScreen.globalGoalTitle", { year: Number(year) + 1 })}
       </Text>
-      <Heading textAlign="center" size="sm">
+      <Heading size="sm" className="text-center">
         {text}
       </Heading>
     </Center>

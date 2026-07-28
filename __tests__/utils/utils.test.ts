@@ -1,24 +1,42 @@
 import {
+  getProgressBackgroundColor,
   getProgressColorByValue,
   calculateTotalProgress,
   getPluralForm,
   resolveErrorMessage,
 } from "../../utils/utils";
 
-describe("getProgressColorByValue", () => {
+describe("getProgressBackgroundColor", () => {
   it("returns red below 30", () => {
-    expect(getProgressColorByValue(0)).toBe("$progressRed");
-    expect(getProgressColorByValue(29)).toBe("$progressRed");
+    expect(getProgressBackgroundColor(0)).toBe("#FF656C");
+    expect(getProgressBackgroundColor(29)).toBe("#FF656C");
   });
 
   it("returns yellow between 30 and 69", () => {
-    expect(getProgressColorByValue(30)).toBe("$progressYellow");
-    expect(getProgressColorByValue(69)).toBe("$progressYellow");
+    expect(getProgressBackgroundColor(30)).toBe("#FAC515");
+    expect(getProgressBackgroundColor(69)).toBe("#FAC515");
   });
 
   it("returns green at 70 and above", () => {
-    expect(getProgressColorByValue(70)).toBe("$green400");
-    expect(getProgressColorByValue(100)).toBe("$green400");
+    expect(getProgressBackgroundColor(70)).toBe("#4bb4ad");
+    expect(getProgressBackgroundColor(100)).toBe("#4bb4ad");
+  });
+});
+
+describe("getProgressColorByValue", () => {
+  it("returns red below 30", () => {
+    expect(getProgressColorByValue(0)).toBe("bg-progressRed");
+    expect(getProgressColorByValue(29)).toBe("bg-progressRed");
+  });
+
+  it("returns yellow between 30 and 69", () => {
+    expect(getProgressColorByValue(30)).toBe("bg-progressYellow");
+    expect(getProgressColorByValue(69)).toBe("bg-progressYellow");
+  });
+
+  it("returns green at 70 and above", () => {
+    expect(getProgressColorByValue(70)).toBe("bg-green-400");
+    expect(getProgressColorByValue(100)).toBe("bg-green-400");
   });
 });
 

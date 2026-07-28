@@ -1,13 +1,9 @@
+import { ChevronRightIcon, ChevronLeftIcon } from "@/components/ui/icon";
+import { Center } from "@/components/ui/center";
+import { Text } from "@/components/ui/text";
+import { Button, ButtonIcon } from "@/components/ui/button";
+import { Box } from "@/components/ui/box";
 import { memo } from "react";
-import {
-  Box,
-  Button,
-  Text,
-  Center,
-  ChevronRightIcon,
-  ButtonIcon,
-  ChevronLeftIcon,
-} from "@gluestack-ui/themed";
 
 interface AlbumNavigationControlsProps {
   onBack: () => void;
@@ -18,24 +14,35 @@ interface AlbumNavigationControlsProps {
 export const AlbumNavigationControls = memo(
   ({ onBack, onForward, currentMonth }: AlbumNavigationControlsProps) => (
     <Box
-      flexDirection="row"
-      alignItems="center"
-      justifyContent="space-between"
-      width="100%"
-      borderRadius="$full"
-      mt="$3"
-      px="$5"
-      backgroundColor="$white"
-      flexShrink={0}
+      className="flex-row items-center justify-between w-full rounded-full mt-3 bg-white shrink-0"
+      style={{ paddingHorizontal: 20, paddingVertical: 4, minHeight: 48 }}
     >
-      <Button onPress={onBack} size="xl" variant="link">
-        <ButtonIcon color="$warmGray800" as={ChevronLeftIcon} />
+      <Button
+        onPress={onBack}
+        size="lg"
+        variant="link"
+        className="h-12 min-w-12"
+      >
+        <ButtonIcon
+          as={ChevronLeftIcon}
+          className="text-warmGray-800 h-5 w-5"
+        />
       </Button>
-      <Center flex={1}>
-        <Text fontWeight={600}>{currentMonth}</Text>
+      <Center className="flex-1">
+        <Text className="font-semibold text-typography-900">
+          {currentMonth}
+        </Text>
       </Center>
-      <Button onPress={onForward} size="xl" variant="link">
-        <ButtonIcon color="$warmGray800" as={ChevronRightIcon} />
+      <Button
+        onPress={onForward}
+        size="lg"
+        variant="link"
+        className="h-12 min-w-12"
+      >
+        <ButtonIcon
+          as={ChevronRightIcon}
+          className="text-warmGray-800 h-5 w-5"
+        />
       </Button>
     </Box>
   ),

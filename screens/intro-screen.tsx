@@ -1,15 +1,12 @@
-import {
-  Box,
-  Heading,
-  Center,
-  Button,
-  ButtonText,
-} from "@gluestack-ui/themed";
+import { Button, ButtonText } from "@/components/ui/button";
+import { Center } from "@/components/ui/center";
+import { Heading } from "@/components/ui/heading";
+import { Box } from "@/components/ui/box";
 import { SafeAreaView } from "../components/common/safe-area-view";
 import { SnowAngel, Decorating, Dog, SkiingSantaSvg } from "../assets/svg";
 import Carousel, { Pagination } from "react-native-reanimated-carousel";
-import { useRef, ReactNode } from "react";
-import { Dimensions } from "react-native";
+import { useCallback, useRef, useState, ComponentType } from "react";
+import { LayoutChangeEvent } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { SCREENS } from "../constants/constants";
@@ -17,15 +14,16 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
 import * as Haptics from "expo-haptics";
 import { useSharedValue } from "react-native-reanimated";
+import { SvgProps } from "react-native-svg";
 
-const { width: screenWidth } = Dimensions.get("window");
-const itemWidth = screenWidth - 60;
-const carouselHeight = 380;
+const SCREEN_PADDING = 30;
+const TITLE_AREA = 72;
+
 type NavigationProp = StackNavigationProp<RootStackParamList, "INTRO">;
 
 interface IntroScreenItem {
   title: string;
-  image: ReactNode;
+  Image: ComponentType<SvgProps>;
 }
 
 export function IntroScreen() {
@@ -33,79 +31,106 @@ export function IntroScreen() {
   const nav = useNavigation<NavigationProp>();
   const carouselRef = useRef(null);
   const progress = useSharedValue(0);
+  const [carouselSize, setCarouselSize] = useState({ width: 0, height: 0 });
+
   const data: IntroScreenItem[] = [
     {
       title: t("screens.intro.firstScreenText"),
-      image: <Decorating />,
+      Image: Decorating,
     },
     {
       title: t("screens.intro.secondScreenText"),
-      image: <SnowAngel />,
+      Image: SnowAngel,
     },
     {
       title: t("screens.intro.thirdScreenText"),
-      image: <SkiingSantaSvg />,
+      Image: SkiingSantaSvg,
     },
     {
       title: t("screens.intro.fourthScreenText"),
-      image: <Dog />,
+      Image: Dog,
     },
   ];
 
-  function renderItem({ item }: { item: IntroScreenItem }) {
-    return (
-      <Box alignItems="center" width={itemWidth}>
-        <Center mb="$5">{item.image}</Center>
-        <Heading verticalAlign="middle" textAlign="center">
-          {item.title}
-        </Heading>
-      </Box>
+  const handleCarouselLayout = useCallback((event: LayoutChangeEvent) => {
+    const { width, height } = event.nativeEvent.layout;
+    if (width <= 0 || height <= 0) return;
+
+    setCarouselSize((prev) =>
+      prev.width === width && prev.height === height
+        ? prev
+        : { width, height },
     );
-  }
-  return (
-    <SafeAreaView flex={1}>
-      <Box flex={1} justifyContent="center">
-        <Box>
-          <Carousel
-            ref={carouselRef}
-            loop={false}
-            pagingEnabled
-            snapEnabled
-            mode="parallax"
-            modeConfig={{
-              parallaxScrollingScale: 0.9,
-              parallaxScrollingOffset: 30,
-            }}
-            style={{ width: screenWidth, height: carouselHeight }}
-            itemWidth={itemWidth}
-            data={data}
-            onProgressChange={progress}
-            renderItem={({ item }) => renderItem({ item })}
-            testID="intro-carousel"
-          />
-          <Box>
-            <Pagination.Basic
-              progress={progress}
-              data={data}
-              dotStyle={{
-                width: 8,
-                height: 8,
-                borderRadius: 5,
-                marginHorizontal: -2,
-                backgroundColor: "rgba(0, 0, 0, 0.75)",
-              }}
-              activeDotStyle={{
-                width: 8,
-                height: 8,
-                borderRadius: 5,
-                marginHorizontal: -2,
-                backgroundColor: "rgba(0, 0, 0, 0.75)",
-              }}
-              containerStyle={{ gap: 8, marginTop: 8 }}
-            />
-          </Box>
+  }, []);
+
+  const imageSize = Math.max(
+    0,
+    Math.min(carouselSize.width, carouselSize.height - TITLE_AREA),
+  );
+
+  const renderItem = useCallback(
+    ({ item }: { item: IntroScreenItem }) => {
+      const Image = item.Image;
+
+      return (
+        <Box className="flex-1 w-full items-center justify-center">
+          <Center className="mb-5" style={{ width: imageSize, height: imageSize }}>
+            <Image width={imageSize} height={imageSize} />
+          </Center>
+          <Heading className="align-middle text-center">{item.title}</Heading>
         </Box>
-        <Box width={itemWidth} alignSelf="center">
+      );
+    },
+    [imageSize],
+  );
+
+  return (
+    <SafeAreaView className="flex-1">
+      <Box
+        className="flex-1 w-full pt-5 pb-2"
+        style={{ paddingHorizontal: SCREEN_PADDING }}
+      >
+        <Box
+          onLayout={handleCarouselLayout}
+          className="flex-1 w-full min-h-0"
+          testID="intro-carousel-layout"
+        >
+          {carouselSize.height > 0 && (
+            <Carousel
+              ref={carouselRef}
+              loop={false}
+              pagingEnabled
+              snapEnabled
+              style={{
+                width: carouselSize.width,
+                height: carouselSize.height,
+              }}
+              itemWidth={carouselSize.width}
+              data={data}
+              onProgressChange={progress}
+              renderItem={renderItem}
+              testID="intro-carousel"
+            />
+          )}
+        </Box>
+        <Box>
+          <Pagination.Basic
+            progress={progress}
+            data={data}
+            dotStyle={{
+              width: 8,
+              height: 8,
+              borderRadius: 5,
+              backgroundColor: "rgba(0, 0, 0, 0.2)",
+            }}
+            activeDotStyle={{
+              borderRadius: 5,
+              backgroundColor: "rgba(0, 0, 0, 0.75)",
+            }}
+            containerStyle={{ gap: 8, marginTop: 8, marginBottom: 8 }}
+          />
+        </Box>
+        <Box className="w-full">
           <Button
             onPress={async () => {
               try {
@@ -113,7 +138,7 @@ export function IntroScreen() {
               } catch {}
               nav.replace(SCREENS.REGISTER);
             }}
-            mt="$2"
+            className="mt-2"
           >
             <ButtonText>{t("screens.intro.loginBtn")}</ButtonText>
           </Button>
@@ -124,8 +149,8 @@ export function IntroScreen() {
               } catch {}
               nav.replace(SCREENS.LOGIN);
             }}
-            mt="$2"
             variant="outline"
+            className="mt-2"
           >
             <ButtonText>{t("screens.intro.signupBtn")}</ButtonText>
           </Button>

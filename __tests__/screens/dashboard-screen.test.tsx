@@ -17,12 +17,23 @@ jest.mock("../../services/api", () => ({
 }));
 
 jest.mock("react-native-circular-progress-indicator", () => {
-  const { Text } = require("react-native");
+  const React = require("react");
+  const { Text, View } = require("react-native");
+  const MockProgress = ({
+    value,
+    children,
+  }: {
+    value: number;
+    children?: React.ReactNode;
+  }) => (
+    <View testID="circular-progress">
+      {children ?? <Text>{`${value}%`}</Text>}
+    </View>
+  );
   return {
     __esModule: true,
-    default: ({ value }: { value: number }) => (
-      <Text testID="circular-progress">{`${value}%`}</Text>
-    ),
+    default: MockProgress,
+    CircularProgressBase: MockProgress,
   };
 });
 

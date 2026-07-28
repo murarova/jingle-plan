@@ -1,3 +1,8 @@
+import { Heading } from "@/components/ui/heading";
+import { Text } from "@/components/ui/text";
+import { Box } from "@/components/ui/box";
+import { ChevronUpIcon, ChevronDownIcon } from "@/components/ui/icon";
+
 import {
   Accordion,
   AccordionHeader,
@@ -6,12 +11,8 @@ import {
   AccordionTitleText,
   AccordionIcon,
   AccordionContent,
-  ChevronUpIcon,
-  ChevronDownIcon,
-  Box,
-  Text,
-  Heading,
-} from "@gluestack-ui/themed";
+} from "@/components/ui/accordion";
+
 import { useTranslation } from "react-i18next";
 import { TaskOutputType, TASK_CATEGORY } from "../constants/constants";
 import { Plans } from "./day-tasks/plans/plans";
@@ -53,8 +54,8 @@ export function TaskItem({
 
   return (
     <>
-      <Accordion size="md" my="$2" type="multiple" borderRadius="$lg">
-        <AccordionItem value="a" borderRadius="$lg">
+      <Accordion type="multiple" className="my-2 rounded-lg">
+        <AccordionItem value="a" className="rounded-lg">
           <View ref={accordionHeaderRef}>
             <AccordionHeader>
               <AccordionTrigger>
@@ -67,9 +68,9 @@ export function TaskItem({
                           : t("screens.tasksOfTheDay.dayTitle")}
                       </AccordionTitleText>
                       {isExpanded ? (
-                        <AccordionIcon as={ChevronUpIcon} ml="$3" />
+                        <AccordionIcon as={ChevronUpIcon} className="ml-3" />
                       ) : (
-                        <AccordionIcon as={ChevronDownIcon} ml="$3" />
+                        <AccordionIcon as={ChevronDownIcon} className="ml-3" />
                       )}
                     </>
                   );
@@ -79,12 +80,12 @@ export function TaskItem({
           </View>
           <AccordionContent>
             <Box>
-              <Heading size="sm" pb="$2">
+              <Heading size="sm" className="pb-2">
                 {taskConfig.title}
               </Heading>
               <Text>{taskConfig.text}</Text>
             </Box>
-            <Box pt="$4">
+            <Box className="pt-4">
               {taskConfig.taskOutputType === TaskOutputType.List && (
                 <Plans
                   context={taskConfig.context as TaskContext}

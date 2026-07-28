@@ -1,12 +1,9 @@
-import { useCallback, useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { ScrollView } from "@/components/ui/scroll-view";
+import { Box } from "@/components/ui/box";
+import { useCallback, useState } from "react";
 import { RefreshControl } from "react-native";
-import {
-  Box,
-  ScrollView,
-  Text,
-  Button,
-} from "@gluestack-ui/themed";
-import { SafeAreaView } from "../components/common/safe-area-view";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList } from "./home-screen";
@@ -31,13 +28,18 @@ function PeriodOverviewScreen() {
   const { refresh, isLoading, getDayConfig, isAdmin } =
     useCalendarDayManager(updateCurrentDate);
   const { isSubscriber, isSubscriptionResolved } = useIAP();
-  const isRefreshing = useMemo(() => Boolean(isLoading), [isLoading]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const currentYear = YEARS[YEARS.length - 1];
   const selectedYear = useAppSelector(selectSelectedYear);
   const isLastYear = selectedYear === currentYear;
 
   const handleRefresh = useCallback(async () => {
-    await refresh();
+    setIsRefreshing(true);
+    try {
+      await refresh();
+    } finally {
+      setIsRefreshing(false);
+    }
   }, [refresh]);
 
   function pressHandler(dateString: string) {
@@ -47,14 +49,13 @@ function PeriodOverviewScreen() {
   }
 
   return (
-    <SafeAreaView flex={1}>
+    <Box className="flex-1">
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
         }
       >
-        <Box mt="$10">
+        <Box className="mt-10">
           <Calendar
             pressHandler={pressHandler}
             getDayConfig={getDayConfig}
@@ -65,36 +66,26 @@ function PeriodOverviewScreen() {
           />
         </Box>
         {!isSubscriber && isSubscriptionResolved && !isAdmin && isLastYear && (
-          <Box
-            mx="$6"
-            mt="$3"
-            mb="$3"
-            p="$4"
-            borderRadius="$xl"
-            backgroundColor="$green50"
-            borderWidth={1}
-            borderColor="$green200"
-          >
-            <Text fontWeight="$semibold" color="$green800" mb="$2">
+          <Box className="mx-6 mt-3 mb-3 p-4 rounded-xl bg-green-50 border border-green-200">
+            <Text className="font-semibold text-green-800 mb-2">
               {t("paywall.lockedCalendarTitle")}
             </Text>
-            <Text color="$green900" mb="$3">
+            <Text className="text-green-900 mb-3">
               {t("paywall.lockedCalendarDescription")}
             </Text>
             <Button
               size="sm"
-              borderRadius="$lg"
-              alignSelf="flex-start"
               onPress={() => nav.navigate(SCREENS.PAYWALL as never)}
+              className="rounded-lg self-start"
             >
-              <Text color="$white" fontWeight="$semibold">
+              <Text className="text-white font-semibold">
                 {t("paywall.goToStore")}
               </Text>
             </Button>
           </Box>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </Box>
   );
 }
 

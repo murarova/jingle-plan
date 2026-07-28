@@ -1,4 +1,5 @@
 import "react-native-gesture-handler";
+import "./global.css";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { RegisterScreen } from "./screens/register-screen";
@@ -7,8 +8,8 @@ import { LoginScreen } from "./screens/login-screen";
 import { HomeScreen } from "./screens/home-screen";
 import { PaywallScreen } from "./screens/paywall-screen";
 import { IntroScreen } from "./screens/intro-screen";
-import { GluestackUIProvider } from "@gluestack-ui/themed";
-import { config } from "./config/gluestack-ui.config";
+import { GluestackUIProvider } from "./components/ui/gluestack-ui-provider";
+import { Box } from "./components/ui/box";
 import { SCREENS } from "./constants/constants";
 import "./i18n/i18n";
 import { Provider, useDispatch } from "react-redux";
@@ -164,11 +165,11 @@ function AppContent() {
   }, [dispatch]);
 
   if (isLoading) {
-    return <Loader />;
+    return <Loader size="large" />;
   }
 
   return (
-    <>
+    <Box className="flex-1">
       <NavigationContainer theme={MyTheme}>
         <Stack.Navigator>
           <Stack.Screen
@@ -217,13 +218,13 @@ function AppContent() {
         </Stack.Navigator>
       </NavigationContainer>
       <GlobalLoader />
-    </>
+    </Box>
   );
 }
 
 export default function App() {
   return (
-    <GluestackUIProvider config={config}>
+    <GluestackUIProvider mode="light">
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Provider store={store}>

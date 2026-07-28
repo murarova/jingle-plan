@@ -1,5 +1,7 @@
+import { VStack } from "@/components/ui/vstack";
+import { Text } from "@/components/ui/text";
+import { Box } from "@/components/ui/box";
 import { memo } from "react";
-import { Box, Text, VStack } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { HappySlider } from "./happy-slider";
 import { ActionButtons } from "../../common";
@@ -16,9 +18,9 @@ export const SummaryView = memo(
     const { t } = useTranslation();
 
     return (
-      <VStack space="md" width="100%">
+      <VStack space="md" className="w-full">
         <HappySlider rate={rate} setRate={() => {}} isDisabled={true} />
-        <Box mb="$2">
+        <Box className="mb-2">
           <Text>{text || t("common.empty")}</Text>
         </Box>
         <ActionButtons onEdit={onEdit} onDelete={onDelete} />

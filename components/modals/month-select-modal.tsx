@@ -1,11 +1,8 @@
-import {
-  Box,
-  Text,
-  Button,
-  ButtonText,
-  VStack,
-  Divider,
-} from "@gluestack-ui/themed";
+import { Divider } from "@/components/ui/divider";
+import { VStack } from "@/components/ui/vstack";
+import { Button, ButtonText } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { Box } from "@/components/ui/box";
 import { useTranslation } from "react-i18next";
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { months } from "../../constants/constants";
@@ -28,8 +25,6 @@ export function MonthSelectModal({
       setSelectedMonth(month);
     }
   }, [month]);
-
-  console.log(months);
 
   const { t } = useTranslation();
   const [selectedMonth, setSelectedMonth] = useState<string>("");
@@ -57,14 +52,14 @@ export function MonthSelectModal({
   const renderFooter = useCallback(
     (props: any) => (
       <BottomSheetFooter {...props} bottomInset={24}>
-        <VStack space="md" px="$9">
+        <VStack space="md" className="px-9">
           <Button
             size="lg"
-            backgroundColor="$red600"
             onPress={handleDone}
             disabled={!selectedMonth}
+            className="bg-red-600"
           >
-            <ButtonText color="$white" fontSize="$md" fontWeight="$semibold">
+            <ButtonText className="text-white text-md font-semibold">
               {t("common.submitBtnText")}
             </ButtonText>
           </Button>
@@ -82,23 +77,22 @@ export function MonthSelectModal({
       snapPoints={snapPoints}
       footerComponent={renderFooter}
     >
-      <Box display="flex" justifyContent="flex-start" alignItems="flex-start">
+      <Box className="flex justify-start items-start">
         <Button variant="link" onPress={handleGoBack}>
           <ChevronLeft size={24} color="#007AFF" />
-          <Text color="#007AFF" fontSize="$md" ml="$1">
+          <Text className="text-[#007AFF] text-md ml-1">
             {t("common.back")}
           </Text>
         </Button>
       </Box>
-      <Text fontSize="$lg" fontWeight="700" textAlign="center" mb="$6">
+      <Text className="text-lg font-[700] text-center mb-6">
         {t("monthSelect.title")}
       </Text>
-
       <BottomSheetScrollView>
-        <VStack mb="$2" px="$4">
-          <Box pb={100}>
+        <VStack className="mb-2 px-4">
+          <Box className="pb-[100px]">
             {months.map((month) => (
-              <Box key={month.value} mb="$1">
+              <Box key={month.value} className="mb-1">
                 <RadioButton
                   value={month.value}
                   label={month.long}
@@ -106,11 +100,11 @@ export function MonthSelectModal({
                   onSelect={handleMonthSelect}
                   size="medium"
                 />
-                <Divider mt="$1" />
+                <Divider className="mt-1" />
               </Box>
             ))}
 
-            <Box mb="$1">
+            <Box className="mb-1">
               <RadioButton
                 value="every"
                 label={t("monthSelect.everyMonth")}

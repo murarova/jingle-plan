@@ -1,13 +1,9 @@
+import { HStack } from "@/components/ui/hstack";
+import { Progress, ProgressFilledTrack } from "@/components/ui/progress";
+import { Text } from "@/components/ui/text";
+import { Box } from "@/components/ui/box";
 import { memo } from "react";
-import {
-  Box,
-  Text,
-  Center,
-  Progress,
-  ProgressFilledTrack,
-  HStack,
-} from "@gluestack-ui/themed";
-import { getProgressColorByValue } from "../../utils/utils";
+import { getProgressBackgroundColor, getProgressColorByValue } from "../../utils/utils";
 
 interface ProgressBarProps {
   total: number;
@@ -15,17 +11,20 @@ interface ProgressBarProps {
 }
 
 export const ProgressBar = memo(({ total, t }: ProgressBarProps) => (
-  <Box my="$2.5">
-    <HStack justifyContent="space-between">
+  <Box className="my-2.5">
+    <HStack className="justify-between">
       <Text size="md">{t("screens.processText")}</Text>
       <Text size="md">{`${total}%`}</Text>
     </HStack>
 
-    <Center my="$2.5" mb="$2.5">
-      <Progress value={total} size="sm">
-        <ProgressFilledTrack bg={getProgressColorByValue(total)} />
+    <Box className="my-2.5 mb-2.5 w-full">
+      <Progress value={total} className="h-2">
+        <ProgressFilledTrack
+          className={getProgressColorByValue(total)}
+          style={{ backgroundColor: getProgressBackgroundColor(total) }}
+        />
       </Progress>
-    </Center>
+    </Box>
   </Box>
 ));
 

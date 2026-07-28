@@ -1,5 +1,6 @@
+import { View } from "@/components/ui/view";
+import { HStack } from "@/components/ui/hstack";
 import { memo } from "react";
-import { HStack, View } from "@gluestack-ui/themed";
 import { useTranslation } from "react-i18next";
 import { TaskProgress } from "../../types/types";
 import { ProgressStat } from "./progress-stat";
@@ -14,17 +15,17 @@ export const DashboardStats = memo(({ totalData }: DashboardStatsProps) => {
   const { t } = useTranslation();
 
   return (
-    <HStack justifyContent="space-between" mt={20} pb="$4" px="$4">
-      <View flex={1} alignItems="center" justifyContent="center">
+    <HStack className="justify-between mt-[20px] pb-4 px-4">
+      <View className="flex-1 items-center justify-center">
         <ProgressStat
           value={totalData.totalTasks}
           label={getPluralForm(totalData.totalTasks, t)}
         />
       </View>
-      <View flex={1} alignItems="center">
+      <View className="flex-1 items-center">
         <CircularProgressIndicator percentage={totalData.donePercentage} />
       </View>
-      <View flex={1} alignItems="center" justifyContent="center">
+      <View className="flex-1 items-center justify-center">
         <ProgressStat
           value={totalData.doneTasks}
           label={t("screens.dashboardScreen.completed")}

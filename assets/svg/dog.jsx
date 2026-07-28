@@ -1,7 +1,13 @@
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 const SvgComponent = (props) => (
-  <Svg xmlns="http://www.w3.org/2000/svg" width={300} height={290} {...props}>
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={300}
+    height={290}
+    viewBox="0 0 300 290"
+    {...props}
+  >
     <Path
       d="M175.48 240.27c61.454 0 111.27-15.625 111.27-34.903 0-19.273-49.816-34.898-111.27-34.898-61.453 0-111.273 15.625-111.273 34.898 0 19.278 49.82 34.903 111.273 34.903Zm0 0"
       style={{

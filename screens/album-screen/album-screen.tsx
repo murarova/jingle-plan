@@ -1,6 +1,5 @@
+import { Box } from "@/components/ui/box";
 import { memo, useCallback } from "react";
-import { Box } from "@gluestack-ui/themed";
-import { SafeAreaView } from "../../components/common/safe-area-view";
 import Carousel from "react-native-reanimated-carousel";
 import { EmptyScreen } from "../../components/empty-screen";
 import { MonthlyData } from "../../types/types";
@@ -31,21 +30,12 @@ export const AlbumScreen = memo(() => {
   }
 
   return (
-    <SafeAreaView flex={1} backgroundColor="$backgroundLight50">
+    <Box className="flex-1 bg-backgroundLight-50">
       <Box
-        flex={1}
-        flexDirection="column"
-        px={SCREEN_PADDING}
-        pt="$5"
-        pb="$2"
-        width="100%"
+        className="flex-1 flex-col py-5 w-full"
+        style={{ paddingHorizontal: SCREEN_PADDING }}
       >
-        <Box
-          flex={1}
-          width="100%"
-          minHeight={0}
-          onLayout={handleCarouselLayout}
-        >
+        <Box onLayout={handleCarouselLayout} className="flex-1 w-full min-h-0">
           {carouselSize.height > 0 && (
             <Carousel
               ref={carouselRef}
@@ -69,7 +59,7 @@ export const AlbumScreen = memo(() => {
           currentMonth={currentMonth}
         />
       </Box>
-    </SafeAreaView>
+    </Box>
   );
 });
 

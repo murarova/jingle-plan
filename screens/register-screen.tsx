@@ -1,18 +1,12 @@
+import { VStack } from "@/components/ui/vstack";
+import { Text } from "@/components/ui/text";
+import { Pressable } from "@/components/ui/pressable";
+import { Input, InputField, InputSlot, InputIcon } from "@/components/ui/input";
+import { Heading } from "@/components/ui/heading";
+import { ButtonText, Button } from "@/components/ui/button";
+import { Box } from "@/components/ui/box";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import {
-  Box,
-  ButtonText,
-  Heading,
-  Input,
-  InputField,
-  Pressable,
-  Text,
-  VStack,
-  Button,
-  InputSlot,
-  InputIcon,
-} from "@gluestack-ui/themed";
 import { SafeAreaView } from "../components/common/safe-area-view";
 import { Alert, Keyboard } from "react-native";
 import * as Haptics from "expo-haptics";
@@ -108,7 +102,6 @@ export const RegisterScreen = () => {
         }).unwrap();
         const serializableUser = convertToSerializableUser(user, trimmedName);
 
-        // Create profile
         await createProfile({
           uid: user.uid,
           name: trimmedName,
@@ -135,7 +128,7 @@ export const RegisterScreen = () => {
                     .catch(() => resolve(false));
                 },
               },
-            ]
+            ],
           );
         });
 
@@ -164,7 +157,7 @@ export const RegisterScreen = () => {
   const handleRepeatPasswordChange = (value: string) => {
     setRepeatPassword(value);
     setPasswordMatchError(
-      value !== password ? t("screens.registerScreen.passwordMatchError") : ""
+      value !== password ? t("screens.registerScreen.passwordMatchError") : "",
     );
   };
 
@@ -174,24 +167,24 @@ export const RegisterScreen = () => {
   };
 
   return (
-    <Pressable flex={1} onPress={Keyboard.dismiss}>
+    <Pressable onPress={Keyboard.dismiss} className="flex-1">
       <KeyboardAwareScrollView
         enableResetScrollToCoords={false}
         keyboardShouldPersistTaps="handled"
         enableOnAndroid={true}
         enableAutomaticScroll={true}
       >
-        <SafeAreaView flex={1}>
-          <Box p={10}>
-            <Box pb={10}>
+        <SafeAreaView className="flex-1">
+          <Box className="p-[10px]">
+            <Box className="pb-[10px]">
               <Heading>{t("screens.registerScreen.title")}</Heading>
             </Box>
-            <Box flexDirection="row" alignItems="center" mb={30}>
-              <Text mr={10}>{t("screens.registerScreen.subtitle")}</Text>
+            <Box className="flex-row items-center mb-[30px]">
+              <Text className="mr-[10px]">
+                {t("screens.registerScreen.subtitle")}
+              </Text>
               <Button
-                size="md"
                 variant="link"
-                action="primary"
                 onPress={() => {
                   try {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -203,7 +196,7 @@ export const RegisterScreen = () => {
               </Button>
             </Box>
             <Box>
-              <VStack space="sm" mb={20}>
+              <VStack space="sm" className="mb-[20px]">
                 <Text>{t("screens.registerScreen.name")}</Text>
                 <Input>
                   <InputField
@@ -216,12 +209,12 @@ export const RegisterScreen = () => {
                   />
                 </Input>
                 {nameError ? (
-                  <Text size="sm" color="$red500">
+                  <Text size="sm" className="text-red-500">
                     {nameError}
                   </Text>
                 ) : null}
               </VStack>
-              <VStack space="sm" mb={20}>
+              <VStack space="sm" className="mb-[20px]">
                 <Text>{t("screens.registerScreen.email")}</Text>
                 <Input>
                   <InputField
@@ -235,12 +228,12 @@ export const RegisterScreen = () => {
                   />
                 </Input>
                 {emailError ? (
-                  <Text size="sm" color="$red500">
+                  <Text size="sm" className="text-red-500">
                     {emailError}
                   </Text>
                 ) : null}
               </VStack>
-              <VStack space="sm" mb={10}>
+              <VStack space="sm" className="mb-[10px]">
                 <Text>{t("screens.registerScreen.password")}</Text>
                 <Input>
                   <InputField
@@ -249,20 +242,20 @@ export const RegisterScreen = () => {
                     onChangeText={handlePasswordChange}
                     placeholder={t("screens.registerScreen.password")}
                   />
-                  <InputSlot pr="$3" onPress={handleState}>
+                  <InputSlot onPress={handleState} className="pr-3">
                     <InputIcon
                       as={showPassword ? EyeIcon : EyeOffIcon}
-                      color="$darkBlue500"
+                      className="text-darkBlue-500"
                     />
                   </InputSlot>
                 </Input>
                 {passwordError ? (
-                  <Text size="sm" color="$red500">
+                  <Text size="sm" className="text-red-500">
                     {passwordError}
                   </Text>
                 ) : null}
               </VStack>
-              <VStack space="sm" mb={30}>
+              <VStack space="sm" className="mb-[30px]">
                 <Text>{t("screens.registerScreen.repeatPassword")}</Text>
                 <Input>
                   <InputField
@@ -273,21 +266,19 @@ export const RegisterScreen = () => {
                   />
                 </Input>
                 {passwordMatchError ? (
-                  <Text size="sm" color="$red500">
+                  <Text size="sm" className="text-red-500">
                     {passwordMatchError}
                   </Text>
                 ) : null}
               </VStack>
             </Box>
             <Button
-              mb={30}
-              size="md"
-              variant="solid"
-              action="primary"
+              variant="default"
               isDisabled={
                 !email || !password || !repeatPassword || !name.trim()
               }
               onPress={handleRegister}
+              className="mb-[30px]"
             >
               <ButtonText>{t("screens.registerScreen.registerBtn")}</ButtonText>
             </Button>

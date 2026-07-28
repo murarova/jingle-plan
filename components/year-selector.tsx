@@ -1,11 +1,4 @@
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../store/withTypes";
-import { setSelectedYear, selectSelectedYear } from "../store/appReducer";
-import { YEARS } from "../constants/constants";
-import { useLazyGetUserDataQuery } from "../services/api";
 import {
-  Box,
-  Text,
   Select,
   SelectTrigger,
   SelectPortal,
@@ -14,7 +7,15 @@ import {
   SelectDragIndicator,
   SelectDragIndicatorWrapper,
   SelectItem,
-} from "@gluestack-ui/themed";
+} from "@/components/ui/select";
+
+import { Text } from "@/components/ui/text";
+import { Box } from "@/components/ui/box";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../store/withTypes";
+import { setSelectedYear, selectSelectedYear } from "../store/appReducer";
+import { YEARS } from "../constants/constants";
+import { useLazyGetUserDataQuery } from "../services/api";
 import { ChevronDown } from "lucide-react-native";
 
 export const YearSelector = () => {
@@ -70,16 +71,10 @@ export const YearSelector = () => {
   const singleYear = availableYears.length === 1 ? availableYears[0] : null;
 
   return (
-    <Box paddingLeft={16}>
+    <Box className="pl-[16px]">
       {singleYear ? (
-        <Box
-          backgroundColor="$white"
-          paddingHorizontal="$3"
-          paddingVertical="$2"
-          minWidth={60}
-          alignItems="center"
-        >
-          <Text fontSize="$lg" fontWeight="$semibold" color="$warmGray800">
+        <Box className="bg-white px-3 py-2 min-w-[60px] items-center">
+          <Text className="text-lg font-semibold text-warmGray-800">
             {singleYear}
           </Text>
         </Box>
@@ -89,17 +84,9 @@ export const YearSelector = () => {
           selectedValue={selectedYear}
           onValueChange={handleYearChange}
         >
-          <SelectTrigger borderWidth={0}>
-            <Box
-              backgroundColor="$white"
-              paddingHorizontal="$3"
-              paddingVertical="$2"
-              minWidth={60}
-              alignItems="center"
-              flexDirection="row"
-              gap="$1"
-            >
-              <Text fontSize="$lg" fontWeight="$semibold" color="$warmGray800">
+          <SelectTrigger className="border-[0px]">
+            <Box className="bg-white px-3 py-2 min-w-[60px] items-center flex-row gap-1">
+              <Text className="text-lg font-semibold text-warmGray-800">
                 {selectedYear}
               </Text>
               <ChevronDown size={16} color="#999999" />
@@ -107,7 +94,7 @@ export const YearSelector = () => {
           </SelectTrigger>
           <SelectPortal>
             <SelectBackdrop />
-            <SelectContent paddingBottom="$10">
+            <SelectContent className="pb-10">
               <SelectDragIndicatorWrapper>
                 <SelectDragIndicator />
               </SelectDragIndicatorWrapper>

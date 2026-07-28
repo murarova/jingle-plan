@@ -1,13 +1,8 @@
-import {
-  Menu,
-  MenuItem,
-  Button,
-  Box,
-  MenuIcon,
-  ButtonIcon,
-  Icon,
-  Text,
-} from "@gluestack-ui/themed";
+import { Text } from "@/components/ui/text";
+import { MenuIcon, Icon } from "@/components/ui/icon";
+import { Box } from "@/components/ui/box";
+import { Button, ButtonIcon } from "@/components/ui/button";
+import { Menu, MenuItem } from "@/components/ui/menu";
 import { LogOut, Trash2, Crown } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { SCREENS } from "../constants/constants";
@@ -36,7 +31,7 @@ export function AppMenu() {
     { uid: currentUser?.uid! },
     {
       skip: !currentUser?.uid,
-    }
+    },
   );
 
   async function handleLogout() {
@@ -47,7 +42,7 @@ export function AppMenu() {
     } catch (error) {
       Alert.alert(
         t("common.error"),
-        error instanceof Error ? error.message : "An error occurred"
+        error instanceof Error ? error.message : "An error occurred",
       );
     }
   }
@@ -81,18 +76,18 @@ export function AppMenu() {
             }
           },
         },
-      ]
+      ],
     );
   }
 
   return (
-    <Box paddingRight={10}>
+    <Box className="pr-[10px]">
       <Menu
         placement="top"
         trigger={({ ...triggerProps }) => {
           return (
             <Button {...triggerProps} variant="link">
-              <ButtonIcon color="$warmGray800" as={MenuIcon} size="xl" />
+              <ButtonIcon as={MenuIcon} className="h-6 w-6 text-warmGray-800" />
             </Button>
           );
         }}
@@ -101,18 +96,19 @@ export function AppMenu() {
           key="welcome"
           textValue="welcome"
           disabled
-          borderTopLeftRadius="$lg"
-          borderTopRightRadius="$lg"
+          className="rounded-t-lg p-0"
         >
           <Box
-            padding="$3"
-            borderBottomWidth={1}
-            borderBottomColor="$warmGray200"
+            className="p-3 w-full"
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: "#e7e5e4",
+            }}
           >
-            <Text fontSize="$sm" color="$warmGray600" mb="$1">
+            <Text className="text-sm text-warmGray-600 mb-1">
               {t("common.welcome")}
             </Text>
-            <Text fontSize="$md" fontWeight="$semibold" color="$warmGray800">
+            <Text className="text-base font-semibold text-warmGray-800">
               {userProfile?.name || "User"}
             </Text>
           </Box>
@@ -136,57 +132,28 @@ export function AppMenu() {
           key="subscription"
           onPress={handleManageSubscription}
           textValue="Subscription"
-          p="$3"
-          minHeight={48}
-          sx={{
-            ":active": {
-              backgroundColor: "$coolGray100",
-            },
-            ":hover": {
-              backgroundColor: "$coolGray50",
-            },
-          }}
+          className="p-3 min-h-[48px] active:bg-coolGray-100 hover:bg-coolGray-50"
         >
-          <Icon as={Crown} size="sm" mr="$3" color="$amber500" />
-          <Text fontSize="$md">{t("common.manageSubscription")}</Text>
+          <Icon as={Crown} size="sm" className="mr-3 text-amber-500" />
+          <Text className="text-base">{t("common.manageSubscription")}</Text>
         </MenuItem>
         <MenuItem
           key="Logout"
           onPress={handleLogout}
           textValue="Logout"
-          p="$3"
-          minHeight={48}
-          sx={{
-            ":active": {
-              backgroundColor: "$coolGray200",
-            },
-            ":hover": {
-              backgroundColor: "$coolGray100",
-            },
-          }}
+          className="p-3 min-h-[48px] active:bg-coolGray-200 hover:bg-coolGray-100"
         >
-          <Icon as={LogOut} size="sm" mr="$3" />
-          <Text fontSize="$md">{t("common.logout")}</Text>
+          <Icon as={LogOut} size="sm" className="mr-3" />
+          <Text className="text-base">{t("common.logout")}</Text>
         </MenuItem>
         <MenuItem
           key="Delete"
           onPress={handleDeleteAccount}
           textValue="Delete"
-          p="$3"
-          minHeight={48}
-          borderBottomLeftRadius="$lg"
-          borderBottomRightRadius="$lg"
-          sx={{
-            ":active": {
-              backgroundColor: "$red100",
-            },
-            ":hover": {
-              backgroundColor: "$red50",
-            },
-          }}
+          className="rounded-b-lg p-3 min-h-[48px] active:bg-red-100 hover:bg-red-50"
         >
-          <Icon as={Trash2} size="sm" mr="$3" color="$red600" />
-          <Text fontSize="$md" color="$red600">
+          <Icon as={Trash2} size="sm" className="mr-3 text-red-600" />
+          <Text className="text-base text-red-600">
             {t("common.deleteAccount")}
           </Text>
         </MenuItem>

@@ -1,14 +1,14 @@
+import { VStack } from "@/components/ui/vstack";
+import { HStack } from "@/components/ui/hstack";
+import { Box } from "@/components/ui/box";
+import { Text } from "@/components/ui/text";
 import {
-  Center,
   Slider,
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  Text,
-  Box,
-  HStack,
-  VStack,
-} from "@gluestack-ui/themed";
+} from "@/components/ui/slider";
+import { Center } from "@/components/ui/center";
 import { useRating } from "../../../hooks/useRating";
 
 interface HappySliderProps {
@@ -23,30 +23,32 @@ export const HappySlider = ({
   setRate,
 }: HappySliderProps) => {
   const getRating = useRating();
+  const filledColor = isDisabled ? "#999999" : "#ff9da2";
+  const thumbColor = isDisabled ? "#999999" : "#ff656c";
+
   return (
-    <VStack space="2xl" mt="$4" mb="$10">
+    <VStack space="2xl" className="mt-4 mb-10">
       <Box>
-        <Text textAlign="center" fontSize="$6xl" pb="$2">
+        <Text className="text-center text-6xl pb-2">
           {getRating(rate)?.icon}
         </Text>
-        <Text textAlign="center">{getRating(rate)?.text}</Text>
+        <Text className="text-center">{getRating(rate)?.text}</Text>
       </Box>
-      <HStack space="lg">
-        <Center w="$80">
+      <HStack space="lg" className="justify-center">
+        <Center style={{ width: 320 }}>
           <Slider
             sliderTrackHeight={4}
             value={rate}
             isDisabled={isDisabled}
+            className="w-full"
             onChange={(v) => {
               setRate(Math.floor(v));
             }}
           >
             <SliderTrack>
-              <SliderFilledTrack
-                bg={isDisabled ? "$warmGray400" : "$primary300"}
-              />
+              <SliderFilledTrack style={{ backgroundColor: filledColor }} />
             </SliderTrack>
-            <SliderThumb bg={isDisabled ? "$warmGray400" : "$primary400"} />
+            <SliderThumb style={{ backgroundColor: thumbColor }} />
           </Slider>
         </Center>
       </HStack>
