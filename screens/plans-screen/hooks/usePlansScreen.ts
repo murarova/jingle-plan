@@ -1,9 +1,5 @@
 import { useState, useCallback, useRef, useMemo } from "react";
-import {
-  PlanScreenData,
-  PlansCollection,
-  TaskContext,
-} from "@/types";
+import { PlanScreenData, PlansCollection, TaskContext } from "@/types";
 import { useAppSelector } from "../../../store/withTypes";
 import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
@@ -96,7 +92,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         resetState();
       }
     },
-    [saveTaskByCategory, selectedYear, t, resetState]
+    [saveTaskByCategory, selectedYear, t, resetState],
   );
 
   const handleUpdatePlan = useCallback(
@@ -135,7 +131,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
               ? plansList.map((item) =>
                   item.id === updatedData.id
                     ? { ...updatedData, text, context, month: selectedMonth }
-                    : item
+                    : item,
                 )
               : [{ ...updatedData, text, context, month: selectedMonth }];
 
@@ -167,7 +163,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
       selectedMonth,
       saveTaskByCategory,
       selectedYear,
-    ]
+    ],
   );
 
   const handleEditPlan = useCallback(
@@ -180,7 +176,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
       setUpdatedData(plan);
       setShowModal(true);
     },
-    [plans]
+    [plans],
   );
 
   const handleDeletePlan = useCallback(
@@ -213,7 +209,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         },
       ]);
     },
-    [plans, saveTaskByCategory, selectedYear, t]
+    [plans, saveTaskByCategory, selectedYear, t],
   );
 
   const handleCompletePlan = useCallback(
@@ -232,18 +228,18 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
       if (plan.month === "every") {
         if (view === PlansViewOptions.context) {
           updatedPlan.monthlyProgress = updatedPlan.monthlyProgress.map(
-            (planMonth) => ({ ...planMonth, isDone })
+            (planMonth) => ({ ...planMonth, isDone }),
           );
         }
         if (plan.month === "every" && month) {
           updatedPlan.monthlyProgress = updatedPlan.monthlyProgress.map(
             (planMonth) =>
-              planMonth.month === month ? { ...planMonth, isDone } : planMonth
+              planMonth.month === month ? { ...planMonth, isDone } : planMonth,
           );
         }
 
         const isAllDone = updatedPlan.monthlyProgress.every(
-          (planMonth) => planMonth.isDone
+          (planMonth) => planMonth.isDone,
         );
         updatedPlan.isDone = isAllDone;
       } else {
@@ -251,10 +247,8 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
       }
 
       const updatedPlans = plansList.map((item) =>
-        item.id === plan.id ? updatedPlan : item
+        item.id === plan.id ? updatedPlan : item,
       );
-
-      console.log("updatedPlans", updatedPlans);
 
       try {
         await saveTaskByCategory({
@@ -280,7 +274,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         resetState();
       }
     },
-    [plans, saveTaskByCategory, selectedYear, t, resetState]
+    [plans, saveTaskByCategory, selectedYear, t, resetState],
   );
 
   const handleAddPlan = useCallback(
@@ -315,7 +309,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         Alert.alert(t("common.error"), message);
       }
     },
-    [plans, saveTaskByCategory, selectedYear, t]
+    [plans, saveTaskByCategory, selectedYear, t],
   );
 
   const openMonthSelect = useCallback(
@@ -325,7 +319,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
       setSelectedMonth(plan.month);
       sheetRef.current?.show();
     },
-    []
+    [],
   );
 
   const handleMonthSelect = useCallback(
@@ -341,7 +335,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         }));
       }
       const updatedPlans = plansList.map((item) =>
-        item.id === data.id ? { ...data, month } : item
+        item.id === data.id ? { ...data, month } : item,
       );
       await updatePlan(context, updatedPlans);
 
@@ -351,7 +345,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         console.log("Haptics not available");
       }
     },
-    [plans, context, updatedData, updatePlan]
+    [plans, context, updatedData, updatePlan],
   );
 
   const handleCopyToNextYear = useCallback(
@@ -399,7 +393,7 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         Alert.alert(t("common.error"), message);
       }
     },
-    [plans, selectedYear, saveTaskByCategory, getUserData, currentUser?.uid, t]
+    [plans, selectedYear, saveTaskByCategory, getUserData, currentUser?.uid, t],
   );
 
   return {
