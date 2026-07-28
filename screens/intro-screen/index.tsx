@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { SCREENS } from "../../constants/constants";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../../App";
+import { RootStackParamList } from "@/navigation/types";
 import * as Haptics from "expo-haptics";
 import { useSharedValue } from "react-native-reanimated";
 import { SvgProps } from "react-native-svg";

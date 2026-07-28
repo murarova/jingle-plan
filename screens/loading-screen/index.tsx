@@ -3,7 +3,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { SCREENS } from "../../constants/constants";
 import { useAppSelector } from "../../store/withTypes";
 import { isLoggedIn } from "../../store/authReducer";
-import { RootStackParamList } from "../../App";
+import { RootStackParamList } from "@/navigation/types";
 import { useCalendarDayManager } from "../../hooks/useCalendarDayManager";
 import { Box } from "@/ui/box";
 

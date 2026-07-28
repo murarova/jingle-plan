@@ -15,7 +15,7 @@ import {
   useDeleteCurrentUserMutation,
 } from "../../services/auth-api-rtk";
 import { useGetUserProfileQuery } from "../../services/api";
-import { RootStackParamList } from "../../App";
+import { RootStackParamList } from "@/navigation/types";
 import { resolveErrorMessage } from "../../utils/utils";
 
 export function AppMenu() {

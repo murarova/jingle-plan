@@ -25,7 +25,7 @@ import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import type { EventArg } from "@react-navigation/native";
 import { Text } from "react-native";
 import { useCallback } from "react";
-import { useUnsavedChanges } from "../../contexts/UnsavedChangesContext";
+import { useUnsavedChanges } from "@/providers";
 import { showUnsavedChangesAlert } from "../../utils/unsaved-changes-alert";
 
 const Tab = createBottomTabNavigator();

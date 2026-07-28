@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { useUnsavedChanges } from "../contexts/UnsavedChangesContext";
+import { useUnsavedChanges } from "@/providers";
 import { showUnsavedChangesAlert } from "../utils/unsaved-changes-alert";
 
 export function useUnsavedChangesBlocker(unsavedChanges: boolean) {

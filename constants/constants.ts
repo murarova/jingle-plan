@@ -4,20 +4,7 @@ export const YEARS = ["2024", "2025"] as const;
 
 export const OPEN_DAYS_FROM_TODAY = 0;
 
-export const SCREENS = {
-  INTRO: "INTRO",
-  PERIOD_OVERVIEW: "PeriodOverview",
-  DAY_OVERVIEW: "DayOverview",
-  REGISTER: "Register",
-  LOGIN: "Login",
-  LOADING: "Loading",
-  SUMMARY: "Summary",
-  HOME: "Home",
-  PLANS: "Plans",
-  ALBUM: "Album",
-  DASHBOARD: "Dashboard",
-  PAYWALL: "Paywall",
-} as const;
+export { SCREENS } from "./screens";
 
 export const LANGUAGES = {
   ua: { icon: "ua", nativeName: "Українська", moment: "uk" },
