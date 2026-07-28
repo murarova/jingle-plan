@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.14](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.1.13...jingle-plan-v1.1.14) (2026-07-28)
+
+
+### Refactoring
+
+* split catch-all modules and clean root hygiene ([#49](https://github.com/murarova/jingle-plan/issues/49)) ([4f54495](https://github.com/murarova/jingle-plan/commit/4f544958b7d0875f91c55b634dce2ff75317ff0e))
+
 ## [1.1.13](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.1.12...jingle-plan-v1.1.13) (2026-07-28)
 
 
