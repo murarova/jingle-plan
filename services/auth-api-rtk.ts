@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import {
   createUserWithEmailAndPassword,
+  deleteUser,
   FirebaseAuthTypes,
   getAuth,
   sendPasswordResetEmail,
@@ -52,7 +53,7 @@ const authQuery = async (args: any) => {
         if (!user) {
           throw new Error("No user is currently logged in");
         }
-        await user.delete();
+        await deleteUser(user);
         return { data: null };
       }
 
