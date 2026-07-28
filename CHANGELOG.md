@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.12](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.1.11...jingle-plan-v1.1.12) (2026-07-28)
+
+
+### Refactoring
+
+* nest shared components and extract Gluestack ui/ ([#44](https://github.com/murarova/jingle-plan/issues/44)) ([866e660](https://github.com/murarova/jingle-plan/commit/866e66016b4afb4ffbc02a1a114820fec7e4aa2c))
+
 ## [1.1.11](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.1.10...jingle-plan-v1.1.11) (2026-07-28)
 
 
