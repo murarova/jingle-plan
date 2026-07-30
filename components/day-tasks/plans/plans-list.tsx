@@ -39,22 +39,21 @@ export function PlansList({ plans, onEdit, onDelete, title }: PlansListProps) {
                   placement="top"
                   trigger={({ ...triggerProps }) => {
                     return (
-                      <Box className="px-3">
-                        <Button
-                          variant="link"
-                          {...triggerProps}
-                          onPress={(e) => {
-                            try {
-                              Haptics.impactAsync(
-                                Haptics.ImpactFeedbackStyle.Light,
-                              );
-                            } catch {}
-                            triggerProps.onPress?.(e);
-                          }}
-                        >
-                          <ButtonIcon as={Ellipsis} className="text-black" />
-                        </Button>
-                      </Box>
+                      <Button
+                        className="px-3 py-2"
+                        variant="link"
+                        {...triggerProps}
+                        onPress={(e) => {
+                          try {
+                            Haptics.impactAsync(
+                              Haptics.ImpactFeedbackStyle.Light,
+                            );
+                          } catch {}
+                          triggerProps.onPress?.(e);
+                        }}
+                      >
+                        <ButtonIcon as={Ellipsis} className="text-black" />
+                      </Button>
                     );
                   }}
                   className="mr-2"

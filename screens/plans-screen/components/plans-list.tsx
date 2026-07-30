@@ -8,12 +8,7 @@ import {
 import { ScrollView } from "@/ui/scroll-view";
 import { Divider } from "@/ui/divider";
 import { Icon, CheckIcon } from "@/ui/icon";
-import {
-  Menu,
-  MenuItem,
-  MenuItemLabel,
-  MenuSeparator,
-} from "@/ui/menu";
+import { Menu, MenuItem, MenuItemLabel, MenuSeparator } from "@/ui/menu";
 import { Button, ButtonIcon } from "@/ui/button";
 import { VStack } from "@/ui/vstack";
 import { HStack } from "@/ui/hstack";
@@ -79,7 +74,12 @@ export function PlansList({
             <Fragment key={item.id}>
               {view === PlansViewOptions.context && label && (
                 <HStack>
-                  <Badge action="gray" size="sm" variant="outline" className="rounded-lg">
+                  <Badge
+                    action="gray"
+                    size="sm"
+                    variant="outline"
+                    className="rounded-lg"
+                  >
                     <BadgeText>{label}</BadgeText>
                     <BadgeIcon as={CalendarDays} className="ml-2" />
                   </Badge>
@@ -87,7 +87,12 @@ export function PlansList({
               )}
               {view === PlansViewOptions.month && (
                 <HStack>
-                  <Badge action="gray" size="sm" variant="outline" className="rounded-lg">
+                  <Badge
+                    action="gray"
+                    size="sm"
+                    variant="outline"
+                    className="rounded-lg"
+                  >
                     <BadgeText>{t(`context.${item.context}`)}</BadgeText>
                   </Badge>
                 </HStack>
@@ -129,22 +134,21 @@ export function PlansList({
                   placement="top"
                   trigger={({ ...triggerProps }) => {
                     return (
-                      <Box className="px-3">
-                        <Button
-                          variant="link"
-                          {...triggerProps}
-                          onPress={(e) => {
-                            try {
-                              Haptics.impactAsync(
-                                Haptics.ImpactFeedbackStyle.Light,
-                              );
-                            } catch {}
-                            triggerProps.onPress?.(e);
-                          }}
-                        >
-                          <ButtonIcon as={Ellipsis} className="text-black" />
-                        </Button>
-                      </Box>
+                      <Button
+                        className="px-3 py-2"
+                        variant="link"
+                        {...triggerProps}
+                        onPress={(e) => {
+                          try {
+                            Haptics.impactAsync(
+                              Haptics.ImpactFeedbackStyle.Light,
+                            );
+                          } catch {}
+                          triggerProps.onPress?.(e);
+                        }}
+                      >
+                        <ButtonIcon as={Ellipsis} className="text-black" />
+                      </Button>
                     );
                   }}
                   className="rounded-lg mr-2"
