@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.16](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.1.15...jingle-plan-v1.1.16) (2026-08-11)
+
+
+### Bug Fixes
+
+* expand plans menu hit area and skip calendar day progress animation ([#54](https://github.com/murarova/jingle-plan/issues/54)) ([4355f79](https://github.com/murarova/jingle-plan/commit/4355f795eb2ed524a991330d60f55273cb6dd063))
+
 ## [1.1.15](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.1.14...jingle-plan-v1.1.15) (2026-07-28)
 
 
