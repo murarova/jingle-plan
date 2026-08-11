@@ -20,12 +20,10 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
+  StatusBar,
 } from "react-native";
 import { Maximize2, Minimize2 } from "lucide-react-native";
-import {
-  SafeAreaProvider,
-  SafeAreaView,
-} from "react-native-safe-area-context";
+import { initialWindowMetrics } from "react-native-safe-area-context";
 
 type FooterHelpers = {
   close: () => void;
@@ -37,6 +35,13 @@ type Props = Omit<TextInputProps, "multiline" | "style"> & {
   style?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
   renderFooter?: (helpers: FooterHelpers) => ReactNode;
+};
+
+const insets = initialWindowMetrics?.insets ?? {
+  top: Platform.OS === "android" ? StatusBar.currentHeight ?? 0 : 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
 };
 
 export const AutoGrowingTextarea = memo(
@@ -124,41 +129,49 @@ export const AutoGrowingTextarea = memo(
             presentationStyle="fullScreen"
             onRequestClose={close}
           >
-            <SafeAreaProvider>
-              <SafeAreaView style={styles.fullscreenRoot} edges={["top", "right", "bottom", "left"]}>
-                <KeyboardAvoidingView
-                  style={styles.fullscreenRoot}
-                  behavior={Platform.OS === "ios" ? "padding" : undefined}
-                >
-                  <View style={styles.header}>
-                    <View style={styles.headerSpacer} />
-                    <Pressable
-                      onPress={close}
-                      hitSlop={8}
-                      accessibilityRole="button"
-                      accessibilityLabel="Collapse textarea"
-                      style={styles.collapseButton}
-                    >
-                      <Minimize2 size={20} color="#525252" />
-                    </Pressable>
-                  </View>
-                  <View style={styles.fullscreenBody}>
-                    <TextInput
-                      {...sharedInputProps}
-                      style={[
-                        styles.textarea,
-                        styles.fullscreenInput,
-                        inputStyle,
-                      ]}
-                      scrollEnabled
-                    />
-                  </View>
-                  {renderFooter ? (
-                    <View style={styles.footer}>{renderFooter({ close })}</View>
-                  ) : null}
-                </KeyboardAvoidingView>
-              </SafeAreaView>
-            </SafeAreaProvider>
+            <View
+              style={[
+                styles.fullscreenRoot,
+                {
+                  paddingTop: insets.top,
+                  paddingBottom: insets.bottom,
+                  paddingLeft: insets.left,
+                  paddingRight: insets.right,
+                },
+              ]}
+            >
+              <KeyboardAvoidingView
+                style={styles.fullscreenRoot}
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
+              >
+                <View style={styles.header}>
+                  <View style={styles.headerSpacer} />
+                  <Pressable
+                    onPress={close}
+                    hitSlop={8}
+                    accessibilityRole="button"
+                    accessibilityLabel="Collapse textarea"
+                    style={styles.collapseButton}
+                  >
+                    <Minimize2 size={20} color="#525252" />
+                  </Pressable>
+                </View>
+                <View style={styles.fullscreenBody}>
+                  <TextInput
+                    {...sharedInputProps}
+                    style={[
+                      styles.textarea,
+                      styles.fullscreenInput,
+                      inputStyle,
+                    ]}
+                    scrollEnabled
+                  />
+                </View>
+                {renderFooter ? (
+                  <View style={styles.footer}>{renderFooter({ close })}</View>
+                ) : null}
+              </KeyboardAvoidingView>
+            </View>
           </Modal>
         </View>
       );
