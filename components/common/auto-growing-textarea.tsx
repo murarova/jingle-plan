@@ -4,7 +4,6 @@ import {
   useState,
   useCallback,
   useEffect,
-  useContext,
   type ReactNode,
 } from "react";
 import {
@@ -18,20 +17,15 @@ import {
   TextInputContentSizeChangeEventData,
   View,
   Pressable,
+  Modal,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Maximize2, Minimize2 } from "lucide-react-native";
 import {
-  SafeAreaInsetsContext,
-  initialWindowMetrics,
+  SafeAreaProvider,
+  SafeAreaView,
 } from "react-native-safe-area-context";
-import {
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-} from "@/ui/modal";
-import { Box } from "@/ui/box";
 
 type FooterHelpers = {
   close: () => void;
@@ -44,8 +38,6 @@ type Props = Omit<TextInputProps, "multiline" | "style"> & {
   inputStyle?: StyleProp<TextStyle>;
   renderFooter?: (helpers: FooterHelpers) => ReactNode;
 };
-
-const EMPTY_INSETS = { top: 0, right: 0, bottom: 0, left: 0 };
 
 export const AutoGrowingTextarea = memo(
   forwardRef<TextInput, Props>(
@@ -62,10 +54,6 @@ export const AutoGrowingTextarea = memo(
       },
       ref,
     ) => {
-      const insets =
-        useContext(SafeAreaInsetsContext) ??
-        initialWindowMetrics?.insets ??
-        EMPTY_INSETS;
       const [height, setHeight] = useState(minHeight);
       const [isExpanded, setIsExpanded] = useState(false);
 
@@ -131,50 +119,46 @@ export const AutoGrowingTextarea = memo(
           </View>
 
           <Modal
-            isOpen={isExpanded}
-            onClose={close}
-            size="full"
-            avoidKeyboard
+            visible={isExpanded}
+            animationType="slide"
+            presentationStyle="fullScreen"
+            onRequestClose={close}
           >
-            <ModalBackdrop />
-            <ModalContent className="h-full w-full max-w-full flex-1 rounded-none bg-white">
-              <View
-                style={[
-                  styles.fullscreenRoot,
-                  {
-                    paddingTop: insets.top,
-                    paddingBottom: insets.bottom,
-                    paddingLeft: insets.left,
-                    paddingRight: insets.right,
-                  },
-                ]}
-              >
-                <ModalHeader className="border-b border-backgroundLight-300 px-4 py-3">
-                  <View style={styles.headerSpacer} />
-                  <Pressable
-                    onPress={close}
-                    hitSlop={8}
-                    accessibilityRole="button"
-                    accessibilityLabel="Collapse textarea"
-                    style={styles.collapseButton}
-                  >
-                    <Minimize2 size={20} color="#525252" />
-                  </Pressable>
-                </ModalHeader>
-                <Box className="flex-1 px-4 py-3">
-                  <TextInput
-                    {...sharedInputProps}
-                    style={[styles.textarea, styles.fullscreenInput, inputStyle]}
-                    scrollEnabled
-                  />
-                </Box>
-                {renderFooter ? (
-                  <ModalFooter className="w-full border-t border-backgroundLight-300 px-4 py-3">
-                    {renderFooter({ close })}
-                  </ModalFooter>
-                ) : null}
-              </View>
-            </ModalContent>
+            <SafeAreaProvider>
+              <SafeAreaView style={styles.fullscreenRoot} edges={["top", "right", "bottom", "left"]}>
+                <KeyboardAvoidingView
+                  style={styles.fullscreenRoot}
+                  behavior={Platform.OS === "ios" ? "padding" : undefined}
+                >
+                  <View style={styles.header}>
+                    <View style={styles.headerSpacer} />
+                    <Pressable
+                      onPress={close}
+                      hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel="Collapse textarea"
+                      style={styles.collapseButton}
+                    >
+                      <Minimize2 size={20} color="#525252" />
+                    </Pressable>
+                  </View>
+                  <View style={styles.fullscreenBody}>
+                    <TextInput
+                      {...sharedInputProps}
+                      style={[
+                        styles.textarea,
+                        styles.fullscreenInput,
+                        inputStyle,
+                      ]}
+                      scrollEnabled
+                    />
+                  </View>
+                  {renderFooter ? (
+                    <View style={styles.footer}>{renderFooter({ close })}</View>
+                  ) : null}
+                </KeyboardAvoidingView>
+              </SafeAreaView>
+            </SafeAreaProvider>
           </Modal>
         </View>
       );
@@ -209,10 +193,36 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
   },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "#D4D4D4",
+  },
+  headerSpacer: {
+    flex: 1,
+  },
+  collapseButton: {
+    padding: 4,
+  },
+  fullscreenBody: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
   fullscreenInput: {
     flex: 1,
     minHeight: 200,
     textAlignVertical: "top",
+  },
+  footer: {
+    width: "100%",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "#D4D4D4",
   },
   expandButton: {
     position: "absolute",
@@ -220,12 +230,6 @@ const styles = StyleSheet.create({
     right: 8,
     padding: 4,
     zIndex: 1,
-  },
-  collapseButton: {
-    padding: 4,
-  },
-  headerSpacer: {
-    flex: 1,
   },
 });
 
