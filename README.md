@@ -22,7 +22,7 @@ Follow these steps to set up and run the project:
 ### Prerequisites
 
 Make sure you have the following installed on your system:
-- [Node.js](https://nodejs.org/) (recommended version: 16 or above)
+- [Node.js](https://nodejs.org/) (recommended version: 24)
 - [Expo CLI](https://docs.expo.dev/get-started/installation/)
 - A package manager (e.g., npm or yarn)
 - [Android Studio](https://developer.android.com/studio) for Android development (if targeting Android)

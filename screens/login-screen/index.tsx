@@ -120,7 +120,7 @@ export const LoginScreen = () => {
     if (!email) {
       Alert.alert(
         t("common.error"),
-        t("screens.loginScreen.resetEmailRequired")
+        t("screens.loginScreen.resetEmailRequired"),
       );
       return;
     }
@@ -128,7 +128,7 @@ export const LoginScreen = () => {
     if (emailError) {
       Alert.alert(
         t("common.error"),
-        t("screens.loginScreen.invalidEmailPrompt")
+        t("screens.loginScreen.invalidEmailPrompt"),
       );
       return;
     }
@@ -137,7 +137,7 @@ export const LoginScreen = () => {
       await sendPasswordReset({ email }).unwrap();
       Alert.alert(
         t("common.done"),
-        t("screens.loginScreen.resetSuccess", { email })
+        t("screens.loginScreen.resetSuccess", { email }),
       );
     } catch (error) {
       let message =
@@ -165,11 +165,10 @@ export const LoginScreen = () => {
               <Heading>{t("screens.loginScreen.title")}</Heading>
             </Box>
             <Box className="flex-col items-start mt-[20px] mb-[30px]">
-              <Text className="mr-[10px]">{t("screens.loginScreen.noAccount")}</Text>
-              <Button
-                variant="link"
-                onPress={goToRegistration}
-              >
+              <Text className="mr-[10px]">
+                {t("screens.loginScreen.noAccount")}
+              </Text>
+              <Button variant="link" onPress={goToRegistration}>
                 <ButtonText>{t("screens.loginScreen.signUpButton")}</ButtonText>
               </Button>
             </Box>
@@ -223,7 +222,8 @@ export const LoginScreen = () => {
               variant="link"
               onPress={handlePasswordReset}
               isDisabled={isResetLoading}
-              className="self-end mb-[20px]">
+              className="self-end mb-[20px]"
+            >
               <ButtonText className="text-black">
                 {t("screens.loginScreen.forgotPassword")}
               </ButtonText>

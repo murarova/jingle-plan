@@ -83,7 +83,7 @@ export const DayComponent = memo(
           clearTimeout(tooltipTimer.current);
         }
       },
-      []
+      [],
     );
 
     const tooltipMessage = unlockMessage ?? defaultLockedMessage;
@@ -111,6 +111,7 @@ export const DayComponent = memo(
             ) : (
               <CircularProgress
                 value={progress}
+                duration={0}
                 activeStrokeColor={
                   progress === 0 ? "transparent" : colors.green400
                 }
@@ -148,7 +149,7 @@ export const DayComponent = memo(
         )}
       </Pressable>
     );
-  }
+  },
 );
 
 DayComponent.displayName = "DayComponent";

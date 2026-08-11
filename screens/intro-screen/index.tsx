@@ -57,9 +57,7 @@ export function IntroScreen() {
     if (width <= 0 || height <= 0) return;
 
     setCarouselSize((prev) =>
-      prev.width === width && prev.height === height
-        ? prev
-        : { width, height },
+      prev.width === width && prev.height === height ? prev : { width, height },
     );
   }, []);
 
@@ -74,7 +72,10 @@ export function IntroScreen() {
 
       return (
         <Box className="flex-1 w-full items-center justify-center">
-          <Center className="mb-5" style={{ width: imageSize, height: imageSize }}>
+          <Center
+            className="mb-5"
+            style={{ width: imageSize, height: imageSize }}
+          >
             <Image width={imageSize} height={imageSize} />
           </Center>
           <Heading className="align-middle text-center">{item.title}</Heading>

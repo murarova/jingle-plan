@@ -37,15 +37,15 @@ const buttonStyle = tva({
   variants: {
     variant: {
       default:
-        'bg-primary-500 border border-primary-300 data-[hover=true]:bg-primary-600 data-[active=true]:bg-primary-700 data-[hover=true]:border-primary-400 data-[active=true]:border-primary-700',
+        'bg-primary-500 border-0 data-[hover=true]:bg-primary-600 data-[active=true]:bg-primary-700',
       solid:
-        'bg-primary-500 border border-primary-300 data-[hover=true]:bg-primary-600 data-[active=true]:bg-primary-700 data-[hover=true]:border-primary-400 data-[active=true]:border-primary-700',
+        'bg-primary-500 border-0 data-[hover=true]:bg-primary-600 data-[active=true]:bg-primary-700',
       outline:
         'bg-transparent border border-primary-300 data-[hover=true]:bg-backgroundLight-50 data-[active=true]:bg-transparent',
       secondary:
-        'bg-secondary-500 border border-secondary-300 data-[hover=true]:bg-secondary-600 data-[active=true]:bg-secondary-700 data-[hover=true]:border-secondary-400 data-[active=true]:border-secondary-700',
+        'bg-secondary-500 border-0 data-[hover=true]:bg-secondary-600 data-[active=true]:bg-secondary-700',
       destructive:
-        'bg-red-500 border border-red-300 data-[hover=true]:bg-red-600 data-[active=true]:bg-red-700',
+        'bg-red-500 border-0 data-[hover=true]:bg-red-600 data-[active=true]:bg-red-700',
       ghost:
         'bg-transparent data-[hover=true]:bg-backgroundLight-50 data-[active=true]:bg-transparent',
       link: 'h-auto min-h-0 px-0 py-0 bg-transparent border-0 data-[hover=true]:bg-transparent data-[active=true]:bg-transparent',
@@ -53,9 +53,10 @@ const buttonStyle = tva({
     size: {
       xs: 'px-3.5 h-8',
       sm: 'px-4 h-9',
-      default: 'px-5 h-10',
-      md: 'px-5 h-10',
+      default: 'px-5 h-11',
+      md: 'px-5 h-11',
       lg: 'px-6 h-11',
+      xl: 'px-7 h-12',
       icon: 'h-10 w-10',
     },
   },
@@ -88,6 +89,7 @@ const buttonTextStyle = tva({
       default: 'text-base',
       md: 'text-base',
       lg: 'text-lg',
+      xl: 'text-xl',
       icon: 'text-sm',
     },
   },
@@ -102,6 +104,7 @@ const buttonSpinnerStyle = tva({
       default: 'h-4 w-4',
       md: 'h-4 w-4',
       lg: 'h-5 w-5',
+      xl: 'h-5 w-5',
       icon: 'h-4 w-4',
     },
   },
@@ -125,6 +128,7 @@ const buttonIconStyle = tva({
       default: 'h-4 w-4',
       md: 'h-4 w-4',
       lg: 'h-5 w-5',
+      xl: 'h-5 w-5',
       icon: 'h-4 w-4',
     },
   },
