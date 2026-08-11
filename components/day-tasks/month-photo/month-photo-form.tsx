@@ -1,8 +1,6 @@
 import { HStack } from "@/ui/hstack";
 import { VStack } from "@/ui/vstack";
-import { Text } from "@/ui/text";
 import { Button, ButtonText } from "@/ui/button";
-import { Box } from "@/ui/box";
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
 import { AutoGrowingTextarea, ImagePicker } from "../../common";
@@ -45,11 +43,15 @@ export const MonthPhotoForm = memo(
           placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
           value={text}
           onChangeText={onTextChange}
-          style={{ marginTop: 16 }}
+          containerStyle={{ marginTop: 16 }}
         />
         <HStack space="sm" className="mt-2">
           {text || image ? (
-            <Button variant="outline" onPress={onCancel} className="flex-1 rounded-lg">
+            <Button
+              variant="outline"
+              onPress={onCancel}
+              className="flex-1 rounded-lg"
+            >
               <ButtonText>{t("common.cancel")}</ButtonText>
             </Button>
           ) : null}

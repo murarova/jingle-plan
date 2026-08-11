@@ -1,6 +1,5 @@
 import { VStack } from "@/ui/vstack";
 import { Button, ButtonText } from "@/ui/button";
-import { Box } from "@/ui/box";
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
 import { TaskOutputType } from "@/constants";
@@ -47,7 +46,7 @@ export const MoodForm = memo(
             value={text}
             onChangeText={onTextChange}
             placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-            style={{ marginBottom: 16 }}
+            containerStyle={{ marginBottom: 16 }}
           />
         )}
         {showImage && (

@@ -36,7 +36,11 @@ export const SummaryForm = memo(
           minHeight={120}
         />
         <HStack space="sm" className="mt-2">
-          <Button variant="outline" onPress={onCancel} className="flex-1 rounded-lg">
+          <Button
+            variant="outline"
+            onPress={onCancel}
+            className="flex-1 rounded-lg"
+          >
             <ButtonText>{t("common.cancel")}</ButtonText>
           </Button>
           <Button onPress={onSubmit} className="flex-1 rounded-lg">
