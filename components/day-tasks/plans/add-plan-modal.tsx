@@ -1,5 +1,5 @@
 import { FormControlErrorText } from "@/ui/form-control";
-import { Textarea, TextareaInput } from "@/ui/textarea";
+import { AutoGrowingTextarea } from "@/components/common";
 
 import {
   Select,
@@ -97,14 +97,12 @@ export function AddPlanModal({
         </ModalHeader>
         <ModalBody>
           <VStack space="md">
-            <Textarea size="md" className="w-full">
-              <TextareaInput
-                onChangeText={setText}
-                defaultValue={text}
-                placeholder={t("screens.plansModal.placeholder")}
-                onSubmitEditing={handleSubmit}
-              />
-            </Textarea>
+            <AutoGrowingTextarea
+              value={text}
+              onChangeText={setText}
+              placeholder={t("screens.plansModal.placeholder")}
+              onSubmitEditing={handleSubmit}
+            />
             {isPlanScreen && (
               <>
                 <VStack space="xs">

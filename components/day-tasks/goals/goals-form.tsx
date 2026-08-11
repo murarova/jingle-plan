@@ -38,19 +38,24 @@ export const GoalsForm = memo(
           onSubmitEditing={handleSubmit}
         />
         <HStack space="sm" className="mt-2">
-          <Button variant="outline" onPress={onCancel} className="flex-1 rounded-lg">
+          <Button
+            variant="outline"
+            onPress={onCancel}
+            className="flex-1 rounded-lg"
+          >
             <ButtonText>{t("common.cancel")}</ButtonText>
           </Button>
           <Button
             onPress={handleSubmit}
             accessibilityLabel="Save goals"
-            className="flex-1 rounded-lg">
+            className="flex-1 rounded-lg"
+          >
             <ButtonText>{submitButtonText}</ButtonText>
           </Button>
         </HStack>
       </VStack>
     );
-  }
+  },
 );
 
 GoalsForm.displayName = "GoalsForm";
