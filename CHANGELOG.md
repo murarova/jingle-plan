@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.1.16...jingle-plan-v1.2.0) (2026-08-11)
+
+
+### Features
+
+* add fullscreen expand to auto-growing textarea ([#57](https://github.com/murarova/jingle-plan/issues/57)) ([afae8ca](https://github.com/murarova/jingle-plan/commit/afae8ca3a84f7c548e7995186038daafbf93b01c))
+
 ## [1.1.16](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.1.15...jingle-plan-v1.1.16) (2026-08-11)
 
 
