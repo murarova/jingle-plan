@@ -1,10 +1,8 @@
 import { HStack } from "@/ui/hstack";
 import { VStack } from "@/ui/vstack";
-import { Text } from "@/ui/text";
 import { Button, ButtonText } from "@/ui/button";
-import { Box } from "@/ui/box";
 import { useTranslation } from "react-i18next";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import { AutoGrowingTextarea, ImagePicker } from "../../common";
 import { ImageData } from "@/types";
 
@@ -32,6 +30,35 @@ export const MonthPhotoForm = memo(
   }: MonthPhotoFormProps) => {
     const { t } = useTranslation();
 
+    const renderFooter = useCallback(
+      ({ close }: { close: () => void }) => (
+        <HStack space="sm" className="w-full">
+          {text || image ? (
+            <Button
+              variant="outline"
+              onPress={() => {
+                onCancel();
+                close();
+              }}
+              className="flex-1 rounded-lg"
+            >
+              <ButtonText>{t("common.cancel")}</ButtonText>
+            </Button>
+          ) : null}
+          <Button
+            onPress={() => {
+              onSubmit();
+              close();
+            }}
+            className="flex-1 rounded-lg"
+          >
+            <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
+          </Button>
+        </HStack>
+      ),
+      [image, onCancel, onSubmit, t, text],
+    );
+
     return (
       <VStack space="md" className="w-full">
         <ImagePicker
@@ -46,6 +73,7 @@ export const MonthPhotoForm = memo(
           value={text}
           onChangeText={onTextChange}
           style={{ marginTop: 16 }}
+          renderFooter={renderFooter}
         />
         <HStack space="sm" className="mt-2">
           {text || image ? (

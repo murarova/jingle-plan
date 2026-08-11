@@ -29,6 +29,34 @@ export const GoalsForm = memo(
       onSubmit(text);
     }, [text, onSubmit]);
 
+    const renderFooter = useCallback(
+      ({ close }: { close: () => void }) => (
+        <HStack space="sm" className="w-full">
+          <Button
+            variant="outline"
+            onPress={() => {
+              onCancel();
+              close();
+            }}
+            className="flex-1 rounded-lg"
+          >
+            <ButtonText>{t("common.cancel")}</ButtonText>
+          </Button>
+          <Button
+            onPress={() => {
+              handleSubmit();
+              close();
+            }}
+            accessibilityLabel="Save goals"
+            className="flex-1 rounded-lg"
+          >
+            <ButtonText>{submitButtonText}</ButtonText>
+          </Button>
+        </HStack>
+      ),
+      [handleSubmit, onCancel, submitButtonText, t],
+    );
+
     return (
       <VStack space="md" className="w-full">
         <AutoGrowingTextarea
@@ -36,6 +64,7 @@ export const GoalsForm = memo(
           onChangeText={onTextChange}
           placeholder={placeholderText}
           onSubmitEditing={handleSubmit}
+          renderFooter={renderFooter}
         />
         <HStack space="sm" className="mt-2">
           <Button variant="outline" onPress={onCancel} className="flex-1 rounded-lg">

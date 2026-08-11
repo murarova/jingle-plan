@@ -1,6 +1,6 @@
 import { HStack } from "@/ui/hstack";
 import { Button, ButtonText } from "@/ui/button";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { TaskContext } from "@/types";
 import { AutoGrowingTextarea } from "../../components/common";
@@ -17,12 +17,40 @@ export const EditableContent = memo(
   ({ text, onTextChange, onSubmit, onCancel }: EditableContentProps) => {
     const { t } = useTranslation();
 
+    const renderFooter = useCallback(
+      ({ close }: { close: () => void }) => (
+        <HStack space="sm" className="w-full">
+          <Button
+            variant="outline"
+            onPress={() => {
+              onCancel();
+              close();
+            }}
+            className="flex-1 rounded-lg"
+          >
+            <ButtonText>{t("common.cancel")}</ButtonText>
+          </Button>
+          <Button
+            onPress={() => {
+              onSubmit();
+              close();
+            }}
+            className="flex-1 rounded-lg"
+          >
+            <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
+          </Button>
+        </HStack>
+      ),
+      [onCancel, onSubmit, t],
+    );
+
     return (
       <>
         <AutoGrowingTextarea
           value={text}
           onChangeText={onTextChange}
           placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
+          renderFooter={renderFooter}
         />
         <HStack space="sm" className="mt-2">
           <Button variant="outline" onPress={onCancel} className="flex-1 rounded-lg">

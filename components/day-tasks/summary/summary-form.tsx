@@ -1,7 +1,7 @@
 import { HStack } from "@/ui/hstack";
 import { VStack } from "@/ui/vstack";
 import { Button, ButtonText } from "@/ui/button";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { HappySlider } from "./happy-slider";
 import { AutoGrowingTextarea } from "../../common";
@@ -26,6 +26,33 @@ export const SummaryForm = memo(
   }: SummaryFormProps) => {
     const { t } = useTranslation();
 
+    const renderFooter = useCallback(
+      ({ close }: { close: () => void }) => (
+        <HStack space="sm" className="w-full">
+          <Button
+            variant="outline"
+            onPress={() => {
+              onCancel();
+              close();
+            }}
+            className="flex-1 rounded-lg"
+          >
+            <ButtonText>{t("common.cancel")}</ButtonText>
+          </Button>
+          <Button
+            onPress={() => {
+              onSubmit();
+              close();
+            }}
+            className="flex-1 rounded-lg"
+          >
+            <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
+          </Button>
+        </HStack>
+      ),
+      [onCancel, onSubmit, t],
+    );
+
     return (
       <VStack space="md" className="w-full">
         <HappySlider rate={rate} setRate={onRateChange} isDisabled={false} />
@@ -34,6 +61,7 @@ export const SummaryForm = memo(
           onChangeText={onTextChange}
           placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
           minHeight={120}
+          renderFooter={renderFooter}
         />
         <HStack space="sm" className="mt-2">
           <Button variant="outline" onPress={onCancel} className="flex-1 rounded-lg">

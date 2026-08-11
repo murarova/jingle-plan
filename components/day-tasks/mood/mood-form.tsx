@@ -1,8 +1,7 @@
 import { VStack } from "@/ui/vstack";
 import { Button, ButtonText } from "@/ui/button";
-import { Box } from "@/ui/box";
 import { useTranslation } from "react-i18next";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import { TaskOutputType } from "@/constants";
 import { AutoGrowingTextarea, ImagePicker } from "../../common";
 
@@ -40,6 +39,22 @@ export const MoodForm = memo(
       taskOutputType === TaskOutputType.Image ||
       taskOutputType === TaskOutputType.TextPhoto;
 
+    const renderFooter = useCallback(
+      ({ close }: { close: () => void }) =>
+        isEditable ? (
+          <Button
+            onPress={() => {
+              onSubmit();
+              close();
+            }}
+            className="w-full rounded-lg"
+          >
+            <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
+          </Button>
+        ) : null,
+      [isEditable, onSubmit, t],
+    );
+
     return (
       <VStack space="md" className="w-full">
         {showText && (
@@ -48,6 +63,7 @@ export const MoodForm = memo(
             onChangeText={onTextChange}
             placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
             style={{ marginBottom: 16 }}
+            renderFooter={renderFooter}
           />
         )}
         {showImage && (
