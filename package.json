@@ -4,7 +4,7 @@
   "version": "1.1.15",
   "scripts": {
     "start": "expo start",
-    "android": "NODE_ENV=development bash -c 'source $HOME/.nvm/nvm.sh && nvm use 20 && expo run:android'",
+    "android": "NODE_ENV=development bash -c 'source $HOME/.nvm/nvm.sh && nvm use 24 && expo run:android'",
     "ios": "expo run:ios",
     "web": "expo start --web",
     "postinstall": "patch-package",
@@ -16,7 +16,7 @@
     "prepare": "husky"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "overrides": {
     "jws": "^4.0.1"

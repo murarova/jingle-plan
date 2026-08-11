@@ -17,12 +17,12 @@ const UITextarea = createTextarea({
 });
 
 const textareaStyle = tva({
-  base: 'w-full h-[100px] border border-backgroundLight-300 bg-white rounded-sm data-[hover=true]:border-borderLight-400 data-[focus=true]:border-borderLight-400 data-[focus=true]:data-[hover=true]:border-borderLight-400 data-[disabled=true]:opacity-40 data-[disabled=true]:data-[hover=true]:border-backgroundLight-300',
+  base: 'w-full h-[100px] border border-backgroundLight-300 bg-white rounded-sm data-[hover=true]:border-borderLight-400 data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:data-[hover=true]:border-typography-600 data-[disabled=true]:opacity-40 data-[disabled=true]:data-[hover=true]:border-backgroundLight-300',
 
   variants: {
     variant: {
       default:
-        'data-[focus=true]:border-borderLight-400 data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:web:shadow-borderLight-400 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-[inset_0_0_0_1px] data-[invalid=true]:web:shadow-error-700 data-[invalid=true]:data-[hover=true]:border-error-700 data-[invalid=true]:data-[disabled=true]:data-[hover=true]:border-error-700',
+        'data-[focus=true]:border-typography-600 data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:web:shadow-typography-600 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-[inset_0_0_0_1px] data-[invalid=true]:web:shadow-error-700 data-[invalid=true]:data-[hover=true]:border-error-700 data-[invalid=true]:data-[disabled=true]:data-[hover=true]:border-error-700',
     },
     size: {
       sm: '',

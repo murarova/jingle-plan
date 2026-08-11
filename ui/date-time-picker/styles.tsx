@@ -6,7 +6,7 @@ export const dateTimePickerStyle = tva({
 });
 
 export const dateTimePickerTriggerStyle = tva({
-  base: 'border border-backgroundLight-300 rounded-sm flex-row items-center overflow-hidden data-[hover=true]:border-borderLight-400 data-[focus=true]:border-primary-700 data-[focus=true]:data-[hover=true]:border-primary-700 data-[disabled=true]:opacity-40 data-[disabled=true]:data-[hover=true]:border-backgroundLight-300',
+  base: 'border border-backgroundLight-300 rounded-sm flex-row items-center overflow-hidden data-[hover=true]:border-borderLight-400 data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:data-[hover=true]:border-typography-600 data-[disabled=true]:opacity-40 data-[disabled=true]:data-[hover=true]:border-backgroundLight-300',
   variants: {
     size: {
       xl: 'h-12',
@@ -16,11 +16,11 @@ export const dateTimePickerTriggerStyle = tva({
     },
     variant: {
       underlined:
-        'border-0 border-b rounded-none border-backgroundLight-300 data-[hover=true]:border-primary-700 data-[focus=true]:border-primary-700 data-[focus=true]:web:shadow-[inset_0_-1px_0_0] data-[focus=true]:web:shadow-primary-700 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-error-700',
+        'border-0 border-b rounded-none border-backgroundLight-300 data-[hover=true]:border-borderLight-400 data-[focus=true]:border-typography-600 data-[focus=true]:web:shadow-[inset_0_-1px_0_0] data-[focus=true]:web:shadow-typography-600 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-error-700',
       outline:
-        'data-[focus=true]:border-primary-700 data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:data-[hover=true]:web:shadow-primary-700 data-[invalid=true]:web:shadow-[inset_0_0_0_1px] data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-error-700 data-[invalid=true]:data-[hover=true]:border-error-700',
+        'data-[focus=true]:border-typography-600 data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:data-[hover=true]:web:shadow-typography-600 data-[invalid=true]:web:shadow-[inset_0_0_0_1px] data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-error-700 data-[invalid=true]:data-[hover=true]:border-error-700',
       rounded:
-        'rounded-full data-[focus=true]:border-primary-700 data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:web:shadow-primary-700 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-error-700',
+        'rounded-full data-[focus=true]:border-typography-600 data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:web:shadow-typography-600 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-error-700',
     },
   },
 });

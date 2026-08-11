@@ -64,9 +64,7 @@ export const PaywallScreen = memo(() => {
     <Box className="flex-1 bg-white">
       <ScrollView contentContainerStyle={{ padding: 24 }}>
         <Box className="mb-6">
-          <Text className="text-xl font-bold mb-1">
-            {t("paywall.title")}
-          </Text>
+          <Text className="text-xl font-bold mb-1">{t("paywall.title")}</Text>
           <Text className="text-md text-warmGray-500">
             {t("paywall.subtitle")}
           </Text>
@@ -77,9 +75,7 @@ export const PaywallScreen = memo(() => {
             <Text className="text-lg font-semibold mb-2">
               {t("paywall.planName")}
             </Text>
-            <Text className="text-2xl font-bold mb-1">
-              {displayedPrice}
-            </Text>
+            <Text className="text-2xl font-bold mb-1">{displayedPrice}</Text>
             <Text className="text-sm text-warmGray-500 mb-4">
               {t("paywall.billingPeriod")}
             </Text>
@@ -114,7 +110,12 @@ export const PaywallScreen = memo(() => {
                   subscribe(resolvedProductId);
                 }
               }}
-              className={` ${isSubscriber ? "bg-green-600" : "bg-primary-600"} mt-6 rounded-xl `}>
+              className={`${
+                isSubscriber
+                  ? "bg-green-600 border-green-600"
+                  : "bg-primary-600 border-primary-600"
+              } mt-6 rounded-xl`}
+            >
               <ButtonText>
                 {isLoading ? t("paywall.processing") : subscribeButtonLabel}
               </ButtonText>
@@ -131,7 +132,7 @@ export const PaywallScreen = memo(() => {
             {t(
               Platform.OS === "android"
                 ? "paywall.disclaimerAndroid"
-                : "paywall.disclaimer"
+                : "paywall.disclaimer",
             )}
           </Text>
         </VStack>

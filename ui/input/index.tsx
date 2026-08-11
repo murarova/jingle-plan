@@ -35,19 +35,21 @@ cssInterop(UIIcon, {
 });
 
 const inputStyle = tva({
-  base: 'w-full flex-row items-center overflow-hidden border border-backgroundLight-300 bg-transparent data-[hover=true]:border-borderLight-400 data-[focus=true]:border-primary-700 data-[focus=true]:data-[hover=true]:border-primary-700 data-[disabled=true]:opacity-40 data-[disabled=true]:data-[hover=true]:border-backgroundLight-300 data-[invalid=true]:border-error-700 data-[invalid=true]:data-[hover=true]:border-error-700 data-[invalid=true]:data-[focus=true]:border-error-700',
+  base: 'w-full flex-row items-center overflow-hidden border border-backgroundLight-300 bg-transparent data-[hover=true]:border-borderLight-400 data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:data-[hover=true]:border-typography-600 data-[disabled=true]:opacity-40 data-[disabled=true]:data-[hover=true]:border-backgroundLight-300 data-[invalid=true]:border-error-700 data-[invalid=true]:data-[hover=true]:border-error-700 data-[invalid=true]:data-[focus=true]:border-error-700',
   variants: {
     size: {
       sm: 'h-9',
-      md: 'h-10',
+      md: 'h-11',
       lg: 'h-11',
       xl: 'h-12',
     },
     variant: {
-      outline: 'rounded',
+      outline:
+        'rounded data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:web:shadow-typography-600 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-[inset_0_0_0_1px] data-[invalid=true]:web:shadow-error-700',
       underlined:
-        'rounded-none border-0 border-b border-backgroundLight-300 data-[focus=true]:border-primary-700 data-[invalid=true]:border-b-2 data-[invalid=true]:border-error-700',
-      rounded: 'rounded-full',
+        'rounded-none border-0 border-b border-backgroundLight-300 data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:web:shadow-[inset_0_-1px_0_0] data-[focus=true]:web:shadow-typography-600 data-[invalid=true]:border-b-2 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-error-700',
+      rounded:
+        'rounded-full data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:web:shadow-typography-600 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-error-700',
     },
   },
   defaultVariants: {
