@@ -1,10 +1,9 @@
 import { Image } from "@/ui/image";
-import { ScrollView } from "@/ui/scroll-view";
-import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
 import { memo } from "react";
 import { ImageStyle } from "react-native";
 import { MonthlyData } from "@/types";
+import { AlbumItemText } from "./album-item-text";
 
 interface AlbumCarouselItemProps {
   item: MonthlyData;
@@ -38,19 +37,7 @@ export const AlbumCarouselItem = memo(({ item }: AlbumCarouselItemProps) => {
           alt={`Photo for ${item.month}`}
         />
       </Box>
-      {hasText && (
-        <Box
-          className="h-[30%] bg-white overflow-hidden"
-          style={{
-            borderBottomRightRadius: 8,
-            borderBottomLeftRadius: 8,
-          }}
-        >
-          <ScrollView showsVerticalScrollIndicator={false} className="flex-1 p-[10px]">
-            <Text>{item.text}</Text>
-          </ScrollView>
-        </Box>
-      )}
+      {item.text ? <AlbumItemText text={item.text} /> : null}
     </Box>
   );
 });

@@ -2,8 +2,12 @@ import { Box } from "@/ui/box";
 import { ActivityIndicator } from "react-native";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
+import { useIAP } from "../../hooks/useIAP";
+import { isLoggedIn } from "../../store/authReducer";
 
 export const GlobalLoader = () => {
+  const { isSubscriptionResolved } = useIAP();
+  const isUserLoggedIn = useSelector(isLoggedIn);
   const isApiLoading = useSelector((state: RootState) => {
     const apiState = state.api;
     const authApiState = state.authApi;
@@ -52,7 +56,9 @@ export const GlobalLoader = () => {
     );
   });
 
-  if (!isApiLoading) return null;
+  if (!isApiLoading && !(isUserLoggedIn && !isSubscriptionResolved)) {
+    return null;
+  }
 
   return (
     <Box
