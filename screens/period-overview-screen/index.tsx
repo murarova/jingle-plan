@@ -48,6 +48,10 @@ function PeriodOverviewScreen() {
     });
   }
 
+  if (isLoading || !isSubscriptionResolved) {
+    return <Box className="flex-1 bg-white" />;
+  }
+
   return (
     <Box className="flex-1">
       <ScrollView

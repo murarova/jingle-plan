@@ -52,14 +52,17 @@ export const useCalendarDayManager = (updateCurrentDate?: () => void) => {
     }
   );
 
-  const { data: userProfile } = useGetUserProfileQuery(
+  const {
+    data: userProfile,
+    isLoading: isProfileLoading,
+  } = useGetUserProfileQuery(
     { uid: currentUser?.uid! },
     {
       skip: !currentUser?.uid,
     }
   );
 
-  const isLoading = isConfigLoading || isUserDataLoading;
+  const isLoading = isConfigLoading || isUserDataLoading || isProfileLoading;
   const error = configError || userDataError;
   const isAdmin = userProfile?.role === "admin" || false;
 

@@ -12,14 +12,15 @@ jest.mock("@react-navigation/native", () =>
 
 const mockRefresh = jest.fn();
 const mockGetDayConfig = jest.fn();
+const mockUseCalendarDayManager = jest.fn(() => ({
+  refresh: mockRefresh,
+  isLoading: false,
+  getDayConfig: mockGetDayConfig,
+  isAdmin: false,
+}));
 
 jest.mock("../../hooks/useCalendarDayManager", () => ({
-  useCalendarDayManager: () => ({
-    refresh: mockRefresh,
-    isLoading: false,
-    getDayConfig: mockGetDayConfig,
-    isAdmin: false,
-  }),
+  useCalendarDayManager: () => mockUseCalendarDayManager(),
 }));
 
 jest.mock("../../hooks/useCurrentDate", () => ({
@@ -57,6 +58,12 @@ describe("PeriodOverviewScreen", () => {
   beforeEach(() => {
     resetNavigationMocks();
     mockRefresh.mockClear();
+    mockUseCalendarDayManager.mockReturnValue({
+      refresh: mockRefresh,
+      isLoading: false,
+      getDayConfig: mockGetDayConfig,
+      isAdmin: false,
+    });
     mockUseIAP.mockReturnValue({
       isSubscriber: false,
       isSubscriptionResolved: true,
@@ -106,5 +113,33 @@ describe("PeriodOverviewScreen", () => {
     });
     fireEvent.press(screen.getByText("Оформити підписку"));
     expect(mockNavigate).toHaveBeenCalledWith(SCREENS.PAYWALL);
+  });
+
+  it("does not render the calendar until requests finish", () => {
+    mockUseCalendarDayManager.mockReturnValue({
+      refresh: mockRefresh,
+      isLoading: true,
+      getDayConfig: mockGetDayConfig,
+      isAdmin: false,
+    });
+
+    renderWithProviders(<PeriodOverviewScreen />, {
+      preloadedState: loggedInPreloadedState,
+    });
+
+    expect(screen.queryByText("CalendarMock")).toBeNull();
+  });
+
+  it("does not render the calendar until subscription status is resolved", () => {
+    mockUseIAP.mockReturnValue({
+      isSubscriber: false,
+      isSubscriptionResolved: false,
+    });
+
+    renderWithProviders(<PeriodOverviewScreen />, {
+      preloadedState: loggedInPreloadedState,
+    });
+
+    expect(screen.queryByText("CalendarMock")).toBeNull();
   });
 });

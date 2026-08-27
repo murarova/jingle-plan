@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import {
-  useSafeAreaInsets,
+  SafeAreaInsetsContext,
+  initialWindowMetrics,
   type Edge,
 } from "react-native-safe-area-context";
 import { Box } from "@/ui/box";
+
+const FALLBACK_INSETS = { top: 0, right: 0, bottom: 0, left: 0 };
 
 type SafeAreaViewProps = React.ComponentProps<typeof Box> & {
   edges?: readonly Edge[];
@@ -17,7 +20,10 @@ export const SafeAreaView = React.forwardRef<
   { edges = ["top", "right", "bottom", "left"], style, ...props },
   ref
 ) {
-  const insets = useSafeAreaInsets();
+  const insets =
+    useContext(SafeAreaInsetsContext) ??
+    initialWindowMetrics?.insets ??
+    FALLBACK_INSETS;
 
   const safeAreaStyle: StyleProp<ViewStyle> = {
     paddingTop: edges.includes("top") ? insets.top : undefined,

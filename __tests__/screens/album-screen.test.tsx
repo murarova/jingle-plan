@@ -112,11 +112,28 @@ describe("AlbumScreen", () => {
       renderWithProviders(<AlbumScreen />, {
         preloadedState: loggedInPreloadedState,
       });
-      const buttons = screen.getAllByRole("button");
-      fireEvent.press(buttons[0]);
-      fireEvent.press(buttons[buttons.length - 1]);
+      const navButtons = screen
+        .getAllByRole("button")
+        .filter(
+          (button) => button.props.accessibilityLabel !== "Expand text",
+        );
+      fireEvent.press(navButtons[0]);
+      fireEvent.press(navButtons[navButtons.length - 1]);
       expect(mockHandleBack).toHaveBeenCalledTimes(1);
       expect(mockHandleForward).toHaveBeenCalledTimes(1);
+    });
+
+    it("opens and closes fullscreen text for reading", () => {
+      renderWithProviders(<AlbumScreen />, {
+        preloadedState: loggedInPreloadedState,
+      });
+
+      fireEvent.press(screen.getAllByLabelText("Expand text")[0]);
+      expect(screen.getByLabelText("Collapse text")).toBeTruthy();
+      expect(screen.getAllByText("Winter memories").length).toBeGreaterThan(0);
+
+      fireEvent.press(screen.getByLabelText("Collapse text"));
+      expect(screen.queryByLabelText("Collapse text")).toBeNull();
     });
   });
 });
