@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.2.0...jingle-plan-v1.3.0) (2026-08-27)
+
+
+### Features
+
+* add fullscreen album text reading and stabilize period overview loading ([#59](https://github.com/murarova/jingle-plan/issues/59)) ([de6126e](https://github.com/murarova/jingle-plan/commit/de6126e07fc31fb0c3ca1387dbb522c851879b4d))
+
 ## [1.2.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.1.16...jingle-plan-v1.2.0) (2026-08-11)
 
 
