@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.3.0...jingle-plan-v1.4.0) (2026-08-28)
+
+
+### Features
+
+* Add Apple subscription offer codes and season access updates ([#61](https://github.com/murarova/jingle-plan/issues/61)) ([4bac7d3](https://github.com/murarova/jingle-plan/commit/4bac7d376beb9a8fadb261314a2a4227a2f8bc7b))
+
 ## [1.3.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.2.0...jingle-plan-v1.3.0) (2026-08-27)
 
 
