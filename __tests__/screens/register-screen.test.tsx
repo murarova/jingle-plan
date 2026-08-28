@@ -96,6 +96,19 @@ describe("RegisterScreen", () => {
       ).toBeTruthy();
     });
 
+    it("accepts a password that includes a special character", () => {
+      renderWithProviders(<RegisterScreen />);
+      fireEvent.changeText(
+        screen.getByPlaceholderText(PASSWORD_PLACEHOLDER),
+        "Password1!"
+      );
+      expect(
+        screen.queryByText(
+          "Пароль має складатись із щонайменше 8 символів і містити хоча б одну цифру та хоча б одну велику літеру"
+        )
+      ).toBeNull();
+    });
+
     it("shows a mismatch error when passwords differ", () => {
       renderWithProviders(<RegisterScreen />);
       fireEvent.changeText(
@@ -107,6 +120,19 @@ describe("RegisterScreen", () => {
         "Password2"
       );
       expect(screen.getByText("Паролі не збігаються")).toBeTruthy();
+    });
+
+    it("clears the mismatch error when the password is filled after the repeat field", () => {
+      renderWithProviders(<RegisterScreen />);
+      fireEvent.changeText(
+        screen.getByPlaceholderText(REPEAT_PLACEHOLDER),
+        "Password1"
+      );
+      fireEvent.changeText(
+        screen.getByPlaceholderText(PASSWORD_PLACEHOLDER),
+        "Password1"
+      );
+      expect(screen.queryByText("Паролі не збігаються")).toBeNull();
     });
 
     it("shows a name error when name is blurred empty", () => {

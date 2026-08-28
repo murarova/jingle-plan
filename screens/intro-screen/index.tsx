@@ -139,7 +139,7 @@ export function IntroScreen() {
               } catch {}
               nav.replace(SCREENS.REGISTER);
             }}
-            className="mt-2"
+            className="mt-5"
           >
             <ButtonText>{t("screens.intro.loginBtn")}</ButtonText>
           </Button>
@@ -151,7 +151,7 @@ export function IntroScreen() {
               nav.replace(SCREENS.LOGIN);
             }}
             variant="outline"
-            className="mt-2"
+            className="mt-3"
           >
             <ButtonText>{t("screens.intro.signupBtn")}</ButtonText>
           </Button>

@@ -189,6 +189,10 @@ export default {
     lockedCalendarDescription:
       "Only subscribers can open all calendar days and view daily reflections as soon as they’re available.",
     goToStore: "Upgrade now",
+    promoCta: "Have a promo code?",
+    restore: "Restore purchases",
+    restoreSuccess: "Your purchases were restored.",
+    restoreEmpty: "No purchases were found to restore.",
   },
   rating: {
     bad: "Bad",

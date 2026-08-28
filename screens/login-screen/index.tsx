@@ -8,11 +8,12 @@ import { Box } from "@/ui/box";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState, useCallback } from "react";
 import { SafeAreaView } from "../../components/common/safe-area-view";
-import { Alert, Keyboard, Switch } from "react-native";
+import { Alert, Keyboard, Platform, Switch } from "react-native";
 import { SCREENS, EMAIL_REGEX } from "@/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { KeyboardAvoidingView } from "@/ui/keyboard-avoiding-view";
+import { ScrollView } from "@/ui/scroll-view";
 import {
   useSignInUserMutation,
   useSendPasswordResetMutation,
@@ -153,12 +154,16 @@ export const LoginScreen = () => {
 
   return (
     <Pressable onPress={Keyboard.dismiss} className="flex-1">
-      <KeyboardAwareScrollView
-        enableResetScrollToCoords={false}
-        keyboardShouldPersistTaps="handled"
-        enableOnAndroid={true}
-        enableAutomaticScroll={true}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+        >
         <SafeAreaView className="flex-1">
           <Box className="flex-col p-[10px] pt-[30px] justify-center">
             <Box className="pb-[10px]">
@@ -200,6 +205,10 @@ export const LoginScreen = () => {
                     onChangeText={setPassword}
                     type={showPassword ? "text" : "password"}
                     placeholder={t("screens.loginScreen.passwordPlaceholder")}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    textContentType="password"
+                    autoComplete="password"
                   />
                   <InputSlot onPress={handleState} className="pr-3">
                     <InputIcon
@@ -238,7 +247,8 @@ export const LoginScreen = () => {
             </Button>
           </Box>
         </SafeAreaView>
-      </KeyboardAwareScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Pressable>
   );
 };

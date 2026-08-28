@@ -1,4 +1,4 @@
-export const YEARS = ["2024", "2025"] as const;
+export const YEARS = ["2024", "2025", "2026"] as const;
 
 export const OPEN_DAYS_FROM_TODAY = 0;
 

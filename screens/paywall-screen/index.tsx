@@ -13,6 +13,9 @@ import {
   EXPO_PUBLIC_ANDROID_SUBSCRIPTION_ID,
 } from "@env";
 import { Alert, Linking, Platform } from "react-native";
+import { Pressable } from "@/ui/pressable";
+import { Loader } from "@/components/common";
+import { PromoCodeSection } from "./promo-code-section";
 
 const MANAGE_SUBSCRIPTION_URL_IOS =
   "https://apps.apple.com/account/subscriptions";
@@ -30,6 +33,9 @@ export const PaywallScreen = memo(() => {
     priceLabel,
     isSubscriber,
     isStoreReady,
+    errorMessage,
+    restorePurchases,
+    isAwaitingOfferRedemption,
   } = useIAP();
   const fallbackProductId =
     Platform.OS === "android"
@@ -59,6 +65,18 @@ export const PaywallScreen = memo(() => {
       Alert.alert(t("common.error"), t("errors.generic"));
     }
   }, [t]);
+
+  const handleRestorePurchases = useCallback(async () => {
+    try {
+      const restored = await restorePurchases();
+      Alert.alert(
+        t("paywall.restore"),
+        restored ? t("paywall.restoreSuccess") : t("paywall.restoreEmpty")
+      );
+    } catch {
+      Alert.alert(t("common.error"), t("errors.generic"));
+    }
+  }, [restorePurchases, t]);
 
   return (
     <Box className="flex-1 bg-white">
@@ -120,15 +138,34 @@ export const PaywallScreen = memo(() => {
                 {isLoading ? t("paywall.processing") : subscribeButtonLabel}
               </ButtonText>
             </Button>
+            <PromoCodeSection />
           </Box>
 
-          <Button variant="link" onPress={handleManageSubscription}>
-            <ButtonText className="text-primary-600">
-              {t("common.manageSubscription")}
-            </ButtonText>
-          </Button>
+          {errorMessage ? (
+            <Text className="text-sm text-red-500 text-center">
+              {errorMessage}
+            </Text>
+          ) : null}
 
-          <Text className="text-xs text-warmGray-500">
+          <HStack space="md" className="justify-center items-center">
+            <Pressable
+              onPress={handleRestorePurchases}
+              disabled={isLoading || !isInitialized || !isStoreReady}
+              className="py-2"
+            >
+              <Text className="text-sm text-warmGray-500">
+                {t("paywall.restore")}
+              </Text>
+            </Pressable>
+            <Text className="text-sm text-warmGray-300">·</Text>
+            <Pressable onPress={handleManageSubscription} className="py-2">
+              <Text className="text-sm text-warmGray-500">
+                {t("common.manageSubscription")}
+              </Text>
+            </Pressable>
+          </HStack>
+
+          <Text className="text-xs text-warmGray-400 text-center">
             {t(
               Platform.OS === "android"
                 ? "paywall.disclaimerAndroid"
@@ -137,6 +174,14 @@ export const PaywallScreen = memo(() => {
           </Text>
         </VStack>
       </ScrollView>
+      {isAwaitingOfferRedemption ? (
+        <Box
+          testID="paywall-redeem-loader"
+          className="absolute left-0 right-0 top-0 bottom-0 z-10"
+        >
+          <Loader absolute />
+        </Box>
+      ) : null}
     </Box>
   );
 });

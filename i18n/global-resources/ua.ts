@@ -53,6 +53,10 @@ export default {
     lockedCalendarDescription:
       "Лише підписники отримують доступ до всіх завдань календаря.",
     goToStore: "Оформити підписку",
+    promoCta: "Маєте промокод?",
+    restore: "Відновити доступ",
+    restoreSuccess: "Доступ відновлено.",
+    restoreEmpty: "Доступу для відновлення не знайдено.",
   },
   context: {
     health: "Тіло",
