@@ -6,7 +6,7 @@ import { useCallback, useState } from "react";
 import { RefreshControl } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { HomeStackParamList } from "./home-screen";
+import { HomeStackParamList } from "@/screens/home-screen";
 import { Calendar } from "../../components/calendar/calendar";
 import { useCalendarDayManager } from "../../hooks/useCalendarDayManager";
 import { useIAP } from "../../hooks/useIAP";

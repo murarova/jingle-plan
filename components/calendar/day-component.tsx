@@ -89,7 +89,7 @@ export const DayComponent = memo(
     const tooltipMessage = unlockMessage ?? defaultLockedMessage;
 
     return (
-      <Pressable onPress={handlePress}>
+      <Pressable testID={`calendar-day-${date.dateString}`} onPress={handlePress}>
         {({ pressed }) => (
           <Box className="items-center justify-center">
             {disabled ? (

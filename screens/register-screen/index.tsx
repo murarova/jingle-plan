@@ -6,14 +6,15 @@ import { Heading } from "@/ui/heading";
 import { ButtonText, Button } from "@/ui/button";
 import { Box } from "@/ui/box";
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SafeAreaView } from "../../components/common/safe-area-view";
-import { Alert, Keyboard } from "react-native";
+import { Alert, Keyboard, Platform } from "react-native";
 import * as Haptics from "expo-haptics";
 import { SCREENS, EMAIL_REGEX, PASSWORD_REGEX } from "@/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { KeyboardAvoidingView } from "@/ui/keyboard-avoiding-view";
+import { ScrollView } from "@/ui/scroll-view";
 import { useAppDispatch } from "../../store/withTypes";
 import { setUser, setAuthError, setAuthLoading } from "../../store/authReducer";
 import { useCreateUserMutation } from "../../services/auth-api-rtk";
@@ -39,6 +40,8 @@ export const RegisterScreen = () => {
   const [passwordError, setPasswordError] = useState("");
   const [passwordMatchError, setPasswordMatchError] = useState("");
   const [nameError, setNameError] = useState("");
+  const passwordValueRef = useRef("");
+  const repeatPasswordValueRef = useRef("");
 
   const dispatch = useAppDispatch();
   const [createUser] = useCreateUserMutation();
@@ -78,87 +81,104 @@ export const RegisterScreen = () => {
     }
   };
 
+  const validatePasswordMatch = (nextPassword: string, nextRepeat: string) => {
+    if (!nextPassword || !nextRepeat) {
+      setPasswordMatchError("");
+      return;
+    }
+    setPasswordMatchError(
+      nextPassword !== nextRepeat
+        ? t("screens.registerScreen.passwordMatchError")
+        : "",
+    );
+  };
+
   const handleRegister = async () => {
     const trimmedName = name.trim();
     const trimmedEmail = email.trim();
+    const currentPassword = passwordValueRef.current || password;
+    const currentRepeat = repeatPasswordValueRef.current || repeatPassword;
+    validateEmail(trimmedEmail);
+    validatePassword(currentPassword);
+    validateName(trimmedName);
+    validatePasswordMatch(currentPassword, currentRepeat);
     if (
-      !emailError &&
-      !passwordError &&
-      !passwordMatchError &&
-      !nameError &&
-      trimmedEmail &&
-      password &&
-      repeatPassword &&
-      trimmedName
+      !trimmedEmail ||
+      !EMAIL_REGEX.test(trimmedEmail) ||
+      !PASSWORD_REGEX.test(currentPassword) ||
+      currentPassword !== currentRepeat ||
+      !trimmedName
     ) {
+      return;
+    }
+    try {
       try {
-        try {
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        } catch {}
-        dispatch(setAuthLoading());
-        const user = await createUser({
-          email: trimmedEmail,
-          password,
-        }).unwrap();
-        const serializableUser = convertToSerializableUser(user, trimmedName);
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      } catch {}
+      dispatch(setAuthLoading());
+      const user = await createUser({
+        email: trimmedEmail,
+        password: currentPassword,
+      }).unwrap();
+      const serializableUser = convertToSerializableUser(user, trimmedName);
 
-        await createProfile({
-          uid: user.uid,
-          name: trimmedName,
-          email: user.email || trimmedEmail,
-        }).unwrap();
+      await createProfile({
+        uid: user.uid,
+        name: trimmedName,
+        email: user.email || trimmedEmail,
+      }).unwrap();
 
-        const shouldRemember = await new Promise<boolean>((resolve) => {
-          Alert.alert(
-            t("screens.registerScreen.savePasswordTitle"),
-            t("screens.registerScreen.savePasswordMessage"),
-            [
-              {
-                text: t("common.cancel"),
-                style: "cancel",
-                onPress: () => {
-                  clearCredentials().finally(() => resolve(false));
-                },
+      const shouldRemember = await new Promise<boolean>((resolve) => {
+        Alert.alert(
+          t("screens.registerScreen.savePasswordTitle"),
+          t("screens.registerScreen.savePasswordMessage"),
+          [
+            {
+              text: t("common.cancel"),
+              style: "cancel",
+              onPress: () => {
+                clearCredentials().finally(() => resolve(false));
               },
-              {
-                text: t("screens.registerScreen.savePasswordConfirm"),
-                onPress: () => {
-                  saveCredentials(trimmedEmail, password)
-                    .then(() => resolve(true))
-                    .catch(() => resolve(false));
-                },
+            },
+            {
+              text: t("screens.registerScreen.savePasswordConfirm"),
+              onPress: () => {
+                saveCredentials(trimmedEmail, currentPassword)
+                  .then(() => resolve(true))
+                  .catch(() => resolve(false));
               },
-            ],
-          );
-        });
+            },
+          ],
+        );
+      });
 
-        if (!shouldRemember) {
-          await clearCredentials();
-        }
-
-        dispatch(setUser(serializableUser));
-        nav.replace(SCREENS.HOME);
-      } catch (error) {
-        const message =
-          resolveErrorMessage(error) ??
-          t("errors.generic", "An error occurred");
-
-        dispatch(setAuthError(message));
-        Alert.alert(t("common.error"), message);
+      if (!shouldRemember) {
+        await clearCredentials();
       }
+
+      dispatch(setUser(serializableUser));
+      nav.replace(SCREENS.HOME);
+    } catch (error) {
+      const message =
+        resolveErrorMessage(error) ??
+        t("errors.generic", "An error occurred");
+
+      dispatch(setAuthError(message));
+      Alert.alert(t("common.error"), message);
     }
   };
 
   const handlePasswordChange = (value: string) => {
+    passwordValueRef.current = value;
     setPassword(value);
     validatePassword(value);
+    validatePasswordMatch(value, repeatPasswordValueRef.current);
   };
 
   const handleRepeatPasswordChange = (value: string) => {
+    repeatPasswordValueRef.current = value;
     setRepeatPassword(value);
-    setPasswordMatchError(
-      value !== password ? t("screens.registerScreen.passwordMatchError") : "",
-    );
+    validatePasswordMatch(passwordValueRef.current, value);
   };
 
   const handleNameChange = (value: string) => {
@@ -168,13 +188,17 @@ export const RegisterScreen = () => {
 
   return (
     <Pressable onPress={Keyboard.dismiss} className="flex-1">
-      <KeyboardAwareScrollView
-        enableResetScrollToCoords={false}
-        keyboardShouldPersistTaps="handled"
-        enableOnAndroid={true}
-        enableAutomaticScroll={true}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <SafeAreaView className="flex-1">
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+        >
+          <SafeAreaView className="flex-1">
           <Box className="p-[10px]">
             <Box className="pb-[10px]">
               <Heading>{t("screens.registerScreen.title")}</Heading>
@@ -241,6 +265,10 @@ export const RegisterScreen = () => {
                     type={showPassword ? "text" : "password"}
                     onChangeText={handlePasswordChange}
                     placeholder={t("screens.registerScreen.password")}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    textContentType="newPassword"
+                    autoComplete="new-password"
                   />
                   <InputSlot onPress={handleState} className="pr-3">
                     <InputIcon
@@ -263,6 +291,10 @@ export const RegisterScreen = () => {
                     type={showPassword ? "text" : "password"}
                     onChangeText={handleRepeatPasswordChange}
                     placeholder={t("screens.registerScreen.repeatPassword")}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    textContentType="newPassword"
+                    autoComplete="new-password"
                   />
                 </Input>
                 {passwordMatchError ? (
@@ -283,8 +315,9 @@ export const RegisterScreen = () => {
               <ButtonText>{t("screens.registerScreen.registerBtn")}</ButtonText>
             </Button>
           </Box>
-        </SafeAreaView>
-      </KeyboardAwareScrollView>
+          </SafeAreaView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Pressable>
   );
 };

@@ -9,12 +9,12 @@ import { calendarTheme, setupCalendarLocale } from "../../utils/calendar-utils";
 import { DayComponent } from "./day-component";
 import { useIAP } from "../../hooks/useIAP";
 import { useNavigation } from "@react-navigation/native";
-import { SCREENS, YEARS } from "@/constants";
+import { SCREENS } from "@/constants";
 
 interface CalendarProps {
   pressHandler: (dateString: string) => void;
   getDayConfig: ReturnType<
-    typeof import("../../hooks/useCalendarDayManager")["useCalendarDayManager"]
+    (typeof import("../../hooks/useCalendarDayManager"))["useCalendarDayManager"]
   >["getDayConfig"];
   isAdmin: boolean;
   isLoading: boolean;
@@ -34,30 +34,28 @@ export const Calendar = memo(
     const selectedYear = useAppSelector(selectSelectedYear);
     const navigation = useNavigation();
     const { isSubscriber } = useIAP();
-    // const { i18n } = useTranslation();
-    // const resolvedLanguage =
-    //   (i18n.resolvedLanguage as keyof typeof LANGUAGES) || "en";
-
     const locale = "uk";
+    // const currentDate = "2026-12-01";
 
     setupCalendarLocale(locale);
 
     const minDate = useMemo(
       () => moment(`${selectedYear}-12-01`).format("YYYY-MM-DD"),
-      [selectedYear]
+      [selectedYear],
     );
 
     const firstUnlockedDate = useMemo(
       () => moment(`${currentYear}-12-03`).format("YYYY-MM-DD"),
-      [currentYear]
+      [currentYear],
     );
 
     const baseMaxDate = useMemo(() => {
       const today = moment(currentDate, "YYYY-MM-DD");
       const thirdDay = moment(firstUnlockedDate, "YYYY-MM-DD");
-      return isSubscriber
-        ? today.format("YYYY-MM-DD")
-        : thirdDay.format("YYYY-MM-DD");
+      if (!isSubscriber) {
+        return thirdDay.format("YYYY-MM-DD");
+      }
+      return moment.max(today, thirdDay).format("YYYY-MM-DD");
     }, [currentDate, firstUnlockedDate, isSubscriber]);
 
     const maxDate = useMemo(
@@ -65,7 +63,7 @@ export const Calendar = memo(
         isAdmin
           ? moment(`${selectedYear}-12-31`).format("YYYY-MM-DD")
           : baseMaxDate,
-      [isAdmin, baseMaxDate, selectedYear]
+      [isAdmin, baseMaxDate, selectedYear],
     );
 
     const renderDayComponent = useCallback(
@@ -101,7 +99,7 @@ export const Calendar = memo(
         maxDate,
         isAdmin,
         isLoading,
-      ]
+      ],
     );
 
     return (
@@ -120,7 +118,7 @@ export const Calendar = memo(
         />
       </Box>
     );
-  }
+  },
 );
 
 Calendar.displayName = "Calendar";

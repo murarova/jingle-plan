@@ -11,12 +11,12 @@ export interface IapContextValue {
   isSubscriptionResolved: boolean;
   isSubscriber: boolean;
   activeProductId: string | null;
-  // inflight
   isLoading: boolean;
-  // error
+  isAwaitingOfferRedemption: boolean;
   errorMessage: string | null;
-  // actions
   subscribe: (productId: string) => Promise<void>;
+  redeemOfferCode: () => Promise<void>;
+  restorePurchases: () => Promise<boolean>;
 }
 
 
