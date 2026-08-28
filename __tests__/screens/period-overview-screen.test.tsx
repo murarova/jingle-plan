@@ -4,7 +4,16 @@ import PeriodOverviewScreen from "../../screens/period-overview-screen";
 import { renderWithProviders } from "../utils/render";
 import { loggedInPreloadedState } from "../utils/day-task-helpers";
 import { mockNavigate, resetNavigationMocks } from "../mocks/navigation";
-import { SCREENS } from "@/constants";
+import { SCREENS, YEARS } from "@/constants";
+
+const currentYear = YEARS[YEARS.length - 1];
+const currentSeasonState = {
+  ...loggedInPreloadedState,
+  app: {
+    ...loggedInPreloadedState.app!,
+    selectedYear: currentYear,
+  },
+};
 
 jest.mock("@react-navigation/native", () =>
   require("../mocks/navigation").mockNavigationModule()
@@ -72,14 +81,14 @@ describe("PeriodOverviewScreen", () => {
 
   it("renders the calendar", () => {
     renderWithProviders(<PeriodOverviewScreen />, {
-      preloadedState: loggedInPreloadedState,
+      preloadedState: currentSeasonState,
     });
     expect(screen.getByText("CalendarMock")).toBeTruthy();
   });
 
   it("navigates to the day overview when a calendar day is pressed", () => {
     renderWithProviders(<PeriodOverviewScreen />, {
-      preloadedState: loggedInPreloadedState,
+      preloadedState: currentSeasonState,
     });
     fireEvent.press(screen.getByTestId("calendar-press"));
     expect(mockNavigate).toHaveBeenCalledWith("DayOverview", {
@@ -89,10 +98,23 @@ describe("PeriodOverviewScreen", () => {
 
   it("shows the paywall banner for non-subscribers on the current year", () => {
     renderWithProviders(<PeriodOverviewScreen />, {
-      preloadedState: loggedInPreloadedState,
+      preloadedState: currentSeasonState,
     });
     expect(screen.getByText("Відкрий усі дні з Jingle Plan+")).toBeTruthy();
     expect(screen.getByText("Оформити підписку")).toBeTruthy();
+  });
+
+  it("hides the paywall banner on a previous year", () => {
+    renderWithProviders(<PeriodOverviewScreen />, {
+      preloadedState: {
+        ...loggedInPreloadedState,
+        app: {
+          ...loggedInPreloadedState.app!,
+          selectedYear: YEARS[0],
+        },
+      },
+    });
+    expect(screen.queryByText("Відкрий усі дні з Jingle Plan+")).toBeNull();
   });
 
   it("hides the paywall banner for subscribers", () => {
@@ -102,14 +124,14 @@ describe("PeriodOverviewScreen", () => {
     });
 
     renderWithProviders(<PeriodOverviewScreen />, {
-      preloadedState: loggedInPreloadedState,
+      preloadedState: currentSeasonState,
     });
     expect(screen.queryByText("Відкрий усі дні з Jingle Plan+")).toBeNull();
   });
 
   it("navigates to the paywall screen from the banner", () => {
     renderWithProviders(<PeriodOverviewScreen />, {
-      preloadedState: loggedInPreloadedState,
+      preloadedState: currentSeasonState,
     });
     fireEvent.press(screen.getByText("Оформити підписку"));
     expect(mockNavigate).toHaveBeenCalledWith(SCREENS.PAYWALL);
@@ -124,7 +146,7 @@ describe("PeriodOverviewScreen", () => {
     });
 
     renderWithProviders(<PeriodOverviewScreen />, {
-      preloadedState: loggedInPreloadedState,
+      preloadedState: currentSeasonState,
     });
 
     expect(screen.queryByText("CalendarMock")).toBeNull();
@@ -137,7 +159,7 @@ describe("PeriodOverviewScreen", () => {
     });
 
     renderWithProviders(<PeriodOverviewScreen />, {
-      preloadedState: loggedInPreloadedState,
+      preloadedState: currentSeasonState,
     });
 
     expect(screen.queryByText("CalendarMock")).toBeNull();
