@@ -16,10 +16,18 @@ import {
 import { ButtonText, Button } from "@/ui/button";
 import { VStack } from "@/ui/vstack";
 import { Text } from "@/ui/text";
-import { ModalBody, ModalFooter, Modal, ModalBackdrop, ModalContent, ModalHeader } from "@/ui/modal";
-import { useState } from "react";
+import {
+  ModalBody,
+  ModalFooter,
+  Modal,
+  ModalBackdrop,
+  ModalContent,
+  ModalHeader,
+} from "@/ui/modal";
+import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
+import { KeyboardAvoidingView } from "@/ui/keyboard-avoiding-view";
 import { PlanData, PlanScreenData, TaskContext } from "@/types";
 import { allMonths, TASK_CONTEXT } from "@/constants";
 
@@ -47,13 +55,17 @@ export function AddPlanModal({
   setSelectedMonth,
 }: AddPlanModalProps) {
   const { t } = useTranslation();
-  const [text, setText] = useState(data?.text ?? "");
+  const textRef = useRef(data?.text ?? "");
   const [contextError, setContextError] = useState(false);
 
   const isEditMode = Boolean(data);
 
-  function handleSubmit() {
-    const trimmedText = text.trim();
+  const handleTextChange = useCallback((value: string) => {
+    textRef.current = value;
+  }, []);
+
+  const handleSubmit = useCallback(() => {
+    const trimmedText = textRef.current.trim();
 
     if (!trimmedText) {
       Alert.alert(t("common.error"), t("errors.emptyText"));
@@ -73,9 +85,19 @@ export function AddPlanModal({
       handleAddPlan(trimmedText);
     }
 
-    setText("");
+    textRef.current = "";
     closeModal();
-  }
+  }, [
+    closeModal,
+    context,
+    data,
+    handleAddPlan,
+    handleUpdatePlan,
+    isEditMode,
+    isPlanScreen,
+    selectedMonth,
+    t,
+  ]);
 
   function handleContextChange(value: string) {
     setContext && setContext(value as TaskContext);
@@ -85,9 +107,18 @@ export function AddPlanModal({
   }
 
   return (
-    <Modal avoidKeyboard isOpen onClose={closeModal}>
+    <Modal isOpen onClose={closeModal}>
       <ModalBackdrop />
-      <ModalContent className="w-[90%]">
+      <KeyboardAvoidingView
+        style={{
+          flex: 1,
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ModalContent className="w-[90%]" entering={undefined}>
         <ModalHeader className="mb-[10px]">
           <Text>
             {isEditMode
@@ -98,8 +129,8 @@ export function AddPlanModal({
         <ModalBody>
           <VStack space="md">
             <AutoGrowingTextarea
-              value={text}
-              onChangeText={setText}
+              defaultValue={data?.text ?? ""}
+              onChangeText={handleTextChange}
               placeholder={t("screens.plansModal.placeholder")}
               onSubmitEditing={handleSubmit}
             />
@@ -176,7 +207,7 @@ export function AddPlanModal({
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button variant="outline" size="sm" onPress={closeModal} className="mr-3">
+          <Button variant="outline" onPress={closeModal} className="mr-3">
             <ButtonText>{t("common.cancel")}</ButtonText>
           </Button>
           <Button variant="default" onPress={handleSubmit}>
@@ -185,7 +216,8 @@ export function AddPlanModal({
             </ButtonText>
           </Button>
         </ModalFooter>
-      </ModalContent>
+        </ModalContent>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

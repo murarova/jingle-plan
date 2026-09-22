@@ -39,3 +39,6 @@ firebase-key.json
 # Android & iOS (native directories)
 android/
 ios/
+
+*.swp
+*~

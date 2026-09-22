@@ -5,6 +5,8 @@ import {
   useCallback,
   useRef,
   useContext,
+  useMemo,
+  useEffect,
 } from "react";
 import {
   StyleSheet,
@@ -46,19 +48,39 @@ export const AutoGrowingTextarea = memo(
         maxHeight = 250,
         expandable = true,
         value,
+        defaultValue,
         onChangeText,
         ...rest
       },
       ref,
     ) => {
+      const isControlled = value !== undefined;
       const [isExpanded, setIsExpanded] = useState(false);
       const [expandedDefaultValue, setExpandedDefaultValue] = useState("");
       const [expandedSession, setExpandedSession] = useState(0);
+      const [compactSession, setCompactSession] = useState(0);
       const compactInputRef = useRef<TextInput | null>(null);
+      const textRef = useRef(
+        typeof value === "string"
+          ? value
+          : typeof defaultValue === "string"
+            ? defaultValue
+            : "",
+      );
+      const sizeStyle = useMemo(
+        () => ({ minHeight, maxHeight }),
+        [minHeight, maxHeight],
+      );
       const insets =
         useContext(SafeAreaInsetsContext) ??
         initialWindowMetrics?.insets ??
         FALLBACK_INSETS;
+
+      useEffect(() => {
+        if (isControlled && typeof value === "string") {
+          textRef.current = value;
+        }
+      }, [isControlled, value]);
 
       const setCompactRef = useCallback(
         (node: TextInput | null) => {
@@ -74,20 +96,31 @@ export const AutoGrowingTextarea = memo(
 
       const closeExpanded = useCallback(() => {
         setIsExpanded(false);
-      }, []);
+        if (!isControlled) {
+          setCompactSession((session) => session + 1);
+        }
+      }, [isControlled]);
 
-      const openExpanded = useCallback(() => {
-        compactInputRef.current?.blur();
-        setExpandedDefaultValue(typeof value === "string" ? value : "");
-        setExpandedSession((session) => session + 1);
-        setIsExpanded(true);
-      }, [value]);
-
-      const handleExpandedChange = useCallback(
+      const handleChange = useCallback(
         (text: string) => {
+          textRef.current = text;
           onChangeText?.(text);
         },
         [onChangeText],
+      );
+
+      const openExpanded = useCallback(() => {
+        compactInputRef.current?.blur();
+        setExpandedDefaultValue(textRef.current);
+        setExpandedSession((session) => session + 1);
+        setIsExpanded(true);
+      }, []);
+
+      const handleExpandedChange = useCallback(
+        (text: string) => {
+          handleChange(text);
+        },
+        [handleChange],
       );
 
       return (
@@ -95,15 +128,18 @@ export const AutoGrowingTextarea = memo(
           <View style={styles.compactWrapper}>
             <TextInput
               {...rest}
+              key={isControlled ? "controlled" : `uncontrolled-${compactSession}`}
               ref={setCompactRef}
-              value={value}
-              onChangeText={onChangeText}
+              {...(isControlled
+                ? { value }
+                : { defaultValue: compactSession === 0 ? defaultValue : textRef.current })}
+              onChangeText={handleChange}
               multiline
               editable={!isExpanded}
               style={[
                 styles.textarea,
                 expandable && styles.textareaWithIcon,
-                { minHeight, maxHeight },
+                sizeStyle,
                 style,
               ]}
               underlineColorAndroid="transparent"

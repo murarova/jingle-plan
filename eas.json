@@ -11,11 +11,20 @@
     },
     "preview": {
       "distribution": "internal",
-      "node": "24.19.0"
+      "android": {
+        "buildType": "apk"
+      },
+      "node": "24.19.0",
+      "env": {
+        "EXPO_PUBLIC_IAP_FUNCTIONS_BASE_URL": "https://us-central1-advent-calendar-12.cloudfunctions.net"
+      }
     },
     "production": {
       "autoIncrement": true,
-      "node": "24.19.0"
+      "node": "24.19.0",
+      "env": {
+        "EXPO_PUBLIC_IAP_FUNCTIONS_BASE_URL": "https://us-central1-advent-calendar-12.cloudfunctions.net"
+      }
     }
   },
   "submit": {

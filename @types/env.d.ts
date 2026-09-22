@@ -3,4 +3,5 @@ declare module "@env" {
   export const EXPO_PUBLIC_IOS_SUBSCRIPTION_ID: string;
   export const EXPO_PUBLIC_ANDROID_SUBSCRIPTION_ID: string;
   export const EXPO_PUBLIC_IAP_VALIDATE_URL: string;
+  export const EXPO_PUBLIC_IAP_FUNCTIONS_BASE_URL: string;
 }
