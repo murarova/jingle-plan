@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.4.0...jingle-plan-v1.5.0) (2026-10-22)
+
+
+### Features
+
+* subscription offer codes and live store pricing ([#63](https://github.com/murarova/jingle-plan/issues/63)) ([6b43b0c](https://github.com/murarova/jingle-plan/commit/6b43b0cc5a6bcf0b6632371a3c20a45dbf2e1750))
+
 ## [1.4.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.3.0...jingle-plan-v1.4.0) (2026-08-28)
 
 
