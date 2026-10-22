@@ -14,21 +14,21 @@ import { RootNavigator } from "./navigation/RootNavigator";
 
 export default function App() {
   return (
-    <GluestackUIProvider mode="light">
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <Provider store={store}>
-          <IAPProvider>
-            <UnsavedChangesProvider>
-              <SafeAreaProvider>
+    <SafeAreaProvider>
+      <GluestackUIProvider mode="light">
+        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <Provider store={store}>
+            <IAPProvider>
+              <UnsavedChangesProvider>
                 <BottomSheetModalProvider>
                   <RootNavigator />
                 </BottomSheetModalProvider>
-              </SafeAreaProvider>
-            </UnsavedChangesProvider>
-          </IAPProvider>
-        </Provider>
-      </GestureHandlerRootView>
-    </GluestackUIProvider>
+              </UnsavedChangesProvider>
+            </IAPProvider>
+          </Provider>
+        </GestureHandlerRootView>
+      </GluestackUIProvider>
+    </SafeAreaProvider>
   );
 }

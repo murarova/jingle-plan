@@ -1,6 +1,8 @@
 // @ts-nocheck
 'use client';
-import React from 'react';
+import React, { useContext } from 'react';
+
+const FALLBACK_INSETS = { top: 0, right: 0, bottom: 0, left: 0 };
 import { H4 } from '@expo/html-elements';
 import { createActionsheet } from '@gluestack-ui/core/actionsheet/creator';
 import {
@@ -14,6 +16,10 @@ import {
   PressableProps,
   ViewStyle,
 } from 'react-native';
+import {
+  SafeAreaInsetsContext,
+  initialWindowMetrics,
+} from 'react-native-safe-area-context';
 import { UIIcon } from '@gluestack-ui/core/icon/creator';
 import { tva } from '@gluestack-ui/utils/nativewind-utils';
 import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
@@ -109,7 +115,7 @@ const actionsheetStyle = tva({
 });
 
 const actionsheetContentStyle = tva({
-  base: 'items-center rounded-t-lg p-4 bg-background web:pointer-events-auto web:select-none border-t border-border dark:border-border/10 max-h-[80vh] pb-safe',
+  base: 'items-center rounded-t-lg p-4 bg-background web:pointer-events-auto web:select-none border-t border-border dark:border-border/10 max-h-[80vh]',
 });
 
 const actionsheetItemStyle = tva({
@@ -271,7 +277,12 @@ const Actionsheet = React.forwardRef<
 const ActionsheetContent = React.forwardRef<
   React.ComponentRef<typeof UIActionsheet.Content>,
   IActionsheetContentProps
->(function ActionsheetContent({ className, ...props }, ref) {
+>(function ActionsheetContent({ className, style, ...props }, ref) {
+  const insets =
+    useContext(SafeAreaInsetsContext) ??
+    initialWindowMetrics?.insets ??
+    FALLBACK_INSETS;
+  const { bottom } = insets;
   return (
     <UIActionsheet.Content
       className={actionsheetContentStyle({
@@ -279,6 +290,7 @@ const ActionsheetContent = React.forwardRef<
       })}
       ref={ref}
       {...props}
+      style={[{ paddingBottom: bottom + 16 }, style]}
     />
   );
 });
