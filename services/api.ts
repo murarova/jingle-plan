@@ -142,6 +142,10 @@ const firebaseQuery = async (args: any, api: any): Promise<any> => {
 export const api = createApi({
   reducerPath: "api",
   baseQuery: firebaseQuery,
+  refetchOnMountOrArgChange: false,
+  refetchOnFocus: false,
+  refetchOnReconnect: false,
+  keepUnusedDataFor: 300,
   tagTypes: ["UserData", "Configuration", "UserProfile"],
   endpoints: (builder) => ({
     getConfiguration: builder.query<CalendarConfig, { year: string }>({

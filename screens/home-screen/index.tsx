@@ -181,6 +181,7 @@ export const HomeScreen = () => {
       screenOptions={{
         tabBarActiveTintColor: "#fe434c",
         tabBarInactiveTintColor: "#999999",
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tab.Screen

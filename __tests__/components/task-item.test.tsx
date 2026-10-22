@@ -2,14 +2,8 @@ import React from "react";
 import { screen } from "@testing-library/react-native";
 import { TaskItem } from "../../components/tasks/task-item";
 import { renderWithProviders } from "../utils/render";
-import { mockGetUserDataQuery } from "../mocks/api-hooks";
 import { TASK_CATEGORY, TaskOutputType } from "@/constants";
 import type { DayTaskConfig } from "@/types";
-
-jest.mock("../../services/api", () => ({
-  ...jest.requireActual("../../services/api"),
-  useGetUserDataQuery: () => mockGetUserDataQuery(),
-}));
 
 jest.mock("../../components/day-tasks/plans/plans", () => ({
   Plans: () => null,
@@ -37,19 +31,13 @@ const baseTaskConfig: DayTaskConfig = {
 };
 
 describe("TaskItem", () => {
-  beforeEach(() => {
-    mockGetUserDataQuery.mockReturnValue({
-      data: null,
-      isLoading: false,
-      isFetching: false,
-      error: undefined,
-      refetch: jest.fn(),
-    });
-  });
-
   it("renders the day task accordion title", () => {
     renderWithProviders(
-      <TaskItem taskConfig={baseTaskConfig} currentDay="2025-12-01" />
+      <TaskItem
+        taskConfig={baseTaskConfig}
+        currentDay="2025-12-01"
+        userData={null}
+      />
     );
     expect(screen.getByText("Завдання дня")).toBeTruthy();
   });
@@ -63,6 +51,7 @@ describe("TaskItem", () => {
           taskOutputType: TaskOutputType.TextPhoto,
         }}
         currentDay="2025-12-01"
+        userData={null}
       />
     );
     expect(screen.getByText("Завдання для настрою")).toBeTruthy();

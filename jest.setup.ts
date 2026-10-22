@@ -22,6 +22,7 @@ jest.mock("@react-native-firebase/app", () => ({
 
 jest.mock("@react-native-firebase/auth", () => ({
   getAuth: jest.fn(() => ({ currentUser: null })),
+  onAuthStateChanged: jest.fn(() => jest.fn()),
   createUserWithEmailAndPassword: jest.fn(),
   deleteUser: jest.fn(),
   signInWithEmailAndPassword: jest.fn(),
@@ -80,12 +81,9 @@ jest.mock("react-native-fbsdk-next", () => ({
   AppEventsLogger: { logEvent: jest.fn() },
 }));
 
-jest.mock("react-native-keyboard-aware-scroll-view", () => {
-  const { ScrollView } = require("react-native");
-  return {
-    KeyboardAwareScrollView: ScrollView,
-  };
-});
+jest.mock("expo-device", () => ({
+  isDevice: true,
+}));
 
 jest.mock("react-native-webview", () => {
   const { View } = require("react-native");

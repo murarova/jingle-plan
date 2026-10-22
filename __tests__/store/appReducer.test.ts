@@ -1,7 +1,9 @@
 import appReducer, {
   setSelectedYear,
+  setAvailableYears,
   setConfiguration,
   selectSelectedYear,
+  selectAvailableYears,
 } from "../../store/appReducer";
 import { YEARS } from "@/constants";
 import type { CalendarConfig } from "@/types";
@@ -11,6 +13,7 @@ const initialState = appReducer(undefined, { type: "@@INIT" });
 describe("appReducer", () => {
   it("defaults the selected year to the latest configured year", () => {
     expect(initialState.selectedYear).toBe(YEARS[YEARS.length - 1]);
+    expect(initialState.availableYears).toEqual([YEARS[YEARS.length - 1]]);
     expect(initialState.configuration).toBeNull();
     expect(initialState.status).toBe("idle");
   });
@@ -18,6 +21,13 @@ describe("appReducer", () => {
   it("updates the selected year", () => {
     const state = appReducer(initialState, setSelectedYear("2024"));
     expect(state.selectedYear).toBe("2024");
+  });
+
+  it("stores available years", () => {
+    const years = ["2024", "2026"];
+    const state = appReducer(initialState, setAvailableYears(years));
+    expect(state.availableYears).toEqual(years);
+    expect(selectAvailableYears({ app: state })).toEqual(years);
   });
 
   it("stores the configuration", () => {

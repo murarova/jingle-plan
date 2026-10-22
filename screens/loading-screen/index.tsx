@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { SCREENS } from "@/constants";
 import { useAppSelector } from "../../store/withTypes";
 import { isLoggedIn } from "../../store/authReducer";
@@ -8,15 +9,15 @@ import { useCalendarDayManager } from "../../hooks/useCalendarDayManager";
 import { Box } from "@/ui/box";
 
 export const LoadingScreen = () => {
-  const nav = useNavigation<NavigationProp<RootStackParamList>>();
+  const nav = useNavigation<StackNavigationProp<RootStackParamList, "Loading">>();
   const isUserLoggedIn = useAppSelector(isLoggedIn);
   const { isLoading } = useCalendarDayManager();
 
   useEffect(() => {
     if (isUserLoggedIn && !isLoading) {
-      nav.navigate(SCREENS.HOME);
+      nav.replace(SCREENS.HOME);
     } else if (!isUserLoggedIn) {
-      nav.navigate(SCREENS.INTRO);
+      nav.replace(SCREENS.INTRO);
     }
   }, [isUserLoggedIn, isLoading, nav]);
 

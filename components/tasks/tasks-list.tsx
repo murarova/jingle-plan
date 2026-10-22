@@ -1,9 +1,8 @@
 import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
-import { YoutubePlayer } from "../common";
+import { KeyboardAwareScroll, YoutubePlayer } from "../common";
 import { TaskItem } from "./task-item";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { DayTaskConfig } from "@/types";
+import { DayTaskConfig, UserData } from "@/types";
 
 interface TaskListProps {
   videoText: string;
@@ -11,6 +10,7 @@ interface TaskListProps {
   dayTaskConfig: DayTaskConfig;
   moodTaskConfig: DayTaskConfig;
   currentDay: string;
+  userData?: UserData | null;
 }
 
 export function TasksList({
@@ -19,25 +19,28 @@ export function TasksList({
   dayTaskConfig,
   moodTaskConfig,
   currentDay,
+  userData,
 }: TaskListProps) {
   return (
-    <KeyboardAwareScrollView
-      extraScrollHeight={180}
-      enableResetScrollToCoords={false}
-      keyboardShouldPersistTaps="handled"
-      enableOnAndroid={true}
-      enableAutomaticScroll={true}
-    >
-      <Box className="pb-[30px]">
+    <KeyboardAwareScroll>
+      <Box>
         {videoText && <Text className="pb-4">{videoText}</Text>}
         {videoId && <YoutubePlayer videoId={videoId} />}
         {dayTaskConfig && (
-          <TaskItem currentDay={currentDay} taskConfig={dayTaskConfig} />
+          <TaskItem
+            currentDay={currentDay}
+            taskConfig={dayTaskConfig}
+            userData={userData}
+          />
         )}
         {moodTaskConfig && (
-          <TaskItem currentDay={currentDay} taskConfig={moodTaskConfig} />
+          <TaskItem
+            currentDay={currentDay}
+            taskConfig={moodTaskConfig}
+            userData={userData}
+          />
         )}
       </Box>
-    </KeyboardAwareScrollView>
+    </KeyboardAwareScroll>
   );
 }

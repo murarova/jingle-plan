@@ -16,8 +16,21 @@ import {
   presentCodeRedemptionSheetIOS,
 } from "expo-iap";
 import type { IapContextValue } from "../types/iap";
-import { SUBSCRIPTION_IDS } from "../config/iap";
+import { skipStoreIap, SUBSCRIPTION_IDS } from "../config/iap";
 import { AppEventsLogger } from "react-native-fbsdk-next";
+import { getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
+import {
+  getAndroidPromoEntitlement,
+  PromoRedeemError,
+  redeemAndroidPromoCode as requestAndroidPromoRedeem,
+} from "../services/android-promo";
+import {
+  computeIsSubscriber,
+  isPromoEntitlementActive,
+  nextPromoExpiresAt,
+  shouldResolveWithoutStoreCheck,
+} from "../utils/iap-entitlement";
+import { getStorePriceLabel } from "../utils/iap-price";
 
 const IapContext = createContext<IapContextValue | null>(null);
 
@@ -29,23 +42,55 @@ function sortByPrice(items: Product[]) {
   });
 }
 
-export function IAPProvider({ children }: { children: React.ReactNode }) {
+function LocalIAPProvider({ children }: { children: React.ReactNode }) {
+  const value: IapContextValue = useMemo(
+    () => ({
+      isInitialized: false,
+      isStoreReady: false,
+      subscriptions: [],
+      priceLabel: null,
+      isSubscriptionResolved: true,
+      isSubscriber: false,
+      activeProductId: null,
+      isLoading: false,
+      isAwaitingOfferRedemption: false,
+      errorMessage: null,
+      promoErrorMessage: null,
+      subscribe: async () => {},
+      redeemAppleOfferCode: async () => false,
+      redeemAndroidPromoCode: async () => false,
+      clearPromoError: () => {},
+      restorePurchases: async () => false,
+    }),
+    [],
+  );
+
+  return <IapContext.Provider value={value}>{children}</IapContext.Provider>;
+}
+
+function StoreIAPProvider({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [promoErrorMessage, setPromoErrorMessage] = useState<string | null>(
+    null,
+  );
   const [activeProductId, setActiveProductId] = useState<string | null>(null);
   const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
+  const [promoExpiresAt, setPromoExpiresAt] = useState<number | null>(null);
 
   const [isFetchingProducts, setIsFetchingProducts] = useState(false);
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
   const [isSubscriptionResolved, setIsSubscriptionResolved] = useState(
-    SUBSCRIPTION_IDS.length === 0
+    SUBSCRIPTION_IDS.length === 0,
   );
   const [isStoreReady, setIsStoreReady] = useState(false);
   const catalogRef = useRef<Product[]>([]);
+  const promoExpiresAtRef = useRef<number | null>(null);
   const awaitingOfferRef = useRef(false);
   const [isAwaitingOfferRedemption, setIsAwaitingOfferRedemption] =
     useState(false);
+  promoExpiresAtRef.current = promoExpiresAt;
 
   const stopAwaitingOffer = useCallback(() => {
     awaitingOfferRef.current = false;
@@ -62,6 +107,9 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
     hasActiveSubscriptions,
     restorePurchases: restorePurchasesFromStore,
   } = useExpoIAP({
+    onError: () => {
+      setIsSubscriptionResolved(true);
+    },
     onPurchaseSuccess: async (purchase) => {
       try {
         await finishTransaction({ purchase, isConsumable: false });
@@ -71,15 +119,15 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
 
         try {
           const product = catalogRef.current.find(
-            (item) => item.id === purchase.productId
+            (item) => item.id === purchase.productId,
           );
           if (product) {
             const price =
               typeof product.price === "number"
                 ? product.price
                 : typeof product.price === "string"
-                ? parseFloat(product.price)
-                : 0;
+                  ? parseFloat(product.price)
+                  : 0;
             const currency = product.currency || "USD";
 
             if (price > 0) {
@@ -90,10 +138,7 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
                   currency: currency,
                 });
               } catch (fbError) {
-                console.log(
-                  "Failed to log Facebook purchase event:",
-                  fbError
-                );
+                console.log("Failed to log Facebook purchase event:", fbError);
               }
             }
           }
@@ -105,7 +150,7 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
         setErrorMessage(
           error instanceof Error
             ? error.message
-            : t("errors.generic", "Something went wrong")
+            : t("errors.generic", "Something went wrong"),
         );
       }
     },
@@ -113,7 +158,7 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
       stopAwaitingOffer();
       if (error?.code === ErrorCode.UserCancelled) return;
       setErrorMessage(
-        error?.message ?? t("errors.generic", "Something went wrong")
+        error?.message ?? t("errors.generic", "Something went wrong"),
       );
     },
   });
@@ -124,7 +169,7 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
     return sortByPrice(catalog as Product[]);
   }, [storeSubscriptions, products]);
   catalogRef.current = subscriptions;
-  const priceLabel = subscriptions[0]?.displayPrice ?? null;
+  const priceLabel = getStorePriceLabel(subscriptions[0]);
   const defaultProductId = subscriptions[0]?.id ?? SUBSCRIPTION_IDS[0] ?? null;
   const isInitialized = connected;
   const isLoading =
@@ -132,15 +177,18 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
     isFetchingProducts ||
     isCheckingSubscription ||
     isAwaitingOfferRedemption;
-  const isSubscriber = hasActiveSubscription || activeProductId != null;
+  const isSubscriber = computeIsSubscriber({
+    hasActiveSubscription,
+    activeProductId,
+    promoExpiresAt,
+  });
 
   useEffect(() => {
     if (!connected) {
       setIsStoreReady(false);
       return;
     }
-    const timer = setTimeout(() => setIsStoreReady(true), 0);
-    return () => clearTimeout(timer);
+    setIsStoreReady(true);
   }, [connected]);
 
   useEffect(() => {
@@ -153,7 +201,7 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
         setErrorMessage(
           error instanceof Error
             ? error.message
-            : t("errors.generic", "Something went wrong")
+            : t("errors.generic", "Something went wrong"),
         );
       } finally {
         setIsFetchingProducts(false);
@@ -161,49 +209,98 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
     })();
   }, [isStoreReady, fetchProducts, t]);
 
-  const refreshEntitlements = useCallback(async (silent = false): Promise<boolean> => {
-    if (!isStoreReady || !SUBSCRIPTION_IDS.length) {
-      return false;
-    }
-    if (!silent) {
-      setIsCheckingSubscription(true);
+  const refreshPromoEntitlement = useCallback(async (): Promise<
+    number | null
+  > => {
+    if (Platform.OS !== "android") {
+      return null;
     }
     try {
-      let hasActive = await hasActiveSubscriptions(SUBSCRIPTION_IDS);
-      if (!hasActive) {
-        hasActive = await hasActiveSubscriptions();
-      }
-      if (!hasActive) {
-        await new Promise((r) => setTimeout(r, 500));
-        hasActive =
-          (await hasActiveSubscriptions(SUBSCRIPTION_IDS)) ||
-          (await hasActiveSubscriptions());
-      }
-      setHasActiveSubscription(hasActive);
-      if (hasActive) {
-        setActiveProductId((cur) => cur ?? defaultProductId ?? null);
-        stopAwaitingOffer();
-      } else {
-        setActiveProductId(null);
-      }
-      return hasActive;
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : t("errors.generic", "Something went wrong")
-      );
-      return false;
-    } finally {
-      if (!silent) {
-        setIsCheckingSubscription(false);
-      }
-      setIsSubscriptionResolved(true);
+      const lookup = await getAndroidPromoEntitlement();
+      const next = nextPromoExpiresAt(promoExpiresAtRef.current, lookup);
+      setPromoExpiresAt(next);
+      promoExpiresAtRef.current = next;
+      return next;
+    } catch {
+      return promoExpiresAtRef.current;
     }
-  }, [isStoreReady, hasActiveSubscriptions, defaultProductId, stopAwaitingOffer, t]);
+  }, []);
+
+  const refreshEntitlements = useCallback(
+    async (silent = false): Promise<boolean> => {
+      if (!silent) {
+        setIsCheckingSubscription(true);
+      }
+      try {
+        const promoExpires = await refreshPromoEntitlement();
+        const promoActive = isPromoEntitlementActive(promoExpires);
+
+        if (!isStoreReady || !SUBSCRIPTION_IDS.length) {
+          if (
+            shouldResolveWithoutStoreCheck({
+              hasSubscriptionIds: SUBSCRIPTION_IDS.length > 0,
+              promoActive,
+            })
+          ) {
+            setIsSubscriptionResolved(true);
+          }
+          return promoActive;
+        }
+
+        let hasActive = await hasActiveSubscriptions(SUBSCRIPTION_IDS);
+        if (!hasActive) {
+          hasActive = await hasActiveSubscriptions();
+        }
+        if (!hasActive) {
+          await new Promise((r) => setTimeout(r, 500));
+          hasActive =
+            (await hasActiveSubscriptions(SUBSCRIPTION_IDS)) ||
+            (await hasActiveSubscriptions());
+        }
+        setHasActiveSubscription(hasActive);
+        if (hasActive) {
+          setActiveProductId((cur) => cur ?? defaultProductId ?? null);
+          stopAwaitingOffer();
+        } else {
+          setActiveProductId(null);
+        }
+        setIsSubscriptionResolved(true);
+        return hasActive || promoActive;
+      } catch (error) {
+        setErrorMessage(
+          error instanceof Error
+            ? error.message
+            : t("errors.generic", "Something went wrong"),
+        );
+        if (isStoreReady && SUBSCRIPTION_IDS.length > 0) {
+          setIsSubscriptionResolved(true);
+        }
+        return false;
+      } finally {
+        if (!silent) {
+          setIsCheckingSubscription(false);
+        }
+      }
+    },
+    [
+      isStoreReady,
+      hasActiveSubscriptions,
+      defaultProductId,
+      stopAwaitingOffer,
+      refreshPromoEntitlement,
+      t,
+    ],
+  );
 
   useEffect(() => {
-    if (!isStoreReady || !SUBSCRIPTION_IDS.length) return;
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, () => {
+      void refreshEntitlements(true);
+    });
+    return unsubscribe;
+  }, [refreshEntitlements]);
+
+  useEffect(() => {
     void refreshEntitlements();
   }, [isStoreReady, refreshEntitlements]);
 
@@ -214,7 +311,7 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
         if (nextAppState === "active") {
           void refreshEntitlements();
         }
-      }
+      },
     );
     return () => subscription.remove();
   }, [refreshEntitlements]);
@@ -239,23 +336,23 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
         setErrorMessage(
           error instanceof Error
             ? error.message
-            : t("errors.generic", "Something went wrong")
+            : t("errors.generic", "Something went wrong"),
         );
       } finally {
         setIsPurchasing(false);
       }
     },
-    [isInitialized, isStoreReady, requestPurchase, t]
+    [isInitialized, isStoreReady, requestPurchase, t],
   );
 
-  const redeemOfferCode = useCallback(async () => {
+  const redeemAppleOfferCode = useCallback(async () => {
+    if (Platform.OS !== "ios") {
+      return false;
+    }
     try {
-      if (Platform.OS !== "ios") {
-        return;
-      }
       if (!isInitialized || !isStoreReady) {
         setErrorMessage(t("errors.generic", "Something went wrong"));
-        return;
+        return false;
       }
       setErrorMessage(null);
       awaitingOfferRef.current = true;
@@ -269,32 +366,83 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
         }
         await new Promise((r) => setTimeout(r, 400));
       }
+      return true;
     } catch (error) {
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : t("errors.generic", "Something went wrong")
+          : t("errors.generic", "Something went wrong"),
       );
+      return false;
     } finally {
       stopAwaitingOffer();
     }
   }, [isInitialized, isStoreReady, refreshEntitlements, stopAwaitingOffer, t]);
 
-  const restorePurchases = useCallback(async () => {
-    try {
-      if (!isInitialized || !isStoreReady) {
-        setErrorMessage(t("errors.generic", "Something went wrong"));
+  const redeemAndroidPromoCode = useCallback(
+    async (code: string) => {
+      if (Platform.OS !== "android") {
         return false;
       }
-      setErrorMessage(null);
-      setIsPurchasing(true);
-      await restorePurchasesFromStore();
+      try {
+        setErrorMessage(null);
+        setPromoErrorMessage(null);
+        const expiresAt = await requestAndroidPromoRedeem(code);
+        setPromoExpiresAt(expiresAt);
+        promoExpiresAtRef.current = expiresAt;
+        return true;
+      } catch (error) {
+        if (error instanceof PromoRedeemError) {
+          const messageKey =
+            error.code === "unknown_code" || error.code === "invalid_code"
+              ? "paywall.promoInvalid"
+              : error.code === "already_used"
+                ? "paywall.promoUsed"
+                : error.code === "already_redeemed"
+                  ? "paywall.promoAlreadyRedeemed"
+                  : "errors.generic";
+          setPromoErrorMessage(t(messageKey));
+          return false;
+        }
+        setPromoErrorMessage(
+          error instanceof Error
+            ? error.message
+            : t("errors.generic", "Something went wrong"),
+        );
+        return false;
+      }
+    },
+    [t],
+  );
+
+  const clearPromoError = useCallback(() => {
+    setPromoErrorMessage(null);
+  }, []);
+
+  const restorePurchases = useCallback(async () => {
+    const canUseStore = isInitialized && isStoreReady;
+    if (!canUseStore && Platform.OS !== "android") {
+      setErrorMessage(t("errors.generic", "Something went wrong"));
+      return false;
+    }
+    setErrorMessage(null);
+    setIsPurchasing(true);
+    try {
+      if (canUseStore) {
+        try {
+          await restorePurchasesFromStore();
+        } catch (error) {
+          if (Platform.OS !== "android") {
+            throw error;
+          }
+        }
+      }
       return await refreshEntitlements();
     } catch (error) {
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : t("errors.generic", "Something went wrong")
+          : t("errors.generic", "Something went wrong"),
       );
       return false;
     } finally {
@@ -319,11 +467,21 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
     isLoading,
     isAwaitingOfferRedemption,
     errorMessage,
+    promoErrorMessage,
     subscribe,
-    redeemOfferCode,
+    redeemAppleOfferCode,
+    redeemAndroidPromoCode,
+    clearPromoError,
     restorePurchases,
   };
   return <IapContext.Provider value={value}>{children}</IapContext.Provider>;
+}
+
+export function IAPProvider({ children }: { children: React.ReactNode }) {
+  if (skipStoreIap) {
+    return <LocalIAPProvider>{children}</LocalIAPProvider>;
+  }
+  return <StoreIAPProvider>{children}</StoreIAPProvider>;
 }
 
 export function useIAP() {

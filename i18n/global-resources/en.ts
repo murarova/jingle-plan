@@ -28,7 +28,8 @@ export default {
     confirmDeletePlan: "Are you sure you want to delete this plan?",
     confirmDeleteTask: "Are you sure you want to delete this task?",
     unsavedChangesTitle: "Unsaved Changes",
-    unsavedChangesMessage: "You have unsaved data. Do you want to proceed without saving?",
+    unsavedChangesMessage:
+      "You have unsaved data. Do you want to proceed without saving?",
   },
   errors: {
     emptyText: "Text field cannot be empty",
@@ -172,8 +173,7 @@ export default {
     title: "Unlock Premium Access",
     subtitle: "Get unlimited access to all advent content and yearly updates.",
     planName: "Jingle Plan+",
-    pricePlaceholder: "$12.99",
-    billingPeriod: "Billed monthly. Cancel anytime.",
+    billingPeriod: "Billed yearly. Cancel anytime.",
     benefitOne: "Access to all current and upcoming seasons",
     benefitTwo: "Priority notifications and reminders",
     benefitThree: "Unlimited media uploads & backup",
@@ -189,7 +189,12 @@ export default {
     lockedCalendarDescription:
       "Only subscribers can open all calendar days and view daily reflections as soon as they’re available.",
     goToStore: "Upgrade now",
-    promoCta: "Have a promo code?",
+    promoCta: "Do you have a promo code?",
+    promoPlaceholder: "Enter promo code",
+    promoRedeem: "Redeem code",
+    promoInvalid: "This promo code is not valid.",
+    promoUsed: "This promo code has already been used.",
+    promoAlreadyRedeemed: "A promo year is already active on this account.",
     restore: "Restore purchases",
     restoreSuccess: "Your purchases were restored.",
     restoreEmpty: "No purchases were found to restore.",

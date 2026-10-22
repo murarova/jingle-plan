@@ -14,6 +14,7 @@ import { getUserFromStorage } from "@/services/storage";
 import { hydrateAuth } from "@/store/authReducer";
 import { useFirebaseMessaging } from "@/hooks/useFirebaseMessaging";
 import { useFcmEligibilitySync } from "@/hooks/useFcmEligibilitySync";
+import { useAvailableYears } from "@/hooks/useAvailableYears";
 import { useIAP } from "@/hooks/useIAP";
 import { useGetUserProfileQuery } from "@/services/api";
 import { useAppSelector } from "@/store/withTypes";
@@ -41,6 +42,7 @@ function AppContent() {
 
   useFirebaseMessaging();
   useFcmEligibilitySync(isSubscriber, isAdmin, isSubscriptionResolved);
+  useAvailableYears();
 
   useEffect(() => {
     (async () => {

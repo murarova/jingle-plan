@@ -8,6 +8,11 @@ import {
   runDecemberDailyNotifications,
   runMonthlyNotifications,
 } from "./notifications";
+import {
+  generateAndroidPromoCodes,
+  redeemAndroidPromoCode,
+  getAndroidPromoEntitlement,
+} from "./android-promo-http";
 
 const DATABASE_URL =
   "https://advent-calendar-12-default-rtdb.europe-west1.firebasedatabase.app";
@@ -73,6 +78,12 @@ const getAppStoreToken = (): string => {
 const buildAppleUrl = (path: string, useSandbox: boolean) => {
   const base = useSandbox ? APPLE_TEST_API_BASE : APPLE_API_BASE;
   return `${base}/${path}`;
+};
+
+export {
+  generateAndroidPromoCodes,
+  redeemAndroidPromoCode,
+  getAndroidPromoEntitlement,
 };
 
 export const validateSubscription = functions

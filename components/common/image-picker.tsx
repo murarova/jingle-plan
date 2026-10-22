@@ -5,7 +5,6 @@ import * as ExpoImagePicker from "expo-image-picker";
 import { useTranslation } from "react-i18next";
 import uuid from "react-native-uuid";
 import { Loader } from "./loader";
-import { AnimatedView } from "./animated-view";
 import { ImageData } from "@/types";
 
 interface ImagePickerProps {
@@ -26,55 +25,53 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
   const { t } = useTranslation();
 
   const pickImage = async () => {
+    setIsImageLoading(true);
+
     const result = await ExpoImagePicker.launchImageLibraryAsync({
       mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
-      quality: 1,
+      quality: 0.8,
+      exif: false,
     });
 
-    if (!result.canceled) {
-      setIsImageLoading(true);
-      const id = image?.id ?? uuid.v4().toString();
-
-      const newImage: ImageData = {
-        id,
-        uri: result.assets[0].uri,
-        width: result.assets[0].width,
-        height: result.assets[0].height,
-      };
-      setImage(newImage);
+    if (result.canceled) {
+      setIsImageLoading(false);
+      return;
     }
+
+    const asset = result.assets[0];
+    setImage({
+      id: image?.id ?? uuid.v4().toString(),
+      uri: asset.uri,
+      width: asset.width,
+      height: asset.height,
+    });
   };
+
+  const showPreview = Boolean(image) || isImageLoading;
 
   return (
     <Box>
-      {(image || isImageLoading) && (
-        <Box className="flex-1">
-          {isImageLoading && (
-            <Box
-              className="absolute bg-blueGray-100 opacity-60 top-0 bottom-0 left-0 right-0 z-2">
-              <Loader size="large" />
-            </Box>
-          )}
+      {showPreview && (
+        <Box className="relative h-[300px] w-full overflow-hidden rounded-lg bg-backgroundLight-50">
           {image && (
-            <AnimatedView style={{ zIndex: 2 }} show={!isImageLoading}>
-              <Box className="h-[300px] w-full">
-                <ImageBackground
-                  style={{ flex: 1, justifyContent: "center" }}
-                  source={{ uri: image.uri }}
-                  onLoadStart={() => setIsImageLoading(true)}
-                  onLoadEnd={() => setIsImageLoading(false)}
-                  resizeMode="contain"
-                />
-              </Box>
-            </AnimatedView>
+            <ImageBackground
+              style={{ flex: 1, justifyContent: "center" }}
+              source={{ uri: image.uri }}
+              onLoadEnd={() => setIsImageLoading(false)}
+              onError={() => setIsImageLoading(false)}
+              resizeMode="contain"
+            />
           )}
-          {!image && isImageLoading && (
-            <Box className="h-[300px] w-full" />
-          )}
+          {isImageLoading && <Loader size="large" absolute />}
         </Box>
       )}
       {edit && (
-        <Button variant="link" onPress={pickImage}>
+        <Button
+          className="mt-2"
+          variant="link"
+          onPress={pickImage}
+          isDisabled={isImageLoading}
+        >
           <ButtonText>
             {image ? t("common.pickAnother") : t("common.pickPhoto")}
           </ButtonText>

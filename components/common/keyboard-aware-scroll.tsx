@@ -1,0 +1,114 @@
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import {
+  Keyboard,
+  Platform,
+  ScrollView,
+  TextInput,
+  View,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+} from "react-native";
+
+const EXTRA_BELOW_INPUT = 10;
+
+type KeyboardAwareScrollProps = {
+  children: ReactNode;
+  extraBelowInput?: number;
+};
+
+export function KeyboardAwareScroll({
+  children,
+  extraBelowInput = EXTRA_BELOW_INPUT,
+}: KeyboardAwareScrollProps) {
+  const scrollRef = useRef<ScrollView>(null);
+  const containerRef = useRef<View>(null);
+  const offsetY = useRef(0);
+  const keyboardTop = useRef(Number.POSITIVE_INFINITY);
+  const extraBelow = useRef(extraBelowInput);
+  extraBelow.current = extraBelowInput;
+  const [keyboardInset, setKeyboardInset] = useState(0);
+
+  const ensureFocusedInputVisible = useCallback(() => {
+    const input = TextInput.State.currentlyFocusedInput();
+    const scroll = scrollRef.current;
+    const container = containerRef.current;
+    if (!input || !scroll || !container) {
+      return;
+    }
+
+    input.measureInWindow((_x, y, _w, height) => {
+      container.measureInWindow((_sx, sy, _sw, sh) => {
+        const visibleBottom = Math.min(sy + sh, keyboardTop.current);
+        const targetBottom = y + height + extraBelow.current;
+        const delta = targetBottom - visibleBottom;
+        if (delta > 1) {
+          scroll.scrollTo({
+            y: Math.max(0, offsetY.current + delta),
+            animated: true,
+          });
+        }
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    const showEvent =
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent =
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+
+    const show = Keyboard.addListener(showEvent, (event) => {
+      keyboardTop.current = event.endCoordinates.screenY;
+      setKeyboardInset(event.endCoordinates.height);
+    });
+    const hide = Keyboard.addListener(hideEvent, () => {
+      keyboardTop.current = Number.POSITIVE_INFINITY;
+      setKeyboardInset(0);
+    });
+
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (keyboardInset === 0) {
+      return;
+    }
+
+    const frame = requestAnimationFrame(() => {
+      ensureFocusedInputVisible();
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [keyboardInset, ensureFocusedInputVisible]);
+
+  const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    offsetY.current = event.nativeEvent.contentOffset.y;
+  };
+
+  return (
+    <View ref={containerRef} style={{ flex: 1 }}>
+      <ScrollView
+        ref={scrollRef}
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          paddingBottom: extraBelowInput + keyboardInset,
+        }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+      >
+        {children}
+      </ScrollView>
+    </View>
+  );
+}

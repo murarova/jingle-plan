@@ -2,58 +2,21 @@ import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
 import { Menu, MenuItem } from "@/ui/menu";
 import { Pressable } from "@/ui/pressable";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/withTypes";
-import { setSelectedYear, selectSelectedYear } from "../../store/appReducer";
-import { YEARS } from "@/constants";
+import {
+  setSelectedYear,
+  selectSelectedYear,
+  selectAvailableYears,
+} from "../../store/appReducer";
 import { colors } from "@/constants/colors";
-import { useLazyGetUserDataQuery } from "../../services/api";
 import { Check, ChevronDown } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 
 export const YearSelector = () => {
   const dispatch = useAppDispatch();
   const selectedYear = useAppSelector(selectSelectedYear);
-  const userUid = useAppSelector((state) => state.auth.userUid);
-  const currentYear = YEARS[YEARS.length - 1];
-  const [availableYears, setAvailableYears] = useState<string[]>([currentYear]);
-  const [fetchUserYearData] = useLazyGetUserDataQuery();
-
-  useEffect(() => {
-    let isActive = true;
-    if (!userUid) {
-      return;
-    }
-
-    const loadYears = async (uid: string) => {
-      const yearsWithData = new Set<string>();
-
-      for (const year of YEARS) {
-        if (year === currentYear) continue;
-        try {
-          const request = fetchUserYearData({ uid, year }, true);
-          const data = await request.unwrap();
-          if (data) {
-            yearsWithData.add(year);
-          }
-        } catch {}
-      }
-
-      if (!isActive) return;
-
-      const orderedYears = YEARS.filter(
-        (year) => year === currentYear || yearsWithData.has(year)
-      );
-
-      orderedYears.length && setAvailableYears(orderedYears);
-    };
-
-    loadYears(userUid);
-
-    return () => {
-      isActive = false;
-    };
-  }, [userUid, fetchUserYearData, currentYear]);
+  const availableYears = useAppSelector(selectAvailableYears);
 
   const yearsNewestFirst = useMemo(
     () => [...availableYears].sort((a, b) => Number(b) - Number(a)),
@@ -73,13 +36,13 @@ export const YearSelector = () => {
   const singleYear = availableYears.length === 1 ? availableYears[0] : null;
 
   return (
-    <Box className="pl-[16px]">
+    <Box className="h-full justify-center pl-[16px]">
       {singleYear ? (
         <Box
           testID="year-selector-label"
-          className="bg-white px-3 py-2 min-h-[44px] min-w-[72px] items-center justify-center"
+          className="h-8 min-w-[72px] items-center justify-center overflow-hidden bg-white px-3"
         >
-          <Text className="text-lg font-semibold text-warmGray-800">
+          <Text size="lg" className="font-semibold leading-6 text-warmGray-800">
             {singleYear}
           </Text>
         </Box>
@@ -97,13 +60,17 @@ export const YearSelector = () => {
                 accessibilityRole="button"
                 accessibilityLabel={selectedYear}
                 hitSlop={8}
+                className="h-8 justify-center"
               >
-                <Box className="bg-white px-3 py-2 min-h-[44px] min-w-[72px] items-center flex-row gap-1">
-                  <Text className="text-lg font-semibold text-warmGray-800">
+                <Box className="h-8 min-w-[72px] flex-row items-center justify-center gap-1 overflow-hidden bg-white px-3">
+                  <Text
+                    size="lg"
+                    className="font-semibold leading-6 text-warmGray-800"
+                  >
                     {selectedYear}
                   </Text>
                   <ChevronDown
-                    size={18}
+                    size={16}
                     color={colors.warmGray400}
                     style={{
                       transform: [{ rotate: isOpen ? "180deg" : "0deg" }],

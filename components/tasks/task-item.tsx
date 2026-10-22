@@ -19,7 +19,6 @@ import { Plans } from "../day-tasks/plans/plans";
 import { Summary } from "../day-tasks/summary/summary";
 import { MonthPhoto } from "../day-tasks/month-photo/month-photo";
 import { Goals } from "../day-tasks/goals/goals";
-import { useAppSelector } from "../../store/withTypes";
 import moment from "moment";
 import {
   DayTaskConfig,
@@ -29,26 +28,22 @@ import {
   PlanContextData,
   SummaryContextData,
   GoalsData,
+  UserData,
 } from "@/types";
 import { MoodTask } from "../day-tasks/mood/mood-task";
-import { useGetUserDataQuery } from "../../services/api";
 import { useRef } from "react";
 import { View } from "react-native";
 
 export function TaskItem({
   taskConfig,
   currentDay,
+  userData,
 }: {
   taskConfig: DayTaskConfig;
   currentDay: string;
+  userData?: UserData | null;
 }) {
   const { t } = useTranslation();
-  const { currentUser } = useAppSelector((state) => state.auth);
-  const { selectedYear } = useAppSelector((state) => state.app);
-  const { data: userData } = useGetUserDataQuery(
-    { uid: currentUser?.uid!, year: selectedYear },
-    { skip: !currentUser?.uid || !selectedYear }
-  );
   const day = moment(currentDay).format("DD");
   const accordionHeaderRef = useRef<View>(null);
 

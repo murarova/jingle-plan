@@ -1,7 +1,7 @@
 import React from "react";
 import { LoadingScreen } from "../../screens/loading-screen";
 import { renderWithProviders } from "../utils/render";
-import { mockNavigate, resetNavigationMocks } from "../mocks/navigation";
+import { mockReplace, resetNavigationMocks } from "../mocks/navigation";
 import { SCREENS } from "@/constants";
 import type { SerializableUser } from "../../types/user";
 
@@ -39,7 +39,7 @@ describe("LoadingScreen", () => {
 
   it("navigates to INTRO when no user is logged in", () => {
     renderWithProviders(<LoadingScreen />, { withNavigation: false });
-    expect(mockNavigate).toHaveBeenCalledWith(SCREENS.INTRO);
+    expect(mockReplace).toHaveBeenCalledWith(SCREENS.INTRO);
   });
 
   it("navigates to HOME when a user is logged in and data is ready", () => {
@@ -55,7 +55,7 @@ describe("LoadingScreen", () => {
         },
       },
     });
-    expect(mockNavigate).toHaveBeenCalledWith(SCREENS.HOME);
+    expect(mockReplace).toHaveBeenCalledWith(SCREENS.HOME);
   });
 
   it("does not navigate while a logged-in user's data is still loading", () => {
@@ -72,6 +72,6 @@ describe("LoadingScreen", () => {
         },
       },
     });
-    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(mockReplace).not.toHaveBeenCalled();
   });
 });

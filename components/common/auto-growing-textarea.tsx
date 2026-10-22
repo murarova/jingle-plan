@@ -5,6 +5,8 @@ import {
   useCallback,
   useRef,
   useContext,
+  useMemo,
+  useEffect,
 } from "react";
 import {
   StyleSheet,
@@ -15,7 +17,6 @@ import {
   TextInputProps,
   View,
   Pressable,
-  Platform,
   Modal,
   ScrollView,
 } from "react-native";
@@ -46,19 +47,40 @@ export const AutoGrowingTextarea = memo(
         maxHeight = 250,
         expandable = true,
         value,
+        defaultValue,
         onChangeText,
         ...rest
       },
       ref,
     ) => {
+      const isControlled = value !== undefined;
       const [isExpanded, setIsExpanded] = useState(false);
       const [expandedDefaultValue, setExpandedDefaultValue] = useState("");
       const [expandedSession, setExpandedSession] = useState(0);
+      const [compactSession, setCompactSession] = useState(0);
       const compactInputRef = useRef<TextInput | null>(null);
+      const expandedInputRef = useRef<TextInput | null>(null);
+      const textRef = useRef(
+        typeof value === "string"
+          ? value
+          : typeof defaultValue === "string"
+            ? defaultValue
+            : "",
+      );
+      const sizeStyle = useMemo(
+        () => ({ minHeight, maxHeight }),
+        [minHeight, maxHeight],
+      );
       const insets =
         useContext(SafeAreaInsetsContext) ??
         initialWindowMetrics?.insets ??
         FALLBACK_INSETS;
+
+      useEffect(() => {
+        if (isControlled && typeof value === "string") {
+          textRef.current = value;
+        }
+      }, [isControlled, value]);
 
       const setCompactRef = useCallback(
         (node: TextInput | null) => {
@@ -74,20 +96,43 @@ export const AutoGrowingTextarea = memo(
 
       const closeExpanded = useCallback(() => {
         setIsExpanded(false);
-      }, []);
+        if (!isControlled) {
+          setCompactSession((session) => session + 1);
+        }
+      }, [isControlled]);
 
-      const openExpanded = useCallback(() => {
-        compactInputRef.current?.blur();
-        setExpandedDefaultValue(typeof value === "string" ? value : "");
-        setExpandedSession((session) => session + 1);
-        setIsExpanded(true);
-      }, [value]);
-
-      const handleExpandedChange = useCallback(
+      const handleChange = useCallback(
         (text: string) => {
+          textRef.current = text;
           onChangeText?.(text);
         },
         [onChangeText],
+      );
+
+      const focusExpandedInput = useCallback(() => {
+        expandedInputRef.current?.focus();
+      }, []);
+
+      const openExpanded = useCallback(() => {
+        setExpandedDefaultValue(textRef.current);
+        setExpandedSession((session) => session + 1);
+        setIsExpanded(true);
+      }, []);
+
+      useEffect(() => {
+        if (!isExpanded) {
+          return;
+        }
+
+        const frame = requestAnimationFrame(focusExpandedInput);
+        return () => cancelAnimationFrame(frame);
+      }, [isExpanded, expandedSession, focusExpandedInput]);
+
+      const handleExpandedChange = useCallback(
+        (text: string) => {
+          handleChange(text);
+        },
+        [handleChange],
       );
 
       return (
@@ -95,15 +140,17 @@ export const AutoGrowingTextarea = memo(
           <View style={styles.compactWrapper}>
             <TextInput
               {...rest}
+              key={isControlled ? "controlled" : `uncontrolled-${compactSession}`}
               ref={setCompactRef}
-              value={value}
-              onChangeText={onChangeText}
+              {...(isControlled
+                ? { value }
+                : { defaultValue: compactSession === 0 ? defaultValue : textRef.current })}
+              onChangeText={handleChange}
               multiline
-              editable={!isExpanded}
               style={[
                 styles.textarea,
                 expandable && styles.textareaWithIcon,
-                { minHeight, maxHeight },
+                sizeStyle,
                 style,
               ]}
               underlineColorAndroid="transparent"
@@ -126,8 +173,9 @@ export const AutoGrowingTextarea = memo(
             <Modal
               visible={isExpanded}
               animationType="fade"
-              presentationStyle="fullScreen"
+              presentationStyle="overFullScreen"
               onRequestClose={closeExpanded}
+              onShow={focusExpandedInput}
             >
               <View
                 style={[
@@ -142,7 +190,7 @@ export const AutoGrowingTextarea = memo(
               >
                 <KeyboardAvoidingView
                   style={styles.expandedRoot}
-                  behavior={Platform.OS === "ios" ? "padding" : undefined}
+                  behavior="padding"
                 >
                   <View style={styles.expandedHeader}>
                     <Pressable
@@ -163,11 +211,13 @@ export const AutoGrowingTextarea = memo(
                     <TextInput
                       {...rest}
                       key={expandedSession}
+                      ref={expandedInputRef}
                       autoFocus
                       multiline
                       scrollEnabled={false}
                       defaultValue={expandedDefaultValue}
                       onChangeText={handleExpandedChange}
+                      onLayout={focusExpandedInput}
                       style={styles.expandedTextarea}
                       underlineColorAndroid="transparent"
                       textAlignVertical="top"

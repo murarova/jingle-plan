@@ -3,7 +3,8 @@ import { useCalendarDayManager } from "../../../hooks/useCalendarDayManager";
 import { calculateTotalProgress } from "@/utils";
 
 export const useDayTasks = (currentDay: string) => {
-  const { getDayConfig, error, refresh, isLoading } = useCalendarDayManager();
+  const { getDayConfig, error, refresh, isLoading, userData } =
+    useCalendarDayManager();
 
   const dayTasks = getDayConfig(currentDay);
   const total = useMemo(
@@ -17,5 +18,6 @@ export const useDayTasks = (currentDay: string) => {
     error,
     refresh,
     isLoading,
+    userData,
   };
 };
