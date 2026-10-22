@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.5.0...jingle-plan-v1.5.1) (2026-10-22)
+
+
+### Bug Fixes
+
+* keep Android select options above the nav bar ([#65](https://github.com/murarova/jingle-plan/issues/65)) ([e7c4c47](https://github.com/murarova/jingle-plan/commit/e7c4c47107565ec82c585c8db654115273d7862d))
+
 ## [1.5.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.4.0...jingle-plan-v1.5.0) (2026-10-22)
 
 
