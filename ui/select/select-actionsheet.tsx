@@ -13,6 +13,10 @@ import {
   SectionList,
   ViewStyle,
 } from 'react-native';
+import {
+  SafeAreaInsetsContext,
+  initialWindowMetrics,
+} from 'react-native-safe-area-context';
 import { UIIcon } from '@gluestack-ui/core/icon/creator';
 import { tva } from '@gluestack-ui/utils/nativewind-utils';
 import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
@@ -25,7 +29,10 @@ import {
   MotionComponentProps,
 } from '@legendapp/motion';
 
-import React from 'react';
+import React, { useContext } from 'react';
+import * as Haptics from 'expo-haptics';
+
+const FALLBACK_INSETS = { top: 0, right: 0, bottom: 0, left: 0 };
 
 type IAnimatedPressableProps = React.ComponentProps<typeof Pressable> &
   MotionComponentProps<typeof Pressable, ViewStyle, unknown, unknown, unknown>;
@@ -103,7 +110,7 @@ const actionsheetStyle = tva({
 });
 
 const actionsheetContentStyle = tva({
-  base: 'items-center rounded-tl-3xl rounded-tr-3xl p-2 bg-white max-h-[70%] web:pointer-events-auto web:select-none shadow-hard-5 pb-safe',
+  base: 'items-center rounded-tl-3xl rounded-tr-3xl p-2 bg-white max-h-[70%] web:pointer-events-auto web:select-none shadow-hard-5',
 });
 
 const actionsheetItemStyle = tva({
@@ -316,7 +323,12 @@ const Actionsheet = React.forwardRef<
 const ActionsheetContent = React.forwardRef<
   React.ComponentRef<typeof UIActionsheet.Content>,
   IActionsheetContentProps & { className?: string }
->(function ActionsheetContent({ className, ...props }, ref) {
+>(function ActionsheetContent({ className, style, ...props }, ref) {
+  const insets =
+    useContext(SafeAreaInsetsContext) ??
+    initialWindowMetrics?.insets ??
+    FALLBACK_INSETS;
+  const { bottom } = insets;
   return (
     <UIActionsheet.Content
       className={actionsheetContentStyle({
@@ -324,6 +336,7 @@ const ActionsheetContent = React.forwardRef<
       })}
       ref={ref}
       {...props}
+      style={[{ paddingBottom: bottom + 16 }, style]}
     />
   );
 });
@@ -331,7 +344,7 @@ const ActionsheetContent = React.forwardRef<
 const ActionsheetItem = React.forwardRef<
   React.ComponentRef<typeof UIActionsheet.Item>,
   IActionsheetItemProps
->(function ActionsheetItem({ className, ...props }, ref) {
+>(function ActionsheetItem({ className, onPress, ...props }, ref) {
   return (
     <UIActionsheet.Item
       className={actionsheetItemStyle({
@@ -339,6 +352,12 @@ const ActionsheetItem = React.forwardRef<
       })}
       ref={ref}
       {...props}
+      onPress={(event) => {
+        try {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        } catch {}
+        onPress?.(event);
+      }}
     />
   );
 });
