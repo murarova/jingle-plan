@@ -2,7 +2,7 @@ import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
 import { KeyboardAwareScroll, YoutubePlayer } from "../common";
 import { TaskItem } from "./task-item";
-import { DayTaskConfig } from "@/types";
+import { DayTaskConfig, UserData } from "@/types";
 
 interface TaskListProps {
   videoText: string;
@@ -10,6 +10,7 @@ interface TaskListProps {
   dayTaskConfig: DayTaskConfig;
   moodTaskConfig: DayTaskConfig;
   currentDay: string;
+  userData?: UserData | null;
 }
 
 export function TasksList({
@@ -18,6 +19,7 @@ export function TasksList({
   dayTaskConfig,
   moodTaskConfig,
   currentDay,
+  userData,
 }: TaskListProps) {
   return (
     <KeyboardAwareScroll>
@@ -25,10 +27,18 @@ export function TasksList({
         {videoText && <Text className="pb-4">{videoText}</Text>}
         {videoId && <YoutubePlayer videoId={videoId} />}
         {dayTaskConfig && (
-          <TaskItem currentDay={currentDay} taskConfig={dayTaskConfig} />
+          <TaskItem
+            currentDay={currentDay}
+            taskConfig={dayTaskConfig}
+            userData={userData}
+          />
         )}
         {moodTaskConfig && (
-          <TaskItem currentDay={currentDay} taskConfig={moodTaskConfig} />
+          <TaskItem
+            currentDay={currentDay}
+            taskConfig={moodTaskConfig}
+            userData={userData}
+          />
         )}
       </Box>
     </KeyboardAwareScroll>

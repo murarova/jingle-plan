@@ -62,6 +62,25 @@ describe("PaywallScreen", () => {
     expect(screen.getByText("Оформити підписку")).toBeTruthy();
   });
 
+  it("shows the store price instead of a hardcoded amount", () => {
+    mockUseIAP.mockReturnValue({
+      ...defaultIap,
+      priceLabel: "₴499.00",
+    });
+    renderWithProviders(<PaywallScreen />);
+    expect(screen.getByText("₴499.00")).toBeTruthy();
+    expect(screen.queryByText("$12.99")).toBeNull();
+  });
+
+  it("does not show a hardcoded price when the store price is missing", () => {
+    mockUseIAP.mockReturnValue({
+      ...defaultIap,
+      priceLabel: null,
+    });
+    renderWithProviders(<PaywallScreen />);
+    expect(screen.queryByText("$12.99")).toBeNull();
+  });
+
   it("renders manage subscription link", () => {
     renderWithProviders(<PaywallScreen />);
     expect(screen.getByText("Керувати підпискою")).toBeTruthy();

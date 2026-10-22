@@ -9,6 +9,7 @@ export type RequestStatus = "idle" | "pending" | "succeeded" | "failed";
 export interface AppState {
   configuration: CalendarConfig | null;
   selectedYear: string;
+  availableYears: string[];
   status: RequestStatus;
   error: string | null;
 }
@@ -16,6 +17,7 @@ export interface AppState {
 const initialState: AppState = {
   configuration: null,
   selectedYear: YEARS[YEARS.length - 1],
+  availableYears: [YEARS[YEARS.length - 1]],
   status: "idle",
   error: null,
 };
@@ -30,14 +32,20 @@ const appSlice = createSlice({
     setSelectedYear: (state, action: PayloadAction<string>) => {
       state.selectedYear = action.payload;
     },
+    setAvailableYears: (state, action: PayloadAction<string[]>) => {
+      state.availableYears = action.payload;
+    },
     setConfiguration: (state, action: PayloadAction<CalendarConfig | null>) => {
       state.configuration = action.payload;
     },
   },
 });
 
-export const { setSelectedYear, setConfiguration } = appSlice.actions;
+export const { setSelectedYear, setAvailableYears, setConfiguration } =
+  appSlice.actions;
 export const selectSelectedYear = (state: { app: AppState }) =>
   state.app.selectedYear;
+export const selectAvailableYears = (state: { app: AppState }) =>
+  state.app.availableYears;
 
 export default appSlice.reducer;

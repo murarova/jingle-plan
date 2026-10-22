@@ -1,4 +1,5 @@
 import { Platform } from "react-native";
+import * as Device from "expo-device";
 import { EXPO_PUBLIC_IOS_SUBSCRIPTION_ID, EXPO_PUBLIC_ANDROID_SUBSCRIPTION_ID } from "@env";
 
 export const SUBSCRIPTION_IDS: string[] =
@@ -13,5 +14,8 @@ export const SUBSCRIPTION_IDS: string[] =
     : [];
 
 export const IAP_DEBUG = __DEV__ ? true : false;
+
+export const skipStoreIap =
+  Platform.OS === "android" && !Device.isDevice;
 
 

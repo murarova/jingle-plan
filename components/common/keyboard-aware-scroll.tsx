@@ -29,7 +29,7 @@ export function KeyboardAwareScroll({
   const scrollRef = useRef<ScrollView>(null);
   const containerRef = useRef<View>(null);
   const offsetY = useRef(0);
-  const keyboardHeight = useRef(0);
+  const keyboardTop = useRef(Number.POSITIVE_INFINITY);
   const extraBelow = useRef(extraBelowInput);
   extraBelow.current = extraBelowInput;
   const [keyboardInset, setKeyboardInset] = useState(0);
@@ -44,9 +44,7 @@ export function KeyboardAwareScroll({
 
     input.measureInWindow((_x, y, _w, height) => {
       container.measureInWindow((_sx, sy, _sw, sh) => {
-        const coveredByKeyboard =
-          Platform.OS === "ios" ? keyboardHeight.current : 0;
-        const visibleBottom = sy + sh - coveredByKeyboard;
+        const visibleBottom = Math.min(sy + sh, keyboardTop.current);
         const targetBottom = y + height + extraBelow.current;
         const delta = targetBottom - visibleBottom;
         if (delta > 1) {
@@ -66,11 +64,11 @@ export function KeyboardAwareScroll({
       Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
 
     const show = Keyboard.addListener(showEvent, (event) => {
-      keyboardHeight.current = event.endCoordinates.height;
+      keyboardTop.current = event.endCoordinates.screenY;
       setKeyboardInset(event.endCoordinates.height);
     });
     const hide = Keyboard.addListener(hideEvent, () => {
-      keyboardHeight.current = 0;
+      keyboardTop.current = Number.POSITIVE_INFINITY;
       setKeyboardInset(0);
     });
 
@@ -102,8 +100,7 @@ export function KeyboardAwareScroll({
         ref={scrollRef}
         style={{ flex: 1 }}
         contentContainerStyle={{
-          paddingBottom:
-            extraBelowInput + (Platform.OS === "ios" ? keyboardInset : 0),
+          paddingBottom: extraBelowInput + keyboardInset,
         }}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"

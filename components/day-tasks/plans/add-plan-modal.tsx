@@ -26,7 +26,7 @@ import {
 } from "@/ui/modal";
 import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Platform } from "react-native";
+import { Alert } from "react-native";
 import { KeyboardAvoidingView } from "@/ui/keyboard-avoiding-view";
 import { PlanData, PlanScreenData, TaskContext } from "@/types";
 import { allMonths, TASK_CONTEXT } from "@/constants";
@@ -116,7 +116,7 @@ export function AddPlanModal({
           justifyContent: "center",
           alignItems: "center",
         }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior="padding"
       >
         <ModalContent className="w-[90%]" entering={undefined}>
         <ModalHeader className="mb-[10px]">

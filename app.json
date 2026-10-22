@@ -45,7 +45,7 @@
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ],
-      "package": "com.murarova.adventCalendar",
+      "package": "com.murarova.jingleplan",
       "softwareKeyboardLayoutMode": "resize"
     },
     "web": {
@@ -73,8 +73,8 @@
             ]
           },
           "android": {
-            "targetSdkVersion": 35,
-            "compileSdkVersion": 35,
+            "targetSdkVersion": 36,
+            "compileSdkVersion": 36,
             "kotlinVersion": "2.1.20",
             "extraMavenRepos": [
               "../../node_modules/@notifee/react-native/android/libs"

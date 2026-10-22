@@ -81,6 +81,10 @@ jest.mock("react-native-fbsdk-next", () => ({
   AppEventsLogger: { logEvent: jest.fn() },
 }));
 
+jest.mock("expo-device", () => ({
+  isDevice: true,
+}));
+
 jest.mock("react-native-webview", () => {
   const { View } = require("react-native");
   return { WebView: View, default: View };

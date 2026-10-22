@@ -16,7 +16,7 @@ import {
   presentCodeRedemptionSheetIOS,
 } from "expo-iap";
 import type { IapContextValue } from "../types/iap";
-import { SUBSCRIPTION_IDS } from "../config/iap";
+import { skipStoreIap, SUBSCRIPTION_IDS } from "../config/iap";
 import { AppEventsLogger } from "react-native-fbsdk-next";
 import { getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
 import {
@@ -30,6 +30,7 @@ import {
   nextPromoExpiresAt,
   shouldResolveWithoutStoreCheck,
 } from "../utils/iap-entitlement";
+import { getStorePriceLabel } from "../utils/iap-price";
 
 const IapContext = createContext<IapContextValue | null>(null);
 
@@ -41,7 +42,33 @@ function sortByPrice(items: Product[]) {
   });
 }
 
-export function IAPProvider({ children }: { children: React.ReactNode }) {
+function LocalIAPProvider({ children }: { children: React.ReactNode }) {
+  const value: IapContextValue = useMemo(
+    () => ({
+      isInitialized: false,
+      isStoreReady: false,
+      subscriptions: [],
+      priceLabel: null,
+      isSubscriptionResolved: true,
+      isSubscriber: false,
+      activeProductId: null,
+      isLoading: false,
+      isAwaitingOfferRedemption: false,
+      errorMessage: null,
+      promoErrorMessage: null,
+      subscribe: async () => {},
+      redeemAppleOfferCode: async () => false,
+      redeemAndroidPromoCode: async () => false,
+      clearPromoError: () => {},
+      restorePurchases: async () => false,
+    }),
+    [],
+  );
+
+  return <IapContext.Provider value={value}>{children}</IapContext.Provider>;
+}
+
+function StoreIAPProvider({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [promoErrorMessage, setPromoErrorMessage] = useState<string | null>(
@@ -80,6 +107,9 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
     hasActiveSubscriptions,
     restorePurchases: restorePurchasesFromStore,
   } = useExpoIAP({
+    onError: () => {
+      setIsSubscriptionResolved(true);
+    },
     onPurchaseSuccess: async (purchase) => {
       try {
         await finishTransaction({ purchase, isConsumable: false });
@@ -139,7 +169,7 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
     return sortByPrice(catalog as Product[]);
   }, [storeSubscriptions, products]);
   catalogRef.current = subscriptions;
-  const priceLabel = subscriptions[0]?.displayPrice ?? null;
+  const priceLabel = getStorePriceLabel(subscriptions[0]);
   const defaultProductId = subscriptions[0]?.id ?? SUBSCRIPTION_IDS[0] ?? null;
   const isInitialized = connected;
   const isLoading =
@@ -158,8 +188,7 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
       setIsStoreReady(false);
       return;
     }
-    const timer = setTimeout(() => setIsStoreReady(true), 0);
-    return () => clearTimeout(timer);
+    setIsStoreReady(true);
   }, [connected]);
 
   useEffect(() => {
@@ -446,6 +475,13 @@ export function IAPProvider({ children }: { children: React.ReactNode }) {
     restorePurchases,
   };
   return <IapContext.Provider value={value}>{children}</IapContext.Provider>;
+}
+
+export function IAPProvider({ children }: { children: React.ReactNode }) {
+  if (skipStoreIap) {
+    return <LocalIAPProvider>{children}</LocalIAPProvider>;
+  }
+  return <StoreIAPProvider>{children}</StoreIAPProvider>;
 }
 
 export function useIAP() {

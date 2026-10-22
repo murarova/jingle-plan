@@ -63,7 +63,7 @@ export function useIosPaywall() {
   }, [redeemAppleOfferCode]);
 
   return {
-    priceLabel: priceLabel ?? t("paywall.pricePlaceholder"),
+    priceLabel: priceLabel ?? "",
     subscribeButtonLabel:
       productId && activeProductId === productId
         ? t("paywall.alreadySubscribed")

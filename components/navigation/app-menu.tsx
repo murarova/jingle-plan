@@ -1,7 +1,7 @@
 import { Text } from "@/ui/text";
 import { MenuIcon, Icon } from "@/ui/icon";
 import { Box } from "@/ui/box";
-import { Button, ButtonIcon } from "@/ui/button";
+import { Pressable } from "@/ui/pressable";
 import { Menu, MenuItem } from "@/ui/menu";
 import { LogOut, Trash2, Crown } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
@@ -83,12 +83,20 @@ export function AppMenu() {
   return (
     <Box className="pr-[10px]">
       <Menu
-        placement="top"
-        trigger={({ ...triggerProps }) => {
+        placement="bottom right"
+        offset={6}
+        trigger={(triggerProps) => {
           return (
-            <Button {...triggerProps} variant="link">
-              <ButtonIcon as={MenuIcon} className="h-6 w-6 text-warmGray-800" />
-            </Button>
+            <Pressable
+              {...triggerProps}
+              accessibilityRole="button"
+              hitSlop={12}
+              delayPressIn={0}
+              collapsable={false}
+              className="min-h-[44px] min-w-[44px] items-center justify-center"
+            >
+              <Icon as={MenuIcon} className="h-6 w-6 text-warmGray-800" />
+            </Pressable>
           );
         }}
       >

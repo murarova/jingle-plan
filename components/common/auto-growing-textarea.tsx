@@ -17,7 +17,6 @@ import {
   TextInputProps,
   View,
   Pressable,
-  Platform,
   Modal,
   ScrollView,
 } from "react-native";
@@ -60,6 +59,7 @@ export const AutoGrowingTextarea = memo(
       const [expandedSession, setExpandedSession] = useState(0);
       const [compactSession, setCompactSession] = useState(0);
       const compactInputRef = useRef<TextInput | null>(null);
+      const expandedInputRef = useRef<TextInput | null>(null);
       const textRef = useRef(
         typeof value === "string"
           ? value
@@ -109,12 +109,24 @@ export const AutoGrowingTextarea = memo(
         [onChangeText],
       );
 
+      const focusExpandedInput = useCallback(() => {
+        expandedInputRef.current?.focus();
+      }, []);
+
       const openExpanded = useCallback(() => {
-        compactInputRef.current?.blur();
         setExpandedDefaultValue(textRef.current);
         setExpandedSession((session) => session + 1);
         setIsExpanded(true);
       }, []);
+
+      useEffect(() => {
+        if (!isExpanded) {
+          return;
+        }
+
+        const frame = requestAnimationFrame(focusExpandedInput);
+        return () => cancelAnimationFrame(frame);
+      }, [isExpanded, expandedSession, focusExpandedInput]);
 
       const handleExpandedChange = useCallback(
         (text: string) => {
@@ -135,7 +147,6 @@ export const AutoGrowingTextarea = memo(
                 : { defaultValue: compactSession === 0 ? defaultValue : textRef.current })}
               onChangeText={handleChange}
               multiline
-              editable={!isExpanded}
               style={[
                 styles.textarea,
                 expandable && styles.textareaWithIcon,
@@ -162,8 +173,9 @@ export const AutoGrowingTextarea = memo(
             <Modal
               visible={isExpanded}
               animationType="fade"
-              presentationStyle="fullScreen"
+              presentationStyle="overFullScreen"
               onRequestClose={closeExpanded}
+              onShow={focusExpandedInput}
             >
               <View
                 style={[
@@ -178,7 +190,7 @@ export const AutoGrowingTextarea = memo(
               >
                 <KeyboardAvoidingView
                   style={styles.expandedRoot}
-                  behavior={Platform.OS === "ios" ? "padding" : undefined}
+                  behavior="padding"
                 >
                   <View style={styles.expandedHeader}>
                     <Pressable
@@ -199,11 +211,13 @@ export const AutoGrowingTextarea = memo(
                     <TextInput
                       {...rest}
                       key={expandedSession}
+                      ref={expandedInputRef}
                       autoFocus
                       multiline
                       scrollEnabled={false}
                       defaultValue={expandedDefaultValue}
                       onChangeText={handleExpandedChange}
+                      onLayout={focusExpandedInput}
                       style={styles.expandedTextarea}
                       underlineColorAndroid="transparent"
                       textAlignVertical="top"

@@ -35,7 +35,6 @@ export default {
     title: "Відкрийте доступ Jingle Plan+",
     subtitle: "Отримуйте всі завдання, нагадування та доступ на рік.",
     planName: "Jingle Plan+",
-    pricePlaceholder: "$12.99",
     billingPeriod: "Щорічна підписка.",
     benefitOne: "Доступ до всіх завдань",
     benefitFour: "Формування планів на рік за усіма важливими сферами життя",

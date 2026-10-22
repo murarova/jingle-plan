@@ -16,7 +16,7 @@ type Props = StackScreenProps<HomeStackParamList, "DayOverview">;
 const DayOverviewScreen: React.FC<Props> = memo(({ route, navigation }) => {
   const { t } = useTranslation();
   const currentDay = route.params.currentDay;
-  const { dayTasks, total, refresh, error } = useDayTasks(currentDay);
+  const { dayTasks, total, refresh, error, userData } = useDayTasks(currentDay);
 
   const previousProgress = usePrevious(total);
   const [showCompletedModal, setShowCompletedModal] = useState(false);
@@ -53,7 +53,11 @@ const DayOverviewScreen: React.FC<Props> = memo(({ route, navigation }) => {
         {dayTasks ? (
           <>
             <ProgressBar total={total} t={t} />
-            <TasksList {...dayTasks.config} currentDay={currentDay} />
+            <TasksList
+              {...dayTasks.config}
+              currentDay={currentDay}
+              userData={userData}
+            />
           </>
         ) : (
           <EmptyState message={t("common.empty")} />

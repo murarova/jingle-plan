@@ -21,6 +21,7 @@ export const loggedInPreloadedState: Partial<RootState> = {
   },
   app: {
     selectedYear: "2025",
+    availableYears: ["2024", "2025", "2026"],
     configuration: null,
     status: "idle",
     error: null,
