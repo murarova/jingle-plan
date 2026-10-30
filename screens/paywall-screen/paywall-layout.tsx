@@ -4,7 +4,7 @@ import { ScrollView } from "@/ui/scroll-view";
 import { Divider } from "@/ui/divider";
 import { HStack } from "@/ui/hstack";
 import { VStack } from "@/ui/vstack";
-import { Button, ButtonText } from "@/ui/button";
+import { AppButton } from "@/components/common";
 import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
 import { Pressable } from "@/ui/pressable";
@@ -43,7 +43,7 @@ export function PaywallLayout({
   const { t } = useTranslation();
 
   return (
-    <Box className="flex-1 bg-white">
+    <Box className="flex-1">
       <ScrollView contentContainerStyle={{ padding: 24 }}>
         <Box className="mb-6">
           <Text className="text-xl font-bold mb-1">{t("paywall.title")}</Text>
@@ -53,7 +53,7 @@ export function PaywallLayout({
         </Box>
 
         <VStack space="md">
-          <Box className="border border-warmGray-200 rounded-2xl p-5 bg-white">
+          <Box className="border border-ivory-line rounded-2xl p-5 bg-ivory-card">
             <Text className="text-lg font-semibold mb-2">
               {t("paywall.planName")}
             </Text>
@@ -80,19 +80,14 @@ export function PaywallLayout({
                 <Text className="flex-1">{t("paywall.benefitTwo")}</Text>
               </HStack>
             </VStack>
-            <Button
-              isDisabled={isSubscribeDisabled}
+            <AppButton
+              label={
+                isProcessing ? t("paywall.processing") : subscribeButtonLabel
+              }
               onPress={onSubscribe}
-              className={`${
-                isSubscriber
-                  ? "bg-green-600 border-green-600"
-                  : "bg-primary-600 border-primary-600"
-              } mt-6 rounded-xl`}
-            >
-              <ButtonText>
-                {isProcessing ? t("paywall.processing") : subscribeButtonLabel}
-              </ButtonText>
-            </Button>
+              isDisabled={isSubscribeDisabled}
+              className={isSubscriber ? "mt-6 bg-green-600" : "mt-6"}
+            />
             {promo}
           </Box>
 

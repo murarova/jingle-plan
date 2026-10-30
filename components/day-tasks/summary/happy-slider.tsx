@@ -4,6 +4,7 @@ import { Text } from "@/ui/text";
 import { useRating } from "../../../hooks/useRating";
 import { useCallback, useMemo, useRef } from "react";
 import { PanResponder, StyleSheet, View } from "react-native";
+import { colors } from "@/constants/colors";
 
 interface HappySliderProps {
   isDisabled: boolean;
@@ -21,8 +22,8 @@ export const HappySlider = ({
   setRate,
 }: HappySliderProps) => {
   const getRating = useRating();
-  const filledColor = isDisabled ? "#999999" : "#ff9da2";
-  const thumbColor = isDisabled ? "#999999" : "#ff656c";
+  const filledColor = isDisabled ? "#8C857B" : "#ff9da2";
+  const thumbColor = isDisabled ? "#8C857B" : "#ff656c";
   const trackRef = useRef<View>(null);
   const metrics = useRef({ x: 0, width: 1 });
 
@@ -75,7 +76,7 @@ export const HappySlider = ({
   return (
     <VStack space="2xl" className="mt-4 mb-10">
       <Box>
-        <Text className="text-center text-6xl pb-2">
+        <Text size="6xl" className="text-center pb-2">
           {getRating(rate)?.icon}
         </Text>
         <Text className="text-center">{getRating(rate)?.text}</Text>
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
   track: {
     height: TRACK_HEIGHT,
     borderRadius: TRACK_HEIGHT / 2,
-    backgroundColor: "#D4D4D4",
+    backgroundColor: colors.ivoryBadge,
     overflow: "hidden",
   },
   filled: {

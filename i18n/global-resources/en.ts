@@ -67,7 +67,8 @@ export default {
     intro: {
       loginBtn: "Login",
       signupBtn: "Sign up",
-      firstScreenText: "Your Christmas planner Jingle plan welcomes you.",
+      brand: "Jingle plan",
+      firstScreenText: "Fill your life with goals",
       secondScreenText:
         "Consider it - it's an advent calendar with interesting tasks about your year. \nIt only takes 15 minutes a day.",
       thirdScreenText:
@@ -76,8 +77,8 @@ export default {
     },
     loginScreen: {
       title: "Login to your account",
-      noAccount: "Don't have an account?",
-      signUpButton: "Sign Up",
+      noAccount: "Don't have an account yet?",
+      signUpButton: "Sign up",
       email: "Email",
       emailPlaceholder: "Enter your email",
       password: "Password",
@@ -86,7 +87,6 @@ export default {
       errorTitle: "Login Failed",
       errorMessage: "Please check your credentials and try again.",
       emptyFieldsMessage: "Email and password fields cannot be empty.",
-      rememberMe: "Remember me",
       forgotPassword: "Forgot password?",
       resetSuccess: "We've sent reset instructions to {{email}}.",
       invalidEmailPrompt:
@@ -111,10 +111,6 @@ export default {
       passwordMatchError: "Passwords do not match",
       invalidEmail: "Please enter a valid email address",
       emptyName: "Name is required",
-      savePasswordTitle: "Save password?",
-      savePasswordMessage:
-        "Would you like us to remember these credentials for next time?",
-      savePasswordConfirm: "Yes, save",
     },
     processText: "You have completed:",
     periodOverview: {
@@ -123,7 +119,7 @@ export default {
     dashboardScreen: {
       goals: "Goals",
       completed: "Completed",
-      title: "Dashboard",
+      title: "Your progress",
       tasks: "goals",
       tasksSingular: "goal",
       tasksFew: "goals",
@@ -150,6 +146,9 @@ export default {
       everyMonthLabel: "Every month",
       byContext: "By Context",
       byMonth: "By Month",
+      searchPlaceholder: "Search",
+      filter: "Filter",
+      noSearchResults: "No plans found",
       globalGoalTitle: "My Global Goal {{year}}:",
     },
     plansModal: {

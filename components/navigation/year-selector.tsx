@@ -9,6 +9,7 @@ import {
   selectSelectedYear,
   selectAvailableYears,
 } from "../../store/appReducer";
+import { typeRole } from "@/constants/typography";
 import { colors } from "@/constants/colors";
 import { Check, ChevronDown } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
@@ -40,9 +41,11 @@ export const YearSelector = () => {
       {singleYear ? (
         <Box
           testID="year-selector-label"
-          className="h-8 min-w-[72px] items-center justify-center overflow-hidden bg-white px-3"
+          className="h-10 flex-row items-center justify-center gap-1.5 px-1"
         >
-          <Text size="lg" className="font-semibold leading-6 text-warmGray-800">
+          <Text
+            className={`${typeRole.button} tracking-tight text-primaryText`}
+          >
             {singleYear}
           </Text>
         </Box>
@@ -62,16 +65,15 @@ export const YearSelector = () => {
                 hitSlop={8}
                 className="h-8 justify-center"
               >
-                <Box className="h-8 min-w-[72px] flex-row items-center justify-center gap-1 overflow-hidden bg-white px-3">
+                <Box className="h-10 flex-row items-center justify-center gap-1.5 px-1">
                   <Text
-                    size="lg"
-                    className="font-semibold leading-6 text-warmGray-800"
+                    className={`${typeRole.button} tracking-tight text-primaryText`}
                   >
                     {selectedYear}
                   </Text>
                   <ChevronDown
-                    size={16}
-                    color={colors.warmGray400}
+                    size={14}
+                    color={colors.primaryText}
                     style={{
                       transform: [{ rotate: isOpen ? "180deg" : "0deg" }],
                     }}
@@ -91,16 +93,20 @@ export const YearSelector = () => {
                 className="px-4 min-h-[48px] justify-between active:bg-coolGray-100"
               >
                 <Text
-                  className={`text-base ${
+                  className={
                     isSelected
                       ? "font-semibold text-warmGray-800"
                       : "text-warmGray-800"
-                  }`}
+                  }
                 >
                   {year}
                 </Text>
                 {isSelected ? (
-                  <Check size={18} color={colors.primary500} strokeWidth={2.5} />
+                  <Check
+                    size={18}
+                    color={colors.primary500}
+                    strokeWidth={2.5}
+                  />
                 ) : null}
               </MenuItem>
             );

@@ -22,6 +22,102 @@ const date = {
 };
 
 describe("DayComponent", () => {
+  it("marks today's date", () => {
+    renderWithProviders(
+      <DayComponent
+        date={date}
+        state=""
+        onPress={jest.fn()}
+        currentDate="2025-12-10"
+        progress={0}
+        isAdmin={false}
+        maxDate="2025-12-15"
+      />
+    );
+    expect(screen.getByTestId("calendar-today-2025-12-10")).toBeTruthy();
+  });
+
+  it("shows a star above a starred date", () => {
+    renderWithProviders(
+      <DayComponent
+        date={date}
+        state=""
+        onPress={jest.fn()}
+        currentDate="2025-12-15"
+        progress={0}
+        isAdmin={false}
+        maxDate="2025-12-15"
+        starredDates={["2025-12-10"]}
+      />
+    );
+    expect(screen.getByTestId("calendar-star-2025-12-10")).toBeTruthy();
+  });
+
+  it("shows the today mark instead of the star when they are the same date", () => {
+    renderWithProviders(
+      <DayComponent
+        date={date}
+        state=""
+        onPress={jest.fn()}
+        currentDate="2025-12-10"
+        progress={0}
+        isAdmin={false}
+        maxDate="2025-12-15"
+        starredDates={["2025-12-10"]}
+      />
+    );
+    expect(screen.getByTestId("calendar-today-2025-12-10")).toBeTruthy();
+    expect(screen.queryByTestId("calendar-star-2025-12-10")).toBeNull();
+  });
+
+  it("does not show a star on other dates", () => {
+    renderWithProviders(
+      <DayComponent
+        date={date}
+        state=""
+        onPress={jest.fn()}
+        currentDate="2025-12-15"
+        progress={0}
+        isAdmin={false}
+        maxDate="2025-12-15"
+        starredDates={["2025-12-14"]}
+      />
+    );
+    expect(screen.queryByTestId("calendar-star-2025-12-10")).toBeNull();
+  });
+
+  it("does not mark a different date", () => {
+    renderWithProviders(
+      <DayComponent
+        date={date}
+        state=""
+        onPress={jest.fn()}
+        currentDate="2025-12-15"
+        progress={0}
+        isAdmin={false}
+        maxDate="2025-12-15"
+      />
+    );
+    expect(screen.queryByTestId("calendar-today-2025-12-10")).toBeNull();
+  });
+
+  it("shows the unlock tooltip for a locked day", () => {
+    renderWithProviders(
+      <DayComponent
+        date={date}
+        state=""
+        onPress={jest.fn()}
+        currentDate="2025-12-15"
+        progress={0}
+        isAdmin={false}
+        isSubscriber={true}
+        maxDate="2025-12-03"
+      />
+    );
+    fireEvent.press(screen.getByTestId("calendar-day-2025-12-10"));
+    expect(screen.getByText("Цей день відкриється 10 грудня.")).toBeTruthy();
+  });
+
   it("sends non-subscribers to the paywall for locked days", () => {
     const navigateToPaywall = jest.fn();
     const onPress = jest.fn();

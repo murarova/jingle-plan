@@ -30,12 +30,15 @@ export const AlbumScreen = memo(() => {
   }
 
   return (
-    <Box className="flex-1 bg-backgroundLight-50">
+    <Box className="flex-1">
       <Box
         className="flex-1 flex-col py-5 w-full"
         style={{ paddingHorizontal: SCREEN_PADDING }}
       >
-        <Box onLayout={handleCarouselLayout} className="flex-1 w-full min-h-0">
+        <Box
+          onLayout={handleCarouselLayout}
+          className="min-h-0 w-full flex-1 overflow-hidden rounded-[20px]"
+        >
           {carouselSize.height > 0 && (
             <Carousel
               ref={carouselRef}

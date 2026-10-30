@@ -1,121 +1,101 @@
-import { Divider } from "@/ui/divider";
-import { VStack } from "@/ui/vstack";
-import { Button, ButtonText } from "@/ui/button";
-import { Text } from "@/ui/text";
+import { typeRole } from "@/constants/typography";
+import { allMonths } from "@/constants";
 import { Box } from "@/ui/box";
+import {
+  Select,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicator,
+  SelectDragIndicatorWrapper,
+  SelectInput,
+  SelectItem,
+  SelectPortal,
+  SelectScrollView,
+  SelectTrigger,
+} from "@/ui/select";
+import { SelectContext } from "@gluestack-ui/core/lib/esm/select/creator/SelectContext";
+import {
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import { useTranslation } from "react-i18next";
-import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { months } from "@/constants";
-import { ChevronLeft } from "lucide-react-native";
-import { Sheet, SheetRef, RadioButton } from "../common";
-import { BottomSheetScrollView, BottomSheetFooter } from "@gorhom/bottom-sheet";
+import type { SheetRef } from "../common";
+
+function SelectOpener({ openToken }: { openToken: number }) {
+  const { setIsOpen } = useContext(SelectContext);
+  const openedToken = useRef(0);
+
+  useEffect(() => {
+    if (!openToken || openToken === openedToken.current) {
+      return;
+    }
+    openedToken.current = openToken;
+    setIsOpen(true);
+  }, [openToken, setIsOpen]);
+
+  return null;
+}
 
 export function MonthSelectModal({
   onMonthSelect,
+  closeMonthModal,
   sheetRef,
   month,
 }: {
   onMonthSelect: (month: string) => void;
   closeMonthModal: () => void;
-  sheetRef: React.RefObject<SheetRef | null>;
+  sheetRef: RefObject<SheetRef | null>;
   month?: string;
 }) {
-  useEffect(() => {
-    if (month) {
-      setSelectedMonth(month);
-    }
-  }, [month]);
-
   const { t } = useTranslation();
-  const [selectedMonth, setSelectedMonth] = useState<string>("");
+  const [openToken, setOpenToken] = useState(0);
 
-  const handleDone = () => {
-    if (selectedMonth) {
-      onMonthSelect(selectedMonth);
-      setTimeout(() => {
-        setSelectedMonth("");
-      }, 100);
-    }
-  };
-
-  const handleGoBack = () => {
-    sheetRef.current?.hide();
-    if (selectedMonth) {
-      setSelectedMonth("");
-    }
-  };
-
-  const handleMonthSelect = (month: string) => {
-    setSelectedMonth(month);
-  };
-
-  const renderFooter = useCallback(
-    (props: any) => (
-      <BottomSheetFooter {...props} bottomInset={24}>
-        <VStack space="md" className="px-9">
-          <Button
-            size="lg"
-            onPress={handleDone}
-            disabled={!selectedMonth}
-            className="bg-red-600"
-          >
-            <ButtonText className="text-white text-md font-semibold">
-              {t("common.submitBtnText")}
-            </ButtonText>
-          </Button>
-        </VStack>
-      </BottomSheetFooter>
-    ),
-    [selectedMonth, handleDone, t],
-  );
-
-  const snapPoints = useMemo(() => ["70%", "90%"], []);
+  useImperativeHandle(sheetRef, () => ({
+    show: () => setOpenToken((token) => token + 1),
+    hide: () => setOpenToken(0),
+  }));
 
   return (
-    <Sheet
-      ref={sheetRef}
-      snapPoints={snapPoints}
-      footerComponent={renderFooter}
-    >
-      <Box className="flex justify-start items-start">
-        <Button variant="link" onPress={handleGoBack}>
-          <ChevronLeft size={24} color="#007AFF" />
-          <Text className="text-[#007AFF] text-md ml-1">
-            {t("common.back")}
-          </Text>
-        </Button>
-      </Box>
-      <Text className="text-lg font-[700] text-center mb-6">
-        {t("monthSelect.title")}
-      </Text>
-      <BottomSheetScrollView>
-        <VStack className="mb-2 px-4">
-          <Box className="pb-[100px]">
-            {months.map((month) => (
-              <Box key={month.value} className="mb-1">
-                <RadioButton
-                  value={month.value}
-                  label={month.long}
-                  selected={selectedMonth === month.value}
-                  onSelect={handleMonthSelect}
-                  size="medium"
+    <Box className="absolute h-0 w-0">
+      <Select
+        selectedValue={month ?? ""}
+        onValueChange={onMonthSelect}
+        onClose={closeMonthModal}
+      >
+        <SelectOpener openToken={openToken} />
+        <SelectTrigger className="h-11 w-0 rounded-2xl border-ivory-line bg-ivory-card opacity-0">
+          <SelectInput
+            className={`${typeRole.body} text-primaryText placeholder:text-secondaryText`}
+            placeholder={t("screens.plansModal.selectMonth")}
+          />
+        </SelectTrigger>
+        <SelectPortal>
+          <SelectBackdrop />
+          <SelectContent>
+            <SelectDragIndicatorWrapper>
+              <SelectDragIndicator />
+            </SelectDragIndicatorWrapper>
+            <SelectScrollView>
+              {allMonths.map((item) => (
+                <SelectItem
+                  key={item}
+                  label={t(`months.${item}`)}
+                  value={item}
                 />
-                <Divider className="mt-1" />
-              </Box>
-            ))}
-
-            <Box className="mb-1">
-              <RadioButton
-                value="every"
+              ))}
+              <SelectItem
+                key="every"
                 label={t("monthSelect.everyMonth")}
-                selected={selectedMonth === "every"}
-                onSelect={handleMonthSelect}
-                size="medium"
+                value="every"
               />
-            </Box>
-          </Box>
-        </VStack>
-      </BottomSheetScrollView>
-    </Sheet>
+            </SelectScrollView>
+          </SelectContent>
+        </SelectPortal>
+      </Select>
+    </Box>
   );
 }

@@ -11,6 +11,8 @@ import { useIAP } from "../../hooks/useIAP";
 import { useNavigation } from "@react-navigation/native";
 import { SCREENS } from "@/constants";
 
+const starredDates = ["2026-12-06", "2026-12-25", "2026-12-31"];
+
 interface CalendarProps {
   pressHandler: (dateString: string) => void;
   getDayConfig: ReturnType<
@@ -86,6 +88,7 @@ export const Calendar = memo(
             navigateToPaywall={() =>
               navigation.navigate(SCREENS.PAYWALL as never)
             }
+            starredDates={starredDates}
           />
         );
       },

@@ -1,19 +1,7 @@
 import { Heading } from "@/ui/heading";
 import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
-import { ChevronUpIcon, ChevronDownIcon } from "@/ui/icon";
 
-import {
-  Accordion,
-  AccordionHeader,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionTitleText,
-  AccordionIcon,
-  AccordionContent,
-} from "@/ui/accordion";
-
-import { useTranslation } from "react-i18next";
 import { TaskOutputType, TASK_CATEGORY } from "@/constants";
 import { Plans } from "../day-tasks/plans/plans";
 import { Summary } from "../day-tasks/summary/summary";
@@ -31,8 +19,6 @@ import {
   UserData,
 } from "@/types";
 import { MoodTask } from "../day-tasks/mood/mood-task";
-import { useRef } from "react";
-import { View } from "react-native";
 
 export function TaskItem({
   taskConfig,
@@ -43,91 +29,58 @@ export function TaskItem({
   currentDay: string;
   userData?: UserData | null;
 }) {
-  const { t } = useTranslation();
   const day = moment(currentDay).format("DD");
-  const accordionHeaderRef = useRef<View>(null);
 
   return (
-    <>
-      <Accordion type="multiple" className="my-2 rounded-lg">
-        <AccordionItem value="a" className="rounded-lg">
-          <View ref={accordionHeaderRef}>
-            <AccordionHeader>
-              <AccordionTrigger>
-                {({ isExpanded }: { isExpanded: boolean }) => {
-                  return (
-                    <>
-                      <AccordionTitleText>
-                        {taskConfig.category === TASK_CATEGORY.MOOD
-                          ? t("screens.tasksOfTheDay.moodTitle")
-                          : t("screens.tasksOfTheDay.dayTitle")}
-                      </AccordionTitleText>
-                      {isExpanded ? (
-                        <AccordionIcon as={ChevronUpIcon} className="ml-3" />
-                      ) : (
-                        <AccordionIcon as={ChevronDownIcon} className="ml-3" />
-                      )}
-                    </>
-                  );
-                }}
-              </AccordionTrigger>
-            </AccordionHeader>
-          </View>
-          <AccordionContent>
-            <Box>
-              <Heading size="sm" className="pb-2">
-                {taskConfig.title}
-              </Heading>
-              <Text>{taskConfig.text}</Text>
-            </Box>
-            <Box className="pt-4">
-              {taskConfig.taskOutputType === TaskOutputType.List && (
-                <Plans
-                  context={taskConfig.context as TaskContext}
-                  data={
-                    (userData?.[taskConfig.category] as PlanContextData) ?? null
-                  }
-                />
-              )}
-              {taskConfig.taskOutputType === TaskOutputType.Text &&
-                taskConfig.category === TASK_CATEGORY.SUMMARY && (
-                  <Summary
-                    context={taskConfig.context as TaskContext}
-                    data={
-                      (userData?.[taskConfig.category] as SummaryContextData) ??
-                      null
-                    }
-                  />
-                )}
-              {taskConfig.taskOutputType === TaskOutputType.Image &&
-                taskConfig.category !== TASK_CATEGORY.MOOD && (
-                  <MonthPhoto
-                    data={
-                      (userData?.[taskConfig.category] as MonthPhotoData) ??
-                      null
-                    }
-                    context={taskConfig.context as TaskContext}
-                  />
-                )}
-              {taskConfig.category === TASK_CATEGORY.MOOD && (
-                <MoodTask
-                  data={
-                    (userData?.[taskConfig.category] as MoodTaskData) ?? null
-                  }
-                  taskOutputType={taskConfig.taskOutputType}
-                  day={day}
-                />
-              )}
-              {taskConfig.category === TASK_CATEGORY.GOALS && (
-                <Goals
-                  data={(userData?.[taskConfig.category] as GoalsData) ?? null}
-                  context={taskConfig.context as TaskContext}
-                />
-              )}
-            </Box>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-    </>
+    <Box className="gap-5 rounded-[28px] border border-ivory-line bg-ivory-card p-6">
+      <Box className="gap-4">
+        <Box className="gap-2">
+          <Heading size="sm">{taskConfig.title}</Heading>
+          <Text>{taskConfig.text}</Text>
+        </Box>
+        <Box>
+          {taskConfig.taskOutputType === TaskOutputType.List && (
+            <Plans
+              context={taskConfig.context as TaskContext}
+              data={
+                (userData?.[taskConfig.category] as PlanContextData) ?? null
+              }
+            />
+          )}
+          {taskConfig.taskOutputType === TaskOutputType.Text &&
+            taskConfig.category === TASK_CATEGORY.SUMMARY && (
+              <Summary
+                context={taskConfig.context as TaskContext}
+                data={
+                  (userData?.[taskConfig.category] as SummaryContextData) ??
+                  null
+                }
+              />
+            )}
+          {taskConfig.taskOutputType === TaskOutputType.Image &&
+            taskConfig.category !== TASK_CATEGORY.MOOD && (
+              <MonthPhoto
+                data={
+                  (userData?.[taskConfig.category] as MonthPhotoData) ?? null
+                }
+                context={taskConfig.context as TaskContext}
+              />
+            )}
+          {taskConfig.category === TASK_CATEGORY.MOOD && (
+            <MoodTask
+              data={(userData?.[taskConfig.category] as MoodTaskData) ?? null}
+              taskOutputType={taskConfig.taskOutputType}
+              day={day}
+            />
+          )}
+          {taskConfig.category === TASK_CATEGORY.GOALS && (
+            <Goals
+              data={(userData?.[taskConfig.category] as GoalsData) ?? null}
+              context={taskConfig.context as TaskContext}
+            />
+          )}
+        </Box>
+      </Box>
+    </Box>
   );
 }

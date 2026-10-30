@@ -16,6 +16,8 @@ import Dashboard from "../../assets/svg/dashboard";
 import { AlbumScreen } from "../album-screen";
 import { DashboardScreen } from "../dashboard-screen";
 import { YearSelector } from "../../components/navigation/year-selector";
+import { PlansHeaderRight } from "../plans-screen/components/plans-header-actions";
+import { PlansSearchProvider } from "../plans-screen/plans-search-context";
 import {
   NavigationState,
   StackActions,
@@ -23,16 +25,20 @@ import {
 } from "@react-navigation/native";
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import type { EventArg } from "@react-navigation/native";
-import { Text } from "react-native";
+import { PlatformPressable } from "@react-navigation/elements";
+import { Platform, Text } from "react-native";
 import { useCallback } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useUnsavedChanges } from "@/providers";
+import { colors } from "@/constants/colors";
+import { screenTitleStyle, systemFontFamily } from "@/constants/typography";
 import { showUnsavedChangesAlert } from "../../utils/unsaved-changes-alert";
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createStackNavigator<HomeStackParamList>();
 
-const INACTIVE_COLOR = "#999999";
-const ACTIVE_COLOR = "#fe434c";
+const INACTIVE_COLOR = colors.secondaryText;
+const ACTIVE_COLOR = "#DC6A55";
 
 const useIsDayOverviewActive = () => {
   const isDayOverviewActive = useNavigationState((state) => {
@@ -64,7 +70,20 @@ const HomeTabLabel = ({
 }) => {
   const isDayOverviewActive = useIsDayOverviewActive();
   const color = focused && !isDayOverviewActive ? ACTIVE_COLOR : INACTIVE_COLOR;
-  return <Text style={{ color, fontSize: 12 }}>{label}</Text>;
+  return (
+    <Text
+      style={{
+        color,
+        marginTop: 4,
+        fontFamily: systemFontFamily,
+        fontSize: 11,
+        lineHeight: 16,
+        fontWeight: "500",
+      }}
+    >
+      {label}
+    </Text>
+  );
 };
 
 export type HomeStackParamList = {
@@ -75,13 +94,27 @@ export type HomeStackParamList = {
 function HomeStackNavigator() {
   const { t } = useTranslation();
   return (
-    <HomeStack.Navigator>
+    <HomeStack.Navigator
+      screenOptions={{
+        cardStyle: { backgroundColor: colors.ivoryPage },
+        headerStyle: { backgroundColor: colors.ivoryPage },
+        headerShadowVisible: false,
+        headerTintColor: colors.primaryText,
+        headerTitleAlign: "center",
+        headerTitleStyle: {
+          ...screenTitleStyle,
+          color: colors.primaryText,
+        },
+      }}
+    >
       <HomeStack.Screen
         name="PeriodOverviewMain"
         component={PeriodOverviewScreen}
         options={{
           title: t("screens.periodOverview.title"),
           headerTitleAlign: "center",
+          headerTransparent: true,
+          headerStyle: { backgroundColor: "transparent" },
           headerLeft: YearSelector,
           headerRight: AppMenu,
         }}
@@ -130,6 +163,7 @@ const navigateToPeriodOverview = (
 
 export const HomeScreen = () => {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const { isUnsavedChanges, setUnsavedChanges } = useUnsavedChanges();
 
   const handleTabPress = useCallback(
@@ -176,120 +210,158 @@ export const HomeScreen = () => {
   );
 
   return (
-    <Tab.Navigator
-      initialRouteName={SCREENS.PERIOD_OVERVIEW}
-      screenOptions={{
-        tabBarActiveTintColor: "#fe434c",
-        tabBarInactiveTintColor: "#999999",
-        tabBarHideOnKeyboard: true,
-      }}
-    >
-      <Tab.Screen
-        options={{
-          tabBarIcon: ({ focused }) => <HomeTabIcon focused={focused} />,
-          tabBarLabel: ({ focused }) => (
-            <HomeTabLabel focused={focused} label={t("common.home")} />
+    <PlansSearchProvider>
+      <Tab.Navigator
+        initialRouteName={SCREENS.PERIOD_OVERVIEW}
+        screenOptions={{
+          sceneStyle: { backgroundColor: colors.ivoryPage },
+          headerStyle: { backgroundColor: colors.ivoryPage },
+          headerShadowVisible: false,
+          headerTintColor: colors.primaryText,
+          headerTitleStyle: {
+            ...screenTitleStyle,
+            color: colors.primaryText,
+          },
+          tabBarActiveTintColor: ACTIVE_COLOR,
+          tabBarInactiveTintColor: INACTIVE_COLOR,
+          tabBarHideOnKeyboard: true,
+          tabBarStyle: {
+            backgroundColor: colors.ivoryCard,
+            borderTopColor: colors.ivoryLine,
+            borderTopWidth: 1,
+            paddingTop: 8,
+            paddingHorizontal: 8,
+            paddingBottom: insets.bottom,
+            height: 72 + insets.bottom,
+          },
+          tabBarButton: (props) => (
+            <PlatformPressable
+              {...props}
+              style={[
+                props.style,
+                { flex: 1, justifyContent: "center", padding: 0 },
+              ]}
+            />
           ),
-          headerShown: false,
-          popToTopOnBlur: true,
+          tabBarIconStyle: {
+            width: 48,
+            height: 36,
+          },
+          tabBarLabelStyle: {
+            fontFamily: systemFontFamily,
+            fontSize: 11,
+            lineHeight: 16,
+            fontWeight: "500",
+          },
         }}
-        name={SCREENS.PERIOD_OVERVIEW}
-        component={HomeStackNavigator}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            if (isUnsavedChanges) {
-              handleTabPress(e, navigation, SCREENS.PERIOD_OVERVIEW, true);
-              return;
-            }
+      >
+        <Tab.Screen
+          options={{
+            tabBarIcon: ({ focused }) => <HomeTabIcon focused={focused} />,
+            tabBarLabel: ({ focused }) => (
+              <HomeTabLabel focused={focused} label={t("common.home")} />
+            ),
+            headerShown: false,
+            popToTopOnBlur: true,
+          }}
+          name={SCREENS.PERIOD_OVERVIEW}
+          component={HomeStackNavigator}
+          listeners={({ navigation }) => ({
+            tabPress: (e) => {
+              if (isUnsavedChanges) {
+                handleTabPress(e, navigation, SCREENS.PERIOD_OVERVIEW, true);
+                return;
+              }
 
-            if (navigateToPeriodOverview(navigation)) {
-              e.preventDefault();
-            }
+              if (navigateToPeriodOverview(navigation)) {
+                e.preventDefault();
+              }
 
-            try {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            } catch (error) {
-              console.log("Haptics not available");
-            }
-          },
-        })}
-      />
-      <Tab.Screen
-        name={SCREENS.SUMMARY}
-        component={SummaryScreen}
-        options={{
-          title: t("common.summary"),
-          headerTitleAlign: "center",
-          tabBarLabel: t("common.summary"),
-          headerLeft: YearSelector,
-          headerRight: AppMenu,
-          tabBarIcon: ({ focused }) => (
-            <Medal color={focused ? "#fe434c" : "#999999"} />
-          ),
-        }}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            handleTabPress(e, navigation, SCREENS.SUMMARY);
-          },
-        })}
-      />
-      <Tab.Screen
-        name={SCREENS.PLANS}
-        component={PlansScreen}
-        options={{
-          tabBarLabel: t("common.plans"),
-          title: t("common.plans"),
-          headerTitleAlign: "center",
-          headerLeft: YearSelector,
-          headerRight: AppMenu,
-          tabBarIcon: ({ focused }) => (
-            <Compas color={focused ? "#fe434c" : "#999999"} />
-          ),
-        }}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            handleTabPress(e, navigation, SCREENS.PLANS);
-          },
-        })}
-      />
-      <Tab.Screen
-        name={SCREENS.ALBUM}
-        component={AlbumScreen}
-        options={{
-          tabBarLabel: t("common.album"),
-          title: t("common.album"),
-          headerTitleAlign: "center",
-          headerLeft: YearSelector,
-          headerRight: AppMenu,
-          tabBarIcon: ({ focused }) => (
-            <Album color={focused ? "#fe434c" : "#999999"} />
-          ),
-        }}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            handleTabPress(e, navigation, SCREENS.ALBUM);
-          },
-        })}
-      />
-      <Tab.Screen
-        name={SCREENS.DASHBOARD}
-        component={DashboardScreen}
-        options={{
-          tabBarLabel: t("common.dashboard"),
-          title: t("screens.dashboardScreen.title"),
-          headerTitleAlign: "center",
-          headerLeft: YearSelector,
-          headerRight: AppMenu,
-          tabBarIcon: ({ focused }) => (
-            <Dashboard color={focused ? "#fe434c" : "#999999"} />
-          ),
-        }}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            handleTabPress(e, navigation, SCREENS.DASHBOARD);
-          },
-        })}
-      />
-    </Tab.Navigator>
+              try {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              } catch (error) {
+                console.log("Haptics not available");
+              }
+            },
+          })}
+        />
+        <Tab.Screen
+          name={SCREENS.SUMMARY}
+          component={SummaryScreen}
+          options={{
+            title: t("common.summary"),
+            headerTitleAlign: "center",
+            tabBarLabel: t("common.summary"),
+            headerLeft: YearSelector,
+            headerRight: AppMenu,
+            tabBarIcon: ({ focused }) => (
+              <Medal color={focused ? ACTIVE_COLOR : INACTIVE_COLOR} />
+            ),
+          }}
+          listeners={({ navigation }) => ({
+            tabPress: (e) => {
+              handleTabPress(e, navigation, SCREENS.SUMMARY);
+            },
+          })}
+        />
+        <Tab.Screen
+          name={SCREENS.PLANS}
+          component={PlansScreen}
+          options={{
+            tabBarLabel: t("common.plans"),
+            title: t("common.plans"),
+            headerTitleAlign: "center",
+            headerLeft: YearSelector,
+            headerRight: PlansHeaderRight,
+            tabBarIcon: ({ focused }) => (
+              <Compas color={focused ? ACTIVE_COLOR : INACTIVE_COLOR} />
+            ),
+          }}
+          listeners={({ navigation }) => ({
+            tabPress: (e) => {
+              handleTabPress(e, navigation, SCREENS.PLANS);
+            },
+          })}
+        />
+        <Tab.Screen
+          name={SCREENS.ALBUM}
+          component={AlbumScreen}
+          options={{
+            tabBarLabel: t("common.album"),
+            title: t("common.album"),
+            headerTitleAlign: "center",
+            headerLeft: YearSelector,
+            headerRight: AppMenu,
+            tabBarIcon: ({ focused }) => (
+              <Album color={focused ? ACTIVE_COLOR : INACTIVE_COLOR} />
+            ),
+          }}
+          listeners={({ navigation }) => ({
+            tabPress: (e) => {
+              handleTabPress(e, navigation, SCREENS.ALBUM);
+            },
+          })}
+        />
+        <Tab.Screen
+          name={SCREENS.DASHBOARD}
+          component={DashboardScreen}
+          options={{
+            tabBarLabel: t("common.dashboard"),
+            title: t("screens.dashboardScreen.title"),
+            headerTitleAlign: "center",
+            headerLeft: YearSelector,
+            headerRight: AppMenu,
+            tabBarIcon: ({ focused }) => (
+              <Dashboard color={focused ? ACTIVE_COLOR : INACTIVE_COLOR} />
+            ),
+          }}
+          listeners={({ navigation }) => ({
+            tabPress: (e) => {
+              handleTabPress(e, navigation, SCREENS.DASHBOARD);
+            },
+          })}
+        />
+      </Tab.Navigator>
+    </PlansSearchProvider>
   );
 };

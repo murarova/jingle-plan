@@ -1,5 +1,7 @@
 import { FormControlErrorText } from "@/ui/form-control";
-import { AutoGrowingTextarea } from "@/components/common";
+import { AppButton, AutoGrowingTextarea } from "@/components/common";
+import { bodyFontSize, systemFontFamily } from "@/constants/typography";
+import { Heading } from "@/ui/heading";
 
 import {
   Select,
@@ -14,9 +16,7 @@ import {
   SelectScrollView,
 } from "@/ui/select";
 
-import { ButtonText, Button } from "@/ui/button";
 import { VStack } from "@/ui/vstack";
-import { Text } from "@/ui/text";
 import {
   ModalBody,
   ModalFooter,
@@ -30,7 +30,7 @@ import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
 import { KeyboardAvoidingView } from "@/ui/keyboard-avoiding-view";
 import { PlanData, PlanScreenData, TaskContext } from "@/types";
-import { allMonths, TASK_CONTEXT } from "@/constants";
+import { allMonths, TASK_CONTEXT, cardShadow } from "@/constants";
 
 interface AddPlanModalProps {
   isPlanScreen?: boolean;
@@ -119,13 +119,17 @@ export function AddPlanModal({
         }}
         behavior="padding"
       >
-        <ModalContent className="w-[90%]" entering={undefined}>
-          <ModalHeader className="mb-[10px]">
-            <Text>
+        <ModalContent
+          entering={undefined}
+          className="w-[90%] rounded-3xl border border-ivory-line bg-ivory-card"
+          style={cardShadow}
+        >
+          <ModalHeader>
+            <Heading size="md" className="text-primaryText mb-2">
               {isEditMode
                 ? t("screens.plansModal.editPlanTitle")
                 : t("screens.plansModal.addPlanTitle")}
-            </Text>
+            </Heading>
           </ModalHeader>
           <ModalBody>
             <VStack space="md">
@@ -142,9 +146,15 @@ export function AddPlanModal({
                       selectedValue={context ? t(`context.${context}`) : ""}
                       onValueChange={handleContextChange}
                     >
-                      <SelectTrigger className="bg-white">
+                      <SelectTrigger className="h-11 rounded-2xl border-ivory-line bg-ivory-card">
                         <SelectInput
+                          className="text-primaryText placeholder:text-secondaryText"
                           placeholder={t("screens.plansModal.selectContext")}
+                          style={{
+                            fontFamily: systemFontFamily,
+                            fontSize: bodyFontSize,
+                            lineHeight: 22,
+                          }}
                         />
                       </SelectTrigger>
                       <SelectPortal>
@@ -177,9 +187,15 @@ export function AddPlanModal({
                     }
                     onValueChange={setSelectedMonth}
                   >
-                    <SelectTrigger className="bg-white">
+                    <SelectTrigger className="h-11 rounded-2xl border-ivory-line bg-ivory-card">
                       <SelectInput
+                        className="text-primaryText placeholder:text-secondaryText"
                         placeholder={t("screens.plansModal.selectMonth")}
+                        style={{
+                          fontFamily: systemFontFamily,
+                          fontSize: bodyFontSize,
+                          lineHeight: 22,
+                        }}
                       />
                     </SelectTrigger>
                     <SelectPortal>
@@ -209,15 +225,18 @@ export function AddPlanModal({
               )}
             </VStack>
           </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" onPress={closeModal} className="mr-3">
-              <ButtonText>{t("common.cancel")}</ButtonText>
-            </Button>
-            <Button variant="default" onPress={handleSubmit}>
-              <ButtonText>
-                {isEditMode ? t("common.save") : t("common.add")}
-              </ButtonText>
-            </Button>
+          <ModalFooter className="gap-3">
+            <AppButton
+              variant="secondary"
+              label={t("common.cancel")}
+              onPress={closeModal}
+              className="flex-1"
+            />
+            <AppButton
+              label={isEditMode ? t("common.save") : t("common.add")}
+              onPress={handleSubmit}
+              className="flex-1"
+            />
           </ModalFooter>
         </ModalContent>
       </KeyboardAvoidingView>

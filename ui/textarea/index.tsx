@@ -17,7 +17,7 @@ const UITextarea = createTextarea({
 });
 
 const textareaStyle = tva({
-  base: 'w-full h-[100px] border border-backgroundLight-300 bg-white rounded-sm data-[hover=true]:border-borderLight-400 data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:data-[hover=true]:border-typography-600 data-[disabled=true]:opacity-40 data-[disabled=true]:data-[hover=true]:border-backgroundLight-300',
+  base: 'w-full h-[100px] border border-ivory-line bg-ivory-card rounded-sm data-[hover=true]:border-borderLight-400 data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:data-[hover=true]:border-typography-600 data-[disabled=true]:opacity-40 data-[disabled=true]:data-[hover=true]:border-ivory-line',
 
   variants: {
     variant: {
@@ -34,13 +34,13 @@ const textareaStyle = tva({
 });
 
 const textareaInputStyle = tva({
-  base: 'p-2 flex-1 text-typography-900 placeholder:text-typography-500 web:outline-0 web:outline-none web:cursor-text web:data-[disabled=true]:cursor-not-allowed',
+  base: 'p-2 flex-1 text-primaryText ios:font-system android:font-roboto placeholder:text-secondaryText web:outline-0 web:outline-none web:cursor-text web:data-[disabled=true]:cursor-not-allowed',
   parentVariants: {
     size: {
-      sm: 'text-sm',
-      md: 'text-base',
-      lg: 'text-lg',
-      xl: 'text-xl',
+      sm: 'ios:text-[15px] android:text-[14px]',
+      md: 'ios:text-[17px] android:text-[16px]',
+      lg: 'ios:text-[18px] android:text-[18px]',
+      xl: 'ios:text-[20px] android:text-[20px]',
     },
   },
 });

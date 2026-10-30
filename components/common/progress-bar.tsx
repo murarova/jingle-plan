@@ -11,14 +11,16 @@ interface ProgressBarProps {
 }
 
 export const ProgressBar = memo(({ total, t }: ProgressBarProps) => (
-  <Box className="my-2.5">
-    <HStack className="justify-between">
+  <Box className="gap-3 rounded-3xl border border-ivory-line bg-ivory-card p-5">
+    <HStack className="items-center justify-between">
       <Text size="md">{t("screens.processText")}</Text>
-      <Text size="md">{`${total}%`}</Text>
+      <Box className="rounded-full bg-ivory-badge px-2.5 py-1">
+        <Text size="md">{`${total}%`}</Text>
+      </Box>
     </HStack>
 
-    <Box className="my-2.5 mb-2.5 w-full">
-      <Progress value={total} className="h-2">
+    <Box className="w-full">
+      <Progress value={total} className="h-2 bg-ivory-page">
         <ProgressFilledTrack
           className={getProgressColorByValue(total)}
           style={{ backgroundColor: getProgressBackgroundColor(total) }}

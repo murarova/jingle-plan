@@ -23,14 +23,18 @@ export const useCalendarDayManager = (updateCurrentDate?: () => void) => {
   const { selectedYear } = useAppSelector((state) => state.app);
   const { currentUser } = useAppSelector((state) => state.auth);
 
+  const hasSignedInUser = Boolean(currentUser?.uid && selectedYear);
+
   const {
     data: configuration,
     isLoading: isConfigLoading,
+    isUninitialized: isConfigUninitialized,
+    isFetching: isConfigFetching,
     error: configError,
   } = useGetConfigurationQuery(
     { year: selectedYear },
     {
-      skip: !selectedYear,
+      skip: !hasSignedInUser,
       refetchOnMountOrArgChange: false,
       refetchOnFocus: false,
       refetchOnReconnect: false,
@@ -40,12 +44,14 @@ export const useCalendarDayManager = (updateCurrentDate?: () => void) => {
   const {
     data: userData,
     isLoading: isUserDataLoading,
+    isUninitialized: isUserDataUninitialized,
+    isFetching: isUserDataFetching,
     error: userDataError,
     refetch: refetchUserData,
   } = useGetUserDataQuery(
     { uid: currentUser?.uid!, year: selectedYear },
     {
-      skip: !currentUser?.uid || !selectedYear,
+      skip: !hasSignedInUser,
       refetchOnMountOrArgChange: false,
       refetchOnFocus: false,
       refetchOnReconnect: false,
@@ -55,6 +61,8 @@ export const useCalendarDayManager = (updateCurrentDate?: () => void) => {
   const {
     data: userProfile,
     isLoading: isProfileLoading,
+    isUninitialized: isProfileUninitialized,
+    isFetching: isProfileFetching,
   } = useGetUserProfileQuery(
     { uid: currentUser?.uid! },
     {
@@ -63,6 +71,14 @@ export const useCalendarDayManager = (updateCurrentDate?: () => void) => {
   );
 
   const isLoading = isConfigLoading || isUserDataLoading || isProfileLoading;
+  const isInitialLoading =
+    hasSignedInUser &&
+    (isConfigUninitialized ||
+      isConfigFetching ||
+      isUserDataUninitialized ||
+      isUserDataFetching ||
+      isProfileUninitialized ||
+      isProfileFetching);
   const error = configError || userDataError;
   const isAdmin = userProfile?.role === "admin" || false;
 
@@ -215,6 +231,7 @@ export const useCalendarDayManager = (updateCurrentDate?: () => void) => {
 
   return {
     isLoading,
+    isInitialLoading,
     error,
     configuration,
     userData,

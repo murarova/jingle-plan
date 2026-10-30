@@ -225,7 +225,7 @@ export const BottomSheetPortal = ({
       enablePanDownToClose={enablePanDownToClose}
       enableDynamicSizing={enableDynamicSizing}
       // @ts-ignore - className support via cssInterop
-      backgroundClassName={`${backgroundClassName} bg-background border border-border/90 rounded-xl`}
+      backgroundClassName={`${backgroundClassName} bg-card border border-border/90 rounded-xl`}
       // @ts-ignore
       handleIndicatorClassName={`${handleIndicatorClassName} bg-primary`}
       {...props}

@@ -15,6 +15,7 @@ export interface IapContextValue {
   subscribe: (productId: string) => Promise<void>;
   redeemAppleOfferCode: () => Promise<boolean>;
   redeemAndroidPromoCode: (code: string) => Promise<boolean>;
+  clearErrorMessage: () => void;
   clearPromoError: () => void;
   restorePurchases: () => Promise<boolean>;
 }

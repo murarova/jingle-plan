@@ -1,9 +1,8 @@
 import { HStack } from "@/ui/hstack";
-import { Button, ButtonText } from "@/ui/button";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { TaskContext } from "@/types";
-import { AutoGrowingTextarea } from "../../components/common";
+import { AppButton, AutoGrowingTextarea } from "../../components/common";
 
 interface EditableContentProps {
   context: TaskContext;
@@ -24,17 +23,18 @@ export const EditableContent = memo(
           onChangeText={onTextChange}
           placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
         />
-        <HStack space="sm" className="mt-2">
-          <Button
-            variant="outline"
+        <HStack className="mt-2 gap-3">
+          <AppButton
+            variant="secondary"
+            label={t("common.cancel")}
             onPress={onCancel}
-            className="flex-1 rounded-lg"
-          >
-            <ButtonText>{t("common.cancel")}</ButtonText>
-          </Button>
-          <Button onPress={onSubmit} className="flex-1 rounded-lg">
-            <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
-          </Button>
+            className="flex-1"
+          />
+          <AppButton
+            label={t("screens.tasksOfTheDay.submitBtnText")}
+            onPress={onSubmit}
+            className="flex-1"
+          />
         </HStack>
       </>
     );

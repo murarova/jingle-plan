@@ -1,30 +1,19 @@
-import { Badge, BadgeText, BadgeIcon } from "@/ui/badge";
-import {
-  Checkbox,
-  CheckboxIndicator,
-  CheckboxIcon,
-  CheckboxLabel,
-} from "@/ui/checkbox";
-import { ScrollView } from "@/ui/scroll-view";
+import { colors } from "@/constants/colors";
+import { months, PlansViewOptions } from "@/constants";
+import { Badge, BadgeIcon, BadgeText } from "@/ui/badge";
+import { Checkbox, CheckboxIndicator, CheckboxLabel } from "@/ui/checkbox";
+import Svg, { Path } from "react-native-svg";
 import { Divider } from "@/ui/divider";
-import { Icon, CheckIcon } from "@/ui/icon";
-import { Menu, MenuItem, MenuItemLabel, MenuSeparator } from "@/ui/menu";
+import { Menu, MenuItem } from "@/ui/menu";
+import { View } from "react-native";
 import { Button, ButtonIcon } from "@/ui/button";
-import { VStack } from "@/ui/vstack";
 import { HStack } from "@/ui/hstack";
 import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
-import {
-  EditIcon,
-  Trash2,
-  Ellipsis,
-  CalendarDays,
-  Copy,
-} from "lucide-react-native";
+import { CalendarDays, Ellipsis } from "lucide-react-native";
 import { Fragment } from "react";
 import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
-import { months, PlansViewOptions } from "@/constants";
 import { PlanScreenData } from "@/types";
 import { CompletePlanProps } from "../context-view/types";
 
@@ -45,7 +34,6 @@ export function PlansList({
   onDelete,
   handleCompletePlan,
   onMonthSelect,
-  onCopyToNextYear,
   view,
   month,
 }: PlansListProps) {
@@ -54,174 +42,181 @@ export function PlansList({
   function getMonthBadge(item: PlanScreenData) {
     if (item.month === "every") {
       return t("screens.plansScreen.everyMonthLabel");
-    } else {
-      return months.find((month) => month.value === item.month)?.long;
     }
+    return months.find((entry) => entry.value === item.month)?.long;
   }
 
   return (
-    <ScrollView className="max-h-80 w-full">
-      <VStack space="sm" className="w-full flex-1">
-        {plans.map((item, index, array) => {
-          const label = getMonthBadge(item);
-          const isDone =
-            Boolean(
-              item.monthlyProgress?.find(
-                (planMonth) => planMonth.month === month,
-              )?.isDone,
-            ) || item?.isDone;
-          return (
-            <Fragment key={item.id}>
-              {view === PlansViewOptions.context && label && (
-                <HStack>
-                  <Badge
-                    action="gray"
-                    size="sm"
-                    variant="outline"
-                    className="rounded-lg"
-                  >
-                    <BadgeText>{label}</BadgeText>
-                    <BadgeIcon as={CalendarDays} className="ml-2" />
-                  </Badge>
-                </HStack>
-              )}
-              {view === PlansViewOptions.month && (
-                <HStack>
-                  <Badge
-                    action="gray"
-                    size="sm"
-                    variant="outline"
-                    className="rounded-lg"
-                  >
-                    <BadgeText>{t(`context.${item.context}`)}</BadgeText>
-                  </Badge>
-                </HStack>
-              )}
-              <HStack className="justify-between items-center">
-                <Box className="flex-1 mr-2">
-                  <Checkbox
-                    value={item?.text}
-                    isChecked={isDone}
-                    onChange={(value) =>
-                      handleCompletePlan({
-                        plan: item,
-                        value,
-                        context: item.context,
-                        month,
-                      })
-                    }
-                    aria-label={item?.text}
-                  >
-                    <CheckboxIndicator className="mr-2">
-                      <CheckboxIcon as={CheckIcon} className="text-white" />
-                    </CheckboxIndicator>
-                    <CheckboxLabel className="flex-1">
-                      <Text
-                        style={
-                          isDone && {
-                            textDecorationLine: "line-through",
-                            textDecorationStyle: "solid",
-                            opacity: 0.5,
-                          }
-                        }
-                      >
-                        {item?.text}
-                      </Text>
-                    </CheckboxLabel>
-                  </Checkbox>
-                </Box>
-                <Menu
-                  placement="top"
-                  trigger={({ ...triggerProps }) => {
-                    return (
-                      <Button
-                        className="px-3 py-2"
-                        variant="link"
-                        {...triggerProps}
-                        onPress={(e) => {
-                          try {
-                            Haptics.impactAsync(
-                              Haptics.ImpactFeedbackStyle.Light,
-                            );
-                          } catch {}
-                          triggerProps.onPress?.(e);
-                        }}
-                      >
-                        <ButtonIcon as={Ellipsis} className="text-black" />
-                      </Button>
-                    );
-                  }}
-                  className="rounded-lg mr-2"
-                  style={{ backgroundColor: "#FFFFFF", paddingVertical: 0 }}
+    <Box className="w-full">
+      {plans.map((item, index, array) => {
+        const isDone =
+          Boolean(
+            item.monthlyProgress?.find((planMonth) => planMonth.month === month)
+              ?.isDone,
+          ) || item?.isDone;
+        const label = getMonthBadge(item);
+        return (
+          <Fragment key={item.id}>
+            {view === PlansViewOptions.context && label && (
+              <HStack>
+                <Badge
+                  action="gray"
+                  size="sm"
+                  variant="outline"
+                  className="rounded-lg"
                 >
-                  <MenuItem
-                    key="edit"
-                    textValue="edit"
-                    onPress={() => onEdit(item)}
-                    className="rounded-t-lg flex bg-[#fff] justify-between p-3 min-h-[48px] active:bg-coolGray-200 hover:bg-coolGray-100"
+                  <BadgeText>{label}</BadgeText>
+                  <BadgeIcon as={CalendarDays} className="ml-2" />
+                </Badge>
+              </HStack>
+            )}
+            {view === PlansViewOptions.month && (
+              <HStack>
+                <Badge
+                  action="gray"
+                  size="sm"
+                  variant="outline"
+                  className="rounded-lg"
+                >
+                  <BadgeText>{t(`context.${item.context}`)}</BadgeText>
+                </Badge>
+              </HStack>
+            )}
+            <HStack className="min-h-11 items-center gap-2.5">
+              <Box className="min-w-0 flex-1">
+                <Checkbox
+                  value={item?.text}
+                  isChecked={isDone}
+                  hitSlop={14}
+                  className="w-full"
+                  onChange={(value) =>
+                    handleCompletePlan({
+                      plan: item,
+                      value,
+                      context: item.context,
+                      month,
+                    })
+                  }
+                  aria-label={item?.text}
+                >
+                  <CheckboxIndicator
+                    style={{ borderWidth: 1.5 }}
+                    className="h-[22px] w-[22px] shrink-0 rounded-full border-[#d5ccbc] bg-transparent data-[checked=true]:border-[#7EB344] data-[checked=true]:bg-[#EAF0DE] data-[hover=true]:data-[checked=true]:border-[#7EB344] data-[hover=true]:data-[checked=true]:bg-[#EAF0DE] data-[active=true]:data-[checked=true]:border-[#7EB344] data-[active=true]:data-[checked=true]:bg-[#EAF0DE]"
                   >
-                    <MenuItemLabel className="text-base">
-                      {t("common.edit")}
-                    </MenuItemLabel>
-                    <Icon as={EditIcon} size="sm" className="ml-3" />
-                  </MenuItem>
-                  <MenuSeparator />
-                  <MenuItem
-                    key="selectMonth"
-                    textValue="selectMonth"
-                    onPress={() => onMonthSelect(item)}
-                    className="bg-[#fff] flex justify-between p-3 min-h-[48px] active:bg-coolGray-200 hover:bg-coolGray-100"
-                  >
-                    <MenuItemLabel className="text-base">
-                      {t("common.selectMonth")}
-                    </MenuItemLabel>
-                    <Icon as={CalendarDays} size="sm" className="ml-3" />
-                  </MenuItem>
-                  {/* {onCopyToNextYear && (
-                    <MenuItem
-                      key="copyToNextYear"
-                      textValue="copyToNextYear"
-                      backgroundColor="#fff"
-                      display="flex"
-                      justifyContent="space-between"
-                      p="$3"
-                      mb="$px"
-                      minHeight={48}
-                      onPress={() => onCopyToNextYear(item)}
-                      sx={{
-                        ":active": {
-                          backgroundColor: "$coolGray200",
-                        },
-                        ":hover": {
-                          backgroundColor: "$coolGray100",
-                        },
+                    {isDone ? (
+                      <Svg
+                        width={12}
+                        height={10}
+                        viewBox="0 0 12 10"
+                        fill="none"
+                      >
+                        <Path
+                          d="M9.9996 2.5L4.50015 7.083L2.0004 4.99982"
+                          stroke="#4E7129"
+                          strokeWidth={2}
+                          strokeLinecap="round"
+                        />
+                      </Svg>
+                    ) : null}
+                  </CheckboxIndicator>
+                  <CheckboxLabel className="py-2 min-w-0 flex-1 shrink">
+                    <Text
+                      className="shrink text-primaryText"
+                      style={
+                        isDone && {
+                          textDecorationLine: "line-through",
+                          textDecorationStyle: "solid",
+                          opacity: 0.5,
+                        }
+                      }
+                    >
+                      {item?.text}
+                    </Text>
+                  </CheckboxLabel>
+                </Checkbox>
+              </Box>
+              <Menu
+                placement="bottom right"
+                offset={6}
+                trigger={({ ...triggerProps }) => {
+                  return (
+                    <Button
+                      className="h-11 w-11"
+                      variant="link"
+                      {...triggerProps}
+                      onPress={(e) => {
+                        try {
+                          Haptics.impactAsync(
+                            Haptics.ImpactFeedbackStyle.Light,
+                          );
+                        } catch {}
+                        triggerProps.onPress?.(e);
                       }}
                     >
-                      <MenuItemLabel className="text-base">
-                        {t("common.copyToNextYear")}
-                      </MenuItemLabel>
-                      <Icon as={Copy} size="sm" ml="$3" />
-                    </MenuItem>
-                  )} */}
-                  <MenuSeparator />
-                  <MenuItem
-                    key="delete"
-                    textValue="delete"
-                    onPress={() => onDelete(item)}
-                    className="rounded-b-lg bg-[#fff] flex justify-between p-3 min-h-[48px] active:bg-red-100 hover:bg-red-50"
-                  >
-                    <MenuItemLabel className="text-base text-red-600">
-                      {t("common.delete")}
-                    </MenuItemLabel>
-                    <Icon as={Trash2} size="sm" className="ml-3 text-red-600" />
-                  </MenuItem>
-                </Menu>
-              </HStack>
-              {index !== array.length - 1 && <Divider />}
-            </Fragment>
-          );
-        })}
-      </VStack>
-    </ScrollView>
+                      <ButtonIcon as={Ellipsis} className="text-primaryText" />
+                    </Button>
+                  );
+                }}
+                className="overflow-visible rounded-2xl"
+                style={{
+                  width: 223,
+                  backgroundColor: colors.ivoryCard,
+                  borderRadius: 16,
+                  paddingVertical: 0,
+                  overflow: "visible",
+                  shadowColor: "#2B211A",
+                  shadowOffset: { width: 0, height: 6 },
+                  shadowOpacity: 0.12,
+                  shadowRadius: 10,
+                  elevation: 6,
+                }}
+              >
+                <MenuItem
+                  key="edit"
+                  textValue="edit"
+                  onPress={() => onEdit(item)}
+                  className="rounded-b-none rounded-t-2xl border-b-[0.5px] border-ivory-line bg-ivory-card px-4 py-[13px] data-[active=true]:bg-ivory-badge"
+                >
+                  <View
+                    pointerEvents="none"
+                    style={{
+                      position: "absolute",
+                      top: -5,
+                      right: 18,
+                      width: 10,
+                      height: 10,
+                      backgroundColor: colors.ivoryCard,
+                      transform: [{ rotate: "45deg" }],
+                    }}
+                  />
+                  <Text className="text-primaryText">{t("common.edit")}</Text>
+                </MenuItem>
+                <MenuItem
+                  key="selectMonth"
+                  textValue="selectMonth"
+                  onPress={() => onMonthSelect(item)}
+                  className="rounded-none border-b-[0.5px] border-ivory-line bg-ivory-card px-4 py-[13px] data-[active=true]:bg-ivory-badge"
+                >
+                  <Text className="text-primaryText">{t("common.selectMonth")}</Text>
+                </MenuItem>
+                <MenuItem
+                  key="delete"
+                  textValue="delete"
+                  onPress={() => onDelete(item)}
+                  className="rounded-b-2xl rounded-t-none bg-ivory-card px-4 py-[13px] data-[active=true]:bg-ivory-badge"
+                >
+                  <Text style={{ color: colors.primary500 }}>
+                    {t("common.delete")}
+                  </Text>
+                </MenuItem>
+              </Menu>
+            </HStack>
+            {index !== array.length - 1 && (
+              <Divider className="bg-[#eee8dc] mb-2.5" />
+            )}
+          </Fragment>
+        );
+      })}
+    </Box>
   );
 }

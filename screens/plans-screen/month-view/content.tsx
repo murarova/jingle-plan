@@ -1,8 +1,8 @@
 import { Box } from "@/ui/box";
 import { AccordionContent } from "@/ui/accordion";
 import { memo } from "react";
-import { PlansList } from "../components/plans-list";
 import { PlansViewOptions } from "@/constants";
+import { PlansList } from "../components/plans-list";
 import { CompletePlanProps } from "../context-view/types";
 import { PlanWithContext } from "./types";
 
@@ -26,10 +26,9 @@ export const MonthPlansContent = memo(
     onComplete,
     month,
   }: MonthPlansContentProps) => (
-    <AccordionContent>
+    <AccordionContent className="mt-0 px-5 pb-5 pt-0">
       <Box>
         <PlansList
-          view={PlansViewOptions.month}
           plans={plans}
           onMonthSelect={onMonthSelect}
           onEdit={onEdit}
@@ -37,6 +36,7 @@ export const MonthPlansContent = memo(
           onCopyToNextYear={onCopyToNextYear}
           handleCompletePlan={onComplete}
           month={month}
+          view={PlansViewOptions.month}
         />
       </Box>
     </AccordionContent>

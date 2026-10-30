@@ -3,6 +3,7 @@ import { useMemo, memo } from "react";
 import { useTranslation } from "react-i18next";
 import SwitchSelector from "react-native-switch-selector";
 import { PlansViewOptions } from "@/constants";
+import { colors } from "@/constants/colors";
 import * as Haptics from "expo-haptics";
 
 interface ViewSwitchProps {
@@ -23,11 +24,11 @@ export const ViewSwitch = memo(({ onViewChange }: ViewSwitchProps) => {
         value: PlansViewOptions.month,
       },
     ],
-    [t]
+    [t],
   );
 
   return (
-    <Box className="mt-4 mx-2">
+    <Box className="mt-4 mx-4 mb-4">
       <SwitchSelector
         initial={0}
         onPress={(value: PlansViewOptions) => {
@@ -38,9 +39,9 @@ export const ViewSwitch = memo(({ onViewChange }: ViewSwitchProps) => {
         }}
         textColor="#000"
         selectedColor="#000"
-        buttonColor="#fff"
-        borderColor="#EBEBEB"
-        backgroundColor="#EBEBEB"
+        buttonColor={colors.ivoryCard}
+        borderColor={colors.ivoryLine}
+        backgroundColor={colors.ivoryBadge}
         hasPadding
         height={32}
         borderRadius={7}

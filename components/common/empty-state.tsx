@@ -1,5 +1,5 @@
-import { Button, ButtonText } from "@/ui/button";
 import { VStack } from "@/ui/vstack";
+import { AppButton } from "./app-button";
 import { Center } from "@/ui/center";
 import { Text } from "@/ui/text";
 import { memo } from "react";
@@ -14,9 +14,7 @@ export const EmptyState = memo(({ message, onRetry }: EmptyStateProps) => (
     <VStack space="md" className="items-center">
       <Text className="text-xl">{message}</Text>
       {onRetry && (
-        <Button onPress={onRetry}>
-          <ButtonText>Retry</ButtonText>
-        </Button>
+        <AppButton label="Retry" onPress={onRetry} />
       )}
     </VStack>
   </Center>

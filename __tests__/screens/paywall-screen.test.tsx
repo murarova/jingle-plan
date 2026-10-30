@@ -7,6 +7,7 @@ import { renderWithProviders } from "../utils/render";
 const mockSubscribe = jest.fn();
 const mockRedeemAppleOfferCode = jest.fn();
 const mockRedeemAndroidPromoCode = jest.fn();
+const mockClearErrorMessage = jest.fn();
 const mockClearPromoError = jest.fn();
 const mockRestorePurchases = jest.fn();
 
@@ -16,6 +17,7 @@ const defaultIap = {
   subscribe: mockSubscribe,
   redeemAppleOfferCode: mockRedeemAppleOfferCode,
   redeemAndroidPromoCode: mockRedeemAndroidPromoCode,
+  clearErrorMessage: mockClearErrorMessage,
   clearPromoError: mockClearPromoError,
   restorePurchases: mockRestorePurchases,
   activeProductId: null,
@@ -41,6 +43,7 @@ describe("PaywallScreen", () => {
     mockSubscribe.mockReset();
     mockRedeemAppleOfferCode.mockReset();
     mockRedeemAndroidPromoCode.mockReset();
+    mockClearErrorMessage.mockReset();
     mockClearPromoError.mockReset();
     mockRestorePurchases.mockReset().mockResolvedValue(true);
     mockUseIAP.mockReturnValue({ ...defaultIap });
@@ -58,7 +61,7 @@ describe("PaywallScreen", () => {
   });
 
   it("renders subscribe CTA", () => {
-    renderWithProviders(<PaywallScreen />);
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
     expect(screen.getByText("Оформити підписку")).toBeTruthy();
   });
 
@@ -67,7 +70,7 @@ describe("PaywallScreen", () => {
       ...defaultIap,
       priceLabel: "₴499.00",
     });
-    renderWithProviders(<PaywallScreen />);
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
     expect(screen.getByText("₴499.00")).toBeTruthy();
     expect(screen.queryByText("$12.99")).toBeNull();
   });
@@ -77,12 +80,12 @@ describe("PaywallScreen", () => {
       ...defaultIap,
       priceLabel: null,
     });
-    renderWithProviders(<PaywallScreen />);
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
     expect(screen.queryByText("$12.99")).toBeNull();
   });
 
   it("renders manage subscription link", () => {
-    renderWithProviders(<PaywallScreen />);
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
     expect(screen.getByText("Керувати підпискою")).toBeTruthy();
   });
 
@@ -91,7 +94,7 @@ describe("PaywallScreen", () => {
       configurable: true,
       get: () => "ios",
     });
-    renderWithProviders(<PaywallScreen />);
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
     fireEvent.press(screen.getByText("Маєте промокод?"));
     expect(mockRedeemAppleOfferCode).toHaveBeenCalledWith();
     expect(mockRedeemAndroidPromoCode).not.toHaveBeenCalled();
@@ -103,7 +106,7 @@ describe("PaywallScreen", () => {
       get: () => "android",
     });
     mockRedeemAndroidPromoCode.mockResolvedValue(false);
-    renderWithProviders(<PaywallScreen />);
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
     expect(screen.queryByTestId("paywall-promo-input")).toBeNull();
     fireEvent.press(screen.getByText("Маєте промокод?"));
     fireEvent.changeText(
@@ -127,11 +130,25 @@ describe("PaywallScreen", () => {
       errorMessage: "Store failed",
       promoErrorMessage: "Цей промокод недійсний.",
     });
-    renderWithProviders(<PaywallScreen />);
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
     expect(screen.getByText("Store failed")).toBeTruthy();
     expect(screen.queryByText("Цей промокод недійсний.")).toBeNull();
     fireEvent.press(screen.getByText("Маєте промокод?"));
     expect(screen.getAllByText("Цей промокод недійсний.")).toHaveLength(1);
+  });
+
+  it("clears the store error when the screen is left", () => {
+    mockUseIAP.mockReturnValue({
+      ...defaultIap,
+      errorMessage: "Store failed",
+    });
+    const { unmount } = renderWithProviders(<PaywallScreen />, {
+      withNavigation: true,
+    });
+    expect(screen.getByText("Store failed")).toBeTruthy();
+    expect(mockClearErrorMessage).not.toHaveBeenCalled();
+    unmount();
+    expect(mockClearErrorMessage).toHaveBeenCalled();
   });
 
   it("clears Android promo errors when the modal opens", () => {
@@ -139,7 +156,7 @@ describe("PaywallScreen", () => {
       configurable: true,
       get: () => "android",
     });
-    renderWithProviders(<PaywallScreen />);
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
     fireEvent.press(screen.getByText("Маєте промокод?"));
     expect(mockClearPromoError).toHaveBeenCalled();
   });
@@ -153,7 +170,7 @@ describe("PaywallScreen", () => {
       ...defaultIap,
       isAwaitingOfferRedemption: false,
     });
-    renderWithProviders(<PaywallScreen />);
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
     fireEvent.press(screen.getByText("Маєте промокод?"));
     expect(screen.queryByTestId("paywall-redeem-loader")).toBeNull();
   });
@@ -168,7 +185,7 @@ describe("PaywallScreen", () => {
       activeProductId: "test.subscription",
       isSubscriber: true,
     });
-    renderWithProviders(<PaywallScreen />);
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
     expect(screen.queryByText("Маєте промокод?")).toBeNull();
     expect(screen.queryByTestId("paywall-promo-input")).toBeNull();
   });
@@ -183,13 +200,13 @@ describe("PaywallScreen", () => {
       isLoading: true,
       isAwaitingOfferRedemption: true,
     });
-    renderWithProviders(<PaywallScreen />);
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
     expect(screen.getByTestId("paywall-redeem-loader")).toBeTruthy();
   });
 
   it("restores purchases", async () => {
     const alertSpy = jest.spyOn(Alert, "alert").mockImplementation(() => {});
-    renderWithProviders(<PaywallScreen />);
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
     fireEvent.press(screen.getByText("Відновити доступ"));
     expect(mockRestorePurchases).toHaveBeenCalled();
     await waitFor(() => {
@@ -211,7 +228,7 @@ describe("PaywallScreen", () => {
       isInitialized: false,
       isStoreReady: false,
     });
-    renderWithProviders(<PaywallScreen />);
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
     fireEvent.press(screen.getByText("Відновити доступ"));
     expect(mockRestorePurchases).toHaveBeenCalled();
   });

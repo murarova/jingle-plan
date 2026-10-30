@@ -32,7 +32,7 @@ export const GlobalLoader = () => {
 
     // Check if any mutations are pending in main API
     const hasApiMutations = Object.values(apiState.mutations).some(
-      (mutation: any) => mutation?.status === "pending"
+      (mutation: any) => mutation?.status === "pending",
     );
 
     // Check if any queries are pending in auth API (exclude refetches that have data)
@@ -43,12 +43,12 @@ export const GlobalLoader = () => {
           return false;
         }
         return query?.status === "pending";
-      }
+      },
     );
 
     // Check if any mutations are pending in auth API
     const hasAuthMutations = Object.values(authApiState.mutations).some(
-      (mutation: any) => mutation?.status === "pending"
+      (mutation: any) => mutation?.status === "pending",
     );
 
     return (
@@ -61,8 +61,7 @@ export const GlobalLoader = () => {
   }
 
   return (
-    <Box
-      className="absolute bg-white/80 left-0 right-0 top-0 bottom-0 z-[9999] justify-center items-center">
+    <Box className="absolute bg-ivory-page/80 left-0 right-0 top-0 bottom-0 z-[9999] justify-center items-center">
       <ActivityIndicator size="large" />
     </Box>
   );

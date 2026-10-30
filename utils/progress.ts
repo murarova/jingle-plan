@@ -1,3 +1,5 @@
+import { colors } from "@/constants/colors";
+
 interface TaskProgress {
   dayTaskGrade: number;
   moodTaskGrade: number;
@@ -5,14 +7,14 @@ interface TaskProgress {
 
 export function getProgressBackgroundColor(value: number): string {
   if (value < 30) {
-    return "#FF656C";
+    return colors.primary500;
   }
 
   if (value < 70) {
-    return "#FAC515";
+    return colors.progressYellow;
   }
 
-  return "#4bb4ad";
+  return colors.green400;
 }
 
 export function getProgressColorByValue(value: number): string {
@@ -21,7 +23,7 @@ export function getProgressColorByValue(value: number): string {
   } else if (value >= 30 && value < 70) {
     return "bg-progressYellow";
   } else {
-    return "bg-green-400";
+    return "bg-progressGreen";
   }
 }
 

@@ -22,8 +22,8 @@ const badgeStyle = tva({
       warning: 'bg-yellow-100 border-yellow-500',
       success: 'bg-green-100 border-green-500',
       info: 'bg-primary-100 border-primary-500',
-      muted: 'bg-warmGray-100 border-warmGray-400',
-      gray: 'bg-warmGray-100 border-warmGray-400',
+      muted: 'bg-ivory-badge border-ivory-line',
+      gray: 'bg-ivory-badge border-ivory-line',
     },
     variant: {
       solid: '',

@@ -53,7 +53,7 @@ const selectStyle = tva({
 });
 
 const selectTriggerStyle = tva({
-  base: "w-full border border-backgroundLight-300 rounded flex-row items-center overflow-hidden bg-transparent data-[hover=true]:border-borderLight-400 data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:data-[hover=true]:border-typography-600 data-[disabled=true]:opacity-40 data-[disabled=true]:data-[hover=true]:border-backgroundLight-300 data-[invalid=true]:border-error-700 data-[invalid=true]:data-[hover=true]:border-error-700 data-[invalid=true]:data-[focus=true]:border-error-700",
+  base: "w-full border border-ivory-line rounded flex-row items-center overflow-hidden bg-transparent data-[hover=true]:border-borderLight-400 data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:data-[hover=true]:border-typography-600 data-[disabled=true]:opacity-40 data-[disabled=true]:data-[hover=true]:border-ivory-line data-[invalid=true]:border-error-700 data-[invalid=true]:data-[hover=true]:border-error-700 data-[invalid=true]:data-[focus=true]:border-error-700",
   variants: {
     size: {
       xl: "h-12",
@@ -63,7 +63,7 @@ const selectTriggerStyle = tva({
     },
     variant: {
       underlined:
-        "border-0 border-b border-backgroundLight-300 rounded-none data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:web:shadow-[inset_0_-1px_0_0] data-[focus=true]:web:shadow-typography-600 data-[invalid=true]:border-b-2 data-[invalid=true]:border-error-700",
+        "border-0 border-b border-ivory-line rounded-none data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:web:shadow-[inset_0_-1px_0_0] data-[focus=true]:web:shadow-typography-600 data-[invalid=true]:border-b-2 data-[invalid=true]:border-error-700",
       outline:
         "data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:web:shadow-typography-600 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-[inset_0_0_0_1px] data-[invalid=true]:web:shadow-error-700",
       rounded:
@@ -77,12 +77,12 @@ const selectTriggerStyle = tva({
 });
 
 const selectInputStyle = tva({
-  base: "flex-1 px-3 placeholder:text-typography-500 web:w-full h-full text-typography-900 font-body pointer-events-none web:outline-none ios:leading-[0px] py-0",
+  base: "flex-1 px-3 placeholder:text-secondaryText web:w-full h-full text-primaryText font-body pointer-events-none web:outline-none py-0",
   parentVariants: {
     size: {
       xl: "text-xl",
       lg: "text-lg",
-      md: "text-base",
+      md: "text-[17px] leading-[22px]",
       sm: "text-sm",
     },
     variant: {

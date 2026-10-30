@@ -115,7 +115,7 @@ const actionsheetStyle = tva({
 });
 
 const actionsheetContentStyle = tva({
-  base: 'items-center rounded-t-lg p-4 bg-background web:pointer-events-auto web:select-none border-t border-border dark:border-border/10 max-h-[80vh]',
+  base: 'items-center rounded-t-lg p-4 bg-card web:pointer-events-auto web:select-none border-t border-border dark:border-border/10 max-h-[80vh]',
 });
 
 const actionsheetItemStyle = tva({

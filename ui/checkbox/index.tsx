@@ -62,11 +62,11 @@ const checkboxStyle = tva({
 });
 
 const checkboxIndicatorStyle = tva({
-  base: 'justify-center items-center w-5 h-5 shrink-0 rounded border-2 border-borderLight-400 bg-transparent web:outline-none data-[checked=true]:bg-green-500 data-[checked=true]:border-green-500 data-[hover=true]:border-typography-500 data-[hover=true]:data-[checked=true]:bg-green-400 data-[hover=true]:data-[checked=true]:border-green-400 data-[active=true]:data-[checked=true]:bg-green-400 data-[active=true]:data-[checked=true]:border-green-400 data-[invalid=true]:border-error-700 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-40',
+  base: 'justify-center items-center w-5 h-5 shrink-0 rounded border-2 border-borderLight-400 bg-transparent web:outline-none data-[checked=true]:bg-[#7EB344] data-[checked=true]:border-[#7EB344] data-[hover=true]:border-typography-500 data-[hover=true]:data-[checked=true]:bg-[#7EB344] data-[hover=true]:data-[checked=true]:border-[#7EB344] data-[active=true]:data-[checked=true]:bg-[#7EB344] data-[active=true]:data-[checked=true]:border-[#7EB344] data-[invalid=true]:border-error-700 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-40',
 });
 
 const checkboxLabelStyle = tva({
-  base: 'text-typography-700 text-base font-normal font-body web:select-none web:cursor-pointer data-[checked=true]:text-typography-900 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-40',
+  base: 'text-primaryText text-base font-normal font-body web:select-none web:cursor-pointer data-[checked=true]:text-primaryText data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-40',
 });
 
 const checkboxIconStyle = tva({

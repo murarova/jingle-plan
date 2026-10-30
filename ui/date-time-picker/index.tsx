@@ -429,7 +429,7 @@ function IOSDateTimePicker({
           onPress={handleCancel}
         />
         {/* Picker container */}
-        <View className="bg-background rounded-t-lg p-4 relative">
+        <View className="bg-card rounded-t-lg p-4 relative">
           <View className="flex-row justify-between items-center mb-4 border-b border-border pb-2">
             <Pressable onPress={handleCancel}>
               <Text className="text-primary font-semibold text-base">

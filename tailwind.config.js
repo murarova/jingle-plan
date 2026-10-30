@@ -15,8 +15,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        heading: ["sans-serif"],
-        body: ["sans-serif"],
+        system: ["System"],
+        roboto: ["sans-serif"],
+        heading: ["System", "sans-serif"],
+        body: ["System", "sans-serif"],
         mono: ["monospace"],
       },
       fontSize: {
@@ -65,9 +67,9 @@ module.exports = {
           200: "#ffc5c8",
           300: "#ff9da2",
           400: "#ff656c",
-          500: "#fe434c",
-          600: "#ec1620",
-          700: "#c70e17",
+          500: "#DC6A55",
+          600: "#D3462C",
+          700: "#B23B25",
           800: "#a41017",
           900: "#88141a",
           950: "#4a0508",
@@ -91,7 +93,7 @@ module.exports = {
           100: "#d5f2ee",
           200: "#aae5dc",
           300: "#78d0c7",
-          400: "#4bb4ad",
+          400: "#7EB344",
           500: "#339994",
           600: "#267b78",
           700: "#226362",
@@ -115,9 +117,9 @@ module.exports = {
           100: "#f3f4f6",
           200: "#e5e7eb",
         },
-        progressGreen: "#86CB3C",
-        progressYellow: "#FAC515",
-        progressRed: "#FF656C",
+        progressGreen: "#7EB344",
+        progressYellow: "#D9A62E",
+        progressRed: "#DC6A55",
         backgroundLight: {
           50: "#F5F5F5",
           100: "#F1F1F1",
@@ -125,6 +127,14 @@ module.exports = {
           300: "#D4D4D4",
           400: "#A3A3A3",
         },
+        ivory: {
+          page: "#F4F0E6",
+          card: "#FFFDF8",
+          line: "#E6DECE",
+          badge: "#EAE3D3",
+        },
+        primaryText: "#3D3A35",
+        secondaryText: "#8C857B",
         borderLight: {
           300: "#D4D4D4",
           400: "#A3A3A3",

@@ -10,7 +10,7 @@ import { Box } from "@/ui/box";
 import { useTranslation } from "react-i18next";
 import { EmptyScreen } from "../../components/common/empty-screen";
 import { KeyboardAwareScroll } from "../../components/common";
-import { TASK_CONTEXT } from "@/constants";
+import { TASK_CONTEXT, cardShadow } from "@/constants";
 import { useRating } from "../../hooks/useRating";
 import { SummaryContextData } from "@/types";
 import { useAppSelector } from "../../store/withTypes";
@@ -28,7 +28,7 @@ export const SummaryScreen: React.FC = () => {
   const { selectedYear } = useAppSelector((state) => state.app);
   const { data: userData } = useGetUserDataQuery(
     { uid: currentUser?.uid!, year: selectedYear },
-    { skip: !currentUser?.uid || !selectedYear }
+    { skip: !currentUser?.uid || !selectedYear },
   );
   const summary = userData?.summary as SummaryContextData | null;
 
@@ -48,16 +48,21 @@ export const SummaryScreen: React.FC = () => {
 
   return (
     <Box className="flex-1">
-      <Box className="p-2 flex-1">
+      <Box className="flex-1 px-4 pb-8 pt-4">
         <KeyboardAwareScroll>
-          <Accordion key="summary" type="multiple" className="my-2 rounded-lg">
+          <Accordion key="summary" type="multiple" className="bg-transparent">
             {Object.values(TASK_CONTEXT).map((context) => {
               if (!summary[context]) return null;
 
               return (
-                <AccordionItem key={context} value={context} className="rounded-lg mb-5">
+                <AccordionItem
+                  key={context}
+                  value={context}
+                  className="mb-4 overflow-hidden rounded-3xl border border-ivory-line bg-ivory-card"
+                  style={cardShadow}
+                >
                   <AccordionHeader>
-                    <AccordionTrigger>
+                    <AccordionTrigger className="px-5 py-5">
                       {({ isExpanded }: { isExpanded: boolean }) => {
                         return (
                           <AccordionHeaderContent
@@ -71,7 +76,7 @@ export const SummaryScreen: React.FC = () => {
                       }}
                     </AccordionTrigger>
                   </AccordionHeader>
-                  <AccordionContent>
+                  <AccordionContent className="mt-0 px-5 pb-5 pt-0">
                     <Box>
                       {editContext === context ? (
                         <EditableContent

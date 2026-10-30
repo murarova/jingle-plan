@@ -17,23 +17,23 @@ import { accordionAnimationConfig } from "./animation-config";
 /** Styles */
 
 const accordionStyle = tva({
-  base: "w-full bg-white",
+  base: "w-full bg-ivory-card",
 });
 
 const accordionItemStyle = tva({
-  base: "bg-backgroundLight-50",
+  base: "bg-ivory-card",
 });
 
 const accordionTitleTextStyle = tva({
-  base: "text-typography-900 font-bold font-body flex-1 text-left text-base tracking-md",
+  base: "text-primaryText flex-1 text-left tracking-md ios:font-system android:font-roboto ios:text-[20px] ios:leading-[25px] ios:font-semibold android:text-[20px] android:leading-[26px] android:font-medium",
 });
 
 const accordionIconStyle = tva({
-  base: "text-typography-900 fill-none h-4 w-4",
+  base: "text-primaryText fill-none h-4 w-4",
 });
 
 const accordionContentTextStyle = tva({
-  base: "text-typography-700 text-base font-normal font-body tracking-md",
+  base: "text-primaryText font-normal tracking-md ios:font-system android:font-roboto ios:text-[17px] ios:leading-[22px] android:text-[16px] android:leading-[24px]",
 });
 
 const accordionHeaderStyle = tva({
@@ -45,7 +45,7 @@ const accordionContentStyle = tva({
 });
 
 const accordionTriggerStyle = tva({
-  base: "w-full flex-row justify-between items-center py-5 px-5 web:outline-none focus:outline-none data-[disabled=true]:opacity-40 data-[disabled=true]:cursor-not-allowed data-[focus-visible=true]:bg-backgroundLight-50 gap-3",
+  base: "w-full flex-row justify-between items-center py-5 px-5 web:outline-none focus:outline-none data-[disabled=true]:opacity-40 data-[disabled=true]:cursor-not-allowed data-[focus-visible=true]:bg-ivory-badge gap-3",
 });
 
 const Header = (

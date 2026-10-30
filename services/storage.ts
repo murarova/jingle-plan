@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SerializableUser } from "../types/user";
 
 const USER_STORAGE_KEY = "@user_data";
+const LEGACY_AUTH_KEYS = ["@jp.credentials", "@jp.rememberedEmail"];
 
 export const saveUserToStorage = async (user: SerializableUser) => {
   try {
@@ -27,5 +28,13 @@ export const removeUserFromStorage = async () => {
     await AsyncStorage.removeItem(USER_STORAGE_KEY);
   } catch (error) {
     console.error("Error removing user from storage:", error);
+  }
+};
+
+export const clearLegacyCredentials = async () => {
+  try {
+    await AsyncStorage.multiRemove(LEGACY_AUTH_KEYS);
+  } catch (error) {
+    console.error("Failed to clear legacy credentials", error);
   }
 };

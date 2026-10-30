@@ -16,7 +16,7 @@ export const Loader = ({ size, absolute }: LoaderProps) => {
   if (absolute) {
     return (
       <Box
-        className="absolute bg-white/50 left-0 right-0 top-0 bottom-0 z-[1]">
+        className="absolute bg-ivory-page/50 left-0 right-0 top-0 bottom-0 z-[1]">
         {BaseLoader}
       </Box>
     );

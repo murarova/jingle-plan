@@ -57,7 +57,7 @@ const sliderThumbStyle = tva({
 });
 
 const sliderTrackStyle = tva({
-  base: 'bg-backgroundLight-300 rounded-lg overflow-hidden',
+  base: 'bg-ivory-badge rounded-lg overflow-hidden',
   parentVariants: {
     orientation: {
       horizontal: 'w-full flex-row',

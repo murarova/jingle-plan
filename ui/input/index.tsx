@@ -35,7 +35,7 @@ cssInterop(UIIcon, {
 });
 
 const inputStyle = tva({
-  base: 'w-full flex-row items-center overflow-hidden border border-backgroundLight-300 bg-transparent data-[hover=true]:border-borderLight-400 data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:data-[hover=true]:border-typography-600 data-[disabled=true]:opacity-40 data-[disabled=true]:data-[hover=true]:border-backgroundLight-300 data-[invalid=true]:border-error-700 data-[invalid=true]:data-[hover=true]:border-error-700 data-[invalid=true]:data-[focus=true]:border-error-700',
+  base: 'w-full flex-row items-center overflow-hidden border border-ivory-line bg-transparent data-[hover=true]:border-borderLight-400 data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:data-[hover=true]:border-typography-600 data-[disabled=true]:opacity-40 data-[disabled=true]:data-[hover=true]:border-ivory-line data-[invalid=true]:border-error-700 data-[invalid=true]:data-[hover=true]:border-error-700 data-[invalid=true]:data-[focus=true]:border-error-700',
   variants: {
     size: {
       sm: 'h-9',
@@ -47,7 +47,7 @@ const inputStyle = tva({
       outline:
         'rounded data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:web:shadow-typography-600 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-[inset_0_0_0_1px] data-[invalid=true]:web:shadow-error-700',
       underlined:
-        'rounded-none border-0 border-b border-backgroundLight-300 data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:web:shadow-[inset_0_-1px_0_0] data-[focus=true]:web:shadow-typography-600 data-[invalid=true]:border-b-2 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-error-700',
+        'rounded-none border-0 border-b border-ivory-line data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:web:shadow-[inset_0_-1px_0_0] data-[focus=true]:web:shadow-typography-600 data-[invalid=true]:border-b-2 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-error-700',
       rounded:
         'rounded-full data-[focus=true]:border-typography-600 data-[active=true]:border-typography-600 data-[focus=true]:web:shadow-[inset_0_0_0_1px] data-[focus=true]:web:shadow-typography-600 data-[invalid=true]:border-error-700 data-[invalid=true]:web:shadow-error-700',
     },
@@ -75,13 +75,13 @@ const inputSlotStyle = tva({
 });
 
 const inputFieldStyle = tva({
-  base: 'flex-1 text-typography-900 font-body h-full px-3 py-0 placeholder:text-typography-500 web:outline-none web:outline-0 ios:leading-[0px] web:cursor-text web:data-[disabled=true]:cursor-not-allowed',
+  base: 'flex-1 text-primaryText ios:font-system android:font-roboto h-full px-3 py-0 placeholder:text-secondaryText web:outline-none web:outline-0 ios:leading-[0px] web:cursor-text web:data-[disabled=true]:cursor-not-allowed',
   parentVariants: {
     size: {
-      sm: 'text-sm',
-      md: 'text-base',
-      lg: 'text-lg',
-      xl: 'text-xl',
+      sm: 'ios:text-[15px] android:text-[14px]',
+      md: 'ios:text-[17px] android:text-[16px]',
+      lg: 'ios:text-[18px] android:text-[18px]',
+      xl: 'ios:text-[20px] android:text-[20px]',
     },
     variant: {
       underlined: 'px-0',

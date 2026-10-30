@@ -24,7 +24,7 @@ const SvgComponent = (props) => (
         strokeWidth: 1.5,
         strokeLinecap: "round",
         strokeLinejoin: "round",
-        stroke: "#4bb4ad",
+        stroke: "#7EB344",
         strokeOpacity: 1,
         strokeMiterlimit: 10,
       }}
@@ -35,7 +35,7 @@ const SvgComponent = (props) => (
       style={{
         stroke: "none",
         fillRule: "nonzero",
-        fill: "#4bb4ad",
+        fill: "#7EB344",
         fillOpacity: 1,
       }}
     />
@@ -93,7 +93,7 @@ const SvgComponent = (props) => (
       style={{
         stroke: "none",
         fillRule: "nonzero",
-        fill: "#fe434c",
+        fill: "#DC6A55",
         fillOpacity: 1,
       }}
     />
@@ -141,7 +141,7 @@ const SvgComponent = (props) => (
       style={{
         stroke: "none",
         fillRule: "nonzero",
-        fill: "#fe434c",
+        fill: "#DC6A55",
         fillOpacity: 1,
       }}
     />
@@ -177,7 +177,7 @@ const SvgComponent = (props) => (
       style={{
         stroke: "none",
         fillRule: "nonzero",
-        fill: "#fe434c",
+        fill: "#DC6A55",
         fillOpacity: 1,
       }}
     />
@@ -195,7 +195,7 @@ const SvgComponent = (props) => (
       style={{
         stroke: "none",
         fillRule: "nonzero",
-        fill: "#fe434c",
+        fill: "#DC6A55",
         fillOpacity: 1,
       }}
     />

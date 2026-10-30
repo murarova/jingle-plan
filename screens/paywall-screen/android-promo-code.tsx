@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, ButtonText } from "@/ui/button";
+import { AppButton } from "@/components/common";
 import { Input, InputField } from "@/ui/input";
 import { Heading } from "@/ui/heading";
 import { Text } from "@/ui/text";
@@ -48,16 +48,13 @@ export const AndroidPromoCode = memo(
 
     return (
       <>
-        <Button
-          variant="outline"
-          isDisabled={isDisabled}
+        <AppButton
+          variant="secondary"
+          label={t("paywall.promoCta")}
           onPress={onOpen}
-          className="mt-3 rounded-xl border-primary-600"
-        >
-          <ButtonText className="text-primary-600">
-            {t("paywall.promoCta")}
-          </ButtonText>
-        </Button>
+          isDisabled={isDisabled}
+          className="mt-3"
+        />
         <Modal isOpen={isModalOpen} onClose={onClose} size="md">
           <ModalBackdrop />
           <KeyboardAvoidingView
@@ -91,18 +88,17 @@ export const AndroidPromoCode = memo(
                 ) : null}
               </ModalBody>
               <ModalFooter>
-                <Button
+                <AppButton
                   testID="paywall-promo-redeem"
-                  isDisabled={isRedeeming || !code.trim()}
-                  onPress={onRedeem}
-                  className="rounded-lg w-full bg-primary-600 border-primary-600"
-                >
-                  <ButtonText>
-                    {isRedeeming
+                  label={
+                    isRedeeming
                       ? t("paywall.processing")
-                      : t("paywall.promoRedeem")}
-                  </ButtonText>
-                </Button>
+                      : t("paywall.promoRedeem")
+                  }
+                  onPress={onRedeem}
+                  isDisabled={isRedeeming || !code.trim()}
+                  className="w-full"
+                />
               </ModalFooter>
             </ModalContent>
           </KeyboardAvoidingView>

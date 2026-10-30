@@ -31,7 +31,7 @@ const baseTaskConfig: DayTaskConfig = {
 };
 
 describe("TaskItem", () => {
-  it("renders the day task accordion title", () => {
+  it("renders the task title and description", () => {
     renderWithProviders(
       <TaskItem
         taskConfig={baseTaskConfig}
@@ -39,10 +39,11 @@ describe("TaskItem", () => {
         userData={null}
       />
     );
-    expect(screen.getByText("Завдання дня")).toBeTruthy();
+    expect(screen.getByText("My Task Title")).toBeTruthy();
+    expect(screen.getByText("Task description text")).toBeTruthy();
   });
 
-  it("renders mood title for mood category tasks", () => {
+  it("renders the title and description for mood category tasks", () => {
     renderWithProviders(
       <TaskItem
         taskConfig={{
@@ -54,6 +55,7 @@ describe("TaskItem", () => {
         userData={null}
       />
     );
-    expect(screen.getByText("Завдання для настрою")).toBeTruthy();
+    expect(screen.getByText("My Task Title")).toBeTruthy();
+    expect(screen.getByText("Task description text")).toBeTruthy();
   });
 });

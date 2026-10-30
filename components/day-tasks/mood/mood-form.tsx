@@ -1,9 +1,8 @@
 import { VStack } from "@/ui/vstack";
-import { Button, ButtonText } from "@/ui/button";
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
 import { TaskOutputType } from "@/constants";
-import { AutoGrowingTextarea, ImagePicker } from "../../common";
+import { AppButton, AutoGrowingTextarea, ImagePicker } from "../../common";
 
 interface MoodFormProps {
   text: string;
@@ -59,9 +58,11 @@ export const MoodForm = memo(
           />
         )}
         {isEditable && (
-          <Button onPress={onSubmit} className="mt-2 rounded-lg">
-            <ButtonText>{t("screens.tasksOfTheDay.submitBtnText")}</ButtonText>
-          </Button>
+          <AppButton
+            label={t("screens.tasksOfTheDay.submitBtnText")}
+            onPress={onSubmit}
+            className="mt-2"
+          />
         )}
       </VStack>
     );

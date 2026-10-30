@@ -110,7 +110,7 @@ const DateTimePicker = React.forwardRef<
         onPress={() => !disabled && setIsOpen(true)}
         className="w-full"
       >
-        <View className="flex-row items-center border border-border rounded-md px-3 py-2 bg-background">
+        <View className="flex-row items-center border border-border rounded-md px-3 py-2 bg-card">
           <TextInput
             value={displayValue || placeholder}
             editable={false}
@@ -122,7 +122,7 @@ const DateTimePicker = React.forwardRef<
 
       {/* Modal/Dropdown */}
       {isOpen && (
-        <View className="absolute top-full left-0 right-0 mt-2 bg-background border border-border rounded-lg shadow-lg p-4 z-50">
+        <View className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-lg p-4 z-50">
           {/* Date Picker */}
           {(mode === 'date' || mode === 'datetime') && (
             <View className="mb-4">
@@ -144,7 +144,7 @@ const DateTimePicker = React.forwardRef<
                 type="time"
                 value={tempTime}
                 onChange={handleTimeChange}
-                className="w-full p-2 border border-border rounded bg-background text-foreground text-sm"
+                className="w-full p-2 border border-border rounded bg-card text-foreground text-sm"
                 aria-label="Time"
               />
             </View>

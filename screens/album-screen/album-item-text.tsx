@@ -23,7 +23,7 @@ export const AlbumItemText = memo(({ text }: AlbumItemTextProps) => {
   }, []);
 
   return (
-    <Box className="relative h-[30%] overflow-hidden rounded-b-lg bg-white">
+    <Box className="relative h-[30%] overflow-hidden rounded-b-lg bg-ivory-card">
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="flex-1 p-[10px] pr-10"
@@ -41,8 +41,8 @@ export const AlbumItemText = memo(({ text }: AlbumItemTextProps) => {
       </Pressable>
       <Modal isOpen={isExpanded} onClose={closeExpanded} size="full">
         <ModalBackdrop />
-        <ModalContent className="h-full w-full max-w-full rounded-none bg-white">
-          <SafeAreaView className="flex-1 bg-white">
+        <ModalContent className="h-full w-full max-w-full rounded-none bg-ivory-page">
+          <SafeAreaView className="flex-1 bg-ivory-page">
             <Box className="flex-row items-center justify-end px-3 pb-2 pt-1">
               <Pressable
                 onPress={closeExpanded}

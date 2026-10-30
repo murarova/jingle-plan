@@ -6,9 +6,17 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
 import { colors } from "@/constants/colors";
+import { cardShadow } from "@/constants/shadow";
+import {
+  bodyFontSize,
+  systemFontFamily,
+  typeRole,
+} from "@/constants/typography";
 import CircularProgress from "react-native-circular-progress-indicator";
 import { DateData } from "react-native-calendars";
 import { LockKeyhole } from "lucide-react-native";
+import { Tooltip, TooltipContent } from "@/ui/tooltip";
+import Star from "../../assets/svg/star";
 
 export interface DayComponentProps {
   date: DateData;
@@ -22,6 +30,7 @@ export interface DayComponentProps {
   navigateToPaywall?: () => void;
   isAdmin: boolean;
   maxDate: string;
+  starredDates?: string[];
 }
 
 export const DayComponent = memo(
@@ -35,8 +44,12 @@ export const DayComponent = memo(
     isSubscriber = false,
     navigateToPaywall,
     maxDate,
+    starredDates,
   }: DayComponentProps) => {
     const today = date?.dateString === currentDate;
+    const showStar = Boolean(
+      !today && date?.dateString && starredDates?.includes(date.dateString),
+    );
     const disabled = maxDate < date?.dateString;
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const tooltipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -89,65 +102,107 @@ export const DayComponent = memo(
     const tooltipMessage = unlockMessage ?? defaultLockedMessage;
 
     return (
-      <Pressable testID={`calendar-day-${date.dateString}`} onPress={handlePress}>
-        {({ pressed }) => (
-          <Box className="items-center justify-center">
-            {disabled ? (
-              <Box className="bg-warmGray-200 w-[50px] h-[50px] rounded-[25px] items-center justify-center">
-                <LockKeyhole
-                  size={24}
-                  color={colors.warmGray400}
-                  strokeWidth={2}
-                />
+      <Tooltip
+        placement="top"
+        offset={8}
+        isOpen={isTooltipOpen}
+        onClose={() => setIsTooltipOpen(false)}
+        closeOnClick={false}
+        pointerEvents="box-none"
+        className="absolute inset-0 overflow-visible"
+        trigger={({ ref, collapsable }) => (
+          <Pressable
+            ref={ref}
+            collapsable={collapsable}
+            testID={`calendar-day-${date.dateString}`}
+            onPress={handlePress}
+          >
+            {({ pressed }) => (
+              <Box className="relative items-center justify-center">
+                {disabled ? (
+                  <Box
+                    className="h-[41px] w-[41px] items-center justify-center rounded-full"
+                    style={{
+                      borderWidth: 2,
+                      borderColor: "rgba(75,180,173,0.18)",
+                    }}
+                  >
+                    <LockKeyhole
+                      size={16}
+                      color={colors.secondaryText}
+                      strokeWidth={2}
+                    />
+                  </Box>
+                ) : isLoading ? (
+                  <Box
+                    className="h-[41px] w-[41px] items-center justify-center rounded-full"
+                    style={{
+                      borderWidth: 2,
+                      borderColor: "rgba(75,180,173,0.18)",
+                    }}
+                  >
+                    <Text
+                      className={`text-primaryText ${today ? "font-bold" : ""}`}
+                    >
+                      {date?.day?.toString() || ""}
+                    </Text>
+                  </Box>
+                ) : (
+                  <CircularProgress
+                    value={progress}
+                    duration={0}
+                    activeStrokeColor={
+                      progress === 0 ? "transparent" : colors.green400
+                    }
+                    inActiveStrokeColor={colors.green400}
+                    inActiveStrokeOpacity={0.18}
+                    circleBackgroundColor={
+                      pressed ? colors.ivoryBadge : "transparent"
+                    }
+                    showProgressValue={false}
+                    title={date?.day?.toString() || ""}
+                    titleStyle={{
+                      fontFamily: systemFontFamily,
+                      fontSize: bodyFontSize,
+                      fontWeight: today ? "700" : "400",
+                      color: colors.primaryText,
+                    }}
+                    radius={20.5}
+                    activeStrokeWidth={2}
+                    inActiveStrokeWidth={2}
+                  />
+                )}
+                {today && (
+                  <Box
+                    testID={`calendar-today-${date.dateString}`}
+                    className="absolute -top-3 h-[6px] w-[6px] rounded-full bg-primary-500"
+                  />
+                )}
+                {showStar && (
+                  <Box
+                    testID={`calendar-star-${date.dateString}`}
+                    className="absolute -top-[21px] left-0 right-0 items-center"
+                  >
+                    <Star />
+                  </Box>
+                )}
               </Box>
-            ) : isLoading ? (
-              <Box className="w-[50px] h-[50px] items-center justify-center rounded-[25px] bg-transparent">
-                <Text
-                  className={`${today ? "font-bold" : "font-semibold"} text-[16px] text-warmGray-900`}
-                >
-                  {date?.day?.toString() || ""}
-                </Text>
-              </Box>
-            ) : (
-              <CircularProgress
-                value={progress}
-                duration={0}
-                activeStrokeColor={
-                  progress === 0 ? "transparent" : colors.green400
-                }
-                inActiveStrokeColor={colors.warmGray400}
-                inActiveStrokeOpacity={0.2}
-                circleBackgroundColor={
-                  pressed ? colors.backgroundLight100 : "transparent"
-                }
-                showProgressValue={false}
-                title={date?.day?.toString() || ""}
-                titleStyle={{
-                  fontSize: 16,
-                  fontWeight: today ? 700 : 500,
-                  color: "#292524",
-                }}
-                radius={25}
-                activeStrokeWidth={5}
-                inActiveStrokeWidth={5}
-              />
             )}
-            {today && (
-              <Box className="bg-primary-500 absolute -top-3 w-[6px] h-[6px] rounded-[3px]" />
-            )}
-            {disabled && isTooltipOpen && (
-              <Box
-                className="absolute bg-warmGray-800 px-3 py-2 rounded-md z-50"
-                style={{ bottom: 56, width: 200, left: -75 }}
-              >
-                <Text className="text-white text-xs text-center">
-                  {tooltipMessage}
-                </Text>
-              </Box>
-            )}
-          </Box>
+          </Pressable>
         )}
-      </Pressable>
+      >
+        <TooltipContent
+          initial={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+          className="w-[200px] rounded-2xl border border-ivory-line bg-ivory-card px-3 py-2"
+          style={cardShadow}
+        >
+          <Text
+            className={`${typeRole.supporting} text-center text-primaryText`}
+          >
+            {tooltipMessage}
+          </Text>
+        </TooltipContent>
+      </Tooltip>
     );
   },
 );

@@ -101,14 +101,14 @@ describe("MonthPhoto", () => {
         preloadedState: loggedInPreloadedState,
       });
       expect(screen.getByText("Saved photo caption")).toBeTruthy();
-      expect(screen.getByText("Редагувати")).toBeTruthy();
+      expect(screen.getByLabelText("Редагувати")).toBeTruthy();
     });
 
     it("switches to edit mode when edit is pressed", () => {
       renderWithProviders(<MonthPhoto context={CONTEXT} data={savedData} />, {
         preloadedState: loggedInPreloadedState,
       });
-      fireEvent.press(screen.getByText("Редагувати"));
+      fireEvent.press(screen.getByLabelText("Редагувати"));
       expect(screen.getByPlaceholderText(TEXTAREA_PLACEHOLDER)).toBeTruthy();
     });
 
@@ -116,7 +116,7 @@ describe("MonthPhoto", () => {
       renderWithProviders(<MonthPhoto context={CONTEXT} data={savedData} />, {
         preloadedState: loggedInPreloadedState,
       });
-      fireEvent.press(screen.getByText("Редагувати"));
+      fireEvent.press(screen.getByLabelText("Редагувати"));
       fireEvent.changeText(
         screen.getByPlaceholderText(TEXTAREA_PLACEHOLDER),
         "Updated caption"
@@ -148,7 +148,7 @@ describe("MonthPhoto", () => {
       renderWithProviders(<MonthPhoto context={CONTEXT} data={savedData} />, {
         preloadedState: loggedInPreloadedState,
       });
-      fireEvent.press(screen.getByText("Видалити"));
+      fireEvent.press(screen.getByLabelText("Видалити"));
 
       await waitFor(() => {
         expect(removeTaskTrigger).toHaveBeenCalledWith({

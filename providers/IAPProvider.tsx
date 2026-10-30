@@ -59,6 +59,7 @@ function LocalIAPProvider({ children }: { children: React.ReactNode }) {
       subscribe: async () => {},
       redeemAppleOfferCode: async () => false,
       redeemAndroidPromoCode: async () => false,
+      clearErrorMessage: () => {},
       clearPromoError: () => {},
       restorePurchases: async () => false,
     }),
@@ -415,6 +416,10 @@ function StoreIAPProvider({ children }: { children: React.ReactNode }) {
     [t],
   );
 
+  const clearErrorMessage = useCallback(() => {
+    setErrorMessage(null);
+  }, []);
+
   const clearPromoError = useCallback(() => {
     setPromoErrorMessage(null);
   }, []);
@@ -471,6 +476,7 @@ function StoreIAPProvider({ children }: { children: React.ReactNode }) {
     subscribe,
     redeemAppleOfferCode,
     redeemAndroidPromoCode,
+    clearErrorMessage,
     clearPromoError,
     restorePurchases,
   };

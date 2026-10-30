@@ -10,7 +10,7 @@ describe("ActionButtons", () => {
     renderWithProviders(
       <ActionButtons onEdit={onEdit} onDelete={onDelete} />
     );
-    fireEvent.press(screen.getByText("Редагувати"));
+    fireEvent.press(screen.getByLabelText("Редагувати"));
     expect(onEdit).toHaveBeenCalledTimes(1);
     expect(onDelete).not.toHaveBeenCalled();
   });
@@ -21,7 +21,7 @@ describe("ActionButtons", () => {
     renderWithProviders(
       <ActionButtons onEdit={onEdit} onDelete={onDelete} />
     );
-    fireEvent.press(screen.getByText("Видалити"));
+    fireEvent.press(screen.getByLabelText("Видалити"));
     expect(onDelete).toHaveBeenCalledTimes(1);
     expect(onEdit).not.toHaveBeenCalled();
   });

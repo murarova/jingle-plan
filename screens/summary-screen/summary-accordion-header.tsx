@@ -1,10 +1,10 @@
-import { ChevronUpIcon, ChevronDownIcon } from "@/ui/icon";
-import { AccordionTitleText, AccordionIcon } from "@/ui/accordion";
+import { AccordionTitleText } from "@/ui/accordion";
 import { Heading } from "@/ui/heading";
 import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
 import { memo } from "react";
 import { TaskContext, SummaryContextData } from "@/types";
+import { CategoryToggle } from "@/components/common/category-toggle";
 
 interface AccordionHeaderProps {
   context: TaskContext;
@@ -18,19 +18,14 @@ export const AccordionHeaderContent = memo(
   ({ context, isExpanded, getRating, t, summary }: AccordionHeaderProps) => (
     <>
       <AccordionTitleText>
-        <Box className="flex flex-row items-center">
-          <Box className="mr-2">
-            <Heading size="sm">{t(`context.${context}`)}</Heading>
-          </Box>
-          <Box className="flex items-center">
-            <Text>{getRating(summary?.[context]?.rate)?.icon}</Text>
-          </Box>
+        <Box className="flex-row items-center">
+          <Heading size="md" className="mr-2 text-primaryText">
+            {t(`context.${context}`)}
+          </Heading>
+          <Text>{getRating(summary?.[context]?.rate)?.icon}</Text>
         </Box>
       </AccordionTitleText>
-      <AccordionIcon
-        as={isExpanded ? ChevronUpIcon : ChevronDownIcon}
-        className="ml-3"
-      />
+      <CategoryToggle isExpanded={isExpanded} />
     </>
   )
 );

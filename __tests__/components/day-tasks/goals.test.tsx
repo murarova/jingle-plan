@@ -93,14 +93,14 @@ describe("Goals", () => {
         preloadedState: loggedInPreloadedState,
       });
       expect(screen.getByText("My global goal")).toBeTruthy();
-      expect(screen.getByText("Редагувати")).toBeTruthy();
+      expect(screen.getByLabelText("Редагувати")).toBeTruthy();
     });
 
     it("switches to edit mode when edit is pressed", () => {
       renderWithProviders(<Goals context={CONTEXT} data={savedData} />, {
         preloadedState: loggedInPreloadedState,
       });
-      fireEvent.press(screen.getByText("Редагувати"));
+      fireEvent.press(screen.getByLabelText("Редагувати"));
       expect(screen.getByPlaceholderText(TEXTAREA_PLACEHOLDER)).toBeTruthy();
     });
 
@@ -114,7 +114,7 @@ describe("Goals", () => {
       renderWithProviders(<Goals context={CONTEXT} data={savedData} />, {
         preloadedState: loggedInPreloadedState,
       });
-      fireEvent.press(screen.getByText("Видалити"));
+      fireEvent.press(screen.getByLabelText("Видалити"));
 
       await waitFor(() => {
         expect(removeTaskTrigger).toHaveBeenCalledWith({

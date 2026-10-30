@@ -1,14 +1,20 @@
 import { ScrollView } from "@/ui/scroll-view";
 import { Box } from "@/ui/box";
-import { Accordion, AccordionHeader, AccordionItem, AccordionTrigger } from "@/ui/accordion";
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/ui/accordion";
 import { memo, useCallback } from "react";
-import { months, PlansViewOptions } from "@/constants";
+import { months, PlansViewOptions, cardShadow } from "@/constants";
 import { EmptyScreen } from "../../../components/common/empty-screen";
 import isEmpty from "lodash/isEmpty";
 import { AccordionHeaderContent } from "./header";
 import { MonthPlansContent } from "./content";
 import { CompletePlanProps, PlansMonthViewProps } from "../context-view/types";
 import { PlanWithContext } from "./types";
+import { useSearchExpanded } from "../hooks/use-search-expanded";
 
 export const PlansMonthView = memo(
   ({
@@ -18,40 +24,47 @@ export const PlansMonthView = memo(
     handleCopyToNextYear,
     handleCompletePlan,
     openMonthSelect,
+    searchExpandedKey = "",
   }: PlansMonthViewProps) => {
     const handlePlanEdit = useCallback(
       (item: PlanWithContext) => {
         handleEditPlan(item, item.context);
       },
-      [handleEditPlan]
+      [handleEditPlan],
     );
 
     const handlePlanDelete = useCallback(
       (item: PlanWithContext) => {
         handleDeletePlan(item.id, item.context);
       },
-      [handleDeletePlan]
+      [handleDeletePlan],
     );
 
     const handlePlanComplete = useCallback(
       (props: CompletePlanProps) => {
         handleCompletePlan(props);
       },
-      [handleCompletePlan]
+      [handleCompletePlan],
     );
 
     const handlePlanMonthSelect = useCallback(
       (item: PlanWithContext) => {
         openMonthSelect(item, item.context);
       },
-      [openMonthSelect]
+      [openMonthSelect],
     );
 
     const handlePlanCopyToNextYear = useCallback(
       (item: PlanWithContext) => {
         handleCopyToNextYear(item, item.context);
       },
-      [handleCopyToNextYear]
+      [handleCopyToNextYear],
+    );
+
+    const firstMonth = months.find((month) => monthlyPlans[month.value]);
+    const [expanded, setExpanded] = useSearchExpanded(
+      firstMonth ? [firstMonth.value] : [],
+      searchExpandedKey,
     );
 
     if (isEmpty(monthlyPlans)) {
@@ -60,20 +73,30 @@ export const PlansMonthView = memo(
 
     return (
       <ScrollView>
-        <Box className="p-2 flex-1">
-          <Accordion key="month-view" type="multiple" className="my-2 rounded-lg">
+        <Box className="flex-1 px-4 pb-8">
+          <Accordion
+            key="month-view"
+            type="multiple"
+            value={expanded}
+            onValueChange={setExpanded}
+            className="bg-transparent"
+          >
             {months.map((month) => {
               const monthPlans = monthlyPlans[month.value];
               if (!monthPlans) return null;
 
               return (
-                <AccordionItem key={month.value} value={month.value} className="rounded-lg mb-5">
+                <AccordionItem
+                  key={month.value}
+                  value={month.value}
+                  className="mb-4 overflow-hidden rounded-3xl border border-ivory-line bg-ivory-card"
+                  style={cardShadow}
+                >
                   <AccordionHeader>
-                    <AccordionTrigger>
+                    <AccordionTrigger className="px-5 py-5">
                       {({ isExpanded }: { isExpanded: boolean }) => (
                         <AccordionHeaderContent
                           monthName={month.long}
-                          plansCount={monthPlans.length}
                           isExpanded={isExpanded}
                         />
                       )}
@@ -101,7 +124,7 @@ export const PlansMonthView = memo(
         </Box>
       </ScrollView>
     );
-  }
+  },
 );
 
 PlansMonthView.displayName = "PlansMonthView";

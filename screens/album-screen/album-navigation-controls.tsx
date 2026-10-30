@@ -14,7 +14,7 @@ interface AlbumNavigationControlsProps {
 export const AlbumNavigationControls = memo(
   ({ onBack, onForward, currentMonth }: AlbumNavigationControlsProps) => (
     <Box
-      className="flex-row items-center justify-between w-full rounded-full mt-3 bg-white shrink-0"
+      className="flex-row items-center justify-between w-full rounded-full mt-3 bg-ivory-card shrink-0"
       style={{ paddingHorizontal: 20, paddingVertical: 4, minHeight: 48 }}
     >
       <Button
@@ -29,9 +29,7 @@ export const AlbumNavigationControls = memo(
         />
       </Button>
       <Center className="flex-1">
-        <Text className="font-semibold text-typography-900">
-          {currentMonth}
-        </Text>
+        <Text className="font-semibold text-primaryText">{currentMonth}</Text>
       </Center>
       <Button
         onPress={onForward}

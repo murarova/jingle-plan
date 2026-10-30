@@ -4,3 +4,4 @@ export * from "./tasks";
 export * from "./i18n";
 export * from "./validation";
 export * from "./colors";
+export * from "./shadow";

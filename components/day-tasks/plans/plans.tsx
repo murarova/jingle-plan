@@ -1,5 +1,5 @@
-import { Button, ButtonText } from "@/ui/button";
 import { Box } from "@/ui/box";
+import { AppButton } from "@/components/common";
 import { useTranslation } from "react-i18next";
 import isEmpty from "lodash/isEmpty";
 import { AddPlanModal } from "./add-plan-modal";
@@ -33,9 +33,10 @@ export function Plans({ context, data }: PlansProps) {
 
   return (
     <Box>
-      <Button onPress={handleAddPlanBtn} className="rounded-lg">
-        <ButtonText>{t("screens.tasksOfTheDay.addPlanItem")}</ButtonText>
-      </Button>
+      <AppButton
+        label={t("screens.tasksOfTheDay.addPlanItem")}
+        onPress={handleAddPlanBtn}
+      />
       {!isEmpty(data) && (
         <Box className="mt-10">
           <PlansList

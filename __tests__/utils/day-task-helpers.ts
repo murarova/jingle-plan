@@ -35,7 +35,7 @@ export const mockSetImage = jest.fn((image: ImageData | null) => {
 });
 
 export const mockSaveImageFn = jest.fn(() =>
-  Promise.resolve("https://example.com/image.jpg")
+  Promise.resolve("https://example.com/image.jpg"),
 );
 
 export const mockSetIsLoading = jest.fn();
