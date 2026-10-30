@@ -30,9 +30,11 @@ export interface PlansContextEntry {
 
 export interface PlansContextViewProps extends PlansHandlers {
   contextEntries: PlansContextEntry[];
+  searchExpandedKey?: string;
 }
 
 export interface PlansMonthViewProps extends PlansHandlers {
   monthlyPlans: PlansMonthData;
+  searchExpandedKey?: string;
 }
 

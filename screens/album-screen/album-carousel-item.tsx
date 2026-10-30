@@ -22,7 +22,7 @@ export const AlbumCarouselItem = memo(({ item }: AlbumCarouselItemProps) => {
   return (
     <Box className="flex-1 w-full h-full flex-col">
       <Box
-        className={`${hasText ? "h-[70%]" : "flex-1"} bg-white p-[10px] items-center justify-center overflow-hidden`}
+        className={`${hasText ? "h-[70%]" : "flex-1"} bg-ivory-card p-[10px] items-center justify-center overflow-hidden`}
         style={{
           borderTopRightRadius: 8,
           borderTopLeftRadius: 8,

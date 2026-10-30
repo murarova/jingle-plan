@@ -1,7 +1,9 @@
 import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
+import { useEffect, useState } from "react";
 import { KeyboardAwareScroll, YoutubePlayer } from "../common";
 import { TaskItem } from "./task-item";
+import { DayTaskTab, TaskTabs } from "./task-tabs";
 import { DayTaskConfig, UserData } from "@/types";
 
 interface TaskListProps {
@@ -21,24 +23,44 @@ export function TasksList({
   currentDay,
   userData,
 }: TaskListProps) {
+  const [selectedTab, setSelectedTab] = useState<DayTaskTab>("day");
+
+  useEffect(() => {
+    setSelectedTab("day");
+  }, [currentDay]);
+
+  const activeTab: DayTaskTab =
+    selectedTab === "mood" && moodTaskConfig
+      ? "mood"
+      : dayTaskConfig
+        ? "day"
+        : "mood";
+  const activeConfig = activeTab === "mood" ? moodTaskConfig : dayTaskConfig;
+
   return (
     <KeyboardAwareScroll>
-      <Box>
-        {videoText && <Text className="pb-4">{videoText}</Text>}
-        {videoId && <YoutubePlayer videoId={videoId} />}
-        {dayTaskConfig && (
-          <TaskItem
-            currentDay={currentDay}
-            taskConfig={dayTaskConfig}
-            userData={userData}
-          />
+      <Box className="gap-5 pb-5">
+        {videoText && (
+          <Box className="rounded-3xl border border-ivory-line bg-ivory-card p-5">
+            <Text>{videoText}</Text>
+          </Box>
         )}
-        {moodTaskConfig && (
-          <TaskItem
-            currentDay={currentDay}
-            taskConfig={moodTaskConfig}
-            userData={userData}
-          />
+        {videoId && (
+          <Box className="rounded-3xl border border-ivory-line bg-ivory-card p-3">
+            <YoutubePlayer videoId={videoId} />
+          </Box>
+        )}
+        {activeConfig && (
+          <Box className="gap-3">
+            {dayTaskConfig && moodTaskConfig && (
+              <TaskTabs selected={activeTab} onChange={setSelectedTab} />
+            )}
+            <TaskItem
+              currentDay={currentDay}
+              taskConfig={activeConfig}
+              userData={userData}
+            />
+          </Box>
         )}
       </Box>
     </KeyboardAwareScroll>

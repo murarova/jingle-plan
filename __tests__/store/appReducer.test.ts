@@ -39,7 +39,7 @@ describe("appReducer", () => {
   it("clears the configuration when set to null", () => {
     const withConfig = appReducer(
       initialState,
-      setConfiguration({ foo: "bar" } as unknown as CalendarConfig)
+      setConfiguration({ foo: "bar" } as unknown as CalendarConfig),
     );
     const state = appReducer(withConfig, setConfiguration(null));
     expect(state.configuration).toBeNull();
@@ -47,7 +47,7 @@ describe("appReducer", () => {
 
   it("selectSelectedYear reads the slice", () => {
     expect(selectSelectedYear({ app: initialState })).toBe(
-      YEARS[YEARS.length - 1]
+      YEARS[YEARS.length - 1],
     );
   });
 });

@@ -105,7 +105,8 @@ export default {
     intro: {
       loginBtn: "Створити акаунт",
       signupBtn: "Увійти",
-      firstScreenText: "Привіт! \nЦе твій різдвяний планер \nJingle plan.",
+      brand: "Jingle plan",
+      firstScreenText: "Наповни своє життя цілями",
       secondScreenText: "Всього лише 15 хв на день.",
       thirdScreenText:
         "І за місяць у тебе готові \nпідсумки поточного року та плани на наступний рік.",
@@ -113,19 +114,18 @@ export default {
     },
     loginScreen: {
       title: "Увійдіть у свій обліковий запис",
-      noAccount: "Не маєте облікового запису?",
+      noAccount: "Ще немає акаунта?",
       signUpButton: "Зареєструватися",
       email: "Електронна пошта",
-      emailPlaceholder: "Введіть вашу електронну пошту",
+      emailPlaceholder: "Введи електронну пошту",
       password: "Пароль",
-      passwordPlaceholder: "Введіть ваш пароль",
+      passwordPlaceholder: "Введи пароль",
       loginButton: "Увійти",
       errorTitle: "Помилка входу",
       errorMessage: "Перевірте свої дані та спробуйте ще раз.",
       emptyFieldsMessage:
         "Поля електронної пошти та пароля не можуть бути порожніми.",
-      rememberMe: "Запам'ятати мене",
-      forgotPassword: "Забули пароль?",
+      forgotPassword: "Забув пароль?",
       resetSuccess: "Ми надіслали інструкції для відновлення на {{email}}.",
       invalidEmailPrompt:
         "Будь ласка, введіть дійсну пошту перед відновленням.",
@@ -149,10 +149,6 @@ export default {
       passwordMatchError: "Паролі не збігаються",
       invalidEmail: "Будь ласка, введіть дійсну електронну адресу",
       emptyName: "Ім'я обов'язкове",
-      savePasswordTitle: "Зберегти пароль?",
-      savePasswordMessage:
-        "Запам'ятати ці дані, щоб швидко увійти наступного разу?",
-      savePasswordConfirm: "Так, зберегти",
     },
     emptyScreen: "На сьогодні завдань немає",
     processText: "Виконано:",
@@ -162,7 +158,7 @@ export default {
     dashboardScreen: {
       goals: "Цілей",
       completed: "Виконано",
-      title: "Прогрес",
+      title: "Твій прогрес",
       tasks: "цілей",
       tasksSingular: "ціль",
       tasksFew: "цілі",
@@ -189,6 +185,9 @@ export default {
       everyMonthLabel: "Кожного місяця",
       byContext: "По сферах",
       byMonth: "По місяцях",
+      searchPlaceholder: "Пошук",
+      filter: "Фільтр",
+      noSearchResults: "Нічого не знайдено",
       globalGoalTitle: "Моя глобальна мета {{year}}:",
     },
     plansModal: {

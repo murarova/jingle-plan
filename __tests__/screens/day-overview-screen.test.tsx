@@ -5,7 +5,8 @@ import { renderWithProviders } from "../utils/render";
 import { TASK_CATEGORY, TaskOutputType } from "@/constants";
 
 jest.mock("../../screens/day-overview-screen/hooks/useDayTasks", () => ({
-  useDayTasks: () => require("../utils/day-overview-test-state").getDayOverviewState(),
+  useDayTasks: () =>
+    require("../utils/day-overview-test-state").getDayOverviewState(),
 }));
 
 jest.mock("../../components/tasks/tasks-list", () => ({
@@ -36,15 +37,26 @@ describe("DayOverviewScreen", () => {
 
   it("sets the navigation title from the current day", () => {
     renderWithProviders(
-      <DayOverviewScreen route={mockRoute as never} navigation={mockNavigation as never} />
+      <DayOverviewScreen
+        route={mockRoute as never}
+        navigation={mockNavigation as never}
+      />,
     );
-    expect(mockSetOptions).toHaveBeenCalledWith({ title: "01.12.2025" });
+    expect(mockSetOptions).toHaveBeenCalledWith({
+      title: "01.12.2025",
+      headerStyle: { backgroundColor: "#F4F0E6" },
+      headerShadowVisible: false,
+      cardStyle: { backgroundColor: "#F4F0E6" },
+    });
   });
 
   it("shows an empty state when there are no day tasks", () => {
     state.setDayOverviewState({ dayTasks: null, total: 0, error: null });
     renderWithProviders(
-      <DayOverviewScreen route={mockRoute as never} navigation={mockNavigation as never} />
+      <DayOverviewScreen
+        route={mockRoute as never}
+        navigation={mockNavigation as never}
+      />,
     );
     expect(screen.getByText("Поки що тут нічого немає")).toBeTruthy();
   });
@@ -78,7 +90,10 @@ describe("DayOverviewScreen", () => {
     });
 
     renderWithProviders(
-      <DayOverviewScreen route={mockRoute as never} navigation={mockNavigation as never} />
+      <DayOverviewScreen
+        route={mockRoute as never}
+        navigation={mockNavigation as never}
+      />,
     );
     expect(screen.getByText("42%")).toBeTruthy();
     expect(screen.getByText("TasksListMock")).toBeTruthy();
@@ -94,7 +109,10 @@ describe("DayOverviewScreen", () => {
     });
 
     renderWithProviders(
-      <DayOverviewScreen route={mockRoute as never} navigation={mockNavigation as never} />
+      <DayOverviewScreen
+        route={mockRoute as never}
+        navigation={mockNavigation as never}
+      />,
     );
     fireEvent.press(screen.getByText("Retry"));
     expect(mockRefresh).toHaveBeenCalledTimes(1);
@@ -108,7 +126,10 @@ describe("DayOverviewScreen", () => {
     });
 
     const view = renderWithProviders(
-      <DayOverviewScreen route={mockRoute as never} navigation={mockNavigation as never} />
+      <DayOverviewScreen
+        route={mockRoute as never}
+        navigation={mockNavigation as never}
+      />,
     );
 
     act(() => {
@@ -124,7 +145,7 @@ describe("DayOverviewScreen", () => {
         <DayOverviewScreen
           route={{ params: { currentDay: "2025-12-01" } } as never}
           navigation={mockNavigation as never}
-        />
+        />,
       );
     });
 

@@ -1,9 +1,8 @@
 import { HStack } from "@/ui/hstack";
 import { VStack } from "@/ui/vstack";
-import { Button, ButtonText } from "@/ui/button";
 import { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { AutoGrowingTextarea } from "../../common";
+import { AppButton, AutoGrowingTextarea } from "../../common";
 
 interface GoalsFormProps {
   text: string;
@@ -37,21 +36,19 @@ export const GoalsForm = memo(
           placeholder={placeholderText}
           onSubmitEditing={handleSubmit}
         />
-        <HStack space="sm" className="mt-2">
-          <Button
-            variant="outline"
+        <HStack className="mt-2 gap-3">
+          <AppButton
+            variant="secondary"
+            label={t("common.cancel")}
             onPress={onCancel}
-            className="flex-1 rounded-lg"
-          >
-            <ButtonText>{t("common.cancel")}</ButtonText>
-          </Button>
-          <Button
+            className="flex-1"
+          />
+          <AppButton
+            label={submitButtonText}
             onPress={handleSubmit}
             accessibilityLabel="Save goals"
-            className="flex-1 rounded-lg"
-          >
-            <ButtonText>{submitButtonText}</ButtonText>
-          </Button>
+            className="flex-1"
+          />
         </HStack>
       </VStack>
     );

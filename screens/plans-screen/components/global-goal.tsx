@@ -13,11 +13,11 @@ export const GlobalGoal = memo(({ text, year }: GlobalGoalProps) => {
   const { t } = useTranslation();
 
   return (
-    <Center className="pt-4 pb-2">
-      <Text className="pb-2">
+    <Center className="px-4 pb-4">
+      <Text className="pb-1 text-secondaryText">
         {t("screens.plansScreen.globalGoalTitle", { year: Number(year) + 1 })}
       </Text>
-      <Heading size="sm" className="text-center">
+      <Heading size="sm" className="text-center text-primaryText">
         {text}
       </Heading>
     </Center>

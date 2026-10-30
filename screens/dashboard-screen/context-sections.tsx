@@ -9,18 +9,16 @@ interface ContextSectionsProps {
 }
 
 export const ContextSections = memo(({ contextData }: ContextSectionsProps) => (
-  <Box className="mt-[10px] flex-wrap flex-row">
+  <Box className="-mx-1.5 flex-row flex-wrap">
     {Object.values(TASK_CONTEXT).map((context) => {
       const data = contextData[context];
       if (!data) return null;
 
       return (
-        <Box key={context} className="w-[50%]">
+        <Box key={context} className="mb-3 w-1/2 px-1.5">
           <DashboardContextSection
             context={context}
             percentage={data.donePercentage}
-            totalTasks={data.totalTasks}
-            doneTasks={data.doneTasks}
           />
         </Box>
       );

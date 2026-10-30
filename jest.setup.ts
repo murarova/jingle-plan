@@ -124,12 +124,6 @@ jest.mock("react-native-safe-area-context", () => {
   };
 });
 
-jest.mock("./services/password-storage", () => ({
-  saveCredentials: jest.fn(() => Promise.resolve()),
-  loadCredentials: jest.fn(() => Promise.resolve(null)),
-  clearCredentials: jest.fn(() => Promise.resolve()),
-}));
-
 jest.mock("./services/storage", () => ({
   getUserFromStorage: jest.fn(() => Promise.resolve(null)),
   saveUserToStorage: jest.fn(() => Promise.resolve()),

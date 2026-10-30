@@ -8,6 +8,8 @@ import { useTranslation } from "react-i18next";
 import { SCREENS } from "@/constants";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Alert } from "react-native";
+import { typeRole } from "@/constants/typography";
+import { colors } from "@/constants/colors";
 import { useAppDispatch, useAppSelector } from "../../store/withTypes";
 import { clearUser } from "../../store/authReducer";
 import {
@@ -17,6 +19,20 @@ import {
 import { useGetUserProfileQuery } from "../../services/api";
 import { RootStackParamList } from "@/navigation/types";
 import { resolveErrorMessage } from "@/utils";
+
+const menuSurfaceStyle = {
+  borderRadius: 16,
+  paddingVertical: 0,
+  overflow: "visible" as const,
+  shadowColor: "#2B211A",
+  shadowOffset: { width: 0, height: 6 },
+  shadowOpacity: 0.12,
+  shadowRadius: 10,
+  elevation: 6,
+};
+
+const actionItemClass =
+  "min-h-[48px] bg-ivory-card px-4 py-[13px] data-[active=true]:bg-ivory-badge";
 
 export function AppMenu() {
   const { t } = useTranslation();
@@ -80,91 +96,102 @@ export function AppMenu() {
     );
   }
 
+  const actions = [
+    {
+      key: "subscription",
+      textValue: "Subscription",
+      label: t("common.manageSubscription"),
+      icon: Crown,
+      onPress: handleManageSubscription,
+    },
+    {
+      key: "Logout",
+      textValue: "Logout",
+      label: t("common.logout"),
+      icon: LogOut,
+      onPress: handleLogout,
+    },
+    {
+      key: "Delete",
+      textValue: "Delete",
+      label: t("common.deleteAccount"),
+      icon: Trash2,
+      onPress: handleDeleteAccount,
+      destructive: true,
+    },
+  ];
+
   return (
-    <Box className="pr-[10px]">
+    <Box className="pr-4">
       <Menu
         placement="bottom right"
         offset={6}
-        trigger={(triggerProps) => {
-          return (
-            <Pressable
-              {...triggerProps}
-              accessibilityRole="button"
-              hitSlop={12}
-              delayPressIn={0}
-              collapsable={false}
-              className="min-h-[44px] min-w-[44px] items-center justify-center"
-            >
-              <Icon as={MenuIcon} className="h-6 w-6 text-warmGray-800" />
-            </Pressable>
-          );
-        }}
+        style={menuSurfaceStyle}
+        trigger={(triggerProps) => (
+          <Pressable
+            {...triggerProps}
+            accessibilityRole="button"
+            hitSlop={8}
+            delayPressIn={0}
+            collapsable={false}
+            className="h-10 w-10 items-center justify-center rounded-[14px] border border-ivory-line bg-ivory-card"
+          >
+            <Icon
+              as={MenuIcon}
+              className="h-[21px] w-[21px] text-primaryText"
+            />
+          </Pressable>
+        )}
       >
         <MenuItem
           key="welcome"
           textValue="welcome"
           disabled
-          className="rounded-t-lg p-0"
+          className="rounded-b-none rounded-t-2xl border-b-[0.5px] border-ivory-line bg-ivory-card p-0 data-[disabled=true]:opacity-100"
         >
           <Box
-            className="p-3 w-full"
-            style={{
-              borderBottomWidth: 1,
-              borderBottomColor: "#e7e5e4",
-            }}
-          >
-            <Text className="text-sm text-warmGray-600 mb-1">
+            pointerEvents="none"
+            className="absolute -top-[5px] right-[18px] h-2.5 w-2.5 bg-ivory-card"
+            style={{ transform: [{ rotate: "45deg" }] }}
+          />
+          <Box className="w-full px-4 py-3">
+            <Text className={`${typeRole.supporting} mb-1 text-secondaryText`}>
               {t("common.welcome")}
             </Text>
-            <Text className="text-base font-semibold text-warmGray-800">
+            <Text className={`${typeRole.button} text-primaryText`}>
               {userProfile?.name || "User"}
             </Text>
           </Box>
         </MenuItem>
+        {actions.map((action, index) => {
+          const isLast = index === actions.length - 1;
+          const color = action.destructive
+            ? colors.primary500
+            : colors.primaryText;
 
-        {/* Switching languages will not be a part of v1 */}
-        {/* {Object.keys(LANGUAGES).map((lng) => (
-        <MenuItem
-          key={LANGUAGES[lng].icon}
-          onPress={() => handleLanguageChanged(lng)}
-          textValue={LANGUAGES[lng].nativeName}
-        >
-          <Box mr={8}>
-            <CountryFlag isoCode={LANGUAGES[lng].icon} size={16} />
-          </Box>
-
-          <MenuItemLabel size="sm">{LANGUAGES[lng].nativeName}</MenuItemLabel>
-        </MenuItem>
-      ))} */}
-        <MenuItem
-          key="subscription"
-          onPress={handleManageSubscription}
-          textValue="Subscription"
-          className="p-3 min-h-[48px] active:bg-coolGray-100 hover:bg-coolGray-50"
-        >
-          <Icon as={Crown} size="sm" className="mr-3 text-amber-500" />
-          <Text className="text-base">{t("common.manageSubscription")}</Text>
-        </MenuItem>
-        <MenuItem
-          key="Logout"
-          onPress={handleLogout}
-          textValue="Logout"
-          className="p-3 min-h-[48px] active:bg-coolGray-200 hover:bg-coolGray-100"
-        >
-          <Icon as={LogOut} size="sm" className="mr-3" />
-          <Text className="text-base">{t("common.logout")}</Text>
-        </MenuItem>
-        <MenuItem
-          key="Delete"
-          onPress={handleDeleteAccount}
-          textValue="Delete"
-          className="rounded-b-lg p-3 min-h-[48px] active:bg-red-100 hover:bg-red-50"
-        >
-          <Icon as={Trash2} size="sm" className="mr-3 text-red-600" />
-          <Text className="text-base text-red-600">
-            {t("common.deleteAccount")}
-          </Text>
-        </MenuItem>
+          return (
+            <MenuItem
+              key={action.key}
+              onPress={action.onPress}
+              textValue={action.textValue}
+              className={
+                isLast
+                  ? `${actionItemClass} rounded-b-2xl rounded-t-none`
+                  : `${actionItemClass} rounded-none border-b-[0.5px] border-ivory-line`
+              }
+            >
+              <Icon
+                as={action.icon}
+                size="sm"
+                className="mr-3"
+                style={{ color }}
+              />
+              <Text className={typeRole.body} style={{ color }}>
+                {action.label}
+              </Text>
+            </MenuItem>
+          );
+        })}
       </Menu>
     </Box>
   );

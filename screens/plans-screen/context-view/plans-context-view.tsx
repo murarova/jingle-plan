@@ -1,12 +1,18 @@
 import { ScrollView } from "@/ui/scroll-view";
 import { Box } from "@/ui/box";
-import { Accordion, AccordionHeader, AccordionItem, AccordionTrigger } from "@/ui/accordion";
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/ui/accordion";
 import { memo, useCallback } from "react";
-import { PlansViewOptions } from "@/constants";
+import { PlansViewOptions, cardShadow } from "@/constants";
 import { PlanScreenData, TaskContext } from "@/types";
 import { AccordionHeaderContent } from "./header";
 import { PlansAccordionContent } from "./content";
 import { CompletePlanProps, PlansContextViewProps } from "./types";
+import { useSearchExpanded } from "../hooks/use-search-expanded";
 
 export const PlansContextView = memo(
   ({
@@ -16,51 +22,67 @@ export const PlansContextView = memo(
     handleDeletePlan,
     handleCopyToNextYear,
     handleCompletePlan,
+    searchExpandedKey = "",
   }: PlansContextViewProps) => {
     const handleMonthSelectForContext = useCallback(
       (item: PlanScreenData, context: TaskContext) => {
         openMonthSelect(item, context);
       },
-      [openMonthSelect]
+      [openMonthSelect],
     );
 
     const handleEditForContext = useCallback(
       (item: PlanScreenData, context: TaskContext) => {
         handleEditPlan(item, context);
       },
-      [handleEditPlan]
+      [handleEditPlan],
     );
 
     const handleDeleteForContext = useCallback(
       (item: PlanScreenData, context: TaskContext) => {
         handleDeletePlan(item.id, context);
       },
-      [handleDeletePlan]
+      [handleDeletePlan],
     );
 
     const handleCompleteForContext = useCallback(
       (props: CompletePlanProps) => {
         handleCompletePlan(props);
       },
-      [handleCompletePlan]
+      [handleCompletePlan],
+    );
+
+    const [expanded, setExpanded] = useSearchExpanded(
+      contextEntries[0] ? [contextEntries[0].context] : [],
+      searchExpandedKey,
     );
 
     return (
       <ScrollView>
-        <Box className="p-2 flex-1">
-          <Accordion key="context-view" type="multiple" className="my-2 rounded-lg">
+        <Box className="flex-1 px-4 pb-8">
+          <Accordion
+            key="context-view"
+            type="multiple"
+            value={expanded}
+            onValueChange={setExpanded}
+            className="bg-transparent"
+          >
             {contextEntries.map(({ context, plans }) => {
               if (!plans?.length) return null;
 
               return (
-                <AccordionItem key={context} value={context} className="rounded-lg mb-5">
+                <AccordionItem
+                  key={context}
+                  value={context}
+                  className="mb-4 overflow-hidden rounded-3xl border border-ivory-line bg-ivory-card"
+                  style={cardShadow}
+                >
                   <AccordionHeader>
-                    <AccordionTrigger>
+                    <AccordionTrigger className="px-5 py-5">
                       {({ isExpanded }: { isExpanded: boolean }) => (
                         <AccordionHeaderContent
                           context={context}
                           isExpanded={isExpanded}
-                          plansCount={plans.length}
                         />
                       )}
                     </AccordionTrigger>
@@ -91,7 +113,7 @@ export const PlansContextView = memo(
         </Box>
       </ScrollView>
     );
-  }
+  },
 );
 
 PlansContextView.displayName = "PlansContextView";

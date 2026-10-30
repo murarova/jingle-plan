@@ -5,7 +5,6 @@ import {
   useCallback,
   useRef,
   useContext,
-  useMemo,
   useEffect,
 } from "react";
 import {
@@ -26,6 +25,8 @@ import {
   initialWindowMetrics,
 } from "react-native-safe-area-context";
 import { KeyboardAvoidingView } from "@/ui/keyboard-avoiding-view";
+import { colors } from "@/constants/colors";
+import { bodyFontSize, systemFontFamily } from "@/constants/typography";
 
 const FALLBACK_INSETS = { top: 0, right: 0, bottom: 0, left: 0 };
 
@@ -43,12 +44,13 @@ export const AutoGrowingTextarea = memo(
       {
         style,
         containerStyle,
-        minHeight = 100,
+        minHeight = 176,
         maxHeight = 250,
         expandable = true,
         value,
         defaultValue,
         onChangeText,
+        placeholderTextColor = colors.secondaryText,
         ...rest
       },
       ref,
@@ -66,10 +68,6 @@ export const AutoGrowingTextarea = memo(
           : typeof defaultValue === "string"
             ? defaultValue
             : "",
-      );
-      const sizeStyle = useMemo(
-        () => ({ minHeight, maxHeight }),
-        [minHeight, maxHeight],
       );
       const insets =
         useContext(SafeAreaInsetsContext) ??
@@ -137,20 +135,26 @@ export const AutoGrowingTextarea = memo(
 
       return (
         <View style={[styles.container, containerStyle]}>
-          <View style={styles.compactWrapper}>
+          <View style={[styles.compactWrapper, { minHeight }]}>
             <TextInput
               {...rest}
-              key={isControlled ? "controlled" : `uncontrolled-${compactSession}`}
+              key={
+                isControlled ? "controlled" : `uncontrolled-${compactSession}`
+              }
               ref={setCompactRef}
               {...(isControlled
                 ? { value }
-                : { defaultValue: compactSession === 0 ? defaultValue : textRef.current })}
+                : {
+                    defaultValue:
+                      compactSession === 0 ? defaultValue : textRef.current,
+                  })}
               onChangeText={handleChange}
+              placeholderTextColor={placeholderTextColor}
               multiline
               style={[
                 styles.textarea,
                 expandable && styles.textareaWithIcon,
-                sizeStyle,
+                { maxHeight },
                 style,
               ]}
               underlineColorAndroid="transparent"
@@ -164,7 +168,7 @@ export const AutoGrowingTextarea = memo(
                 accessibilityRole="button"
                 accessibilityLabel="Expand textarea"
               >
-                <Maximize2 size={18} color="#737373" />
+                <Maximize2 size={18} color={colors.secondaryText} />
               </Pressable>
             ) : null}
           </View>
@@ -200,7 +204,7 @@ export const AutoGrowingTextarea = memo(
                       accessibilityRole="button"
                       accessibilityLabel="Collapse textarea"
                     >
-                      <Minimize2 size={20} color="#737373" />
+                      <Minimize2 size={20} color={colors.secondaryText} />
                     </Pressable>
                   </View>
                   <ScrollView
@@ -216,6 +220,7 @@ export const AutoGrowingTextarea = memo(
                       multiline
                       scrollEnabled={false}
                       defaultValue={expandedDefaultValue}
+                      placeholderTextColor={placeholderTextColor}
                       onChangeText={handleExpandedChange}
                       onLayout={focusExpandedInput}
                       style={styles.expandedTextarea}
@@ -240,30 +245,34 @@ const styles = StyleSheet.create({
   compactWrapper: {
     position: "relative",
     width: "100%",
+    overflow: "hidden",
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: colors.ivoryLine,
+    backgroundColor: colors.ivoryCard,
   },
   textarea: {
     width: "100%",
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: "#D4D4D4",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 16,
-    lineHeight: 22,
-    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontFamily: systemFontFamily,
+    fontSize: bodyFontSize,
+    lineHeight: 24,
+    color: colors.primaryText,
+    backgroundColor: "transparent",
   },
   textareaWithIcon: {
     paddingRight: 40,
   },
   expandButton: {
     position: "absolute",
-    top: 8,
-    right: 8,
+    top: 14,
+    right: 16,
     padding: 4,
   },
   expandedSafeArea: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.ivoryPage,
   },
   expandedRoot: {
     flex: 1,
@@ -287,9 +296,10 @@ const styles = StyleSheet.create({
     minHeight: 240,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    fontSize: 16,
-    lineHeight: 22,
-    color: "#000000",
+    fontFamily: systemFontFamily,
+    fontSize: bodyFontSize,
+    lineHeight: 24,
+    color: colors.primaryText,
   },
 });
 

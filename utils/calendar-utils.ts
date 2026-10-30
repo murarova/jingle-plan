@@ -1,4 +1,6 @@
 import { LocaleConfig } from "react-native-calendars";
+import { colors } from "@/constants/colors";
+import { systemFontFamily, secondaryFontSize } from "@/constants/typography";
 
 export const setupCalendarLocale = (locale: string): void => {
   if (locale === "uk") {
@@ -51,32 +53,44 @@ export const setupCalendarLocale = (locale: string): void => {
 };
 
 export const calendarTheme: Record<string, any> = {
-  textDayHeaderFontWeight: "600",
-  textDayHeaderFontSize: 13,
+  calendarBackground: "transparent",
+  backgroundColor: "transparent",
+  textSectionTitleColor: colors.secondaryText,
+  textDayHeaderFontWeight: "500",
+  textDayHeaderFontSize: 14,
   "stylesheet.calendar.main": {
+    container: {
+      paddingLeft: 0,
+      paddingRight: 0,
+      backgroundColor: "transparent",
+    },
     week: {
-      marginVertical: 15,
+      marginTop: 0,
+      marginBottom: 28,
       flexDirection: "row",
-      justifyContent: "space-around",
+      justifyContent: "space-between",
     },
   },
   "stylesheet.calendar.header": {
     header: {
-      display: "none",
+      height: 0,
+      opacity: 0,
     },
     week: {
-      marginTop: 7,
+      marginTop: 0,
+      marginBottom: 28,
       flexDirection: "row",
-      justifyContent: "space-around",
+      justifyContent: "space-between",
       width: "100%",
     },
     dayHeader: {
-      flex: 1,
+      width: 41,
       textAlign: "center",
-      color: "#292524",
-      fontWeight: "500",
-      fontSize: 13,
-      marginBottom: 15,
+      color: colors.secondaryText,
+      fontWeight: "400",
+      fontSize: secondaryFontSize,
+      fontFamily: systemFontFamily,
+      marginBottom: 0,
       includeFontPadding: false,
     },
   },

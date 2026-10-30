@@ -14,7 +14,7 @@ import { mockReplace, resetNavigationMocks } from "../mocks/navigation";
 import { SCREENS } from "@/constants";
 
 jest.mock("@react-navigation/native", () =>
-  require("../mocks/navigation").mockNavigationModule()
+  require("../mocks/navigation").mockNavigationModule(),
 );
 
 jest.mock("../../services/auth-api-rtk", () => ({
@@ -23,17 +23,17 @@ jest.mock("../../services/auth-api-rtk", () => ({
   useSendPasswordResetMutation: () => mockSendPasswordResetMutation(),
 }));
 
-const EMAIL_PLACEHOLDER = "Введіть вашу електронну пошту";
-const PASSWORD_PLACEHOLDER = "Введіть ваш пароль";
+const EMAIL_PLACEHOLDER = "Введи електронну пошту";
+const PASSWORD_PLACEHOLDER = "Введи пароль";
 
 const fillCredentials = (
   email = "user@example.com",
-  password = "Password1"
+  password = "Password1",
 ) => {
   fireEvent.changeText(screen.getByPlaceholderText(EMAIL_PLACEHOLDER), email);
   fireEvent.changeText(
     screen.getByPlaceholderText(PASSWORD_PLACEHOLDER),
-    password
+    password,
   );
 };
 
@@ -60,7 +60,8 @@ describe("LoginScreen", () => {
     it("renders sign-in and forgot-password actions", () => {
       renderWithProviders(<LoginScreen />);
       expect(screen.getByText("Увійти")).toBeTruthy();
-      expect(screen.getByText("Забули пароль?")).toBeTruthy();
+      expect(screen.getByText("Забув пароль?")).toBeTruthy();
+      expect(screen.queryByText("Запам'ятати мене")).toBeNull();
     });
   });
 
@@ -71,7 +72,7 @@ describe("LoginScreen", () => {
       fireEvent.changeText(emailInput, "not-an-email");
       fireEvent(emailInput, "blur");
       expect(
-        screen.getByText("Будь ласка, введіть дійсну електронну адресу")
+        screen.getByText("Будь ласка, введіть дійсну електронну адресу"),
       ).toBeTruthy();
     });
 
@@ -82,7 +83,7 @@ describe("LoginScreen", () => {
       fireEvent(emailInput, "blur");
       fireEvent(emailInput, "focus");
       expect(
-        screen.queryByText("Будь ласка, введіть дійсну електронну адресу")
+        screen.queryByText("Будь ласка, введіть дійсну електронну адресу"),
       ).toBeNull();
     });
   });
@@ -128,12 +129,12 @@ describe("LoginScreen", () => {
     it("blocks reset and alerts when email is empty", async () => {
       renderWithProviders(<LoginScreen />);
 
-      fireEvent.press(screen.getByText("Забули пароль?"));
+      fireEvent.press(screen.getByText("Забув пароль?"));
 
       await waitFor(() => {
         expect(alertSpy).toHaveBeenCalledWith(
           "Помилка",
-          "Введіть вашу електронну адресу, щоб отримати інструкції."
+          "Введіть вашу електронну адресу, щоб отримати інструкції.",
         );
       });
       expect(sendPasswordResetTrigger).not.toHaveBeenCalled();
@@ -143,10 +144,10 @@ describe("LoginScreen", () => {
       renderWithProviders(<LoginScreen />);
       fireEvent.changeText(
         screen.getByPlaceholderText(EMAIL_PLACEHOLDER),
-        "user@example.com"
+        "user@example.com",
       );
 
-      fireEvent.press(screen.getByText("Забули пароль?"));
+      fireEvent.press(screen.getByText("Забув пароль?"));
 
       await waitFor(() => {
         expect(sendPasswordResetTrigger).toHaveBeenCalledWith({
@@ -155,7 +156,7 @@ describe("LoginScreen", () => {
       });
       expect(alertSpy).toHaveBeenCalledWith(
         "Виконано",
-        "Ми надіслали інструкції для відновлення на user@example.com."
+        "Ми надіслали інструкції для відновлення на user@example.com.",
       );
     });
   });

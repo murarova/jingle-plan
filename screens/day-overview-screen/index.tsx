@@ -10,6 +10,7 @@ import isNil from "lodash/isNil";
 import { useDayTasks } from "./hooks/useDayTasks";
 import { HomeStackParamList } from "../home-screen";
 import { ProgressBar, EmptyState } from "../../components/common";
+import { colors } from "@/constants/colors";
 
 type Props = StackScreenProps<HomeStackParamList, "DayOverview">;
 
@@ -34,6 +35,9 @@ const DayOverviewScreen: React.FC<Props> = memo(({ route, navigation }) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: moment(currentDay).format("DD.MM.YYYY"),
+      headerStyle: { backgroundColor: colors.ivoryPage },
+      headerShadowVisible: false,
+      cardStyle: { backgroundColor: colors.ivoryPage },
     });
   }, [currentDay, navigation]);
 
@@ -49,7 +53,7 @@ const DayOverviewScreen: React.FC<Props> = memo(({ route, navigation }) => {
 
   return (
     <Box className="flex-1">
-      <Box className="p-2 flex-1">
+      <Box className="flex-1 gap-5 px-4 pt-5">
         {dayTasks ? (
           <>
             <ProgressBar total={total} t={t} />

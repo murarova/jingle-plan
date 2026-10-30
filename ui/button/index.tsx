@@ -41,13 +41,13 @@ const buttonStyle = tva({
       solid:
         'bg-primary-500 border-0 data-[hover=true]:bg-primary-600 data-[active=true]:bg-primary-700',
       outline:
-        'bg-transparent border border-primary-300 data-[hover=true]:bg-backgroundLight-50 data-[active=true]:bg-transparent',
+        'bg-transparent border border-primary-300 data-[hover=true]:bg-ivory-badge data-[active=true]:bg-transparent',
       secondary:
         'bg-secondary-500 border-0 data-[hover=true]:bg-secondary-600 data-[active=true]:bg-secondary-700',
       destructive:
         'bg-red-500 border-0 data-[hover=true]:bg-red-600 data-[active=true]:bg-red-700',
       ghost:
-        'bg-transparent data-[hover=true]:bg-backgroundLight-50 data-[active=true]:bg-transparent',
+        'bg-transparent data-[hover=true]:bg-ivory-badge data-[active=true]:bg-transparent',
       link: 'h-auto min-h-0 px-0 py-0 bg-transparent border-0 data-[hover=true]:bg-transparent data-[active=true]:bg-transparent',
     },
     size: {
@@ -72,7 +72,7 @@ const buttonStyle = tva({
   },
 });
 const buttonTextStyle = tva({
-  base: 'font-body font-semibold web:select-none',
+  base: 'ios:font-system android:font-roboto ios:font-semibold android:font-medium web:select-none',
   parentVariants: {
     variant: {
       default: 'text-typography-0',
@@ -80,17 +80,17 @@ const buttonTextStyle = tva({
       secondary: 'text-typography-0',
       destructive: 'text-typography-0',
       outline: 'text-primary-600 data-[active=true]:text-primary-700',
-      ghost: 'text-typography-900',
+      ghost: 'text-primaryText',
       link: 'text-primary-600 data-[hover=true]:underline data-[active=true]:underline',
     },
     size: {
-      xs: 'text-xs',
-      sm: 'text-sm',
-      default: 'text-base',
-      md: 'text-base',
-      lg: 'text-lg',
-      xl: 'text-xl',
-      icon: 'text-sm',
+      xs: 'ios:text-[13px] ios:leading-[18px] android:text-[12px] android:leading-[16px]',
+      sm: 'ios:text-[15px] ios:leading-[20px] android:text-[14px] android:leading-[20px]',
+      default: 'ios:text-[17px] ios:leading-[22px] android:text-[16px] android:leading-[20px]',
+      md: 'ios:text-[17px] ios:leading-[22px] android:text-[16px] android:leading-[20px]',
+      lg: 'ios:text-[18px] ios:leading-[24px] android:text-[17px] android:leading-[22px]',
+      xl: 'ios:text-[20px] ios:leading-[26px] android:text-[18px] android:leading-[24px]',
+      icon: 'ios:text-[15px] android:text-[14px]',
     },
   },
 });
@@ -119,7 +119,7 @@ const buttonIconStyle = tva({
       secondary: 'text-typography-0',
       destructive: 'text-typography-0',
       outline: 'text-primary-600 data-[active=true]:text-primary-700',
-      ghost: 'text-typography-900',
+      ghost: 'text-primaryText',
       link: 'text-primary-600',
     },
     size: {

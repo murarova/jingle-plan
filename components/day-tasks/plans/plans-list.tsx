@@ -1,18 +1,33 @@
 import { Heading } from "@/ui/heading";
 import { ScrollView } from "@/ui/scroll-view";
 import { Divider } from "@/ui/divider";
-import { Icon } from "@/ui/icon";
-import { Menu, MenuItem, MenuItemLabel, MenuSeparator } from "@/ui/menu";
+import { Menu, MenuItem, MenuSeparator } from "@/ui/menu";
 import { Button, ButtonIcon } from "@/ui/button";
 import { VStack } from "@/ui/vstack";
 import { HStack } from "@/ui/hstack";
 import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
-import { EditIcon, Trash2, Ellipsis } from "lucide-react-native";
+import { colors } from "@/constants/colors";
+import { Ellipsis } from "lucide-react-native";
 import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { PlanData } from "@/types";
 import * as Haptics from "expo-haptics";
+
+const menuSurfaceStyle = {
+  width: 223,
+  borderRadius: 16,
+  paddingVertical: 0,
+  overflow: "visible" as const,
+  shadowColor: "#2B211A",
+  shadowOffset: { width: 0, height: 6 },
+  shadowOpacity: 0.12,
+  shadowRadius: 10,
+  elevation: 6,
+};
+
+const actionItemClass =
+  "bg-ivory-card px-4 py-[13px] data-[active=true]:bg-ivory-badge";
 
 interface PlansListProps {
   plans: PlanData[] | null;
@@ -36,56 +51,56 @@ export function PlansList({ plans, onEdit, onDelete, title }: PlansListProps) {
                   <Text>{item?.text}</Text>
                 </Box>
                 <Menu
-                  placement="top"
-                  trigger={({ ...triggerProps }) => {
-                    return (
-                      <Button
-                        className="px-3 py-2"
-                        variant="link"
-                        {...triggerProps}
-                        onPress={(e) => {
-                          try {
-                            Haptics.impactAsync(
-                              Haptics.ImpactFeedbackStyle.Light,
-                            );
-                          } catch {}
-                          triggerProps.onPress?.(e);
-                        }}
-                      >
-                        <ButtonIcon as={Ellipsis} className="text-black" />
-                      </Button>
-                    );
-                  }}
-                  className="mr-2"
-                  style={{ backgroundColor: "#FFFFFF", paddingVertical: 0 }}
+                  placement="bottom right"
+                  offset={6}
+                  style={menuSurfaceStyle}
+                  trigger={(triggerProps) => (
+                    <Button
+                      className="h-11 w-11"
+                      variant="link"
+                      {...triggerProps}
+                      onPress={(e) => {
+                        try {
+                          Haptics.impactAsync(
+                            Haptics.ImpactFeedbackStyle.Light,
+                          );
+                        } catch {}
+                        triggerProps.onPress?.(e);
+                      }}
+                    >
+                      <ButtonIcon as={Ellipsis} className="text-primaryText" />
+                    </Button>
+                  )}
                 >
                   <MenuItem
                     key="edit"
                     textValue="edit"
                     onPress={() => onEdit(item)}
-                    className="rounded-t-lg flex bg-[#fff] justify-between p-3 min-h-[48px] active:bg-coolGray-200 hover:bg-coolGray-100"
+                    className={`${actionItemClass} rounded-b-none rounded-t-2xl`}
                   >
-                    <MenuItemLabel className="text-base">
-                      {t("common.edit")}
-                    </MenuItemLabel>
-                    <Icon as={EditIcon} size="sm" className="ml-3" />
+                    <Box
+                      pointerEvents="none"
+                      className="absolute -top-[5px] right-[18px] h-2.5 w-2.5 bg-ivory-card"
+                      style={{ transform: [{ rotate: "45deg" }] }}
+                    />
+                    <Text>{t("common.edit")}</Text>
                   </MenuItem>
                   <MenuSeparator />
-
                   <MenuItem
                     key="delete"
                     textValue="delete"
                     onPress={() => onDelete(item)}
-                    className="rounded-b-lg bg-[#fff] flex justify-between p-3 min-h-[48px] active:bg-red-100 hover:bg-red-50"
+                    className={`${actionItemClass} rounded-b-2xl rounded-t-none`}
                   >
-                    <MenuItemLabel className="text-base text-red-600">
+                    <Text style={{ color: colors.primary500 }}>
                       {t("common.delete")}
-                    </MenuItemLabel>
-                    <Icon as={Trash2} size="sm" className="ml-3 text-red-600" />
+                    </Text>
                   </MenuItem>
                 </Menu>
               </HStack>
-              {index !== array.length - 1 && <Divider />}
+              {index !== array.length - 1 && (
+                <Divider className="w-full bg-ivory-line" />
+              )}
             </Fragment>
           );
         })}

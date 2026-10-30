@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, AlertButton } from "react-native";
+import { Alert } from "react-native";
 import { fireEvent, screen, waitFor } from "@testing-library/react-native";
 import { RegisterScreen } from "../../screens/register-screen";
 import { renderWithProviders } from "../utils/render";
@@ -153,12 +153,6 @@ describe("RegisterScreen", () => {
 
   describe("submit", () => {
     it("creates the user and profile, then navigates home", async () => {
-      alertSpy.mockImplementation(
-        (_title?: string, _msg?: string, buttons?: AlertButton[]) => {
-          buttons?.[1]?.onPress?.();
-        }
-      );
-
       const { store } = renderWithProviders(<RegisterScreen />);
       fillForm();
 
@@ -167,6 +161,7 @@ describe("RegisterScreen", () => {
       await waitFor(() => {
         expect(mockReplace).toHaveBeenCalledWith(SCREENS.HOME);
       });
+      expect(alertSpy).not.toHaveBeenCalled();
       expect(createUserTrigger).toHaveBeenCalledWith({
         email: "anna@example.com",
         password: "Password1",

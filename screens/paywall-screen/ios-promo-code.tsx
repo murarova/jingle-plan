@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, ButtonText } from "@/ui/button";
+import { AppButton } from "@/components/common";
 
 type IosPromoCodeProps = {
   isDisabled: boolean;
@@ -17,16 +17,13 @@ export const IosPromoCode = memo(
     }
 
     return (
-      <Button
-        variant="outline"
-        isDisabled={isDisabled}
+      <AppButton
+        variant="secondary"
+        label={t("paywall.promoCta")}
         onPress={onRedeem}
-        className="mt-3 rounded-xl border-primary-600"
-      >
-        <ButtonText className="text-primary-600">
-          {t("paywall.promoCta")}
-        </ButtonText>
-      </Button>
+        isDisabled={isDisabled}
+        className="mt-3"
+      />
     );
   },
 );

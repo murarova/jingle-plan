@@ -6,10 +6,13 @@ import { SCREENS } from "@/constants";
 import type { SerializableUser } from "../../types/user";
 
 jest.mock("@react-navigation/native", () =>
-  require("../mocks/navigation").mockNavigationModule()
+  require("../mocks/navigation").mockNavigationModule(),
 );
 
-const mockUseCalendarDayManager = jest.fn(() => ({ isLoading: false }));
+const mockUseCalendarDayManager = jest.fn(() => ({
+  isLoading: false,
+  isInitialLoading: false,
+}));
 
 jest.mock("../../hooks/useCalendarDayManager", () => ({
   useCalendarDayManager: () => mockUseCalendarDayManager(),
@@ -27,7 +30,10 @@ const testUser: SerializableUser = {
 describe("LoadingScreen", () => {
   beforeEach(() => {
     resetNavigationMocks();
-    mockUseCalendarDayManager.mockReturnValue({ isLoading: false });
+    mockUseCalendarDayManager.mockReturnValue({
+      isLoading: false,
+      isInitialLoading: false,
+    });
   });
 
   it("renders an empty screen while resolving auth", () => {
@@ -59,7 +65,10 @@ describe("LoadingScreen", () => {
   });
 
   it("does not navigate while a logged-in user's data is still loading", () => {
-    mockUseCalendarDayManager.mockReturnValue({ isLoading: true });
+    mockUseCalendarDayManager.mockReturnValue({
+      isLoading: true,
+      isInitialLoading: true,
+    });
     renderWithProviders(<LoadingScreen />, {
       withNavigation: false,
       preloadedState: {

@@ -7,6 +7,7 @@ import { tva } from "@gluestack-ui/utils/nativewind-utils";
 import { cssInterop } from "nativewind";
 import React from "react";
 import { Platform, Pressable, Text, View, ViewStyle } from "react-native";
+import { colors } from "@/constants/colors";
 import Animated, { FadeOut, ZoomIn } from "react-native-reanimated";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
@@ -31,11 +32,11 @@ const menuShadowStyle: ViewStyle = Platform.select({
 })!;
 
 const menuStyle = tva({
-  base: "rounded-sm bg-white",
+  base: "rounded-sm bg-ivory-card",
 });
 
 const menuItemStyle = tva({
-  base: "w-full p-3 flex-row items-center rounded data-[hover=true]:bg-backgroundLight-100 data-[active=true]:bg-backgroundLight-200 data-[focus=true]:bg-backgroundLight-100 data-[focus=true]:web:outline-none data-[focus=true]:web:outline-0 data-[disabled=true]:opacity-40 data-[disabled=true]:web:cursor-not-allowed data-[disabled=true]:data-[focus=true]:bg-transparent",
+  base: "w-full p-3 flex-row items-center rounded data-[hover=true]:bg-ivory-badge data-[active=true]:bg-ivory-line data-[focus=true]:bg-ivory-badge data-[focus=true]:web:outline-none data-[focus=true]:web:outline-0 data-[disabled=true]:opacity-40 data-[disabled=true]:web:cursor-not-allowed data-[disabled=true]:data-[focus=true]:bg-transparent",
 });
 
 const menuBackdropStyle = tva({
@@ -43,11 +44,11 @@ const menuBackdropStyle = tva({
 });
 
 const menuSeparatorStyle = tva({
-  base: "bg-backgroundLight-200 h-px w-full",
+  base: "bg-ivory-line h-px w-full",
 });
 
 const menuItemLabelStyle = tva({
-  base: "text-typography-900 font-normal font-body",
+  base: "text-primaryText font-normal font-body",
 
   variants: {
     isTruncated: {
@@ -154,7 +155,7 @@ const Menu = React.forwardRef<React.ComponentRef<typeof UIMenu>, IMenuProps>(
         style={[
           {
             width: 260,
-            backgroundColor: "#FFFFFF",
+            backgroundColor: colors.ivoryCard,
             borderRadius: 4,
             paddingVertical: 8,
           },

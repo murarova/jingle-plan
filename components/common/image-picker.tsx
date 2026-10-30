@@ -52,7 +52,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
   return (
     <Box>
       {showPreview && (
-        <Box className="relative h-[300px] w-full overflow-hidden rounded-lg bg-backgroundLight-50">
+        <Box className="relative h-[300px] w-full overflow-hidden rounded-lg bg-ivory-badge">
           {image && (
             <ImageBackground
               style={{ flex: 1, justifyContent: "center" }}
@@ -67,7 +67,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
       )}
       {edit && (
         <Button
-          className="mt-2"
+          className="mt-4"
           variant="link"
           onPress={pickImage}
           isDisabled={isImageLoading}

@@ -26,7 +26,7 @@ export const SkiingSantaSvg = (props) => (
       style={{
         stroke: "none",
         fillRule: "nonzero",
-        fill: "#4bb4ad",
+        fill: "#7EB344",
         fillOpacity: 1,
       }}
     />
@@ -61,7 +61,7 @@ export const SkiingSantaSvg = (props) => (
       style={{
         stroke: "none",
         fillRule: "nonzero",
-        fill: "#4bb4ad",
+        fill: "#7EB344",
         fillOpacity: 1,
       }}
     />
@@ -83,7 +83,7 @@ export const SkiingSantaSvg = (props) => (
       style={{
         stroke: "none",
         fillRule: "nonzero",
-        fill: "#4bb4ad",
+        fill: "#7EB344",
         fillOpacity: 1,
       }}
     />
@@ -92,7 +92,7 @@ export const SkiingSantaSvg = (props) => (
       style={{
         stroke: "none",
         fillRule: "nonzero",
-        fill: "#fe434c",
+        fill: "#DC6A55",
         fillOpacity: 1,
       }}
     />
@@ -190,7 +190,7 @@ export const SkiingSantaSvg = (props) => (
       style={{
         stroke: "none",
         fillRule: "nonzero",
-        fill: "#fe434c",
+        fill: "#DC6A55",
         fillOpacity: 1,
       }}
     />
@@ -256,7 +256,7 @@ export const SkiingSantaSvg = (props) => (
       style={{
         stroke: "none",
         fillRule: "nonzero",
-        fill: "#fe434c",
+        fill: "#DC6A55",
         fillOpacity: 1,
       }}
     />
@@ -371,7 +371,7 @@ export const SkiingSantaSvg = (props) => (
       style={{
         stroke: "none",
         fillRule: "nonzero",
-        fill: "#fe434c",
+        fill: "#DC6A55",
         fillOpacity: 1,
       }}
     />
@@ -508,7 +508,7 @@ export const SkiingSantaSvg = (props) => (
       style={{
         stroke: "none",
         fillRule: "nonzero",
-        fill: "#fe434c",
+        fill: "#DC6A55",
         fillOpacity: 1,
       }}
     />
@@ -517,7 +517,7 @@ export const SkiingSantaSvg = (props) => (
       style={{
         stroke: "none",
         fillRule: "nonzero",
-        fill: "#fe434c",
+        fill: "#DC6A55",
         fillOpacity: 1,
       }}
     />

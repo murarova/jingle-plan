@@ -8,18 +8,18 @@ import {
 
 describe("getProgressBackgroundColor", () => {
   it("returns red below 30", () => {
-    expect(getProgressBackgroundColor(0)).toBe("#FF656C");
-    expect(getProgressBackgroundColor(29)).toBe("#FF656C");
+    expect(getProgressBackgroundColor(0)).toBe("#DC6A55");
+    expect(getProgressBackgroundColor(29)).toBe("#DC6A55");
   });
 
   it("returns yellow between 30 and 69", () => {
-    expect(getProgressBackgroundColor(30)).toBe("#FAC515");
-    expect(getProgressBackgroundColor(69)).toBe("#FAC515");
+    expect(getProgressBackgroundColor(30)).toBe("#D9A62E");
+    expect(getProgressBackgroundColor(69)).toBe("#D9A62E");
   });
 
   it("returns green at 70 and above", () => {
-    expect(getProgressBackgroundColor(70)).toBe("#4bb4ad");
-    expect(getProgressBackgroundColor(100)).toBe("#4bb4ad");
+    expect(getProgressBackgroundColor(70)).toBe("#7EB344");
+    expect(getProgressBackgroundColor(100)).toBe("#7EB344");
   });
 });
 
@@ -35,8 +35,8 @@ describe("getProgressColorByValue", () => {
   });
 
   it("returns green at 70 and above", () => {
-    expect(getProgressColorByValue(70)).toBe("bg-green-400");
-    expect(getProgressColorByValue(100)).toBe("bg-green-400");
+    expect(getProgressColorByValue(70)).toBe("bg-progressGreen");
+    expect(getProgressColorByValue(100)).toBe("bg-progressGreen");
   });
 });
 

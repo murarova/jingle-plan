@@ -1,19 +1,19 @@
-import { VStack } from "@/ui/vstack";
 import { Text } from "@/ui/text";
 import { Pressable } from "@/ui/pressable";
 import { Input, InputField, InputSlot, InputIcon } from "@/ui/input";
 import { Heading } from "@/ui/heading";
-import { ButtonText, Button } from "@/ui/button";
+import { AppButton } from "@/components/common";
 import { Box } from "@/ui/box";
 import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { SafeAreaView } from "../../components/common/safe-area-view";
-import { Alert, Keyboard, Platform, Switch } from "react-native";
-import { SCREENS, EMAIL_REGEX } from "@/constants";
+import { Alert, Keyboard, Platform, TextStyle } from "react-native";
+import { SCREENS, EMAIL_REGEX, colors } from "@/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { KeyboardAvoidingView } from "@/ui/keyboard-avoiding-view";
 import { ScrollView } from "@/ui/scroll-view";
+import { typeRole } from "@/constants/typography";
 import {
   useSignInUserMutation,
   useSendPasswordResetMutation,
@@ -24,21 +24,28 @@ import { convertToSerializableUser } from "../../types/user";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/navigation/types";
 import { resolveErrorMessage } from "@/utils";
-import {
-  saveCredentials,
-  loadCredentials,
-  clearCredentials,
-} from "../../services/password-storage";
 import * as Haptics from "expo-haptics";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Login">;
+
+const MUTED = "#756e63";
+
+const captionStyle: TextStyle = {
+  fontSize: 14,
+  lineHeight: 16,
+  fontWeight: "500",
+};
+
+const mutedCaptionStyle: TextStyle = {
+  ...captionStyle,
+  color: MUTED,
+};
 
 export const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const dispatch = useAppDispatch();
   const [signInUser] = useSignInUserMutation();
   const [sendPasswordReset, { isLoading: isResetLoading }] =
@@ -67,43 +74,15 @@ export const LoginScreen = () => {
   };
   const handleState = () => setShowPassword((prevState) => !prevState);
 
-  useEffect(() => {
-    let isMounted = true;
-
-    (async () => {
-      const stored = await loadCredentials();
-      if (!isMounted || !stored) return;
-
-      setEmail(stored.email);
-      setPassword(stored.password);
-      setRememberMe(true);
-    })();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const handleRememberToggle = useCallback((value: boolean) => {
-    setRememberMe(value);
-    if (!value) {
-      clearCredentials();
-    }
-  }, []);
-
   const goToMainFlow = async () => {
     try {
-      try {
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      } catch {}
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    } catch {}
+
+    try {
       dispatch(setAuthLoading());
       const user = await signInUser({ email, password }).unwrap();
       dispatch(setUser(convertToSerializableUser(user)));
-      if (rememberMe) {
-        await saveCredentials(email, password);
-      } else {
-        await clearCredentials();
-      }
       nav.replace(SCREENS.HOME);
     } catch (error) {
       const message =
@@ -164,89 +143,108 @@ export const LoginScreen = () => {
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
         >
-        <SafeAreaView className="flex-1">
-          <Box className="flex-col p-[10px] pt-[30px] justify-center">
-            <Box className="pb-[10px]">
-              <Heading>{t("screens.loginScreen.title")}</Heading>
-            </Box>
-            <Box className="flex-col items-start mt-[20px] mb-[30px]">
-              <Text className="mr-[10px]">
-                {t("screens.loginScreen.noAccount")}
-              </Text>
-              <Button variant="link" onPress={goToRegistration}>
-                <ButtonText>{t("screens.loginScreen.signUpButton")}</ButtonText>
-              </Button>
-            </Box>
-            <Box>
-              <VStack space="sm" className="mb-[30px]">
-                <Text>{t("screens.loginScreen.email")}</Text>
-                <Input>
-                  <InputField
-                    value={email}
-                    onChangeText={setEmail}
-                    onBlur={() => validateEmail(email)}
-                    onFocus={() => setEmailError("")}
-                    autoCapitalize="none"
-                    inputMode="email"
-                    placeholder={t("screens.loginScreen.emailPlaceholder")}
-                  />
-                </Input>
-                {emailError ? (
-                  <Text size="sm" className="text-red-500">
-                    {emailError}
-                  </Text>
-                ) : null}
-              </VStack>
-              <VStack space="sm" className="mb-[20px]">
-                <Text>{t("screens.loginScreen.password")}</Text>
-                <Input>
-                  <InputField
-                    value={password}
-                    onChangeText={setPassword}
-                    type={showPassword ? "text" : "password"}
-                    placeholder={t("screens.loginScreen.passwordPlaceholder")}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    textContentType="password"
-                    autoComplete="password"
-                  />
-                  <InputSlot onPress={handleState} className="pr-3">
-                    <InputIcon
-                      as={showPassword ? EyeIcon : EyeOffIcon}
-                      className="text-darkBlue-500"
+          <SafeAreaView className="flex-1">
+            <Box className="flex-1 justify-between">
+              <Box className="w-full px-6 pt-10">
+                <Heading
+                  size="2xl"
+                  className="w-full text-center text-primaryText"
+                >
+                  {t("screens.intro.brand")}
+                </Heading>
+                <Box className="gap-8 pt-[72px]">
+                  <Heading size="lg" className="text-primaryText">
+                    {t("screens.loginScreen.title")}
+                  </Heading>
+                  <Box className="gap-6">
+                    <Box className="gap-1">
+                      <Text className="text-primaryText" style={captionStyle}>
+                        {t("screens.loginScreen.email")}
+                      </Text>
+                      <Input className="h-11 rounded-lg bg-ivory-card">
+                        <InputField
+                          value={email}
+                          onChangeText={setEmail}
+                          onBlur={() => validateEmail(email)}
+                          onFocus={() => setEmailError("")}
+                          autoCapitalize="none"
+                          inputMode="email"
+                          textContentType="username"
+                          autoComplete="username"
+                          importantForAutofill="yes"
+                          placeholder={t("screens.loginScreen.emailPlaceholder")}
+                          placeholderTextColor={colors.secondaryText}
+                          className="px-4"
+                        />
+                      </Input>
+                      {emailError ? (
+                        <Text size="sm" className="text-red-500">
+                          {emailError}
+                        </Text>
+                      ) : null}
+                    </Box>
+                    <Box className="gap-1">
+                      <Text className="text-primaryText" style={captionStyle}>
+                        {t("screens.loginScreen.password")}
+                      </Text>
+                      <Input className="h-11 rounded-lg bg-ivory-card">
+                        <InputField
+                          value={password}
+                          onChangeText={setPassword}
+                          type={showPassword ? "text" : "password"}
+                          placeholder={t(
+                            "screens.loginScreen.passwordPlaceholder",
+                          )}
+                          placeholderTextColor={colors.secondaryText}
+                          autoCapitalize="none"
+                          autoCorrect={false}
+                          textContentType="password"
+                          autoComplete="password"
+                          importantForAutofill="yes"
+                          className="px-4"
+                        />
+                        <InputSlot onPress={handleState} className="pr-4">
+                          <InputIcon
+                            as={showPassword ? EyeIcon : EyeOffIcon}
+                            className="text-[#756e63]"
+                          />
+                        </InputSlot>
+                      </Input>
+                    </Box>
+                    <Pressable
+                      onPress={handlePasswordReset}
+                      disabled={isResetLoading}
+                      className="h-8 items-end justify-center"
+                      accessibilityRole="button"
+                    >
+                      <Text style={mutedCaptionStyle}>
+                        {t("screens.loginScreen.forgotPassword")}
+                      </Text>
+                    </Pressable>
+                    <AppButton
+                      label={t("screens.loginScreen.loginButton")}
+                      isDisabled={!email || !password || !!emailError}
+                      onPress={goToMainFlow}
+                      className="w-full"
                     />
-                  </InputSlot>
-                </Input>
-              </VStack>
+                  </Box>
+                </Box>
+              </Box>
+              <Box className="items-center gap-3 px-6 pt-8">
+                <Text style={mutedCaptionStyle}>
+                  {t("screens.loginScreen.noAccount")}
+                </Text>
+                <Pressable
+                  onPress={goToRegistration}
+                  accessibilityRole="button"
+                >
+                  <Text className={`${typeRole.button} text-primaryText`}>
+                    {t("screens.loginScreen.signUpButton")}
+                  </Text>
+                </Pressable>
+              </Box>
             </Box>
-            <Box className="flex-row items-center justify-between mb-[20px]">
-              <Text>{t("screens.loginScreen.rememberMe")}</Text>
-              <Switch
-                testID="remember-me-switch"
-                value={rememberMe}
-                onValueChange={handleRememberToggle}
-              />
-            </Box>
-            <Button
-              variant="link"
-              onPress={handlePasswordReset}
-              isDisabled={isResetLoading}
-              className="self-end mb-[20px]"
-            >
-              <ButtonText className="text-black">
-                {t("screens.loginScreen.forgotPassword")}
-              </ButtonText>
-            </Button>
-            <Button
-              variant="default"
-              isDisabled={!email || !password || !!emailError}
-              onPress={goToMainFlow}
-              className="mb-[30px]"
-            >
-              <ButtonText>{t("screens.loginScreen.loginButton")}</ButtonText>
-            </Button>
-          </Box>
-        </SafeAreaView>
+          </SafeAreaView>
         </ScrollView>
       </KeyboardAvoidingView>
     </Pressable>

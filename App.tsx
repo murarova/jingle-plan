@@ -3,6 +3,7 @@ import "./global.css";
 import "./i18n/i18n";
 import "./navigation/fcm-background";
 import { StatusBar } from "react-native";
+import { colors } from "@/constants/colors";
 import { Provider } from "react-redux";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -16,8 +17,10 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <GluestackUIProvider mode="light">
-        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-        <GestureHandlerRootView style={{ flex: 1 }}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.ivoryPage} />
+        <GestureHandlerRootView
+          style={{ flex: 1, backgroundColor: colors.ivoryPage }}
+        >
           <Provider store={store}>
             <IAPProvider>
               <UnsavedChangesProvider>

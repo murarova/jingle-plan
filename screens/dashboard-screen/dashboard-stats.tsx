@@ -1,4 +1,3 @@
-import { View } from "@/ui/view";
 import { HStack } from "@/ui/hstack";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
@@ -15,22 +14,16 @@ export const DashboardStats = memo(({ totalData }: DashboardStatsProps) => {
   const { t } = useTranslation();
 
   return (
-    <HStack className="justify-between mt-[20px] pb-4 px-4">
-      <View className="flex-1 items-center justify-center">
-        <ProgressStat
-          value={totalData.totalTasks}
-          label={getPluralForm(totalData.totalTasks, t)}
-        />
-      </View>
-      <View className="flex-1 items-center">
-        <CircularProgressIndicator percentage={totalData.donePercentage} />
-      </View>
-      <View className="flex-1 items-center justify-center">
-        <ProgressStat
-          value={totalData.doneTasks}
-          label={t("screens.dashboardScreen.completed")}
-        />
-      </View>
+    <HStack className="h-[204px] items-center justify-between rounded-3xl border border-ivory-line bg-ivory-card px-3">
+      <ProgressStat
+        value={totalData.totalTasks}
+        label={getPluralForm(totalData.totalTasks, t)}
+      />
+      <CircularProgressIndicator percentage={totalData.donePercentage} />
+      <ProgressStat
+        value={totalData.doneTasks}
+        label={t("screens.dashboardScreen.completed")}
+      />
     </HStack>
   );
 });

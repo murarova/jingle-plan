@@ -12,6 +12,7 @@ import {
   FlatList,
   SectionList,
   ViewStyle,
+  useWindowDimensions,
 } from 'react-native';
 import {
   SafeAreaInsetsContext,
@@ -110,15 +111,15 @@ const actionsheetStyle = tva({
 });
 
 const actionsheetContentStyle = tva({
-  base: 'items-center rounded-tl-3xl rounded-tr-3xl p-2 bg-white max-h-[70%] web:pointer-events-auto web:select-none shadow-hard-5',
+  base: 'items-center rounded-tl-3xl rounded-tr-3xl p-2 bg-ivory-card max-h-full web:pointer-events-auto web:select-none shadow-hard-5',
 });
 
 const actionsheetItemStyle = tva({
-  base: 'w-full flex-row items-center p-3 rounded-sm data-[disabled=true]:opacity-40 data-[disabled=true]:web:pointer-events-auto data-[disabled=true]:web:cursor-not-allowed data-[hover=true]:bg-backgroundLight-100 data-[active=true]:bg-backgroundLight-200 data-[checked=true]:bg-backgroundLight-300 data-[focus=true]:bg-backgroundLight-100 web:data-[focus-visible=true]:bg-backgroundLight-100',
+  base: 'w-full flex-row items-center p-3 rounded-sm data-[disabled=true]:opacity-40 data-[disabled=true]:web:pointer-events-auto data-[disabled=true]:web:cursor-not-allowed data-[hover=true]:bg-ivory-badge data-[active=true]:bg-ivory-line data-[checked=true]:bg-ivory-badge data-[focus=true]:bg-ivory-badge web:data-[focus-visible=true]:bg-ivory-badge',
 });
 
 const actionsheetItemTextStyle = tva({
-  base: 'text-typography-700 font-normal font-body tracking-md text-left mx-2',
+  base: 'text-primaryText font-normal font-body tracking-md text-left mx-2',
   variants: {
     isTruncated: {
       true: '',
@@ -136,7 +137,7 @@ const actionsheetItemTextStyle = tva({
       '2xs': 'text-2xs',
       'xs': 'text-xs',
       'sm': 'text-sm',
-      'md': 'text-base',
+      'md': 'text-[17px] leading-[22px]',
       'lg': 'text-lg',
       'xl': 'text-xl',
       '2xl': 'text-2xl',
@@ -164,7 +165,7 @@ const actionsheetBackdropStyle = tva({
 });
 
 const actionsheetScrollViewStyle = tva({
-  base: 'w-full h-auto',
+  base: 'w-full',
 });
 
 const actionsheetVirtualizedListStyle = tva({
@@ -442,12 +443,20 @@ const ActionsheetBackdrop = React.forwardRef<
 const ActionsheetScrollView = React.forwardRef<
   React.ComponentRef<typeof UIActionsheet.ScrollView>,
   IActionsheetScrollViewProps
->(function ActionsheetScrollView({ className, ...props }, ref) {
+>(function ActionsheetScrollView({ className, style, ...props }, ref) {
+  const insets =
+    useContext(SafeAreaInsetsContext) ??
+    initialWindowMetrics?.insets ??
+    FALLBACK_INSETS;
+  const { height } = useWindowDimensions();
+  const maxHeight = height - insets.top - insets.bottom - 48;
+
   return (
     <UIActionsheet.ScrollView
       className={actionsheetScrollViewStyle({
         class: className,
       })}
+      style={[{ maxHeight, flexGrow: 0 }, style]}
       ref={ref}
       {...props}
     />

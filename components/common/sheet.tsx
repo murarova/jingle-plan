@@ -5,6 +5,7 @@ import React, {
   useRef,
 } from "react";
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import { colors } from "@/constants/colors";
 
 export type SheetRef = {
   show: () => void;
@@ -43,8 +44,8 @@ export const Sheet = forwardRef<SheetRef, SheetProps>(
         snapPoints={snapPoints}
         backdropComponent={renderBackdrop}
         footerComponent={footerComponent}
-        handleIndicatorStyle={{ backgroundColor: "grey" }}
-        style={{ backgroundColor: "#FFFFFF", borderRadius: 13 }}
+        handleIndicatorStyle={{ backgroundColor: colors.ivoryLine }}
+        style={{ backgroundColor: colors.ivoryCard, borderRadius: 13 }}
         enableDynamicSizing={false}
       >
         {children}

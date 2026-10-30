@@ -73,7 +73,7 @@ const tabsIndicatorStyle = tva({
   parentVariants: {
     variant: {
       underlined: 'border-b  border-primary',
-      filled: 'bg-background z-20  rounded-lg',
+      filled: 'bg-card z-20  rounded-lg',
     },
   },
 });

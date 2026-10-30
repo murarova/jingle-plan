@@ -21,9 +21,5 @@ module.exports = {
     "!**/index.{ts,tsx}",
     "!config/**",
   ],
-  coveragePathIgnorePatterns: [
-    "/node_modules/",
-    "/__tests__/",
-    "/firebase/",
-  ],
+  coveragePathIgnorePatterns: ["/node_modules/", "/__tests__/", "/firebase/"],
 };

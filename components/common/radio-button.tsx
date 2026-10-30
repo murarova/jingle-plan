@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+} from "react-native";
 
 interface RadioButtonProps {
   value: string;
@@ -28,19 +34,31 @@ export const RadioButton: React.FC<RadioButtonProps> = ({
     small: {
       radioCircle: { width: 16, height: 16, borderRadius: 8 },
       radioDot: { width: 6, height: 6, borderRadius: 3 },
-      text: { fontSize: 14, color: "#525252" },
+      text: {
+        fontFamily: Platform.select({ ios: "System", android: "sans-serif" }),
+        fontSize: Platform.select({ ios: 15, android: 14, default: 15 }),
+        color: "#525252",
+      },
       padding: 8,
     },
     medium: {
       radioCircle: { width: 20, height: 20, borderRadius: 10 },
       radioDot: { width: 8, height: 8, borderRadius: 4 },
-      text: { fontSize: 16, color: "#525252" },
+      text: {
+        fontFamily: Platform.select({ ios: "System", android: "sans-serif" }),
+        fontSize: Platform.select({ ios: 17, android: 16, default: 17 }),
+        color: "#525252",
+      },
       padding: 12,
     },
     large: {
       radioCircle: { width: 24, height: 24, borderRadius: 12 },
       radioDot: { width: 10, height: 10, borderRadius: 5 },
-      text: { fontSize: 18, color: "#525252" },
+      text: {
+        fontFamily: Platform.select({ ios: "System", android: "sans-serif" }),
+        fontSize: Platform.select({ ios: 17, android: 16, default: 17 }),
+        color: "#525252",
+      },
       padding: 16,
     },
   };
@@ -89,7 +107,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   radioButtonSelected: {
-    backgroundColor: "#fe434c",
+    backgroundColor: "#DC6A55",
   },
   radioButtonDisabled: {
     opacity: 0.5,
@@ -103,20 +121,20 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   radioCircleSelected: {
-    borderColor: "#fe434c",
+    borderColor: "#DC6A55",
   },
   radioCircleDisabled: {
     borderColor: "#9CA3AF",
   },
   radioDot: {
-    backgroundColor: "#fe434c",
+    backgroundColor: "#DC6A55",
   },
   radioText: {
     color: "#000",
     flex: 1,
   },
   radioTextSelected: {
-    color: "#fe434c",
+    color: "#DC6A55",
   },
   radioTextDisabled: {
     color: "#9CA3AF",

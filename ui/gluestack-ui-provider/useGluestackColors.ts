@@ -62,8 +62,8 @@ export function useCalendarTheme(): Record<string, string> {
   const palette = useGluestackColors();
 
   return {
-    backgroundColor: palette.background || '#ffffff',
-    calendarBackground: palette.background || '#ffffff',
+    backgroundColor: palette.background || '#F4F0E6',
+    calendarBackground: palette.background || '#F4F0E6',
     textSectionTitleColor: palette.mutedForeground || '#737373',
     selectedDayBackgroundColor: palette.primary || '#171717',
     selectedDayTextColor: palette.primaryForeground || '#fafafa',

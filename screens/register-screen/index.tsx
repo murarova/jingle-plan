@@ -1,18 +1,17 @@
-import { VStack } from "@/ui/vstack";
 import { Text } from "@/ui/text";
 import { Pressable } from "@/ui/pressable";
 import { Input, InputField, InputSlot, InputIcon } from "@/ui/input";
-import { Heading } from "@/ui/heading";
-import { ButtonText, Button } from "@/ui/button";
+import { AppButton } from "@/components/common";
 import { Box } from "@/ui/box";
 import { useNavigation } from "@react-navigation/native";
 import { useRef, useState } from "react";
 import { SafeAreaView } from "../../components/common/safe-area-view";
-import { Alert, Keyboard, Platform } from "react-native";
+import { Alert, Keyboard, Platform, TextStyle } from "react-native";
 import * as Haptics from "expo-haptics";
-import { SCREENS, EMAIL_REGEX, PASSWORD_REGEX } from "@/constants";
+import { SCREENS, EMAIL_REGEX, PASSWORD_REGEX, colors } from "@/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
+import { typeRole } from "@/constants/typography";
 import { KeyboardAvoidingView } from "@/ui/keyboard-avoiding-view";
 import { ScrollView } from "@/ui/scroll-view";
 import { useAppDispatch } from "../../store/withTypes";
@@ -23,12 +22,15 @@ import { useCreateProfileMutation } from "../../services/api";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/navigation/types";
 import { resolveErrorMessage } from "@/utils";
-import {
-  saveCredentials,
-  clearCredentials,
-} from "../../services/password-storage";
+import { Heading } from "@/ui/heading";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Register">;
+
+const captionStyle: TextStyle = {
+  fontSize: 14,
+  lineHeight: 16,
+  fontWeight: "500",
+};
 
 export const RegisterScreen = () => {
   const [name, setName] = useState("");
@@ -128,40 +130,11 @@ export const RegisterScreen = () => {
         email: user.email || trimmedEmail,
       }).unwrap();
 
-      const shouldRemember = await new Promise<boolean>((resolve) => {
-        Alert.alert(
-          t("screens.registerScreen.savePasswordTitle"),
-          t("screens.registerScreen.savePasswordMessage"),
-          [
-            {
-              text: t("common.cancel"),
-              style: "cancel",
-              onPress: () => {
-                clearCredentials().finally(() => resolve(false));
-              },
-            },
-            {
-              text: t("screens.registerScreen.savePasswordConfirm"),
-              onPress: () => {
-                saveCredentials(trimmedEmail, currentPassword)
-                  .then(() => resolve(true))
-                  .catch(() => resolve(false));
-              },
-            },
-          ],
-        );
-      });
-
-      if (!shouldRemember) {
-        await clearCredentials();
-      }
-
       dispatch(setUser(serializableUser));
       nav.replace(SCREENS.HOME);
     } catch (error) {
       const message =
-        resolveErrorMessage(error) ??
-        t("errors.generic", "An error occurred");
+        resolveErrorMessage(error) ?? t("errors.generic", "An error occurred");
 
       dispatch(setAuthError(message));
       Alert.alert(t("common.error"), message);
@@ -199,122 +172,162 @@ export const RegisterScreen = () => {
           keyboardDismissMode="on-drag"
         >
           <SafeAreaView className="flex-1">
-          <Box className="p-[10px]">
-            <Box className="pb-[10px]">
-              <Heading>{t("screens.registerScreen.title")}</Heading>
-            </Box>
-            <Box className="flex-row items-center mb-[30px]">
-              <Text className="mr-[10px]">
-                {t("screens.registerScreen.subtitle")}
-              </Text>
-              <Button
-                variant="link"
-                onPress={() => {
-                  try {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  } catch {}
-                  nav.push(SCREENS.LOGIN);
-                }}
-              >
-                <ButtonText>{t("screens.registerScreen.loginBtn")}</ButtonText>
-              </Button>
-            </Box>
-            <Box>
-              <VStack space="sm" className="mb-[20px]">
-                <Text>{t("screens.registerScreen.name")}</Text>
-                <Input>
-                  <InputField
-                    value={name}
-                    onChangeText={handleNameChange}
-                    onBlur={() => validateName(name)}
-                    onFocus={() => setNameError("")}
-                    inputMode="text"
-                    placeholder={t("screens.registerScreen.name")}
-                  />
-                </Input>
-                {nameError ? (
-                  <Text size="sm" className="text-red-500">
-                    {nameError}
-                  </Text>
-                ) : null}
-              </VStack>
-              <VStack space="sm" className="mb-[20px]">
-                <Text>{t("screens.registerScreen.email")}</Text>
-                <Input>
-                  <InputField
-                    value={email}
-                    onChangeText={setEmail}
-                    onBlur={() => validateEmail(email)}
-                    onFocus={() => setEmailError("")}
-                    autoCapitalize="none"
-                    inputMode="text"
-                    placeholder={t("screens.registerScreen.email")}
-                  />
-                </Input>
-                {emailError ? (
-                  <Text size="sm" className="text-red-500">
-                    {emailError}
-                  </Text>
-                ) : null}
-              </VStack>
-              <VStack space="sm" className="mb-[10px]">
-                <Text>{t("screens.registerScreen.password")}</Text>
-                <Input>
-                  <InputField
-                    value={password}
-                    type={showPassword ? "text" : "password"}
-                    onChangeText={handlePasswordChange}
-                    placeholder={t("screens.registerScreen.password")}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    textContentType="newPassword"
-                    autoComplete="new-password"
-                  />
-                  <InputSlot onPress={handleState} className="pr-3">
-                    <InputIcon
-                      as={showPassword ? EyeIcon : EyeOffIcon}
-                      className="text-darkBlue-500"
+            <Box className="flex-1 justify-between">
+              <Box className="w-full px-6 pt-10">
+                <Heading
+                  size="2xl"
+                  className="w-full text-center text-primaryText"
+                >
+                  {t("screens.intro.brand")}
+                </Heading>
+                <Box className="gap-8 pt-[72px]">
+                  <Heading size="lg" className="text-primaryText">
+                    {t("screens.registerScreen.title")}
+                  </Heading>
+                  <Box className="gap-6">
+                    <Box className="gap-1">
+                      <Text className="text-primaryText" style={captionStyle}>
+                        {t("screens.registerScreen.name")}
+                      </Text>
+                      <Input className="h-11 rounded-lg bg-ivory-card">
+                        <InputField
+                          value={name}
+                          onChangeText={handleNameChange}
+                          onBlur={() => validateName(name)}
+                          onFocus={() => setNameError("")}
+                          inputMode="text"
+                          placeholder={t("screens.registerScreen.name")}
+                          placeholderTextColor={colors.secondaryText}
+                          className="px-4"
+                        />
+                      </Input>
+                      {nameError ? (
+                        <Text size="sm" className="text-red-500">
+                          {nameError}
+                        </Text>
+                      ) : null}
+                    </Box>
+                    <Box className="gap-1">
+                      <Text className="text-primaryText" style={captionStyle}>
+                        {t("screens.registerScreen.email")}
+                      </Text>
+                      <Input className="h-11 rounded-lg bg-ivory-card">
+                        <InputField
+                          value={email}
+                          onChangeText={setEmail}
+                          onBlur={() => validateEmail(email)}
+                          onFocus={() => setEmailError("")}
+                          autoCapitalize="none"
+                          inputMode="email"
+                          textContentType="username"
+                          autoComplete="username"
+                          importantForAutofill="yes"
+                          placeholder={t("screens.registerScreen.email")}
+                          placeholderTextColor={colors.secondaryText}
+                          className="px-4"
+                        />
+                      </Input>
+                      {emailError ? (
+                        <Text size="sm" className="text-red-500">
+                          {emailError}
+                        </Text>
+                      ) : null}
+                    </Box>
+                    <Box className="gap-1">
+                      <Text className="text-primaryText" style={captionStyle}>
+                        {t("screens.registerScreen.password")}
+                      </Text>
+                      <Input className="h-11 rounded-lg bg-ivory-card">
+                        <InputField
+                          value={password}
+                          type={showPassword ? "text" : "password"}
+                          onChangeText={handlePasswordChange}
+                          placeholder={t("screens.registerScreen.password")}
+                          placeholderTextColor={colors.secondaryText}
+                          autoCapitalize="none"
+                          autoCorrect={false}
+                          textContentType="newPassword"
+                          autoComplete="new-password"
+                          importantForAutofill="yes"
+                          className="px-4"
+                        />
+                        <InputSlot onPress={handleState} className="pr-4">
+                          <InputIcon
+                            as={showPassword ? EyeIcon : EyeOffIcon}
+                            className="text-[#756e63]"
+                          />
+                        </InputSlot>
+                      </Input>
+                      {passwordError ? (
+                        <Text size="sm" className="text-red-500">
+                          {passwordError}
+                        </Text>
+                      ) : null}
+                    </Box>
+                    <Box className="gap-1">
+                      <Text className="text-primaryText" style={captionStyle}>
+                        {t("screens.registerScreen.repeatPassword")}
+                      </Text>
+                      <Input className="h-11 rounded-lg bg-ivory-card">
+                        <InputField
+                          value={repeatPassword}
+                          type={showPassword ? "text" : "password"}
+                          onChangeText={handleRepeatPasswordChange}
+                          placeholder={t(
+                            "screens.registerScreen.repeatPassword",
+                          )}
+                          placeholderTextColor={colors.secondaryText}
+                          autoCapitalize="none"
+                          autoCorrect={false}
+                          textContentType="newPassword"
+                          autoComplete="new-password"
+                          importantForAutofill="yes"
+                          className="px-4"
+                        />
+                      </Input>
+                      {passwordMatchError ? (
+                        <Text size="sm" className="text-red-500">
+                          {passwordMatchError}
+                        </Text>
+                      ) : null}
+                    </Box>
+                    <AppButton
+                      label={t("screens.registerScreen.registerBtn")}
+                      isDisabled={
+                        !email ||
+                        !password ||
+                        !repeatPassword ||
+                        !name.trim() ||
+                        !!nameError ||
+                        !!emailError ||
+                        !!passwordError ||
+                        !!passwordMatchError
+                      }
+                      onPress={handleRegister}
+                      className="w-full"
                     />
-                  </InputSlot>
-                </Input>
-                {passwordError ? (
-                  <Text size="sm" className="text-red-500">
-                    {passwordError}
+                  </Box>
+                </Box>
+              </Box>
+              <Box className="items-center gap-3 px-6 pt-8">
+                <Text style={{ ...captionStyle, color: "#756e63" }}>
+                  {t("screens.registerScreen.subtitle")}
+                </Text>
+                <Pressable
+                  onPress={() => {
+                    try {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    } catch {}
+                    nav.push(SCREENS.LOGIN);
+                  }}
+                  accessibilityRole="button"
+                >
+                  <Text className={`${typeRole.button} text-primaryText`}>
+                    {t("screens.registerScreen.loginBtn")}
                   </Text>
-                ) : null}
-              </VStack>
-              <VStack space="sm" className="mb-[30px]">
-                <Text>{t("screens.registerScreen.repeatPassword")}</Text>
-                <Input>
-                  <InputField
-                    value={repeatPassword}
-                    type={showPassword ? "text" : "password"}
-                    onChangeText={handleRepeatPasswordChange}
-                    placeholder={t("screens.registerScreen.repeatPassword")}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    textContentType="newPassword"
-                    autoComplete="new-password"
-                  />
-                </Input>
-                {passwordMatchError ? (
-                  <Text size="sm" className="text-red-500">
-                    {passwordMatchError}
-                  </Text>
-                ) : null}
-              </VStack>
+                </Pressable>
+              </Box>
             </Box>
-            <Button
-              variant="default"
-              isDisabled={
-                !email || !password || !repeatPassword || !name.trim()
-              }
-              onPress={handleRegister}
-              className="mb-[30px]"
-            >
-              <ButtonText>{t("screens.registerScreen.registerBtn")}</ButtonText>
-            </Button>
-          </Box>
           </SafeAreaView>
         </ScrollView>
       </KeyboardAvoidingView>

@@ -17,7 +17,13 @@ export const DashboardScreen = memo(() => {
     <Box className="flex-1">
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ flexGrow: 1, padding: 8 }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingHorizontal: 16,
+          paddingTop: 16,
+          paddingBottom: 16,
+          gap: 16,
+        }}
       >
         {totalData && <DashboardStats totalData={totalData} />}
         {contextData && <ContextSections contextData={contextData} />}
