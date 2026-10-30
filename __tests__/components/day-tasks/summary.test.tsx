@@ -102,15 +102,15 @@ describe("Summary", () => {
         preloadedState: loggedInPreloadedState,
       });
       expect(screen.getByText("Saved summary text")).toBeTruthy();
-      expect(screen.getByText("Редагувати")).toBeTruthy();
-      expect(screen.getByText("Видалити")).toBeTruthy();
+      expect(screen.getByLabelText("Редагувати")).toBeTruthy();
+      expect(screen.getByLabelText("Видалити")).toBeTruthy();
     });
 
     it("switches to edit mode when edit is pressed", () => {
       renderWithProviders(<Summary context={CONTEXT} data={savedData} />, {
         preloadedState: loggedInPreloadedState,
       });
-      fireEvent.press(screen.getByText("Редагувати"));
+      fireEvent.press(screen.getByLabelText("Редагувати"));
       expect(screen.getByPlaceholderText(TEXTAREA_PLACEHOLDER)).toBeTruthy();
     });
 
@@ -118,7 +118,7 @@ describe("Summary", () => {
       renderWithProviders(<Summary context={CONTEXT} data={savedData} />, {
         preloadedState: loggedInPreloadedState,
       });
-      fireEvent.press(screen.getByText("Редагувати"));
+      fireEvent.press(screen.getByLabelText("Редагувати"));
       fireEvent.changeText(
         screen.getByPlaceholderText(TEXTAREA_PLACEHOLDER),
         "Changed text"
@@ -138,7 +138,7 @@ describe("Summary", () => {
       renderWithProviders(<Summary context={CONTEXT} data={savedData} />, {
         preloadedState: loggedInPreloadedState,
       });
-      fireEvent.press(screen.getByText("Видалити"));
+      fireEvent.press(screen.getByLabelText("Видалити"));
 
       await waitFor(() => {
         expect(removeTaskTrigger).toHaveBeenCalledWith({

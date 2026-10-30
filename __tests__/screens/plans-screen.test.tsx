@@ -2,7 +2,7 @@ import React from "react";
 import { fireEvent, screen } from "@testing-library/react-native";
 import * as Haptics from "expo-haptics";
 import { PlansScreen } from "../../screens/plans-screen";
-import { PlansHeaderActions } from "../../screens/plans-screen/plans-header-actions";
+import { PlansHeaderActions } from "../../screens/plans-screen/components/plans-header-actions";
 import { PlansSearchProvider } from "../../screens/plans-screen/plans-search-context";
 import { renderWithProviders } from "../utils/render";
 import { loggedInPreloadedState } from "../utils/day-task-helpers";

@@ -122,7 +122,7 @@ describe("MoodTask", () => {
         { preloadedState: loggedInPreloadedState }
       );
       expect(screen.getByText("Saved mood note")).toBeTruthy();
-      expect(screen.getByText("Редагувати")).toBeTruthy();
+      expect(screen.getByLabelText("Редагувати")).toBeTruthy();
     });
 
     it("switches to edit mode when edit is pressed", () => {
@@ -134,7 +134,7 @@ describe("MoodTask", () => {
         />,
         { preloadedState: loggedInPreloadedState }
       );
-      fireEvent.press(screen.getByText("Редагувати"));
+      fireEvent.press(screen.getByLabelText("Редагувати"));
       expect(screen.getByPlaceholderText(TEXTAREA_PLACEHOLDER)).toBeTruthy();
     });
 
@@ -153,7 +153,7 @@ describe("MoodTask", () => {
         />,
         { preloadedState: loggedInPreloadedState }
       );
-      fireEvent.press(screen.getByText("Видалити"));
+      fireEvent.press(screen.getByLabelText("Видалити"));
 
       await waitFor(() => {
         expect(removeTaskTrigger).toHaveBeenCalledWith({

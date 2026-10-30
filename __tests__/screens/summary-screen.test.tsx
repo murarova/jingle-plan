@@ -81,7 +81,7 @@ describe("SummaryScreen", () => {
       });
       fireEvent.press(screen.getByText("Тіло"));
       expect(screen.getByText("Health reflection")).toBeTruthy();
-      expect(screen.getAllByText("Редагувати").length).toBeGreaterThan(0);
+      expect(screen.getAllByLabelText("Редагувати").length).toBeGreaterThan(0);
     });
 
     it("enters edit mode, saves updated text, and calls the mutation", async () => {
@@ -89,7 +89,7 @@ describe("SummaryScreen", () => {
         preloadedState: loggedInPreloadedState,
       });
       fireEvent.press(screen.getByText("Тіло"));
-      fireEvent.press(screen.getAllByText("Редагувати")[0]);
+      fireEvent.press(screen.getAllByLabelText("Редагувати")[0]);
       fireEvent.changeText(
         screen.getByPlaceholderText(TEXTAREA_PLACEHOLDER),
         "Updated health reflection"
@@ -122,7 +122,7 @@ describe("SummaryScreen", () => {
         preloadedState: loggedInPreloadedState,
       });
       fireEvent.press(screen.getByText("Тіло"));
-      fireEvent.press(screen.getAllByText("Видалити")[0]);
+      fireEvent.press(screen.getAllByLabelText("Видалити")[0]);
 
       await waitFor(() => {
         expect(removeTaskTrigger).toHaveBeenCalledWith({
