@@ -73,7 +73,7 @@ export const PlansMonthView = memo(
 
     return (
       <ScrollView>
-        <Box className="flex-1 px-4 pb-8">
+        <Box className="flex-1 px-4 pb-24">
           <Accordion
             key="month-view"
             type="multiple"

@@ -2,7 +2,12 @@ import { VStack } from "@/ui/vstack";
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
 import { TaskOutputType } from "@/constants";
-import { AppButton, AutoGrowingTextarea, ImagePicker } from "../../common";
+import {
+  AppButton,
+  AutoGrowingTextarea,
+  ImagePicker,
+  KeyboardAwareGroup,
+} from "../../common";
 
 interface MoodFormProps {
   text: string;
@@ -39,32 +44,34 @@ export const MoodForm = memo(
       taskOutputType === TaskOutputType.TextPhoto;
 
     return (
-      <VStack space="md" className="w-full">
-        {showText && (
-          <AutoGrowingTextarea
-            value={text}
-            onChangeText={onTextChange}
-            placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-            containerStyle={{ marginBottom: 16 }}
-          />
-        )}
-        {showImage && (
-          <ImagePicker
-            setIsImageLoading={setImageLoading}
-            isImageLoading={isImageLoading}
-            edit={true}
-            setImage={setImage}
-            image={image}
-          />
-        )}
-        {isEditable && (
-          <AppButton
-            label={t("screens.tasksOfTheDay.submitBtnText")}
-            onPress={onSubmit}
-            className="mt-2"
-          />
-        )}
-      </VStack>
+      <KeyboardAwareGroup>
+        <VStack space="md" className="w-full">
+          {showText && (
+            <AutoGrowingTextarea
+              value={text}
+              onChangeText={onTextChange}
+              placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
+              containerStyle={{ marginBottom: 16 }}
+            />
+          )}
+          {showImage && (
+            <ImagePicker
+              setIsImageLoading={setImageLoading}
+              isImageLoading={isImageLoading}
+              edit={true}
+              setImage={setImage}
+              image={image}
+            />
+          )}
+          {isEditable && (
+            <AppButton
+              label={t("screens.tasksOfTheDay.submitBtnText")}
+              onPress={onSubmit}
+              className="mt-2"
+            />
+          )}
+        </VStack>
+      </KeyboardAwareGroup>
     );
   }
 );

@@ -22,8 +22,8 @@ export const HappySlider = ({
   setRate,
 }: HappySliderProps) => {
   const getRating = useRating();
-  const filledColor = isDisabled ? "#8C857B" : "#ff9da2";
-  const thumbColor = isDisabled ? "#8C857B" : "#ff656c";
+  const filledColor = isDisabled ? colors.secondaryText : colors.primary300;
+  const thumbColor = isDisabled ? colors.secondaryText : colors.primary500;
   const trackRef = useRef<View>(null);
   const metrics = useRef({ x: 0, width: 1 });
 
@@ -87,7 +87,11 @@ export const HappySlider = ({
             <View
               style={[
                 styles.filled,
-                { width: `${rate}%`, backgroundColor: filledColor },
+                {
+                  width: `${rate}%`,
+                  backgroundColor: filledColor,
+                  opacity: isDisabled ? 0.4 : 1,
+                },
               ]}
             />
           </View>
@@ -98,6 +102,7 @@ export const HappySlider = ({
               {
                 left: `${rate}%`,
                 backgroundColor: thumbColor,
+                opacity: isDisabled ? 0.95 : 1,
               },
             ]}
           />

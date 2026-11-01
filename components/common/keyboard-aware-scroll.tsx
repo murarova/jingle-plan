@@ -1,6 +1,9 @@
 import {
+  createContext,
   useCallback,
+  useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -22,12 +25,43 @@ type KeyboardAwareScrollProps = {
   extraBelowInput?: number;
 };
 
+type Registry = {
+  register: (node: View) => () => void;
+  reveal: () => void;
+};
+
+const RegistryContext = createContext<Registry | null>(null);
+
+export function useKeyboardAwareReveal() {
+  return useContext(RegistryContext)?.reveal;
+}
+
+export function KeyboardAwareGroup({ children }: { children: ReactNode }) {
+  const ref = useRef<View>(null);
+  const registry = useContext(RegistryContext);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!registry || !node) {
+      return;
+    }
+    return registry.register(node);
+  }, [registry]);
+
+  return (
+    <View ref={ref} collapsable={false} style={{ width: "100%" }}>
+      {children}
+    </View>
+  );
+}
+
 export function KeyboardAwareScroll({
   children,
   extraBelowInput = EXTRA_BELOW_INPUT,
 }: KeyboardAwareScrollProps) {
   const scrollRef = useRef<ScrollView>(null);
   const containerRef = useRef<View>(null);
+  const groups = useRef(new Set<View>());
   const offsetY = useRef(0);
   const keyboardTop = useRef(Number.POSITIVE_INFINITY);
   const extraBelow = useRef(extraBelowInput);
@@ -42,10 +76,10 @@ export function KeyboardAwareScroll({
       return;
     }
 
-    input.measureInWindow((_x, y, _w, height) => {
+    const scrollTargetIntoView = (top: number, height: number) => {
       container.measureInWindow((_sx, sy, _sw, sh) => {
         const visibleBottom = Math.min(sy + sh, keyboardTop.current);
-        const targetBottom = y + height + extraBelow.current;
+        const targetBottom = top + height + extraBelow.current;
         const delta = targetBottom - visibleBottom;
         if (delta > 1) {
           scroll.scrollTo({
@@ -54,8 +88,49 @@ export function KeyboardAwareScroll({
           });
         }
       });
+    };
+
+    input.measureInWindow((_x, y) => {
+      const candidates = [...groups.current];
+      if (candidates.length === 0) {
+        return;
+      }
+
+      let pending = candidates.length;
+      let best: { y: number; height: number } | null = null;
+
+      candidates.forEach((group) => {
+        group.measureInWindow((_gx, gy, _gw, gh) => {
+          const contains = y >= gy - 1 && y <= gy + gh + 1;
+          if (contains && (best === null || gh < best.height)) {
+            best = { y: gy, height: gh };
+          }
+          pending -= 1;
+          if (pending === 0 && best) {
+            scrollTargetIntoView(best.y, best.height);
+          }
+        });
+      });
     });
   }, []);
+
+  const ensureRef = useRef(ensureFocusedInputVisible);
+  ensureRef.current = ensureFocusedInputVisible;
+
+  const registry = useMemo<Registry>(
+    () => ({
+      register: (node) => {
+        groups.current.add(node);
+        return () => {
+          groups.current.delete(node);
+        };
+      },
+      reveal: () => {
+        ensureRef.current();
+      },
+    }),
+    [],
+  );
 
   useEffect(() => {
     const showEvent =
@@ -83,11 +158,17 @@ export function KeyboardAwareScroll({
       return;
     }
 
+    let innerFrame = 0;
     const frame = requestAnimationFrame(() => {
-      ensureFocusedInputVisible();
+      innerFrame = requestAnimationFrame(() => {
+        ensureFocusedInputVisible();
+      });
     });
 
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      cancelAnimationFrame(frame);
+      cancelAnimationFrame(innerFrame);
+    };
   }, [keyboardInset, ensureFocusedInputVisible]);
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -95,20 +176,22 @@ export function KeyboardAwareScroll({
   };
 
   return (
-    <View ref={containerRef} style={{ flex: 1 }}>
-      <ScrollView
-        ref={scrollRef}
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingBottom: extraBelowInput + keyboardInset,
-        }}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="interactive"
-        onScroll={onScroll}
-        scrollEventThrottle={16}
-      >
-        {children}
-      </ScrollView>
-    </View>
+    <RegistryContext.Provider value={registry}>
+      <View ref={containerRef} style={{ flex: 1 }}>
+        <ScrollView
+          ref={scrollRef}
+          style={{ flex: 1 }}
+          contentContainerStyle={{
+            paddingBottom: extraBelowInput + keyboardInset,
+          }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+        >
+          {children}
+        </ScrollView>
+      </View>
+    </RegistryContext.Provider>
   );
 }

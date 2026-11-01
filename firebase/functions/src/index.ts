@@ -13,11 +13,15 @@ import {
   redeemAndroidPromoCode,
   getAndroidPromoEntitlement,
 } from "./android-promo-http";
+import { deleteUserData } from "./delete-user-data";
 
 const DATABASE_URL =
   "https://advent-calendar-12-default-rtdb.europe-west1.firebasedatabase.app";
 
-initializeApp({ databaseURL: DATABASE_URL });
+initializeApp({
+  databaseURL: DATABASE_URL,
+  storageBucket: "advent-calendar-12.appspot.com",
+});
 
 const applePrivateKey = defineSecret("IAP_APPLE_PRIVATE_KEY");
 const appleIssuerId = defineString("IAP_APPLE_ISSUER_ID");
@@ -85,6 +89,8 @@ export {
   redeemAndroidPromoCode,
   getAndroidPromoEntitlement,
 };
+
+export { deleteUserData };
 
 export const validateSubscription = functions
   .runWith({ secrets: [applePrivateKey] })

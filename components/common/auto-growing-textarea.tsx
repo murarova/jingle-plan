@@ -25,6 +25,7 @@ import {
   initialWindowMetrics,
 } from "react-native-safe-area-context";
 import { KeyboardAvoidingView } from "@/ui/keyboard-avoiding-view";
+import { useKeyboardAwareReveal } from "./keyboard-aware-scroll";
 import { colors } from "@/constants/colors";
 import { bodyFontSize, systemFontFamily } from "@/constants/typography";
 
@@ -50,11 +51,13 @@ export const AutoGrowingTextarea = memo(
         value,
         defaultValue,
         onChangeText,
+        onFocus,
         placeholderTextColor = colors.secondaryText,
         ...rest
       },
       ref,
     ) => {
+      const revealFocusedField = useKeyboardAwareReveal();
       const isControlled = value !== undefined;
       const [isExpanded, setIsExpanded] = useState(false);
       const [expandedDefaultValue, setExpandedDefaultValue] = useState("");
@@ -149,12 +152,18 @@ export const AutoGrowingTextarea = memo(
                       compactSession === 0 ? defaultValue : textRef.current,
                   })}
               onChangeText={handleChange}
+              onFocus={(event) => {
+                onFocus?.(event);
+                if (!isExpanded) {
+                  revealFocusedField?.();
+                }
+              }}
               placeholderTextColor={placeholderTextColor}
               multiline
               style={[
                 styles.textarea,
                 expandable && styles.textareaWithIcon,
-                { maxHeight },
+                { minHeight, maxHeight, flexGrow: 1 },
                 style,
               ]}
               underlineColorAndroid="transparent"
@@ -209,6 +218,7 @@ export const AutoGrowingTextarea = memo(
                   </View>
                   <ScrollView
                     style={styles.expandedScroll}
+                    contentContainerStyle={styles.expandedScrollContent}
                     keyboardShouldPersistTaps="handled"
                     keyboardDismissMode="interactive"
                   >
@@ -223,7 +233,7 @@ export const AutoGrowingTextarea = memo(
                       placeholderTextColor={placeholderTextColor}
                       onChangeText={handleExpandedChange}
                       onLayout={focusExpandedInput}
-                      style={styles.expandedTextarea}
+                      style={[styles.expandedTextarea, styles.expandedTextareaFill]}
                       underlineColorAndroid="transparent"
                       textAlignVertical="top"
                     />
@@ -291,6 +301,9 @@ const styles = StyleSheet.create({
   expandedScroll: {
     flex: 1,
   },
+  expandedScrollContent: {
+    flexGrow: 1,
+  },
   expandedTextarea: {
     width: "100%",
     minHeight: 240,
@@ -300,6 +313,9 @@ const styles = StyleSheet.create({
     fontSize: bodyFontSize,
     lineHeight: 24,
     color: colors.primaryText,
+  },
+  expandedTextareaFill: {
+    flexGrow: 1,
   },
 });
 

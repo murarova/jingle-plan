@@ -3,7 +3,11 @@ import { VStack } from "@/ui/vstack";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { HappySlider } from "./happy-slider";
-import { AppButton, AutoGrowingTextarea } from "../../common";
+import {
+  AppButton,
+  AutoGrowingTextarea,
+  KeyboardAwareGroup,
+} from "../../common";
 
 interface SummaryFormProps {
   text: string;
@@ -28,24 +32,26 @@ export const SummaryForm = memo(
     return (
       <VStack space="md" className="w-full">
         <HappySlider rate={rate} setRate={onRateChange} isDisabled={false} />
-        <AutoGrowingTextarea
-          value={text}
-          onChangeText={onTextChange}
-          placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-        />
-        <HStack className="mt-2 gap-3">
-          <AppButton
-            variant="secondary"
-            label={t("common.cancel")}
-            onPress={onCancel}
-            className="flex-1"
+        <KeyboardAwareGroup>
+          <AutoGrowingTextarea
+            value={text}
+            onChangeText={onTextChange}
+            placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
           />
-          <AppButton
-            label={t("screens.tasksOfTheDay.submitBtnText")}
-            onPress={onSubmit}
-            className="flex-1"
-          />
-        </HStack>
+          <HStack className="mt-2 w-full gap-3">
+            <AppButton
+              variant="secondary"
+              label={t("common.cancel")}
+              onPress={onCancel}
+              className="min-w-0 flex-1 basis-0"
+            />
+            <AppButton
+              label={t("screens.tasksOfTheDay.submitBtnText")}
+              onPress={onSubmit}
+              className="min-w-0 flex-1 basis-0"
+            />
+          </HStack>
+        </KeyboardAwareGroup>
       </VStack>
     );
   }

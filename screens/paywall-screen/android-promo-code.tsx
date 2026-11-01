@@ -1,10 +1,11 @@
-import { memo } from "react";
+import { memo, useRef } from "react";
+import { View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { AppButton } from "@/components/common";
+import { useModalKeyboardShift } from "@/hooks/useModalKeyboardShift";
 import { Input, InputField } from "@/ui/input";
 import { Heading } from "@/ui/heading";
 import { Text } from "@/ui/text";
-import { KeyboardAvoidingView } from "@/ui/keyboard-avoiding-view";
 import {
   Modal,
   ModalBackdrop,
@@ -41,6 +42,8 @@ export const AndroidPromoCode = memo(
     onRedeem,
   }: AndroidPromoCodeProps) => {
     const { t } = useTranslation();
+    const modalRef = useRef<View>(null);
+    const translateY = useModalKeyboardShift(modalRef);
 
     if (isSubscriber) {
       return null;
@@ -57,14 +60,14 @@ export const AndroidPromoCode = memo(
         />
         <Modal isOpen={isModalOpen} onClose={onClose} size="md">
           <ModalBackdrop />
-          <KeyboardAvoidingView
+          <View
+            ref={modalRef}
+            pointerEvents="box-none"
             style={{
-              flex: 1,
               width: "100%",
-              justifyContent: "center",
               alignItems: "center",
+              transform: [{ translateY }],
             }}
-            behavior="padding"
           >
             <ModalContent>
               <ModalHeader className="justify-center">
@@ -101,7 +104,7 @@ export const AndroidPromoCode = memo(
                 />
               </ModalFooter>
             </ModalContent>
-          </KeyboardAvoidingView>
+          </View>
         </Modal>
       </>
     );

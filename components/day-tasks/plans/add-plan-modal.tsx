@@ -1,5 +1,6 @@
 import { FormControlErrorText } from "@/ui/form-control";
 import { AppButton, AutoGrowingTextarea } from "@/components/common";
+import { useModalKeyboardShift } from "@/hooks/useModalKeyboardShift";
 import { bodyFontSize, systemFontFamily } from "@/constants/typography";
 import { Heading } from "@/ui/heading";
 
@@ -27,8 +28,7 @@ import {
 } from "@/ui/modal";
 import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert } from "react-native";
-import { KeyboardAvoidingView } from "@/ui/keyboard-avoiding-view";
+import { Alert, View } from "react-native";
 import { PlanData, PlanScreenData, TaskContext } from "@/types";
 import { allMonths, TASK_CONTEXT, cardShadow } from "@/constants";
 
@@ -57,6 +57,8 @@ export function AddPlanModal({
 }: AddPlanModalProps) {
   const { t } = useTranslation();
   const textRef = useRef(data?.text ?? "");
+  const modalRef = useRef<View>(null);
+  const translateY = useModalKeyboardShift(modalRef);
   const [contextError, setContextError] = useState(false);
 
   const isEditMode = Boolean(data);
@@ -110,14 +112,14 @@ export function AddPlanModal({
   return (
     <Modal isOpen onClose={closeModal}>
       <ModalBackdrop />
-      <KeyboardAvoidingView
+      <View
+        ref={modalRef}
+        pointerEvents="box-none"
         style={{
-          flex: 1,
           width: "100%",
-          justifyContent: "center",
           alignItems: "center",
+          transform: [{ translateY }],
         }}
-        behavior="padding"
       >
         <ModalContent
           entering={undefined}
@@ -225,21 +227,21 @@ export function AddPlanModal({
               )}
             </VStack>
           </ModalBody>
-          <ModalFooter className="gap-3">
+          <ModalFooter className="w-full gap-3">
             <AppButton
               variant="secondary"
               label={t("common.cancel")}
               onPress={closeModal}
-              className="flex-1"
+              className="min-w-0 flex-1 basis-0"
             />
             <AppButton
               label={isEditMode ? t("common.save") : t("common.add")}
               onPress={handleSubmit}
-              className="flex-1"
+              className="min-w-0 flex-1 basis-0"
             />
           </ModalFooter>
         </ModalContent>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }

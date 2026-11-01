@@ -2,7 +2,12 @@ import { HStack } from "@/ui/hstack";
 import { VStack } from "@/ui/vstack";
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
-import { AppButton, AutoGrowingTextarea, ImagePicker } from "../../common";
+import {
+  AppButton,
+  AutoGrowingTextarea,
+  ImagePicker,
+  KeyboardAwareGroup,
+} from "../../common";
 import { ImageData } from "@/types";
 
 interface MonthPhotoFormProps {
@@ -38,27 +43,29 @@ export const MonthPhotoForm = memo(
           setImage={onImageChange}
           image={image}
         />
-        <AutoGrowingTextarea
-          placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
-          value={text}
-          onChangeText={onTextChange}
-          containerStyle={{ marginTop: 16 }}
-        />
-        <HStack className="mt-2 gap-3">
-          {text || image ? (
-            <AppButton
-              variant="secondary"
-              label={t("common.cancel")}
-              onPress={onCancel}
-              className="flex-1"
-            />
-          ) : null}
-          <AppButton
-            label={t("screens.tasksOfTheDay.submitBtnText")}
-            onPress={onSubmit}
-            className="flex-1"
+        <KeyboardAwareGroup>
+          <AutoGrowingTextarea
+            placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
+            value={text}
+            onChangeText={onTextChange}
+            containerStyle={{ marginTop: 16 }}
           />
-        </HStack>
+          <HStack className="mt-2 w-full gap-3">
+            {text || image ? (
+              <AppButton
+                variant="secondary"
+                label={t("common.cancel")}
+                onPress={onCancel}
+                className="min-w-0 flex-1 basis-0"
+              />
+            ) : null}
+            <AppButton
+              label={t("screens.tasksOfTheDay.submitBtnText")}
+              onPress={onSubmit}
+              className="min-w-0 flex-1 basis-0"
+            />
+          </HStack>
+        </KeyboardAwareGroup>
       </VStack>
     );
   },
