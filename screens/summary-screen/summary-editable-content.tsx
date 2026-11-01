@@ -2,7 +2,11 @@ import { HStack } from "@/ui/hstack";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { TaskContext } from "@/types";
-import { AppButton, AutoGrowingTextarea } from "../../components/common";
+import {
+  AppButton,
+  AutoGrowingTextarea,
+  KeyboardAwareGroup,
+} from "../../components/common";
 
 interface EditableContentProps {
   context: TaskContext;
@@ -17,26 +21,26 @@ export const EditableContent = memo(
     const { t } = useTranslation();
 
     return (
-      <>
+      <KeyboardAwareGroup>
         <AutoGrowingTextarea
           value={text}
           onChangeText={onTextChange}
           placeholder={t("screens.tasksOfTheDay.textareaPlaceholder")}
         />
-        <HStack className="mt-2 gap-3">
+        <HStack className="mt-2 w-full gap-3">
           <AppButton
             variant="secondary"
             label={t("common.cancel")}
             onPress={onCancel}
-            className="flex-1"
+            className="min-w-0 flex-1 basis-0"
           />
           <AppButton
             label={t("screens.tasksOfTheDay.submitBtnText")}
             onPress={onSubmit}
-            className="flex-1"
+            className="min-w-0 flex-1 basis-0"
           />
         </HStack>
-      </>
+      </KeyboardAwareGroup>
     );
   }
 );

@@ -81,6 +81,7 @@ export function AppMenu() {
           onPress: async () => {
             try {
               await deleteCurrentUser().unwrap();
+              dispatch(clearUser());
               nav.navigate(SCREENS.INTRO);
             } catch (error) {
               console.log("error", error);

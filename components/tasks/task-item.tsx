@@ -35,7 +35,7 @@ export function TaskItem({
     <Box className="gap-5 rounded-[28px] border border-ivory-line bg-ivory-card p-6">
       <Box className="gap-4">
         <Box className="gap-2">
-          <Heading size="sm">{taskConfig.title}</Heading>
+          <Heading size="md">{taskConfig.title}</Heading>
           <Text>{taskConfig.text}</Text>
         </Box>
         <Box>

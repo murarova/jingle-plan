@@ -8,7 +8,10 @@ export type { SheetRef } from "./sheet";
 export { RadioButton } from "./radio-button";
 export { YoutubePlayer } from "./youtube-player";
 export { AutoGrowingTextarea } from "./auto-growing-textarea";
-export { KeyboardAwareScroll } from "./keyboard-aware-scroll";
+export {
+  KeyboardAwareScroll,
+  KeyboardAwareGroup,
+} from "./keyboard-aware-scroll";
 export { ProgressBar } from "./progress-bar";
 export { EmptyState } from "./empty-state";
 export { AppButton } from "./app-button";

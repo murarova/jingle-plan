@@ -172,7 +172,9 @@ export const LoginScreen = () => {
                           textContentType="username"
                           autoComplete="username"
                           importantForAutofill="yes"
-                          placeholder={t("screens.loginScreen.emailPlaceholder")}
+                          placeholder={t(
+                            "screens.loginScreen.emailPlaceholder",
+                          )}
                           placeholderTextColor={colors.secondaryText}
                           className="px-4"
                         />
@@ -230,7 +232,7 @@ export const LoginScreen = () => {
                   </Box>
                 </Box>
               </Box>
-              <Box className="items-center gap-3 px-6 pt-8">
+              <Box className="items-center gap-3 px-6 py-8">
                 <Text style={mutedCaptionStyle}>
                   {t("screens.loginScreen.noAccount")}
                 </Text>

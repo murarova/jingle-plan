@@ -42,8 +42,10 @@ export function PlansList({ plans, onEdit, onDelete, title }: PlansListProps) {
   return (
     <ScrollView className="max-h-80 w-full">
       <VStack space="sm" className="w-full flex-1">
-        {title && <Heading size="sm">{title}</Heading>}
-        {(plans ?? []).map((item, index, array) => {
+        {title && plans && plans.length > 0 && (
+          <Heading size="md">{title}</Heading>
+        )}
+        {plans?.map((item, index, array) => {
           return (
             <Fragment key={item.id}>
               <HStack className="justify-between items-center">

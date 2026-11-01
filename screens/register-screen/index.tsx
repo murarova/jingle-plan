@@ -309,7 +309,7 @@ export const RegisterScreen = () => {
                   </Box>
                 </Box>
               </Box>
-              <Box className="items-center gap-3 px-6 pt-8">
+              <Box className="items-center gap-3 px-6 py-8">
                 <Text style={{ ...captionStyle, color: "#756e63" }}>
                   {t("screens.registerScreen.subtitle")}
                 </Text>

@@ -30,7 +30,12 @@ function SelectOpener({ openToken }: { openToken: number }) {
   const openedToken = useRef(0);
 
   useEffect(() => {
-    if (!openToken || openToken === openedToken.current) {
+    if (!openToken) {
+      openedToken.current = 0;
+      setIsOpen(false);
+      return;
+    }
+    if (openToken === openedToken.current) {
       return;
     }
     openedToken.current = openToken;
