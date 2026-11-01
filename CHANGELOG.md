@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.5.1...jingle-plan-v1.5.2) (2026-10-30)
+
+
+### Refactoring
+
+* app rebranding ([#67](https://github.com/murarova/jingle-plan/issues/67)) ([5d503b6](https://github.com/murarova/jingle-plan/commit/5d503b6210fb696346e039c53b5b78e2d6f27a62))
+
 ## [1.5.1](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.5.0...jingle-plan-v1.5.1) (2026-10-22)
 
 
