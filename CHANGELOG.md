@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.3](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.5.2...jingle-plan-v1.5.3) (2026-11-01)
+
+
+### Bug Fixes
+
+* Fix issues after review ([#69](https://github.com/murarova/jingle-plan/issues/69)) ([24e5d2c](https://github.com/murarova/jingle-plan/commit/24e5d2c429495457bac9bba4519c9606acdf0587))
+
 ## [1.5.2](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.5.1...jingle-plan-v1.5.2) (2026-10-30)
 
 
