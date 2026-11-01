@@ -1,52 +1,50 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
-import { Keyboard, Platform, View } from "react-native";
+import { useCallback } from "react";
+import type { LayoutChangeEvent } from "react-native";
+import { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import {
+  useKeyboardState,
+  useReanimatedKeyboardAnimation,
+  useWindowDimensions,
+} from "react-native-keyboard-controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const MIN_TOP = 96;
+const GAP = 16;
 
-export function useModalKeyboardShift(ref: RefObject<View | null>) {
-  const [translateY, setTranslateY] = useState(0);
-  const translateRef = useRef(0);
+export function useModalKeyboardShift() {
+  const { height: keyboardOffset } = useReanimatedKeyboardAnimation();
+  const { height: windowHeight } = useWindowDimensions();
+  const { top: topInset } = useSafeAreaInsets();
+  const keyboardHeight = useKeyboardState((state) =>
+    state.isVisible ? state.height : 0,
+  );
+  const frameTop = useSharedValue(0);
+  const frameHeight = useSharedValue(0);
+  const minTop = topInset + GAP;
 
-  useEffect(() => {
-    const showEvent =
-      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
-    const hideEvent =
-      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+  const onLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      frameTop.value = event.nativeEvent.layout.y;
+      frameHeight.value = event.nativeEvent.layout.height;
+    },
+    [frameHeight, frameTop],
+  );
 
-    const apply = (next: number) => {
-      translateRef.current = next;
-      setTranslateY(next);
+  const animatedStyle = useAnimatedStyle(() => {
+    const keyboard = -keyboardOffset.value;
+    if (keyboard <= 0 || frameHeight.value === 0) {
+      return { transform: [{ translateY: 0 }] };
+    }
+    const space = windowHeight - keyboard - minTop;
+    const targetTop = minTop + Math.max(0, (space - frameHeight.value) / 2);
+    return {
+      transform: [{ translateY: Math.min(0, targetTop - frameTop.value) }],
     };
+  });
 
-    const show = Keyboard.addListener(showEvent, (event) => {
-      const node = ref.current;
-      if (!node) {
-        return;
-      }
+  const maxHeight =
+    keyboardHeight > 0
+      ? windowHeight - keyboardHeight - minTop - GAP
+      : undefined;
 
-      const keyboardTop = event.endCoordinates.screenY;
-      node.measureInWindow((_x, y, _w, height) => {
-        const baseY = y - translateRef.current;
-        if (baseY < MIN_TOP) {
-          apply(MIN_TOP - baseY);
-          return;
-        }
-
-        const overlap = baseY + height + 12 - keyboardTop;
-        const maxLift = baseY - MIN_TOP;
-        const lift = overlap > 0 ? Math.min(overlap, maxLift) : 0;
-        apply(-lift);
-      });
-    });
-    const hide = Keyboard.addListener(hideEvent, () => {
-      apply(0);
-    });
-
-    return () => {
-      show.remove();
-      hide.remove();
-    };
-  }, [ref]);
-
-  return translateY;
+  return { onLayout, animatedStyle, maxHeight };
 }

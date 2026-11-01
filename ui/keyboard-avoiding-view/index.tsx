@@ -1,3 +1,3 @@
 // @ts-nocheck
 'use client';
-export { KeyboardAvoidingView } from 'react-native';
+export { KeyboardAvoidingView } from 'react-native-keyboard-controller';

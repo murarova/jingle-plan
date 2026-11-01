@@ -7,7 +7,7 @@ import { Box } from "@/ui/box";
 import { useNavigation } from "@react-navigation/native";
 import { useState, useCallback } from "react";
 import { SafeAreaView } from "../../components/common/safe-area-view";
-import { Alert, Keyboard, Platform, TextStyle } from "react-native";
+import { Alert, Keyboard, TextStyle } from "react-native";
 import { SCREENS, EMAIL_REGEX, colors } from "@/constants";
 import { useTranslation } from "react-i18next";
 import { EyeIcon, EyeOffIcon } from "lucide-react-native";
@@ -135,7 +135,7 @@ export const LoginScreen = () => {
     <Pressable onPress={Keyboard.dismiss} className="flex-1">
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior="padding"
       >
         <ScrollView
           style={{ flex: 1 }}

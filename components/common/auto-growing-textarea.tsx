@@ -25,7 +25,6 @@ import {
   initialWindowMetrics,
 } from "react-native-safe-area-context";
 import { KeyboardAvoidingView } from "@/ui/keyboard-avoiding-view";
-import { useKeyboardAwareReveal } from "./keyboard-aware-scroll";
 import { colors } from "@/constants/colors";
 import { bodyFontSize, systemFontFamily } from "@/constants/typography";
 
@@ -57,7 +56,6 @@ export const AutoGrowingTextarea = memo(
       },
       ref,
     ) => {
-      const revealFocusedField = useKeyboardAwareReveal();
       const isControlled = value !== undefined;
       const [isExpanded, setIsExpanded] = useState(false);
       const [expandedDefaultValue, setExpandedDefaultValue] = useState("");
@@ -152,12 +150,7 @@ export const AutoGrowingTextarea = memo(
                       compactSession === 0 ? defaultValue : textRef.current,
                   })}
               onChangeText={handleChange}
-              onFocus={(event) => {
-                onFocus?.(event);
-                if (!isExpanded) {
-                  revealFocusedField?.();
-                }
-              }}
+              onFocus={onFocus}
               placeholderTextColor={placeholderTextColor}
               multiline
               style={[

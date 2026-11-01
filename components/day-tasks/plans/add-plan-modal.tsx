@@ -1,6 +1,6 @@
 import { FormControlErrorText } from "@/ui/form-control";
 import { AppButton, AutoGrowingTextarea } from "@/components/common";
-import { useModalKeyboardShift } from "@/hooks/useModalKeyboardShift";
+import { ModalKeyboardFrame } from "@/components/modals/modal-keyboard-frame";
 import { bodyFontSize, systemFontFamily } from "@/constants/typography";
 import { Heading } from "@/ui/heading";
 
@@ -28,7 +28,7 @@ import {
 } from "@/ui/modal";
 import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, View } from "react-native";
+import { Alert } from "react-native";
 import { PlanData, PlanScreenData, TaskContext } from "@/types";
 import { allMonths, TASK_CONTEXT, cardShadow } from "@/constants";
 
@@ -57,8 +57,6 @@ export function AddPlanModal({
 }: AddPlanModalProps) {
   const { t } = useTranslation();
   const textRef = useRef(data?.text ?? "");
-  const modalRef = useRef<View>(null);
-  const translateY = useModalKeyboardShift(modalRef);
   const [contextError, setContextError] = useState(false);
 
   const isEditMode = Boolean(data);
@@ -112,18 +110,10 @@ export function AddPlanModal({
   return (
     <Modal isOpen onClose={closeModal}>
       <ModalBackdrop />
-      <View
-        ref={modalRef}
-        pointerEvents="box-none"
-        style={{
-          width: "100%",
-          alignItems: "center",
-          transform: [{ translateY }],
-        }}
-      >
+      <ModalKeyboardFrame>
         <ModalContent
           entering={undefined}
-          className="w-[90%] rounded-3xl border border-ivory-line bg-ivory-card"
+          className="w-[90%] shrink rounded-3xl border border-ivory-line bg-ivory-card"
           style={cardShadow}
         >
           <ModalHeader>
@@ -241,7 +231,7 @@ export function AddPlanModal({
             />
           </ModalFooter>
         </ModalContent>
-      </View>
+      </ModalKeyboardFrame>
     </Modal>
   );
 }

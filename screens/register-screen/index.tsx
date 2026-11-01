@@ -6,7 +6,7 @@ import { Box } from "@/ui/box";
 import { useNavigation } from "@react-navigation/native";
 import { useRef, useState } from "react";
 import { SafeAreaView } from "../../components/common/safe-area-view";
-import { Alert, Keyboard, Platform, TextStyle } from "react-native";
+import { Alert, Keyboard, TextStyle } from "react-native";
 import * as Haptics from "expo-haptics";
 import { SCREENS, EMAIL_REGEX, PASSWORD_REGEX, colors } from "@/constants";
 import { useTranslation } from "react-i18next";
@@ -163,7 +163,7 @@ export const RegisterScreen = () => {
     <Pressable onPress={Keyboard.dismiss} className="flex-1">
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior="padding"
       >
         <ScrollView
           style={{ flex: 1 }}

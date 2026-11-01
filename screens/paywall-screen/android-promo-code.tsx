@@ -1,8 +1,7 @@
-import { memo, useRef } from "react";
-import { View } from "react-native";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { AppButton } from "@/components/common";
-import { useModalKeyboardShift } from "@/hooks/useModalKeyboardShift";
+import { ModalKeyboardFrame } from "@/components/modals/modal-keyboard-frame";
 import { Input, InputField } from "@/ui/input";
 import { Heading } from "@/ui/heading";
 import { Text } from "@/ui/text";
@@ -42,8 +41,6 @@ export const AndroidPromoCode = memo(
     onRedeem,
   }: AndroidPromoCodeProps) => {
     const { t } = useTranslation();
-    const modalRef = useRef<View>(null);
-    const translateY = useModalKeyboardShift(modalRef);
 
     if (isSubscriber) {
       return null;
@@ -60,16 +57,8 @@ export const AndroidPromoCode = memo(
         />
         <Modal isOpen={isModalOpen} onClose={onClose} size="md">
           <ModalBackdrop />
-          <View
-            ref={modalRef}
-            pointerEvents="box-none"
-            style={{
-              width: "100%",
-              alignItems: "center",
-              transform: [{ translateY }],
-            }}
-          >
-            <ModalContent>
+          <ModalKeyboardFrame>
+            <ModalContent className="shrink">
               <ModalHeader className="justify-center">
                 <Heading size="md">{t("paywall.promoCta")}</Heading>
               </ModalHeader>
@@ -104,7 +93,7 @@ export const AndroidPromoCode = memo(
                 />
               </ModalFooter>
             </ModalContent>
-          </View>
+          </ModalKeyboardFrame>
         </Modal>
       </>
     );
