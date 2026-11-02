@@ -6,18 +6,27 @@ import {
 } from "@react-native-firebase/database";
 import { getAuth } from "@react-native-firebase/auth";
 import {
+  getAPNSToken,
   getMessaging,
   subscribeToTopic,
   unsubscribeFromTopic,
 } from "@react-native-firebase/messaging";
+import { Platform } from "react-native";
 import { EXPO_PUBLIC_DB } from "@env";
 
 export const PREMIUM_NOTIFICATION_TOPIC = "jingle-plan-premium";
 
 const messaging = getMessaging();
 
+let desiredPremiumTopicState: boolean | null = null;
+
 function fcmTokenRef(uid: string) {
   return ref(getDatabase(undefined, EXPO_PUBLIC_DB), `/fcmTokens/${uid}`);
+}
+
+async function canManageTopics() {
+  if (Platform.OS !== "ios") return true;
+  return (await getAPNSToken(messaging)) !== null;
 }
 
 export async function saveTokenToFirebase(token: string, platform: string) {
@@ -62,7 +71,17 @@ export async function updateFcmEligibility(eligibility: {
 }
 
 export async function syncPremiumTopicSubscription(isEligible: boolean) {
+  desiredPremiumTopicState = isEligible;
+  await retryPremiumTopicSync();
+}
+
+export async function retryPremiumTopicSync() {
+  const isEligible = desiredPremiumTopicState;
+  if (isEligible === null) return;
+
   try {
+    if (!(await canManageTopics())) return;
+
     if (isEligible) {
       await subscribeToTopic(messaging, PREMIUM_NOTIFICATION_TOPIC);
       return;
@@ -75,7 +94,10 @@ export async function syncPremiumTopicSubscription(isEligible: boolean) {
 }
 
 export async function unsubscribeFromPremiumTopic() {
+  desiredPremiumTopicState = null;
+
   try {
+    if (!(await canManageTopics())) return;
     await unsubscribeFromTopic(messaging, PREMIUM_NOTIFICATION_TOPIC);
   } catch (error) {
     console.error("Failed to unsubscribe from premium topic:", error);

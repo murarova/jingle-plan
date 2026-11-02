@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import { Platform } from "react-native";
 import {
   removeTokenFromFirebase,
+  retryPremiumTopicSync,
   saveTokenToFirebase,
   unsubscribeFromPremiumTopic,
 } from "../services/messaging";
@@ -45,6 +46,7 @@ async function registerFcmToken() {
   const token = await getToken(messaging);
   if (token) {
     await saveTokenToFirebase(token, Platform.OS);
+    await retryPremiumTopicSync();
   }
 }
 
@@ -80,6 +82,7 @@ export function useFirebaseMessaging() {
     const unsubscribeTokenRefresh = onTokenRefresh(messaging, async (token) => {
       if (token) {
         await saveTokenToFirebase(token, Platform.OS);
+        await retryPremiumTopicSync();
       }
     });
 

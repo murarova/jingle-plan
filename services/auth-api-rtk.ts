@@ -2,13 +2,12 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import {
   createUserWithEmailAndPassword,
   deleteUser,
-  FirebaseAuthTypes,
   getAuth,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
 } from "@react-native-firebase/auth";
-import { convertToSerializableUser } from "../types/user";
+import { convertToSerializableUser, SerializableUser } from "@/types/user";
 
 const auth = getAuth();
 
@@ -85,7 +84,7 @@ export const authApi = createApi({
   tagTypes: ["Auth"],
   endpoints: (builder) => ({
     createUser: builder.mutation<
-      FirebaseAuthTypes.User,
+      SerializableUser,
       { email: string; password: string }
     >({
       query: ({ email, password }) => ({
@@ -96,7 +95,7 @@ export const authApi = createApi({
     }),
 
     signInUser: builder.mutation<
-      FirebaseAuthTypes.User,
+      SerializableUser,
       { email: string; password: string }
     >({
       query: ({ email, password }) => ({
