@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.5.3...jingle-plan-v1.6.0) (2026-11-02)
+
+
+### Features
+
+* add keyboard controller ([#71](https://github.com/murarova/jingle-plan/issues/71)) ([74fbd66](https://github.com/murarova/jingle-plan/commit/74fbd663575c4e78e2279755616af7c9247d9f8d))
+
 ## [1.5.3](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.5.2...jingle-plan-v1.5.3) (2026-11-01)
 
 
