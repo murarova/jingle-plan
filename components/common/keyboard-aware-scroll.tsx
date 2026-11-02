@@ -7,7 +7,7 @@ import {
   useRef,
   type ReactNode,
 } from "react";
-import { findNodeHandle, View } from "react-native";
+import { findNodeHandle, View, type LayoutChangeEvent } from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -77,6 +77,7 @@ export function KeyboardAwareScroll({
   const frames = useSharedValue<Frame[]>([]);
   const keyboardHeight = useSharedValue(0);
   const spacerHeight = useSharedValue(0);
+  const contentHeight = useSharedValue(0);
   const fromHeight = useSharedValue(0);
   const toHeight = useSharedValue(0);
   const fromOffset = useSharedValue(0);
@@ -204,23 +205,36 @@ export function KeyboardAwareScroll({
         fromHeight.value = keyboardHeight.value;
         toHeight.value = e.height;
         fromOffset.value = offset.value;
-        spacerHeight.value = Math.max(spacerHeight.value, e.height);
-        if (e.height > 0 && input.value?.target !== inputTarget.value) {
-          syncInput();
-        }
-        distance.value = e.height > 0 ? revealDistance(e.height) : 0;
+        distance.value = 0;
 
-        if (distance.value > 0 && fromHeight.value === e.height) {
-          scrollTo(scrollRef, 0, fromOffset.value + distance.value, true);
-          distance.value = 0;
+        if (e.height >= spacerHeight.value) {
+          spacerHeight.value = e.height;
+          if (e.height > 0 && input.value?.target !== inputTarget.value) {
+            syncInput();
+          }
+          distance.value = e.height > 0 ? revealDistance(e.height) : 0;
+          if (distance.value > 0 && fromHeight.value === e.height) {
+            scrollTo(scrollRef, 0, fromOffset.value + distance.value, true);
+            distance.value = 0;
+          }
+          return;
         }
+
+        const container = measure(scrollRef);
+        if (!container) {
+          return;
+        }
+        const maxOffset = Math.max(
+          0,
+          contentHeight.value + extraBelowInput + e.height - container.height,
+        );
+        distance.value = Math.min(0, maxOffset - offset.value);
       },
       onMove: (e) => {
         "worklet";
         keyboardHeight.value = e.height;
-        spacerHeight.value = Math.max(e.height, toHeight.value);
 
-        if (distance.value > 0) {
+        if (distance.value !== 0) {
           const progress = interpolate(
             e.height,
             [fromHeight.value, toHeight.value],
@@ -238,15 +252,15 @@ export function KeyboardAwareScroll({
       onEnd: (e) => {
         "worklet";
         keyboardHeight.value = e.height;
-        spacerHeight.value = e.height;
 
-        if (distance.value > 0) {
+        if (distance.value !== 0) {
           scrollTo(scrollRef, 0, fromOffset.value + distance.value, false);
           distance.value = 0;
         }
+        spacerHeight.value = e.height;
       },
     },
-    [input, inputTarget, revealDistance, syncInput],
+    [extraBelowInput, input, inputTarget, revealDistance, syncInput],
   );
 
   useAnimatedReaction(
@@ -285,6 +299,14 @@ export function KeyboardAwareScroll({
     scrollTag.value = findNodeHandle(scrollRef.current);
   }, [scrollRef, scrollTag]);
 
+  const onContentLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      contentHeight.value = event.nativeEvent.layout.height;
+      registry.measureAll();
+    },
+    [contentHeight, registry],
+  );
+
   return (
     <RegistryContext.Provider value={registry}>
       <Animated.ScrollView
@@ -295,11 +317,7 @@ export function KeyboardAwareScroll({
         keyboardDismissMode="interactive"
         onLayout={onScrollLayout}
       >
-        <View
-          ref={contentRef}
-          collapsable={false}
-          onLayout={registry.measureAll}
-        >
+        <View ref={contentRef} collapsable={false} onLayout={onContentLayout}>
           {children}
         </View>
         <Animated.View style={spacerStyle} />
