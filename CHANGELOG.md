@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.6.0...jingle-plan-v1.7.0) (2026-11-03)
+
+
+### Features
+
+* library upgrade ([#73](https://github.com/murarova/jingle-plan/issues/73)) ([99f8223](https://github.com/murarova/jingle-plan/commit/99f822362fbb19852d0fec4bd73ba3cdb1e3f9c5))
+
 ## [1.6.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.5.3...jingle-plan-v1.6.0) (2026-11-02)
 
 
