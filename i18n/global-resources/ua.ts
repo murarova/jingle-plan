@@ -19,6 +19,7 @@ export default {
     delete: "Видалити",
     selectMonth: "Обрати місяць",
     copyToNextYear: "Скопіювати у наступний рік",
+    copy: "Скопіювати",
     logout: "Вийти",
     deleteAccount: "Видалити акаунт",
     error: "Помилка",
@@ -91,6 +92,9 @@ export default {
   },
   messages: {
     confirmDeletePlan: "Ви впевнені, що хочете видалити цей план?",
+    confirmCopyPlanTitle: "Скопіювати план?",
+    confirmCopyPlan: "Скопіювати цей план у {{year}} рік?",
+    planCopiedToNextYear: "План скопійовано у {{year}} рік.",
     confirmDeleteTask: "Ви впевнені, що хочете видалити це завдання?",
     unsavedChangesTitle: "Незбережені зміни",
     unsavedChangesMessage:
@@ -100,6 +104,20 @@ export default {
     emptyText: "Текстове поле не може бути порожнім",
     emptyImage: "Будь ласка, оберіть зображення",
     generic: "Щось пішло не так. Спробуйте ще раз.",
+    auth: {
+      invalidCredential:
+        "Неправильна електронна пошта або пароль. Перевірте дані та спробуйте ще раз.",
+      invalidEmail: "Введіть коректну електронну пошту.",
+      userDisabled: "Цей обліковий запис заблоковано.",
+      tooManyRequests:
+        "Забагато спроб. Зачекайте кілька хвилин і спробуйте ще раз.",
+      network:
+        "Немає з'єднання з інтернетом. Перевірте мережу та спробуйте ще раз.",
+      emailInUse: "Обліковий запис із цією поштою вже існує. Спробуйте увійти.",
+      weakPassword: "Пароль занадто простий. Оберіть надійніший.",
+      requiresRecentLogin:
+        "З міркувань безпеки вийдіть з акаунта, увійдіть знову та повторіть дію.",
+    },
   },
   screens: {
     intro: {

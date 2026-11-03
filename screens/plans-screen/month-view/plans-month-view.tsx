@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/ui/accordion";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { months, PlansViewOptions, cardShadow } from "@/constants";
 import { EmptyScreen } from "../../../components/common/empty-screen";
 import isEmpty from "lodash/isEmpty";
@@ -54,10 +54,12 @@ export const PlansMonthView = memo(
       [openMonthSelect],
     );
 
-    const handlePlanCopyToNextYear = useCallback(
-      (item: PlanWithContext) => {
-        handleCopyToNextYear(item, item.context);
-      },
+    const handlePlanCopyToNextYear = useMemo(
+      () =>
+        handleCopyToNextYear
+          ? (item: PlanWithContext) =>
+              handleCopyToNextYear(item, item.context)
+          : undefined,
       [handleCopyToNextYear],
     );
 

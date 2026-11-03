@@ -5,6 +5,10 @@ jest.mock("react-native-screens", () =>
   require("react-native-screens/mock")
 );
 
+jest.mock("react-native-worklets", () =>
+  require("react-native-worklets/lib/module/mock")
+);
+
 jest.mock("react-native-reanimated", () => {
   const Reanimated = require("react-native-reanimated/mock");
   Reanimated.default.call = () => {};
@@ -59,15 +63,6 @@ jest.mock("@react-native-firebase/storage", () => ({
 jest.mock("expo-haptics", () => ({
   impactAsync: jest.fn(() => Promise.resolve()),
   ImpactFeedbackStyle: { Light: "light", Medium: "medium" },
-}));
-
-jest.mock("expo-notifications", () => ({
-  getPermissionsAsync: jest.fn(() => Promise.resolve({ status: "granted" })),
-  requestPermissionsAsync: jest.fn(() =>
-    Promise.resolve({ status: "granted" })
-  ),
-  getExpoPushTokenAsync: jest.fn(),
-  setNotificationHandler: jest.fn(),
 }));
 
 jest.mock("@notifee/react-native", () => ({

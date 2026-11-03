@@ -18,7 +18,7 @@ import {
 } from "../../services/auth-api-rtk";
 import { useGetUserProfileQuery } from "../../services/api";
 import { RootStackParamList } from "@/navigation/types";
-import { resolveErrorMessage } from "@/utils";
+import { resolveAuthErrorMessage } from "@/utils";
 
 const menuSurfaceStyle = {
   borderRadius: 16,
@@ -85,11 +85,10 @@ export function AppMenu() {
               nav.navigate(SCREENS.INTRO);
             } catch (error) {
               console.log("error", error);
-              const message =
-                resolveErrorMessage(error) ??
-                t("errors.generic", "An error occurred");
-
-              Alert.alert(t("common.error"), message);
+              Alert.alert(
+                t("common.error"),
+                resolveAuthErrorMessage(error, t),
+              );
             }
           },
         },

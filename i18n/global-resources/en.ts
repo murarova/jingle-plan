@@ -17,6 +17,7 @@ export default {
     delete: "Delete",
     selectMonth: "Select month",
     copyToNextYear: "Copy to next year",
+    copy: "Copy",
     error: "Error",
     save: "Save",
     welcome: "Welcome",
@@ -26,6 +27,9 @@ export default {
   },
   messages: {
     confirmDeletePlan: "Are you sure you want to delete this plan?",
+    confirmCopyPlanTitle: "Copy plan?",
+    confirmCopyPlan: "Copy this plan to {{year}}?",
+    planCopiedToNextYear: "The plan has been copied to {{year}}.",
     confirmDeleteTask: "Are you sure you want to delete this task?",
     unsavedChangesTitle: "Unsaved Changes",
     unsavedChangesMessage:
@@ -35,6 +39,20 @@ export default {
     emptyText: "Text field cannot be empty",
     emptyImage: "Please select an image",
     generic: "Something went wrong. Please try again.",
+    auth: {
+      invalidCredential:
+        "Incorrect email or password. Please check your details and try again.",
+      invalidEmail: "Please enter a valid email address.",
+      userDisabled: "This account has been disabled.",
+      tooManyRequests:
+        "Too many attempts. Please wait a few minutes and try again.",
+      network:
+        "No internet connection. Please check your network and try again.",
+      emailInUse: "An account with this email already exists. Try logging in.",
+      weakPassword: "This password is too weak. Please choose a stronger one.",
+      requiresRecentLogin:
+        "For security reasons, please log out, log in again and repeat this action.",
+    },
   },
   context: {
     health: "Health",

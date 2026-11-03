@@ -115,7 +115,7 @@ export function PaywallLayout({
             </Pressable>
           </HStack>
 
-          <Text className="text-xs text-warmGray-400 text-center">
+          <Text className="text-2xs text-warmGray-400 text-center">
             {disclaimer}
           </Text>
         </VStack>

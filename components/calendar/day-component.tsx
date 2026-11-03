@@ -148,29 +148,40 @@ export const DayComponent = memo(
                     </Text>
                   </Box>
                 ) : (
-                  <CircularProgress
-                    value={progress}
-                    duration={0}
-                    activeStrokeColor={
-                      progress === 0 ? "transparent" : colors.green400
-                    }
-                    inActiveStrokeColor={colors.green400}
-                    inActiveStrokeOpacity={0.18}
-                    circleBackgroundColor={
-                      pressed ? colors.ivoryBadge : "transparent"
-                    }
-                    showProgressValue={false}
-                    title={date?.day?.toString() || ""}
-                    titleStyle={{
-                      fontFamily: systemFontFamily,
-                      fontSize: bodyFontSize,
-                      fontWeight: today ? "700" : "400",
-                      color: colors.primaryText,
-                    }}
-                    radius={20.5}
-                    activeStrokeWidth={2}
-                    inActiveStrokeWidth={2}
-                  />
+                  <Box className="h-[41px] w-[41px] items-center justify-center">
+                    <CircularProgress
+                      value={progress}
+                      duration={0}
+                      activeStrokeColor={
+                        progress === 0 ? "transparent" : colors.green400
+                      }
+                      inActiveStrokeColor={colors.green400}
+                      inActiveStrokeOpacity={0.18}
+                      circleBackgroundColor={
+                        pressed ? colors.ivoryBadge : "transparent"
+                      }
+                      showProgressValue={false}
+                      radius={20.5}
+                      activeStrokeWidth={2}
+                      inActiveStrokeWidth={2}
+                    />
+                    <Box
+                      pointerEvents="none"
+                      className="absolute inset-0 items-center justify-center"
+                    >
+                      <Text
+                        testID={`calendar-day-number-${date.dateString}`}
+                        style={{
+                          fontFamily: systemFontFamily,
+                          fontSize: bodyFontSize,
+                          fontWeight: today ? "700" : "400",
+                          color: colors.primaryText,
+                        }}
+                      >
+                        {date?.day?.toString() || ""}
+                      </Text>
+                    </Box>
+                  </Box>
                 )}
                 {today && (
                   <Box

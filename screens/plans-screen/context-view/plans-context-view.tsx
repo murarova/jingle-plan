@@ -95,8 +95,10 @@ export const PlansContextView = memo(
                     }
                     onEdit={(item) => handleEditForContext(item, context)}
                     onDelete={(item) => handleDeleteForContext(item, context)}
-                    onCopyToNextYear={(item) =>
-                      handleCopyToNextYear(item, context)
+                    onCopyToNextYear={
+                      handleCopyToNextYear
+                        ? (item) => handleCopyToNextYear(item, context)
+                        : undefined
                     }
                     onComplete={(props) =>
                       handleCompleteForContext({

@@ -2,13 +2,12 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import {
   createUserWithEmailAndPassword,
   deleteUser,
-  FirebaseAuthTypes,
   getAuth,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
 } from "@react-native-firebase/auth";
-import { convertToSerializableUser } from "../types/user";
+import { convertToSerializableUser, SerializableUser } from "@/types/user";
 
 const auth = getAuth();
 
@@ -65,10 +64,8 @@ const authQuery = async (args: any) => {
       const errorCode = (error as { code?: string }).code;
       const errorMessage = (error as { message?: string }).message;
 
-      if (errorCode === "auth/user-not-found") {
-        return {
-          error: { status: "CUSTOM_ERROR", data: "AUTH_EMAIL_NOT_FOUND" },
-        };
+      if (typeof errorCode === "string" && errorCode.startsWith("auth/")) {
+        return { error: { status: "CUSTOM_ERROR", data: errorCode } };
       }
 
       if (typeof errorMessage === "string") {
@@ -85,7 +82,7 @@ export const authApi = createApi({
   tagTypes: ["Auth"],
   endpoints: (builder) => ({
     createUser: builder.mutation<
-      FirebaseAuthTypes.User,
+      SerializableUser,
       { email: string; password: string }
     >({
       query: ({ email, password }) => ({
@@ -96,7 +93,7 @@ export const authApi = createApi({
     }),
 
     signInUser: builder.mutation<
-      FirebaseAuthTypes.User,
+      SerializableUser,
       { email: string; password: string }
     >({
       query: ({ email, password }) => ({

@@ -134,7 +134,7 @@ export const TabsAnimatedIndicator = React.forwardRef<
         width: animatedWidth.value,
         height: animatedHeight.value,
       };
-    }, [orientation, animatedX, animatedY, animatedWidth, animatedHeight]);
+    });
 
     // Don't render indicator until we have valid layout data
     if (!hasLayout) {

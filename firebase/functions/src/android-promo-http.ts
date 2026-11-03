@@ -9,7 +9,6 @@ import {
   nextPromoCodeOnConsume,
   PROMO_SOURCE,
   redeemPromoCodeWithCommit,
-  type PromoErrorCode,
   type RedeemSuccess,
 } from "./android-promo";
 
@@ -24,10 +23,6 @@ function setCors(res: Response) {
 function sendJson(res: Response, status: number, body: unknown) {
   setCors(res);
   res.status(status).json(body);
-}
-
-function statusForError(code: PromoErrorCode): number {
-  return 400;
 }
 
 async function requireUid(
@@ -225,7 +220,7 @@ export const redeemAndroidPromoCode = functions
         { uid, code: String(req.body?.code ?? ""), now },
       );
       if ("error" in result) {
-        sendJson(res, statusForError(result.error), { error: result.error });
+        sendJson(res, 400, { error: result.error });
         return;
       }
       sendJson(res, 200, { expiresAt: result.expiresAt });

@@ -14,6 +14,7 @@ import {
   ViewStyle,
   TextInput,
   TextInputProps,
+  type TextInputInstance,
   View,
   Pressable,
   Modal,
@@ -39,7 +40,7 @@ type Props = Omit<TextInputProps, "multiline" | "style"> & {
 };
 
 export const AutoGrowingTextarea = memo(
-  forwardRef<TextInput, Props>(
+  forwardRef<TextInputInstance, Props>(
     (
       {
         style,
@@ -61,8 +62,8 @@ export const AutoGrowingTextarea = memo(
       const [expandedDefaultValue, setExpandedDefaultValue] = useState("");
       const [expandedSession, setExpandedSession] = useState(0);
       const [compactSession, setCompactSession] = useState(0);
-      const compactInputRef = useRef<TextInput | null>(null);
-      const expandedInputRef = useRef<TextInput | null>(null);
+      const compactInputRef = useRef<TextInputInstance | null>(null);
+      const expandedInputRef = useRef<TextInputInstance | null>(null);
       const textRef = useRef(
         typeof value === "string"
           ? value
@@ -82,7 +83,7 @@ export const AutoGrowingTextarea = memo(
       }, [isControlled, value]);
 
       const setCompactRef = useCallback(
-        (node: TextInput | null) => {
+        (node: TextInputInstance | null) => {
           compactInputRef.current = node;
           if (typeof ref === "function") {
             ref(node);

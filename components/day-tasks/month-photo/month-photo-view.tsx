@@ -1,4 +1,4 @@
-import { ImageBackground } from "@/ui/image-background";
+import { Image } from "@/ui/image";
 import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
 import { memo } from "react";
@@ -35,8 +35,8 @@ export const MonthPhotoView = memo(
             )}
             <AnimatedView style={{ zIndex: 1 }} show={!isLoading}>
               <Box className="h-[300px] w-full">
-                <ImageBackground
-                  style={{ flex: 1, justifyContent: "center" }}
+                <Image
+                  size="full"
                   source={{ uri: image?.uri }}
                   resizeMode="contain"
                   onLoadStart={() => setIsImageLoading(true)}

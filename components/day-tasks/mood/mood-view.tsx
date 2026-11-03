@@ -1,4 +1,4 @@
-import { ImageBackground } from "@/ui/image-background";
+import { Image } from "@/ui/image";
 import { Text } from "@/ui/text";
 import { Divider } from "@/ui/divider";
 import { Button, ButtonText } from "@/ui/button";
@@ -44,8 +44,8 @@ export const MoodView = memo(
           )}
           <AnimatedView style={{ zIndex: 1 }} show={!isImageLoading}>
               <Box className="h-[300px] w-full">
-              <ImageBackground
-                style={{ flex: 1, justifyContent: "center" }}
+              <Image
+                size="full"
                 src={image?.uri}
                 resizeMode="contain"
               />

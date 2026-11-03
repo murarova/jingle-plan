@@ -21,7 +21,7 @@ import { convertToSerializableUser } from "../../types/user";
 import { useCreateProfileMutation } from "../../services/api";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/navigation/types";
-import { resolveErrorMessage } from "@/utils";
+import { resolveAuthErrorMessage } from "@/utils";
 import { Heading } from "@/ui/heading";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Register">;
@@ -133,8 +133,7 @@ export const RegisterScreen = () => {
       dispatch(setUser(serializableUser));
       nav.replace(SCREENS.HOME);
     } catch (error) {
-      const message =
-        resolveErrorMessage(error) ?? t("errors.generic", "An error occurred");
+      const message = resolveAuthErrorMessage(error, t);
 
       dispatch(setAuthError(message));
       Alert.alert(t("common.error"), message);

@@ -42,7 +42,7 @@ export const AnimatedHeight: React.FC<AnimatedHeightProps> = ({
       opacity: progress.value,
       overflow: 'hidden',
     };
-  }, [progress, measuredHeight]);
+  });
 
   return (
     <Animated.View style={[animatedStyle, style]}>

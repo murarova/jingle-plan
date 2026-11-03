@@ -7,7 +7,12 @@ import {
   useRef,
   type ReactNode,
 } from "react";
-import { findNodeHandle, View, type LayoutChangeEvent } from "react-native";
+import {
+  findNodeHandle,
+  View,
+  type LayoutChangeEvent,
+  type ViewInstance,
+} from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -35,14 +40,14 @@ type KeyboardAwareScrollProps = {
 type Frame = { top: number; bottom: number };
 
 type Registry = {
-  register: (node: View) => () => void;
+  register: (node: ViewInstance) => () => void;
   measureAll: () => void;
 };
 
 const RegistryContext = createContext<Registry | null>(null);
 
 export function KeyboardAwareGroup({ children }: { children: ReactNode }) {
-  const ref = useRef<View>(null);
+  const ref = useRef<ViewInstance>(null);
   const registry = useContext(RegistryContext);
 
   useEffect(() => {
@@ -70,8 +75,8 @@ export function KeyboardAwareScroll({
   extraBelowInput = EXTRA_BELOW_INPUT,
 }: KeyboardAwareScrollProps) {
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const contentRef = useRef<View>(null);
-  const groups = useRef(new Map<View, Frame>());
+  const contentRef = useRef<ViewInstance>(null);
+  const groups = useRef(new Map<ViewInstance, Frame>());
   const offset = useScrollViewOffset(scrollRef);
   const scrollTag = useSharedValue<number | null>(null);
   const frames = useSharedValue<Frame[]>([]);
@@ -93,7 +98,7 @@ export function KeyboardAwareScroll({
       frames.value = [...groups.current.values()];
     };
 
-    const measureNode = (node: View) => {
+    const measureNode = (node: ViewInstance) => {
       const content = contentRef.current;
       if (!content) {
         return;
@@ -278,7 +283,6 @@ export function KeyboardAwareScroll({
         revealNow();
       }
     },
-    [revealNow, syncInput],
   );
 
   useAnimatedReaction(
@@ -288,7 +292,6 @@ export function KeyboardAwareScroll({
         revealNow();
       }
     },
-    [revealNow],
   );
 
   const spacerStyle = useAnimatedStyle(() => ({
@@ -296,7 +299,7 @@ export function KeyboardAwareScroll({
   }));
 
   const onScrollLayout = useCallback(() => {
-    scrollTag.value = findNodeHandle(scrollRef.current);
+    scrollTag.value = findNodeHandle(scrollRef.current) ?? null;
   }, [scrollRef, scrollTag]);
 
   const onContentLayout = useCallback(

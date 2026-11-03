@@ -11,18 +11,7 @@ module.exports = function (api) {
     plugins: [
       ...(isTest
         ? []
-        : [
-            [
-              "module-resolver",
-              {
-                root: ["."],
-                alias: {
-                  "@": ".",
-                },
-              },
-            ],
-            ["module:react-native-dotenv"],
-          ]),
+        : [["module:react-native-dotenv"]]),
       "react-native-reanimated/plugin",
     ],
   };
