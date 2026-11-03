@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-native-circular-progress-indicator/src/hooks/useAnimatedValue.ts b/node_modules/react-native-circular-progress-indicator/src/hooks/useAnimatedValue.ts
-index 8b56ffb..27cdb2a 100644
+index 8b56ffb..0f5e641 100644
 --- a/node_modules/react-native-circular-progress-indicator/src/hooks/useAnimatedValue.ts
 +++ b/node_modules/react-native-circular-progress-indicator/src/hooks/useAnimatedValue.ts
 @@ -1,6 +1,5 @@
@@ -9,10 +9,11 @@ index 8b56ffb..27cdb2a 100644
    Easing,
    interpolateColor,
    processColor,
-@@ -146,16 +145,14 @@ export default function useAnimatedValue({
+@@ -145,17 +144,15 @@ export default function useAnimatedValue({
+       }
        return config;
      },
-     [],
+-    [],
 -    createAnimatedPropAdapter(
 -      props => {
 -        if (Object.keys(props).includes('stroke')) {
@@ -23,6 +24,7 @@ index 8b56ffb..27cdb2a 100644
 -      },
 -      ['stroke']
 -    )
++    undefined,
 +    props => {
 +      'worklet';
 +      if (Object.keys(props).includes('stroke')) {

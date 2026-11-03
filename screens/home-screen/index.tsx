@@ -168,7 +168,7 @@ export const HomeScreen = () => {
 
   const handleTabPress = useCallback(
     (
-      e: EventArg<"tabPress", true, undefined>,
+      e: EventArg<"tabPress", true, unknown>,
       navigation: BottomTabNavigationProp<Record<string, object | undefined>>,
       targetScreen?: string,
       isPeriodOverview = false,

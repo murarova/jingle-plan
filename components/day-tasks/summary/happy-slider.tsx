@@ -3,7 +3,12 @@ import { Box } from "@/ui/box";
 import { Text } from "@/ui/text";
 import { useRating } from "../../../hooks/useRating";
 import { useCallback, useMemo, useRef } from "react";
-import { PanResponder, StyleSheet, View } from "react-native";
+import {
+  PanResponder,
+  StyleSheet,
+  View,
+  type ViewInstance,
+} from "react-native";
 import { colors } from "@/constants/colors";
 
 interface HappySliderProps {
@@ -24,7 +29,7 @@ export const HappySlider = ({
   const getRating = useRating();
   const filledColor = isDisabled ? colors.secondaryText : colors.primary300;
   const thumbColor = isDisabled ? colors.secondaryText : colors.primary500;
-  const trackRef = useRef<View>(null);
+  const trackRef = useRef<ViewInstance>(null);
   const metrics = useRef({ x: 0, width: 1 });
 
   const measureTrack = useCallback(() => {

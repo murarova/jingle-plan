@@ -6,15 +6,9 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splashscreen.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "assetBundlePatterns": [
       "**/*"
     ],
-    "newArchEnabled": true,
     "ios": {
       "icon": "./assets/icon.png",
       "supportsTablet": false,
@@ -37,13 +31,9 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "splash": {
-        "image": "./assets/icon.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#ffffff"
-      },
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.POST_NOTIFICATIONS"
       ],
       "package": "com.murarova.jingleplan",
       "softwareKeyboardLayoutMode": "resize"
@@ -66,6 +56,7 @@
           }
         }
       ],
+      "./plugins/with-firebase-configure.js",
       [
         "expo-build-properties",
         {
@@ -81,8 +72,6 @@
           },
           "android": {
             "targetSdkVersion": 36,
-            "compileSdkVersion": 36,
-            "kotlinVersion": "2.1.20",
             "enableMinifyInReleaseBuilds": true,
             "enableShrinkResourcesInReleaseBuilds": true,
             "extraProguardRules": "-keep class com.swmansion.reanimated.** { *; }\n-keep class com.facebook.react.turbomodule.** { *; }\n-keep class io.invertase.notifee.** { *; }\n-keep class app.notifee.** { *; }\n-dontwarn app.notifee.**\n-dontwarn io.invertase.notifee.**",
@@ -109,9 +98,19 @@
       ],
       "expo-tracking-transparency",
       "expo-font",
-      "./plugins/with-android-build-fixes.js",
       "@react-native-firebase/auth",
-      "@react-native-firebase/messaging"
+      "@react-native-firebase/messaging",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splashscreen.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff",
+          "android": {
+            "image": "./assets/icon.png"
+          }
+        }
+      ]
     ],
     "extra": {
       "eas": {

@@ -372,7 +372,7 @@ const TabsContentWrapper = React.forwardRef<
     return {
       height: heightValue.value > 0 ? heightValue.value : 'auto',
     };
-  }, []);
+  });
 
   return (
     <UITabs.ContentWrapper

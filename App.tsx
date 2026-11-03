@@ -19,10 +19,7 @@ export default function App() {
     <SafeAreaProvider>
       <KeyboardProvider>
         <GluestackUIProvider mode="light">
-          <StatusBar
-            barStyle="dark-content"
-            backgroundColor={colors.ivoryPage}
-          />
+          <StatusBar barStyle="dark-content" />
           <GestureHandlerRootView
             style={{ flex: 1, backgroundColor: colors.ivoryPage }}
           >
