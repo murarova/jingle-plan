@@ -1,4 +1,4 @@
-import { ImageBackground } from "@/ui/image-background";
+import { Image } from "@/ui/image";
 import { ButtonText, Button } from "@/ui/button";
 import { Box } from "@/ui/box";
 import * as ExpoImagePicker from "expo-image-picker";
@@ -54,8 +54,8 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
       {showPreview && (
         <Box className="relative h-[300px] w-full overflow-hidden rounded-lg bg-ivory-badge">
           {image && (
-            <ImageBackground
-              style={{ flex: 1, justifyContent: "center" }}
+            <Image
+              size="full"
               source={{ uri: image.uri }}
               onLoadEnd={() => setIsImageLoading(false)}
               onError={() => setIsImageLoading(false)}

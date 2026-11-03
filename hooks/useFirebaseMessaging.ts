@@ -15,6 +15,7 @@ import notifee, {
   AuthorizationStatus as NotifeeAuthorizationStatus,
 } from "@notifee/react-native";
 import { getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
+import * as Device from "expo-device";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 import {
@@ -39,6 +40,9 @@ async function ensureAndroidChannel() {
 async function ensureRegisteredForRemoteMessages() {
   if (Platform.OS !== "ios" || isDeviceRegisteredForRemoteMessages(messaging)) {
     return true;
+  }
+  if (!Device.isDevice) {
+    return false;
   }
   try {
     await registerDeviceForRemoteMessages(messaging);
