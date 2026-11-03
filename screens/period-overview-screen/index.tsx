@@ -69,7 +69,7 @@ function PeriodOverviewScreen() {
           >
             <Box className="px-4 pt-6">
               <Box
-                className="overflow-hidden rounded-3xl border border-ivory-line bg-ivory-card px-4 pb-7 pt-6"
+                className="overflow-hidden rounded-3xl border border-ivory-line bg-ivory-card px-4 pb-3 pt-6"
                 style={cardShadow}
               >
                 <Calendar
