@@ -34,6 +34,7 @@ export function PlansList({
   onDelete,
   handleCompletePlan,
   onMonthSelect,
+  onCopyToNextYear,
   view,
   month,
 }: PlansListProps) {
@@ -199,6 +200,18 @@ export function PlansList({
                 >
                   <Text className="text-primaryText">{t("common.selectMonth")}</Text>
                 </MenuItem>
+                {onCopyToNextYear ? (
+                  <MenuItem
+                    key="copyToNextYear"
+                    textValue="copyToNextYear"
+                    onPress={() => onCopyToNextYear(item)}
+                    className="rounded-none border-b-[0.5px] border-ivory-line bg-ivory-card px-4 py-[13px] data-[active=true]:bg-ivory-badge"
+                  >
+                    <Text className="text-primaryText">
+                      {t("common.copyToNextYear")}
+                    </Text>
+                  </MenuItem>
+                ) : null}
                 <MenuItem
                   key="delete"
                   textValue="delete"

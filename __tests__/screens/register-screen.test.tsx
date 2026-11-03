@@ -176,8 +176,14 @@ describe("RegisterScreen", () => {
 
     it("records an auth error and alerts when creation fails", async () => {
       createUserTrigger.mockImplementationOnce(() => ({
-        unwrap: () => Promise.reject(new Error("Email already in use")),
+        unwrap: () =>
+          Promise.reject({
+            status: "CUSTOM_ERROR",
+            data: "auth/email-already-in-use",
+          }),
       }));
+      const expected =
+        "Обліковий запис із цією поштою вже існує. Спробуйте увійти.";
 
       const { store } = renderWithProviders(<RegisterScreen />);
       fillForm();
@@ -185,10 +191,10 @@ describe("RegisterScreen", () => {
       fireEvent.press(screen.getByText("Створити акаунт"));
 
       await waitFor(() => {
-        expect(store.getState().auth.error).toBe("Email already in use");
+        expect(store.getState().auth.error).toBe(expected);
       });
       expect(store.getState().auth.status).toBe("failed");
-      expect(alertSpy).toHaveBeenCalledWith("Помилка", "Email already in use");
+      expect(alertSpy).toHaveBeenCalledWith("Помилка", expected);
       expect(mockReplace).not.toHaveBeenCalled();
     });
   });

@@ -108,8 +108,14 @@ describe("LoginScreen", () => {
 
     it("records an auth error and alerts when sign-in fails", async () => {
       signInTrigger.mockImplementationOnce(() => ({
-        unwrap: () => Promise.reject(new Error("Invalid credentials")),
+        unwrap: () =>
+          Promise.reject({
+            status: "CUSTOM_ERROR",
+            data: "auth/invalid-credential",
+          }),
       }));
+      const expected =
+        "Неправильна електронна пошта або пароль. Перевірте дані та спробуйте ще раз.";
 
       const { store } = renderWithProviders(<LoginScreen />);
       fillCredentials();
@@ -117,10 +123,10 @@ describe("LoginScreen", () => {
       fireEvent.press(screen.getByText("Увійти"));
 
       await waitFor(() => {
-        expect(store.getState().auth.error).toBe("Invalid credentials");
+        expect(store.getState().auth.error).toBe(expected);
       });
       expect(store.getState().auth.status).toBe("failed");
-      expect(alertSpy).toHaveBeenCalledWith("Помилка", "Invalid credentials");
+      expect(alertSpy).toHaveBeenCalledWith("Помилка", expected);
       expect(mockReplace).not.toHaveBeenCalled();
     });
   });

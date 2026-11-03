@@ -23,7 +23,7 @@ import { useAppDispatch } from "../../store/withTypes";
 import { convertToSerializableUser } from "../../types/user";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/navigation/types";
-import { resolveErrorMessage } from "@/utils";
+import { getAuthErrorCode, resolveAuthErrorMessage } from "@/utils";
 import * as Haptics from "expo-haptics";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "Login">;
@@ -85,8 +85,7 @@ export const LoginScreen = () => {
       dispatch(setUser(convertToSerializableUser(user)));
       nav.replace(SCREENS.HOME);
     } catch (error) {
-      const message =
-        resolveErrorMessage(error) ?? t("errors.generic", "An error occurred");
+      const message = resolveAuthErrorMessage(error, t);
 
       dispatch(setAuthError(message));
       Alert.alert(t("common.error"), message);
@@ -120,12 +119,10 @@ export const LoginScreen = () => {
         t("screens.loginScreen.resetSuccess", { email }),
       );
     } catch (error) {
-      let message =
-        resolveErrorMessage(error) ?? t("errors.generic", "An error occurred");
-
-      if (message === "AUTH_EMAIL_NOT_FOUND") {
-        message = t("screens.loginScreen.resetEmailNotFound");
-      }
+      const message =
+        getAuthErrorCode(error) === "auth/user-not-found"
+          ? t("screens.loginScreen.resetEmailNotFound")
+          : resolveAuthErrorMessage(error, t);
 
       Alert.alert(t("common.error"), message);
     }

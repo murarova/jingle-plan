@@ -11,6 +11,7 @@ import {
   PlansViewOptions,
   TASK_CATEGORY,
   TASK_CONTEXT,
+  YEARS,
 } from "@/constants";
 import { Alert } from "react-native";
 import {
@@ -348,34 +349,33 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
     [plans, context, updatedData, updatePlan],
   );
 
-  const handleCopyToNextYear = useCallback(
-    async (plan: PlanScreenData, planContext: TaskContext) => {
-      if (!plans || !currentUser?.uid) return;
+  const nextYear = String(Number(selectedYear) + 1);
+  const isNextYearAvailable = (YEARS as readonly string[]).includes(nextYear);
 
-      const nextYear = (parseInt(selectedYear) + 1).toString();
-      const newPlanId = uuid.v4().toString();
-      const newPlan: PlanScreenData = {
-        ...plan,
-        id: newPlanId,
+  const copyPlanToNextYear = useCallback(
+    async (plan: PlanScreenData, planContext: TaskContext) => {
+      if (!currentUser?.uid) return;
+
+      const { month, monthlyProgress, ...planWithoutMonth } = plan;
+      const copiedPlan: PlanScreenData = {
+        ...planWithoutMonth,
+        id: uuid.v4().toString(),
         isDone: false,
       };
 
       try {
-        const result = await getUserData({
+        const nextYearUserData = await getUserData({
           uid: currentUser.uid,
           year: nextYear,
         }).unwrap();
 
-        const nextYearUserData = result?.data ?? [];
-
-        const existingPlans = ((nextYearUserData?.plans as PlanContextData)?.[
+        const nextYearPlans = ((nextYearUserData?.plans as PlanContextData)?.[
           planContext
-        ] || []) as PlanScreenData[];
-        const updatedPlans = [...existingPlans, newPlan];
+        ] ?? []) as PlanScreenData[];
 
         await saveTaskByCategory({
           category: TASK_CATEGORY.PLANS,
-          data: updatedPlans,
+          data: [...nextYearPlans, copiedPlan],
           context: planContext,
           year: nextYear,
         }).unwrap();
@@ -385,6 +385,11 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         } catch (error) {
           console.log("Haptics not available");
         }
+
+        Alert.alert(
+          t("common.done"),
+          t("messages.planCopiedToNextYear", { year: nextYear }),
+        );
       } catch (error) {
         const message =
           resolveErrorMessage(error) ??
@@ -393,8 +398,29 @@ export const usePlansScreen = ({ plans }: UsePlansScreenProps) => {
         Alert.alert(t("common.error"), message);
       }
     },
-    [plans, selectedYear, saveTaskByCategory, getUserData, currentUser?.uid, t],
+    [currentUser?.uid, getUserData, nextYear, saveTaskByCategory, t],
   );
+
+  const confirmCopyToNextYear = useCallback(
+    (plan: PlanScreenData, planContext: TaskContext) => {
+      Alert.alert(
+        t("messages.confirmCopyPlanTitle"),
+        t("messages.confirmCopyPlan", { year: nextYear }),
+        [
+          { text: t("common.cancel"), style: "cancel" },
+          {
+            text: t("common.copy"),
+            onPress: () => copyPlanToNextYear(plan, planContext),
+          },
+        ],
+      );
+    },
+    [copyPlanToNextYear, nextYear, t],
+  );
+
+  const handleCopyToNextYear = isNextYearAvailable
+    ? confirmCopyToNextYear
+    : undefined;
 
   return {
     handleUpdatePlan,

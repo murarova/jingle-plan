@@ -16,7 +16,7 @@ export interface PlansHandlers {
   handleDeletePlan: (id: string, context: TaskContext) => void;
   handleUpdatePlan: (id: string, text: string) => void;
   handleMonthSelect: (month: string) => void;
-  handleCopyToNextYear: (plan: PlanScreenData, context: TaskContext) => void;
+  handleCopyToNextYear?: (plan: PlanScreenData, context: TaskContext) => void;
   handleCompletePlan: (props: CompletePlanProps) => void;
   setShowModal: (value: boolean) => void;
   showModal: boolean;
