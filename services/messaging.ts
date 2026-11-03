@@ -8,6 +8,7 @@ import { getAuth } from "@react-native-firebase/auth";
 import {
   getAPNSToken,
   getMessaging,
+  isDeviceRegisteredForRemoteMessages,
   subscribeToTopic,
   unsubscribeFromTopic,
 } from "@react-native-firebase/messaging";
@@ -26,6 +27,7 @@ function fcmTokenRef(uid: string) {
 
 async function canManageTopics() {
   if (Platform.OS !== "ios") return true;
+  if (!isDeviceRegisteredForRemoteMessages(messaging)) return false;
   return (await getAPNSToken(messaging)) !== null;
 }
 

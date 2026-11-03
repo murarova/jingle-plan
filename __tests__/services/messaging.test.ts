@@ -1,6 +1,7 @@
 import { Platform } from "react-native";
 import {
   getAPNSToken,
+  isDeviceRegisteredForRemoteMessages,
   subscribeToTopic,
   unsubscribeFromTopic,
 } from "@react-native-firebase/messaging";
@@ -14,16 +15,19 @@ import {
 jest.mock("@react-native-firebase/messaging", () => ({
   getMessaging: jest.fn(() => ({})),
   getAPNSToken: jest.fn(),
+  isDeviceRegisteredForRemoteMessages: jest.fn(),
   subscribeToTopic: jest.fn(),
   unsubscribeFromTopic: jest.fn(),
 }));
 
 const mockGetAPNSToken = getAPNSToken as jest.Mock;
+const mockIsRegistered = isDeviceRegisteredForRemoteMessages as jest.Mock;
 const mockSubscribe = subscribeToTopic as jest.Mock;
 const mockUnsubscribe = unsubscribeFromTopic as jest.Mock;
 
 beforeEach(async () => {
   Platform.OS = "ios";
+  mockIsRegistered.mockReset().mockReturnValue(true);
   mockGetAPNSToken.mockReset().mockResolvedValue("apns-token");
   await unsubscribeFromPremiumTopic();
   mockGetAPNSToken.mockClear();
@@ -46,6 +50,17 @@ describe("premium topic sync", () => {
     expect(mockSubscribe).not.toHaveBeenCalled();
 
     mockGetAPNSToken.mockResolvedValue("apns-token");
+    await retryPremiumTopicSync();
+    expect(mockSubscribe).toHaveBeenCalledTimes(1);
+  });
+
+  it("skips the APNs token lookup on iOS when not registered for remote messages", async () => {
+    mockIsRegistered.mockReturnValue(false);
+    await syncPremiumTopicSubscription(true);
+    expect(mockGetAPNSToken).not.toHaveBeenCalled();
+    expect(mockSubscribe).not.toHaveBeenCalled();
+
+    mockIsRegistered.mockReturnValue(true);
     await retryPremiumTopicSync();
     expect(mockSubscribe).toHaveBeenCalledTimes(1);
   });

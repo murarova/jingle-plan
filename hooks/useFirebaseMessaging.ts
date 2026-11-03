@@ -3,12 +3,17 @@ import {
   getInitialNotification,
   getMessaging,
   getToken,
+  isDeviceRegisteredForRemoteMessages,
   onMessage,
   onNotificationOpenedApp,
   onTokenRefresh,
+  registerDeviceForRemoteMessages,
   requestPermission,
 } from "@react-native-firebase/messaging";
-import notifee, { AndroidImportance } from "@notifee/react-native";
+import notifee, {
+  AndroidImportance,
+  AuthorizationStatus as NotifeeAuthorizationStatus,
+} from "@notifee/react-native";
 import { getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
 import { useEffect } from "react";
 import { Platform } from "react-native";
@@ -31,17 +36,43 @@ async function ensureAndroidChannel() {
   }
 }
 
-async function registerFcmToken() {
-  const authStatus = await requestPermission(messaging);
-  const enabled =
-    authStatus === AuthorizationStatus.AUTHORIZED ||
-    authStatus === AuthorizationStatus.PROVISIONAL;
+async function ensureRegisteredForRemoteMessages() {
+  if (Platform.OS !== "ios" || isDeviceRegisteredForRemoteMessages(messaging)) {
+    return true;
+  }
+  try {
+    await registerDeviceForRemoteMessages(messaging);
+    return true;
+  } catch (error) {
+    console.error("Failed to register for remote messages:", error);
+    return false;
+  }
+}
 
-  if (!enabled) {
+async function requestNotificationPermission() {
+  if (Platform.OS === "android") {
+    const settings = await notifee.requestPermission();
+    return (
+      settings.authorizationStatus === NotifeeAuthorizationStatus.AUTHORIZED
+    );
+  }
+  const authStatus = await requestPermission(messaging);
+  return (
+    authStatus === AuthorizationStatus.AUTHORIZED ||
+    authStatus === AuthorizationStatus.PROVISIONAL
+  );
+}
+
+async function registerFcmToken() {
+  if (!(await requestNotificationPermission())) {
     return;
   }
 
   await ensureAndroidChannel();
+
+  if (!(await ensureRegisteredForRemoteMessages())) {
+    return;
+  }
 
   const token = await getToken(messaging);
   if (token) {
@@ -98,7 +129,7 @@ export function useFirebaseMessaging() {
       messaging,
       async (remoteMessage) => {
         console.log("Notification opened app:", remoteMessage);
-      }
+      },
     );
 
     getInitialNotification(messaging).then((remoteMessage) => {
