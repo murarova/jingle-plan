@@ -34,6 +34,7 @@ export const AlbumCarouselItem = memo(({ item }: AlbumCarouselItemProps) => {
           source={{ uri: item?.image?.uri }}
           size="full"
           resizeMode="contain"
+          resizeMethod="resize"
           style={imageStyle}
           alt={`Photo for ${item.month}`}
         />

@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import uuid from "react-native-uuid";
 import { Loader } from "./loader";
 import { ImageData } from "@/types";
+import { resizeImageForUpload } from "@/utils/resize-image";
 
 interface ImagePickerProps {
   image: ImageData | null;
@@ -29,7 +30,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
 
     const result = await ExpoImagePicker.launchImageLibraryAsync({
       mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
-      quality: 0.8,
+      quality: 1,
       exif: false,
     });
 
@@ -39,11 +40,17 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
     }
 
     const asset = result.assets[0];
-    setImage({
-      id: image?.id ?? uuid.v4().toString(),
+    const resized = await resizeImageForUpload({
       uri: asset.uri,
       width: asset.width,
       height: asset.height,
+    });
+
+    setImage({
+      id: image?.id ?? uuid.v4().toString(),
+      uri: resized.uri,
+      width: resized.width,
+      height: resized.height,
     });
   };
 
