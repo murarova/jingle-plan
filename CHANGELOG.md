@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.7.1...jingle-plan-v1.8.0) (2026-11-04)
+
+
+### Features
+
+* add post-login user guide and redesign paywall ([#78](https://github.com/murarova/jingle-plan/issues/78)) ([ac02c97](https://github.com/murarova/jingle-plan/commit/ac02c979c6b4fdb46f999f093c51930ee842036d))
+
 ## [1.7.1](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.7.0...jingle-plan-v1.7.1) (2026-11-04)
 
 
