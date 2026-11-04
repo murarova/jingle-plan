@@ -3,7 +3,7 @@ import { MenuIcon, Icon } from "@/ui/icon";
 import { Box } from "@/ui/box";
 import { Pressable } from "@/ui/pressable";
 import { Menu, MenuItem } from "@/ui/menu";
-import { LogOut, Trash2, Crown } from "lucide-react-native";
+import { LogOut, Trash2, Crown, CircleHelp } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { SCREENS } from "@/constants";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
@@ -19,6 +19,7 @@ import {
 import { useGetUserProfileQuery } from "../../services/api";
 import { RootStackParamList } from "@/navigation/types";
 import { resolveAuthErrorMessage } from "@/utils";
+import { useUserGuide } from "@/providers";
 
 const menuSurfaceStyle = {
   borderRadius: 16,
@@ -38,6 +39,7 @@ export function AppMenu() {
   const { t } = useTranslation();
   const nav = useNavigation<NavigationProp<RootStackParamList>>();
   const dispatch = useAppDispatch();
+  const { openGuide } = useUserGuide();
   const { currentUser } = useAppSelector((state) => state.auth);
 
   const [signOut] = useSignOutMutation();
@@ -103,6 +105,13 @@ export function AppMenu() {
       label: t("common.manageSubscription"),
       icon: Crown,
       onPress: handleManageSubscription,
+    },
+    {
+      key: "Guide",
+      textValue: "Guide",
+      label: t("guide.menuItem"),
+      icon: CircleHelp,
+      onPress: openGuide,
     },
     {
       key: "Logout",

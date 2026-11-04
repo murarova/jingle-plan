@@ -1,22 +1,23 @@
 import type { ReactNode } from "react";
+import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
+import { CircleCheck, Sparkles } from "lucide-react-native";
 import { ScrollView } from "@/ui/scroll-view";
-import { Divider } from "@/ui/divider";
-import { HStack } from "@/ui/hstack";
-import { VStack } from "@/ui/vstack";
 import { AppButton } from "@/components/common";
 import { Text } from "@/ui/text";
 import { Box } from "@/ui/box";
-import { Pressable } from "@/ui/pressable";
+import { colors } from "@/constants/colors";
+import { PRIVACY_URL, TERMS_URL } from "@/constants/legal";
+import { typeRole } from "@/constants/typography";
+import { PaywallBenefits } from "./paywall-benefits";
+import { PaywallLink } from "./paywall-link";
 
 type PaywallLayoutProps = {
   priceLabel: string;
-  subscribeButtonLabel: string;
   isSubscribeDisabled: boolean;
   isSubscriber: boolean;
   isProcessing: boolean;
-  errorMessage: string | null;
-  disclaimer: string;
+  billingNote: string;
   isRestoreDisabled: boolean;
   onSubscribe: () => void;
   onRestore: () => void;
@@ -27,12 +28,10 @@ type PaywallLayoutProps = {
 
 export function PaywallLayout({
   priceLabel,
-  subscribeButtonLabel,
   isSubscribeDisabled,
   isSubscriber,
   isProcessing,
-  errorMessage,
-  disclaimer,
+  billingNote,
   isRestoreDisabled,
   onSubscribe,
   onRestore,
@@ -41,84 +40,113 @@ export function PaywallLayout({
   overlay,
 }: PaywallLayoutProps) {
   const { t } = useTranslation();
+  const legalLinks = [
+    { key: "terms", label: t("paywall.terms"), url: TERMS_URL },
+    { key: "privacy", label: t("paywall.privacy"), url: PRIVACY_URL },
+  ].filter((link) => link.url);
 
   return (
     <Box className="flex-1">
-      <ScrollView contentContainerStyle={{ padding: 24 }}>
-        <Box className="mb-6">
-          <Text className="text-xl font-bold mb-1">{t("paywall.title")}</Text>
-          <Text className="text-md text-warmGray-500">
-            {t("paywall.subtitle")}
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 32 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <Box className="items-center gap-2 pb-5 pt-2">
+          <Box className="flex-row items-center gap-2">
+            <Sparkles size={16} color={colors.progressYellow} />
+            <Text
+              className={`${typeRole.supporting} font-semibold uppercase`}
+              style={{ color: colors.progressYellow, letterSpacing: 1 }}
+            >
+              {t("paywall.eyebrow")}
+            </Text>
+            <Sparkles size={16} color={colors.progressYellow} />
+          </Box>
+          <Text className={`${typeRole.body} text-center text-secondaryText`}>
+            {t("paywall.lead")}
           </Text>
         </Box>
 
-        <VStack space="md">
-          <Box className="border border-ivory-line rounded-2xl p-5 bg-ivory-card">
-            <Text className="text-lg font-semibold mb-2">
-              {t("paywall.planName")}
+        <PaywallBenefits />
+
+        <Box
+          className="mt-4 w-full gap-2 rounded-3xl border-[1.5px] bg-ivory-card p-4"
+          style={{ borderColor: colors.green400 }}
+        >
+          <Box className="flex-row items-center justify-between">
+            <Text className={`${typeRole.button} text-primaryText`}>
+              {t("paywall.planTitle")}
             </Text>
-            <Text className="text-2xl font-bold mb-1">{priceLabel}</Text>
-            <Text className="text-sm text-warmGray-500 mb-4">
-              {t("paywall.billingPeriod")}
-            </Text>
-            <Divider className="my-2" />
-            <VStack space="xs" className="mt-3">
-              <HStack space="sm" className="mb-2">
-                <Text>•</Text>
-                <Text className="flex-1">{t("paywall.benefitOne")}</Text>
-              </HStack>
-              <HStack space="sm" className="mb-2">
-                <Text>•</Text>
-                <Text className="flex-1">{t("paywall.benefitFour")}</Text>
-              </HStack>
-              <HStack space="sm" className="mb-2">
-                <Text>•</Text>
-                <Text className="flex-1">{t("paywall.benefitThree")}</Text>
-              </HStack>
-              <HStack space="sm" className="mb-2">
-                <Text>•</Text>
-                <Text className="flex-1">{t("paywall.benefitTwo")}</Text>
-              </HStack>
-            </VStack>
-            <AppButton
-              label={
-                isProcessing ? t("paywall.processing") : subscribeButtonLabel
-              }
-              onPress={onSubscribe}
-              isDisabled={isSubscribeDisabled}
-              className={isSubscriber ? "mt-6 bg-green-600" : "mt-6"}
-            />
-            {promo}
+            <CircleCheck size={20} color={colors.green400} />
           </Box>
-
-          {errorMessage ? (
-            <Text className="text-sm text-red-500 text-center">
-              {errorMessage}
-            </Text>
+          {priceLabel ? (
+            <Box className="flex-row items-baseline gap-1.5">
+              <Text
+                className="text-primaryText"
+                style={{ fontSize: 30, lineHeight: 36, fontWeight: "700" }}
+              >
+                {priceLabel}
+              </Text>
+              <Text className={`${typeRole.secondary} text-secondaryText`}>
+                {t("paywall.perYear")}
+              </Text>
+            </Box>
           ) : null}
-
-          <HStack space="md" className="justify-center items-center">
-            <Pressable
-              onPress={onRestore}
-              disabled={isRestoreDisabled}
-              className="py-2"
-            >
-              <Text className="text-sm text-warmGray-500">
-                {t("paywall.restore")}
-              </Text>
-            </Pressable>
-            <Text className="text-sm text-warmGray-300">·</Text>
-            <Pressable onPress={onManageSubscription} className="py-2">
-              <Text className="text-sm text-warmGray-500">
-                {t("common.manageSubscription")}
-              </Text>
-            </Pressable>
-          </HStack>
-
-          <Text className="text-2xs text-warmGray-400 text-center">
-            {disclaimer}
+          <Text
+            className={`${typeRole.supporting} text-secondaryText`}
+            style={{ fontSize: 12, lineHeight: 16 }}
+          >
+            {billingNote}
           </Text>
-        </VStack>
+          {isSubscriber ? (
+            <Box
+              className="mt-1 flex-row items-center justify-center gap-2 rounded-[14px] py-2.5"
+              style={{ backgroundColor: `${colors.green400}26` }}
+            >
+              <CircleCheck size={18} color={colors.green400} />
+              <Text className={`${typeRole.button} text-primaryText`}>
+                {t("paywall.alreadySubscribed")}
+              </Text>
+            </Box>
+          ) : null}
+        </Box>
+
+        {!isSubscriber ? (
+          <AppButton
+            label={isProcessing ? t("paywall.processing") : t("paywall.cta")}
+            onPress={onSubscribe}
+            isDisabled={isSubscribeDisabled}
+            className="mt-4 h-[42px]"
+          />
+        ) : null}
+        {promo}
+
+        <Box className="mt-1 flex-row items-center justify-center gap-2">
+          <PaywallLink
+            label={t("paywall.restore")}
+            onPress={onRestore}
+            disabled={isRestoreDisabled}
+          />
+          <Text className={`${typeRole.supporting} text-secondaryText`}>·</Text>
+          <PaywallLink
+            label={t("common.manageSubscription")}
+            onPress={onManageSubscription}
+          />
+        </Box>
+
+        {legalLinks.length > 0 ? (
+          <Box className="mt-1 flex-row items-center justify-center gap-2">
+            {legalLinks.map((link) => (
+              <PaywallLink
+                key={link.key}
+                label={link.label}
+                onPress={() => {
+                  Linking.openURL(link.url).catch(() => {});
+                }}
+              />
+            ))}
+          </Box>
+        ) : null}
       </ScrollView>
       {overlay}
     </Box>

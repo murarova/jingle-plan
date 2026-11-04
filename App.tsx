@@ -11,7 +11,11 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GluestackUIProvider } from "./ui/gluestack-ui-provider";
 import { store } from "./store/store";
-import { IAPProvider, UnsavedChangesProvider } from "./providers";
+import {
+  IAPProvider,
+  UnsavedChangesProvider,
+  UserGuideProvider,
+} from "./providers";
 import { RootNavigator } from "./navigation/RootNavigator";
 
 export default function App() {
@@ -27,7 +31,9 @@ export default function App() {
               <IAPProvider>
                 <UnsavedChangesProvider>
                   <BottomSheetModalProvider>
-                    <RootNavigator />
+                    <UserGuideProvider>
+                      <RootNavigator />
+                    </UserGuideProvider>
                   </BottomSheetModalProvider>
                 </UnsavedChangesProvider>
               </IAPProvider>

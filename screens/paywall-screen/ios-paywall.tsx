@@ -8,12 +8,10 @@ import { useIosPaywall } from "./hooks/useIosPaywall";
 export const IosPaywall = memo(() => {
   const {
     priceLabel,
-    subscribeButtonLabel,
     isSubscribeDisabled,
     isSubscriber,
     isProcessing,
-    errorMessage,
-    disclaimer,
+    billingNote,
     isRestoreDisabled,
     showRedeemOverlay,
     isPromoDisabled,
@@ -26,12 +24,10 @@ export const IosPaywall = memo(() => {
   return (
     <PaywallLayout
       priceLabel={priceLabel}
-      subscribeButtonLabel={subscribeButtonLabel}
       isSubscribeDisabled={isSubscribeDisabled}
       isSubscriber={isSubscriber}
       isProcessing={isProcessing}
-      errorMessage={errorMessage}
-      disclaimer={disclaimer}
+      billingNote={billingNote}
       isRestoreDisabled={isRestoreDisabled}
       onSubscribe={onSubscribe}
       onRestore={onRestore}

@@ -62,7 +62,7 @@ describe("PaywallScreen", () => {
 
   it("renders subscribe CTA", () => {
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
-    expect(screen.getByText("Оформити підписку")).toBeTruthy();
+    expect(screen.getByText("Відкрити Jingle Plan+")).toBeTruthy();
   });
 
   it("shows the store price instead of a hardcoded amount", () => {
@@ -120,21 +120,44 @@ describe("PaywallScreen", () => {
     expect(mockRedeemAppleOfferCode).not.toHaveBeenCalled();
   });
 
-  it("shows Android promo errors only in the modal", () => {
+  it("shows Android promo errors in an alert", async () => {
     Object.defineProperty(Platform, "OS", {
       configurable: true,
       get: () => "android",
     });
+    const alertSpy = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+    mockRedeemAndroidPromoCode.mockRejectedValue(
+      new Error("Цей промокод недійсний."),
+    );
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
+    fireEvent.press(screen.getByText("Маєте промокод?"));
+    fireEvent.changeText(
+      screen.getByTestId("paywall-promo-input"),
+      "ABCD-EFGHJK",
+    );
+    fireEvent.press(screen.getByTestId("paywall-promo-redeem"));
+    await waitFor(() => {
+      expect(alertSpy).toHaveBeenCalledWith(
+        "Помилка",
+        "Цей промокод недійсний.",
+      );
+    });
+    alertSpy.mockRestore();
+  });
+
+  it("shows store errors in an alert", async () => {
+    const alertSpy = jest.spyOn(Alert, "alert").mockImplementation(() => {});
     mockUseIAP.mockReturnValue({
       ...defaultIap,
       errorMessage: "Store failed",
-      promoErrorMessage: "Цей промокод недійсний.",
     });
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
-    expect(screen.getByText("Store failed")).toBeTruthy();
-    expect(screen.queryByText("Цей промокод недійсний.")).toBeNull();
-    fireEvent.press(screen.getByText("Маєте промокод?"));
-    expect(screen.getAllByText("Цей промокод недійсний.")).toHaveLength(1);
+    await waitFor(() => {
+      expect(alertSpy).toHaveBeenCalledWith("Помилка", "Store failed");
+    });
+    expect(screen.queryByText("Store failed")).toBeNull();
+    expect(mockClearErrorMessage).toHaveBeenCalled();
+    alertSpy.mockRestore();
   });
 
   it("clears the store error when the screen is left", () => {
@@ -145,8 +168,6 @@ describe("PaywallScreen", () => {
     const { unmount } = renderWithProviders(<PaywallScreen />, {
       withNavigation: true,
     });
-    expect(screen.getByText("Store failed")).toBeTruthy();
-    expect(mockClearErrorMessage).not.toHaveBeenCalled();
     unmount();
     expect(mockClearErrorMessage).toHaveBeenCalled();
   });
@@ -173,6 +194,33 @@ describe("PaywallScreen", () => {
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
     fireEvent.press(screen.getByText("Маєте промокод?"));
     expect(screen.queryByTestId("paywall-redeem-loader")).toBeNull();
+  });
+
+  it("hides the subscribe button and shows the active status for subscribers", () => {
+    mockUseIAP.mockReturnValue({
+      ...defaultIap,
+      activeProductId: "test.subscription",
+      isSubscriber: true,
+    });
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
+    expect(screen.queryByText("Відкрити Jingle Plan+")).toBeNull();
+    expect(screen.getByText("Підписка активна")).toBeTruthy();
+    expect(screen.getByText("Керувати підпискою")).toBeTruthy();
+  });
+
+  it("subscribes with the store product when the button is pressed", () => {
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
+    fireEvent.press(screen.getByText("Відкрити Jingle Plan+"));
+    expect(mockSubscribe).toHaveBeenCalledWith("test.subscription");
+  });
+
+  it("shows a platform-specific billing note", () => {
+    Object.defineProperty(Platform, "OS", {
+      configurable: true,
+      get: () => "android",
+    });
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
+    expect(screen.getByText(/налаштуваннях Google Play/)).toBeTruthy();
   });
 
   it("hides the promo code entry for subscribers", () => {
@@ -207,11 +255,11 @@ describe("PaywallScreen", () => {
   it("restores purchases", async () => {
     const alertSpy = jest.spyOn(Alert, "alert").mockImplementation(() => {});
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
-    fireEvent.press(screen.getByText("Відновити доступ"));
+    fireEvent.press(screen.getByText("Відновити покупки"));
     expect(mockRestorePurchases).toHaveBeenCalled();
     await waitFor(() => {
       expect(alertSpy).toHaveBeenCalledWith(
-        "Відновити доступ",
+        "Відновити покупки",
         "Доступ відновлено.",
       );
     });
@@ -229,7 +277,7 @@ describe("PaywallScreen", () => {
       isStoreReady: false,
     });
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
-    fireEvent.press(screen.getByText("Відновити доступ"));
+    fireEvent.press(screen.getByText("Відновити покупки"));
     expect(mockRestorePurchases).toHaveBeenCalled();
   });
 });

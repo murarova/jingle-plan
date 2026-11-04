@@ -4,4 +4,6 @@ declare module "@env" {
   export const EXPO_PUBLIC_ANDROID_SUBSCRIPTION_ID: string;
   export const EXPO_PUBLIC_IAP_VALIDATE_URL: string;
   export const EXPO_PUBLIC_IAP_FUNCTIONS_BASE_URL: string;
+  export const EXPO_PUBLIC_TERMS_URL: string | undefined;
+  export const EXPO_PUBLIC_PRIVACY_URL: string | undefined;
 }

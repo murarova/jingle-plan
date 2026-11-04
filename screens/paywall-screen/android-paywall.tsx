@@ -6,18 +6,15 @@ import { useAndroidPaywall } from "./hooks/useAndroidPaywall";
 export const AndroidPaywall = memo(() => {
   const {
     priceLabel,
-    subscribeButtonLabel,
     isSubscribeDisabled,
     isSubscriber,
     isProcessing,
-    errorMessage,
-    disclaimer,
+    billingNote,
     isRestoreDisabled,
     isPromoDisabled,
     promoCode,
     isPromoModalOpen,
     isRedeemingPromo,
-    promoErrorMessage,
     onChangePromoCode,
     onSubscribe,
     onRestore,
@@ -30,12 +27,10 @@ export const AndroidPaywall = memo(() => {
   return (
     <PaywallLayout
       priceLabel={priceLabel}
-      subscribeButtonLabel={subscribeButtonLabel}
       isSubscribeDisabled={isSubscribeDisabled}
       isSubscriber={isSubscriber}
       isProcessing={isProcessing}
-      errorMessage={errorMessage}
-      disclaimer={disclaimer}
+      billingNote={billingNote}
       isRestoreDisabled={isRestoreDisabled}
       onSubscribe={onSubscribe}
       onRestore={onRestore}
@@ -47,7 +42,6 @@ export const AndroidPaywall = memo(() => {
           code={promoCode}
           isModalOpen={isPromoModalOpen}
           isRedeeming={isRedeemingPromo}
-          promoErrorMessage={promoErrorMessage}
           onChangeCode={onChangePromoCode}
           onOpen={onOpenPromoModal}
           onClose={onClosePromoModal}

@@ -13,12 +13,10 @@ export function useIosPaywall() {
     subscriptions,
     isLoading,
     subscribe,
-    activeProductId,
     isInitialized,
     priceLabel,
     isSubscriber,
     isStoreReady,
-    errorMessage,
     restorePurchases,
     isAwaitingOfferRedemption,
     redeemAppleOfferCode,
@@ -64,15 +62,10 @@ export function useIosPaywall() {
 
   return {
     priceLabel: priceLabel ?? "",
-    subscribeButtonLabel:
-      productId && activeProductId === productId
-        ? t("paywall.alreadySubscribed")
-        : t("paywall.cta"),
     isSubscribeDisabled: isLoading || !productId || !canUseStore,
     isSubscriber,
     isProcessing: isLoading,
-    errorMessage,
-    disclaimer: t("paywall.disclaimer"),
+    billingNote: t("paywall.billingNoteIos"),
     isRestoreDisabled: isLoading || !canUseStore,
     showRedeemOverlay: isAwaitingOfferRedemption,
     isPromoDisabled: isLoading || !canUseStore,

@@ -1,10 +1,11 @@
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { AppButton } from "@/components/common";
+import { Box } from "@/ui/box";
 import { ModalKeyboardFrame } from "@/components/modals/modal-keyboard-frame";
+import { PaywallLink } from "./paywall-link";
 import { Input, InputField } from "@/ui/input";
 import { Heading } from "@/ui/heading";
-import { Text } from "@/ui/text";
 import {
   Modal,
   ModalBackdrop,
@@ -20,7 +21,6 @@ type AndroidPromoCodeProps = {
   code: string;
   isModalOpen: boolean;
   isRedeeming: boolean;
-  promoErrorMessage: string | null;
   onChangeCode: (value: string) => void;
   onOpen: () => void;
   onClose: () => void;
@@ -34,7 +34,6 @@ export const AndroidPromoCode = memo(
     code,
     isModalOpen,
     isRedeeming,
-    promoErrorMessage,
     onChangeCode,
     onOpen,
     onClose,
@@ -48,13 +47,14 @@ export const AndroidPromoCode = memo(
 
     return (
       <>
-        <AppButton
-          variant="secondary"
-          label={t("paywall.promoCta")}
-          onPress={onOpen}
-          isDisabled={isDisabled}
-          className="mt-3"
-        />
+        <Box className="mt-3 items-center">
+          <PaywallLink
+            label={t("paywall.promoCta")}
+            onPress={onOpen}
+            disabled={isDisabled}
+            emphasized
+          />
+        </Box>
         <Modal isOpen={isModalOpen} onClose={onClose} size="md">
           <ModalBackdrop />
           <ModalKeyboardFrame>
@@ -73,11 +73,6 @@ export const AndroidPromoCode = memo(
                     placeholder={t("paywall.promoPlaceholder")}
                   />
                 </Input>
-                {promoErrorMessage ? (
-                  <Text className="text-sm text-red-500 text-center mt-3">
-                    {promoErrorMessage}
-                  </Text>
-                ) : null}
               </ModalBody>
               <ModalFooter>
                 <AppButton

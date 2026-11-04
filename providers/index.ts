@@ -3,3 +3,4 @@ export {
   UnsavedChangesProvider,
   useUnsavedChanges,
 } from "./UnsavedChangesProvider";
+export { UserGuideProvider, useUserGuide } from "./UserGuideProvider";
