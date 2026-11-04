@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "jingle-plan",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "scripts": {
     "start": "expo start",
     "android": "NODE_ENV=development bash -c 'source $HOME/.nvm/nvm.sh && nvm use 24 && expo run:android'",
@@ -55,6 +55,7 @@
     "expo-font": "~58.0.11",
     "expo-haptics": "~58.0.7",
     "expo-iap": "^3.4.13",
+    "expo-image-manipulator": "~58.0.16",
     "expo-image-picker": "~58.0.10",
     "expo-localization": "~58.0.5",
     "expo-splash-screen": "~58.0.12",

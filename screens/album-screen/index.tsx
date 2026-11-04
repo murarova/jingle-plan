@@ -5,7 +5,7 @@ import { EmptyScreen } from "../../components/common/empty-screen";
 import { MonthlyData } from "@/types";
 import { AlbumCarouselItem } from "./album-carousel-item";
 import { AlbumNavigationControls } from "./album-navigation-controls";
-import { SCREEN_PADDING } from "./constants";
+import { CAROUSEL_WINDOW_SIZE, SCREEN_PADDING } from "./constants";
 import { useAlbumScreen } from "./hooks/useAlbumScreen";
 
 export const AlbumScreen = memo(() => {
@@ -51,6 +51,7 @@ export const AlbumScreen = memo(() => {
               }}
               itemWidth={carouselSize.width}
               data={photos}
+              windowSize={CAROUSEL_WINDOW_SIZE}
               onSnapToItem={handleSnapToItem}
               renderItem={renderItem}
             />

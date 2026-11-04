@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.1](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.7.0...jingle-plan-v1.7.1) (2026-11-04)
+
+
+### Bug Fixes
+
+* Android startup and album  ([#76](https://github.com/murarova/jingle-plan/issues/76)) ([7008497](https://github.com/murarova/jingle-plan/commit/700849762ceab353acb2b040b51025bc05135611))
+
 ## [1.7.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.6.0...jingle-plan-v1.7.0) (2026-11-03)
 
 
