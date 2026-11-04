@@ -186,22 +186,89 @@ export default {
   calendar: {
     lockedDayMessage: "This day unlocks on {{date}}.",
   },
+  guide: {
+    skip: "Skip",
+    next: "Next",
+    finish: "Got it",
+    menuItem: "How to use",
+    calendar: {
+      title: "How to use",
+      subtitle: "Your year in 31 days",
+      headline: "From December 1st — a new task every day",
+      hint: "Pick today's date in the calendar and open the task of the day.",
+      footer:
+        "Come back every day and complete the tasks to keep up with the 31-day marathon.",
+    },
+    daily: {
+      title: "What awaits you?",
+      subtitle: "Three steps every day",
+      inspirationTitle: "Inspiration",
+      inspirationText: "A video and a short text to start your day",
+      taskTitle: "Task of the day",
+      taskText: "A short workout and the main task",
+      moodTitle: "Mood task",
+      moodText: "An extra activity on a separate tab",
+      completed: "100% of tasks completed",
+      footer:
+        "When you finish all the tasks of the day, a completion indicator will appear at the top.",
+    },
+    save: {
+      title: "Save your year",
+      subtitle: "From memories to new plans",
+      summaryTitle: "Summary",
+      summaryText: "The results of the year",
+      albumTitle: "Album",
+      albumText: "Moments you want to save",
+      plansTitle: "Plans",
+      plansText: "Your goals for the next year",
+      footer:
+        'Throughout the next year, mark completed plans and follow your achievements in the "Progress" tab.',
+    },
+    progress: {
+      title: "Track your achievements",
+      subtitle: "Your progress goes on",
+      headline: "Your plans don't end on December 31st",
+      cardTitle: "My goals",
+      goalOne: "Read 12 books",
+      goalTwo: "Visit a new city",
+      goalThree: "Start a new hobby",
+      example: "Illustrative example",
+      footer:
+        'Throughout the next year, mark completed plans and follow your achievements in the "Progress" tab.',
+    },
+  },
   paywall: {
-    title: "Unlock Premium Access",
-    subtitle: "Get unlimited access to all advent content and yearly updates.",
-    planName: "Jingle Plan+",
-    billingPeriod: "Billed yearly. Cancel anytime.",
-    benefitOne: "Access to all current and upcoming seasons",
-    benefitTwo: "Priority notifications and reminders",
-    benefitThree: "Unlimited media uploads & backup",
-    benefitFour: "Year-round planning tools across all life areas",
-    cta: "Start Subscription",
+    eyebrow: "Your special year",
+    lead: "Keep the best of the past year and create a plan for the next one.",
+    benefits: {
+      inspiration: {
+        title: "31 days of inspiration",
+        text: "Daily tasks, videos and practices",
+      },
+      album: {
+        title: "Your album of memories",
+        text: "Photos and stories from every month",
+      },
+      summary: {
+        title: "Your year in review",
+        text: "Achievements and important areas of life",
+      },
+      plans: {
+        title: "Plans and progress",
+        text: "Goals for the new year and progress tracking",
+      },
+    },
+    planTitle: "Jingle Plan+ · Yearly access",
+    perYear: "/ year",
+    billingNoteIos:
+      "Payment is charged to your Apple ID. Renews automatically every year unless canceled at least 24 hours before the period ends. Manage it in your Apple settings.",
+    billingNoteAndroid:
+      "Payment is charged to your Google Play account. Renews automatically every year unless canceled at least 24 hours before the period ends. Manage it in your Google Play settings.",
+    cta: "Unlock Jingle Plan+",
     alreadySubscribed: "Active Subscription",
     processing: "Please wait...",
-    disclaimer:
-      "Payment will be charged to your Apple ID account. Subscription automatically renews unless canceled at least 24 hours before the end of the period.",
-    disclaimerAndroid:
-      "Payment will be charged to your Google Play account. Subscription automatically renews unless canceled at least 24 hours before the end of the period.",
+    terms: "Terms of Use",
+    privacy: "Privacy Policy",
     lockedCalendarTitle: "Unlock every day with Premium",
     lockedCalendarDescription:
       "Only subscribers can open all calendar days and view daily reflections as soon as they’re available.",

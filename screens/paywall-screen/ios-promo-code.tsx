@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { AppButton } from "@/components/common";
+import { Box } from "@/ui/box";
+import { PaywallLink } from "./paywall-link";
 
 type IosPromoCodeProps = {
   isDisabled: boolean;
@@ -17,13 +18,14 @@ export const IosPromoCode = memo(
     }
 
     return (
-      <AppButton
-        variant="secondary"
-        label={t("paywall.promoCta")}
-        onPress={onRedeem}
-        isDisabled={isDisabled}
-        className="mt-3"
-      />
+      <Box className="mt-3 items-center">
+        <PaywallLink
+          label={t("paywall.promoCta")}
+          onPress={onRedeem}
+          disabled={isDisabled}
+          emphasized
+        />
+      </Box>
     );
   },
 );

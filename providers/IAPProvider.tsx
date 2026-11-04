@@ -402,15 +402,16 @@ function StoreIAPProvider({ children }: { children: React.ReactNode }) {
                 : error.code === "already_redeemed"
                   ? "paywall.promoAlreadyRedeemed"
                   : "errors.generic";
-          setPromoErrorMessage(t(messageKey));
-          return false;
+          const message = t(messageKey);
+          setPromoErrorMessage(message);
+          throw new Error(message);
         }
-        setPromoErrorMessage(
+        const message =
           error instanceof Error
             ? error.message
-            : t("errors.generic", "Something went wrong"),
-        );
-        return false;
+            : t("errors.generic", "Something went wrong");
+        setPromoErrorMessage(message);
+        throw new Error(message);
       }
     },
     [t],

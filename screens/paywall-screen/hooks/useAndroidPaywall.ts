@@ -13,16 +13,13 @@ export function useAndroidPaywall() {
     subscriptions,
     isLoading,
     subscribe,
-    activeProductId,
     isInitialized,
     priceLabel,
     isSubscriber,
     isStoreReady,
-    errorMessage,
     restorePurchases,
     redeemAndroidPromoCode,
     clearPromoError,
-    promoErrorMessage,
   } = useIAP();
 
   const [code, setCode] = useState("");
@@ -84,28 +81,27 @@ export function useAndroidPaywall() {
         setIsModalOpen(false);
         setCode("");
       }
+    } catch (error) {
+      Alert.alert(
+        t("common.error"),
+        error instanceof Error ? error.message : t("errors.generic"),
+      );
     } finally {
       setIsRedeeming(false);
     }
-  }, [code, redeemAndroidPromoCode]);
+  }, [code, redeemAndroidPromoCode, t]);
 
   return {
     priceLabel: priceLabel ?? "",
-    subscribeButtonLabel:
-      productId && activeProductId === productId
-        ? t("paywall.alreadySubscribed")
-        : t("paywall.cta"),
     isSubscribeDisabled: isLoading || !productId || !canUseStore,
     isSubscriber,
     isProcessing: isLoading,
-    errorMessage,
-    disclaimer: t("paywall.disclaimerAndroid"),
+    billingNote: t("paywall.billingNoteAndroid"),
     isRestoreDisabled: isLoading,
     isPromoDisabled: isLoading,
     promoCode: code,
     isPromoModalOpen: isModalOpen,
     isRedeemingPromo: isRedeeming,
-    promoErrorMessage,
     onChangePromoCode: setCode,
     onSubscribe: handleSubscribe,
     onRestore: handleRestorePurchases,
