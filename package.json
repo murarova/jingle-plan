@@ -55,6 +55,7 @@
     "expo-font": "~58.0.11",
     "expo-haptics": "~58.0.7",
     "expo-iap": "^3.4.13",
+    "expo-image-manipulator": "~58.0.16",
     "expo-image-picker": "~58.0.10",
     "expo-localization": "~58.0.5",
     "expo-splash-screen": "~58.0.12",
