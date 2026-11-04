@@ -237,6 +237,7 @@ export const HomeScreen = () => {
           tabBarButton: (props) => (
             <PlatformPressable
               {...props}
+              pressColor="transparent"
               style={[
                 props.style,
                 { flex: 1, justifyContent: "center", padding: 0 },

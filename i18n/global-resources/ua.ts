@@ -124,11 +124,10 @@ export default {
       loginBtn: "Створити акаунт",
       signupBtn: "Увійти",
       brand: "Jingle plan",
-      firstScreenText: "Наповни своє життя цілями",
-      secondScreenText: "Всього лише 15 хв на день.",
-      thirdScreenText:
-        "І за місяць у тебе готові \nпідсумки поточного року та плани на наступний рік.",
-      fourthScreenText: "Заплануй собі класний рік \nразом із Jingle Plan.",
+      firstScreenText: "Твій рік за 31 день",
+      secondScreenText: "Згадай найкращі моменти",
+      thirdScreenText: "Увійди в новий рік із планом",
+      fourthScreenText: "Подивись, як змінився твій рік",
     },
     loginScreen: {
       title: "Увійдіть у свій обліковий запис",
