@@ -99,7 +99,7 @@ describe("MoodTask", () => {
           })
         );
       });
-      expect(screen.getByText("Feeling calm")).toBeTruthy();
+      expect(await screen.findByText("Feeling calm")).toBeTruthy();
     });
   });
 
