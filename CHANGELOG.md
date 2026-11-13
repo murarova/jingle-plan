@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.8.0...jingle-plan-v1.8.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* fixed clearing textarea in SummaryScreen ([#80](https://github.com/murarova/jingle-plan/issues/80)) ([2cb1c04](https://github.com/murarova/jingle-plan/commit/2cb1c04c43dac11b3f846c81c487be8b80bba268))
+
 ## [1.8.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.7.1...jingle-plan-v1.8.0) (2026-11-04)
 
 
