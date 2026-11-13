@@ -111,6 +111,23 @@ describe("SummaryScreen", () => {
       });
     });
 
+    it("keeps the textarea empty after the saved text is cleared", () => {
+      renderWithProviders(<SummaryScreen />, {
+        preloadedState: loggedInPreloadedState,
+      });
+      fireEvent.press(screen.getByText("Тіло"));
+      fireEvent.press(screen.getAllByLabelText("Редагувати")[0]);
+
+      const input = screen.getByPlaceholderText(TEXTAREA_PLACEHOLDER);
+      expect(input.props.value).toBe("Health reflection");
+
+      fireEvent.changeText(input, "");
+
+      expect(
+        screen.getByPlaceholderText(TEXTAREA_PLACEHOLDER).props.value
+      ).toBe("");
+    });
+
     it("removes a summary after delete confirmation", async () => {
       alertSpy.mockImplementation(
         (_title?: string, _msg?: string, buttons?: { onPress?: () => void }[]) => {
