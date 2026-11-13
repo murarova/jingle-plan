@@ -134,7 +134,9 @@ describe("PeriodOverviewScreen", () => {
       preloadedState: currentSeasonState,
     });
     fireEvent.press(screen.getByText("Оформити підписку"));
-    expect(mockNavigate).toHaveBeenCalledWith(SCREENS.PAYWALL);
+    expect(mockNavigate).toHaveBeenCalledWith(SCREENS.PAYWALL, {
+      placement: "locked_calendar_card",
+    });
   });
 
   it("does not render the calendar until requests finish", () => {

@@ -13,14 +13,17 @@ import { AppButton } from "@/components/common";
 import { colors } from "@/constants/colors";
 import { cardShadow } from "@/constants/shadow";
 import { typeRole } from "@/constants/typography";
+import type { GuideOutcome } from "@/types/analytics";
 import { GUIDE_STEPS } from "./guide-steps";
 
 const SCREEN_MARGIN = 16;
 const INACTIVE_DOT = "#D8D1C3";
 
+type OnGuideClose = (outcome: GuideOutcome, step?: number) => void;
+
 type UserGuideModalProps = {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: OnGuideClose;
 };
 
 function GuideDots({ activeIndex }: { activeIndex: number }) {
@@ -50,7 +53,7 @@ function GuideDots({ activeIndex }: { activeIndex: number }) {
   );
 }
 
-function GuideContent({ onClose }: { onClose: () => void }) {
+function GuideContent({ onClose }: { onClose: OnGuideClose }) {
   const { t } = useTranslation();
   const [stepIndex, setStepIndex] = useState(0);
   const total = GUIDE_STEPS.length;
@@ -62,7 +65,7 @@ function GuideContent({ onClose }: { onClose: () => void }) {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
 
     if (isLast) {
-      onClose();
+      onClose("completed");
       return;
     }
     setStepIndex((prev) => prev + 1);
@@ -80,7 +83,7 @@ function GuideContent({ onClose }: { onClose: () => void }) {
         ) : (
           <Pressable
             accessibilityRole="button"
-            onPress={onClose}
+            onPress={() => onClose("skipped", stepIndex + 1)}
             hitSlop={10}
             testID="guide-skip"
           >
@@ -147,7 +150,7 @@ export function UserGuideModal({ isOpen, onClose }: UserGuideModalProps) {
   const contentHeight = height - insets.top - insets.bottom - SCREEN_MARGIN * 2;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="full">
+    <Modal isOpen={isOpen} onClose={() => onClose("skipped")} size="full">
       <ModalBackdrop />
       <ModalContent
         className="rounded-3xl border border-ivory-line bg-ivory-page"

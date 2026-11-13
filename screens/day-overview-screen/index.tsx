@@ -1,5 +1,12 @@
 import { Box } from "@/ui/box";
-import { useLayoutEffect, useState, useEffect, memo, useCallback } from "react";
+import {
+  useLayoutEffect,
+  useState,
+  useEffect,
+  useRef,
+  memo,
+  useCallback,
+} from "react";
 import { TasksList } from "../../components/tasks/tasks-list";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
@@ -11,14 +18,19 @@ import { useDayTasks } from "./hooks/useDayTasks";
 import { HomeStackParamList } from "../home-screen";
 import { ProgressBar, EmptyState } from "../../components/common";
 import { colors } from "@/constants/colors";
+import { useAppSelector } from "@/store/withTypes";
+import { trackDayCompleted, trackDayOpened } from "@/services/analytics";
 
 type Props = StackScreenProps<HomeStackParamList, "DayOverview">;
 
 const DayOverviewScreen: React.FC<Props> = memo(({ route, navigation }) => {
   const { t } = useTranslation();
   const currentDay = route.params.currentDay;
-  const { dayTasks, total, refresh, error, userData } = useDayTasks(currentDay);
+  const { dayTasks, total, refresh, error, userData, isLoading } =
+    useDayTasks(currentDay);
+  const openedDayRef = useRef<string | null>(null);
 
+  const userUid = useAppSelector((state) => state.auth.userUid);
   const previousProgress = usePrevious(total);
   const [showCompletedModal, setShowCompletedModal] = useState(false);
 
@@ -29,8 +41,15 @@ const DayOverviewScreen: React.FC<Props> = memo(({ route, navigation }) => {
   useEffect(() => {
     if (!isNil(previousProgress) && previousProgress < 100 && total === 100) {
       setShowCompletedModal(true);
+      void trackDayCompleted(currentDay, userUid);
     }
-  }, [total, previousProgress]);
+  }, [total, previousProgress, currentDay, userUid]);
+
+  useEffect(() => {
+    if (isLoading || !dayTasks || openedDayRef.current === currentDay) return;
+    openedDayRef.current = currentDay;
+    trackDayOpened(currentDay, total);
+  }, [isLoading, dayTasks, currentDay, total]);
 
   useLayoutEffect(() => {
     navigation.setOptions({

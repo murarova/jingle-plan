@@ -4,12 +4,18 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   ReactNode,
 } from "react";
 import { UserGuideModal } from "@/components/modals/user-guide";
 import { hasSeenGuide, markGuideSeen } from "@/services/guide-storage";
 import { useAppSelector } from "@/store/withTypes";
+import {
+  trackOnboardingComplete,
+  trackSkipOnboarding,
+} from "@/services/analytics";
+import type { GuideOutcome } from "@/types/analytics";
 
 interface UserGuideContextType {
   openGuide: () => void;
@@ -22,10 +28,12 @@ const UserGuideContext = createContext<UserGuideContextType>({
 export function UserGuideProvider({ children }: { children: ReactNode }) {
   const [isVisible, setIsVisible] = useState(false);
   const userUid = useAppSelector((state) => state.auth.userUid);
+  const isFirstViewRef = useRef(false);
 
   useEffect(() => {
     if (!userUid) {
       setIsVisible(false);
+      isFirstViewRef.current = false;
       return;
     }
 
@@ -33,6 +41,7 @@ export function UserGuideProvider({ children }: { children: ReactNode }) {
 
     hasSeenGuide(userUid).then((seen) => {
       if (!isCancelled && !seen) {
+        isFirstViewRef.current = true;
         setIsVisible(true);
       }
     });
@@ -44,12 +53,23 @@ export function UserGuideProvider({ children }: { children: ReactNode }) {
 
   const openGuide = useCallback(() => setIsVisible(true), []);
 
-  const closeGuide = useCallback(() => {
-    setIsVisible(false);
-    if (userUid) {
-      markGuideSeen(userUid);
-    }
-  }, [userUid]);
+  const closeGuide = useCallback(
+    (outcome: GuideOutcome, step?: number) => {
+      setIsVisible(false);
+      if (userUid) {
+        markGuideSeen(userUid);
+      }
+      if (isFirstViewRef.current) {
+        isFirstViewRef.current = false;
+        if (outcome === "completed") {
+          trackOnboardingComplete();
+        } else {
+          trackSkipOnboarding(step);
+        }
+      }
+    },
+    [userUid],
+  );
 
   const value = useMemo(() => ({ openGuide }), [openGuide]);
 

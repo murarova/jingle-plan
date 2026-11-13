@@ -1,7 +1,10 @@
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+} from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RegisterScreen } from "@/screens/register-screen";
 import { LoadingScreen } from "@/screens/loading-screen";
@@ -31,6 +34,13 @@ import {
   logFacebookEvent,
   requestTrackingPermission,
 } from "./bootstrap";
+import {
+  initializeAnalytics,
+  setAnalyticsSubscriber,
+  setAnalyticsUser,
+  trackScreenView,
+} from "@/services/analytics";
+import { getActiveRouteName } from "./active-route";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -38,6 +48,15 @@ function AppContent() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
+  const navigationRef = useNavigationContainerRef();
+  const currentRouteRef = useRef<string | null>(null);
+
+  const handleNavigationChange = useCallback(() => {
+    const routeName = getActiveRouteName(navigationRef.getRootState());
+    if (!routeName || routeName === currentRouteRef.current) return;
+    currentRouteRef.current = routeName;
+    trackScreenView(routeName);
+  }, [navigationRef]);
   const { currentUser } = useAppSelector((state) => state.auth);
   const { isSubscriber, isSubscriptionResolved } = useIAP();
   const { data: userProfile } = useGetUserProfileQuery(
@@ -49,6 +68,19 @@ function AppContent() {
   useFirebaseMessaging();
   useFcmEligibilitySync(isSubscriber, isAdmin, isSubscriptionResolved);
   useAvailableYears();
+
+  useEffect(() => {
+    initializeAnalytics();
+  }, []);
+
+  useEffect(() => {
+    setAnalyticsUser(currentUser?.uid ?? null);
+  }, [currentUser?.uid]);
+
+  useEffect(() => {
+    if (!isSubscriptionResolved) return;
+    setAnalyticsSubscriber(isSubscriber);
+  }, [isSubscriber, isSubscriptionResolved]);
 
   useEffect(() => {
     (async () => {
@@ -85,7 +117,12 @@ function AppContent() {
 
   return (
     <Box className="flex-1">
-      <NavigationContainer theme={navigationTheme}>
+      <NavigationContainer
+        ref={navigationRef}
+        theme={navigationTheme}
+        onReady={handleNavigationChange}
+        onStateChange={handleNavigationChange}
+      >
         <Stack.Navigator
           screenOptions={{
             cardStyle: { backgroundColor: colors.ivoryPage },

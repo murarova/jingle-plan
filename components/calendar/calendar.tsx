@@ -8,8 +8,10 @@ import { selectSelectedYear } from "../../store/appReducer";
 import { calendarTheme, setupCalendarLocale } from "../../utils/calendar-utils";
 import { DayComponent } from "./day-component";
 import { useIAP } from "../../hooks/useIAP";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import type { RootStackParamList } from "@/navigation/types";
 import { SCREENS } from "@/constants";
+import { PAYWALL_PLACEMENTS } from "@/constants/analytics";
 
 const starredDates = ["2026-12-06", "2026-12-25", "2026-12-31"];
 
@@ -34,7 +36,7 @@ export const Calendar = memo(
     currentDate,
   }: CalendarProps) => {
     const selectedYear = useAppSelector(selectSelectedYear);
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const { isSubscriber } = useIAP();
     const locale = "uk";
     // const currentDate = "2026-12-01";
@@ -86,7 +88,9 @@ export const Calendar = memo(
             isLoading={isLoading}
             isSubscriber={isSubscriber}
             navigateToPaywall={() =>
-              navigation.navigate(SCREENS.PAYWALL as never)
+              navigation.navigate(SCREENS.PAYWALL, {
+                placement: PAYWALL_PLACEMENTS.CALENDAR_LOCKED_DAY,
+              })
             }
             starredDates={starredDates}
           />

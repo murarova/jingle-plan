@@ -6,7 +6,11 @@ import { Box } from "@/ui/box";
 import { useCallback, useContext, useState } from "react";
 import { HeaderHeightContext } from "@react-navigation/elements";
 import { RefreshControl } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import {
+  NavigationProp as NativeNavigationProp,
+  useNavigation,
+} from "@react-navigation/native";
+import type { RootStackParamList } from "@/navigation/types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList } from "@/screens/home-screen";
 import { Calendar } from "../../components/calendar/calendar";
@@ -14,6 +18,7 @@ import { useCalendarDayManager } from "../../hooks/useCalendarDayManager";
 import { useIAP } from "../../hooks/useIAP";
 import { useTranslation } from "react-i18next";
 import { SCREENS, YEARS, cardShadow } from "@/constants";
+import { PAYWALL_PLACEMENTS } from "@/constants/analytics";
 import { typeRole } from "@/constants/typography";
 import { useAppSelector } from "../../store/withTypes";
 import { selectSelectedYear } from "../../store/appReducer";
@@ -26,6 +31,7 @@ type NavigationProp = StackNavigationProp<
 
 function PeriodOverviewScreen() {
   const nav = useNavigation<NavigationProp>();
+  const rootNav = useNavigation<NativeNavigationProp<RootStackParamList>>();
   const { t } = useTranslation();
   const [currentDate, updateCurrentDate] = useCurrentDate();
   const { refresh, isLoading, getDayConfig, isAdmin } =
@@ -95,7 +101,11 @@ function PeriodOverviewScreen() {
                   </Text>
                   <AppButton
                     label={t("paywall.goToStore")}
-                    onPress={() => nav.navigate(SCREENS.PAYWALL as never)}
+                    onPress={() =>
+                      rootNav.navigate(SCREENS.PAYWALL, {
+                        placement: PAYWALL_PLACEMENTS.LOCKED_CALENDAR_CARD,
+                      })
+                    }
                     className="self-start"
                   />
                 </Box>

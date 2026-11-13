@@ -1,5 +1,6 @@
 import React from "react";
 import { act, fireEvent, screen, waitFor } from "@testing-library/react-native";
+import { logEvent } from "@react-native-firebase/analytics";
 import DayOverviewScreen from "../../screens/day-overview-screen";
 import { renderWithProviders } from "../utils/render";
 import { TASK_CATEGORY, TaskOutputType } from "@/constants";
@@ -47,6 +48,46 @@ describe("DayOverviewScreen", () => {
       headerStyle: { backgroundColor: "#F4F0E6" },
       headerShadowVisible: false,
       cardStyle: { backgroundColor: "#F4F0E6" },
+    });
+  });
+
+  it("logs day_opened once with progress after the data has loaded", () => {
+    (logEvent as jest.Mock).mockClear();
+    state.setDayOverviewState({ dayTasks: null, total: 0, isLoading: true });
+    const view = renderWithProviders(
+      <DayOverviewScreen
+        route={mockRoute as never}
+        navigation={mockNavigation as never}
+      />,
+    );
+    expect(logEvent).not.toHaveBeenCalled();
+
+    state.setDayOverviewState({
+      dayTasks: { config: {}, progress: {} },
+      total: 50,
+      isLoading: false,
+    });
+    view.rerender(
+      <DayOverviewScreen
+        route={{ params: { ...mockRoute.params } } as never}
+        navigation={mockNavigation as never}
+      />,
+    );
+    view.rerender(
+      <DayOverviewScreen
+        route={{ params: { ...mockRoute.params } } as never}
+        navigation={mockNavigation as never}
+      />,
+    );
+
+    const opened = (logEvent as jest.Mock).mock.calls.filter(
+      (call) => call[1] === "day_opened",
+    );
+    expect(opened).toHaveLength(1);
+    expect(opened[0][2]).toEqual({
+      day_number: 1,
+      program_year: 2025,
+      progress_percent: 50,
     });
   });
 
