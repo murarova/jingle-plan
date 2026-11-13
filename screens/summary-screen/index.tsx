@@ -81,7 +81,7 @@ export const SummaryScreen: React.FC = () => {
                       {editContext === context ? (
                         <EditableContent
                           context={context}
-                          text={text || summary[context]?.text || ""}
+                          text={text}
                           onTextChange={setText}
                           onSubmit={() =>
                             handleTaskSubmit(context, summary[context])
