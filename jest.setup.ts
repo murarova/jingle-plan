@@ -47,6 +47,14 @@ jest.mock("@react-native-firebase/database", () => ({
   update: jest.fn(),
 }));
 
+jest.mock("@react-native-firebase/analytics", () => ({
+  getAnalytics: jest.fn(() => ({})),
+  logEvent: jest.fn(),
+  setUserId: jest.fn(() => Promise.resolve()),
+  setUserProperty: jest.fn(() => Promise.resolve()),
+  setAnalyticsCollectionEnabled: jest.fn(() => Promise.resolve()),
+}));
+
 jest.mock("@react-native-firebase/messaging", () => ({
   getMessaging: jest.fn(() => ({})),
   setBackgroundMessageHandler: jest.fn(),
@@ -77,7 +85,7 @@ jest.mock("@notifee/react-native", () => ({
 
 jest.mock("react-native-fbsdk-next", () => ({
   Settings: { initializeSDK: jest.fn(), setAdvertiserTrackingEnabled: jest.fn() },
-  AppEventsLogger: { logEvent: jest.fn() },
+  AppEventsLogger: { logEvent: jest.fn(), logPurchase: jest.fn() },
 }));
 
 jest.mock("expo-device", () => ({

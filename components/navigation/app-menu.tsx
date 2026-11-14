@@ -6,6 +6,7 @@ import { Menu, MenuItem } from "@/ui/menu";
 import { LogOut, Trash2, Crown, CircleHelp } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { SCREENS } from "@/constants";
+import { PAYWALL_PLACEMENTS } from "@/constants/analytics";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Alert } from "react-native";
 import { typeRole } from "@/constants/typography";
@@ -66,7 +67,9 @@ export function AppMenu() {
   }
 
   function handleManageSubscription() {
-    nav.navigate(SCREENS.PAYWALL as never);
+    nav.navigate(SCREENS.PAYWALL, {
+      placement: PAYWALL_PLACEMENTS.APP_MENU,
+    });
   }
 
   function handleDeleteAccount() {

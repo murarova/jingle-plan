@@ -16,6 +16,7 @@
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
+        "FirebaseAutomaticScreenReportingEnabled": false,
         "UIBackgroundModes": [
           "remote-notification"
         ],
@@ -57,6 +58,7 @@
         }
       ],
       "./plugins/with-firebase-configure.js",
+      "./plugins/with-firebase-screen-reporting.js",
       [
         "expo-build-properties",
         {
@@ -64,6 +66,7 @@
             "useFrameworks": "static",
             "forceStaticLinking": [
               "RNFBApp",
+              "RNFBAnalytics",
               "RNFBAuth",
               "RNFBDatabase",
               "RNFBMessaging",

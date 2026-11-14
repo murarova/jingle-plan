@@ -17,7 +17,6 @@ import {
 } from "expo-iap";
 import type { IapContextValue } from "../types/iap";
 import { skipStoreIap, SUBSCRIPTION_IDS } from "../config/iap";
-import { AppEventsLogger } from "react-native-fbsdk-next";
 import { getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
 import {
   getAndroidPromoEntitlement,
@@ -31,6 +30,10 @@ import {
   shouldResolveWithoutStoreCheck,
 } from "../utils/iap-entitlement";
 import { getStorePriceLabel } from "../utils/iap-price";
+import {
+  trackPromocodeApplied,
+  trackSubscriptionPurchase,
+} from "../services/analytics";
 
 const IapContext = createContext<IapContextValue | null>(null);
 
@@ -89,6 +92,7 @@ function StoreIAPProvider({ children }: { children: React.ReactNode }) {
   const catalogRef = useRef<Product[]>([]);
   const promoExpiresAtRef = useRef<number | null>(null);
   const awaitingOfferRef = useRef(false);
+  const promoLoggedRef = useRef(false);
   const [isAwaitingOfferRedemption, setIsAwaitingOfferRedemption] =
     useState(false);
   promoExpiresAtRef.current = promoExpiresAt;
@@ -113,39 +117,35 @@ function StoreIAPProvider({ children }: { children: React.ReactNode }) {
     },
     onPurchaseSuccess: async (purchase) => {
       try {
+        const isOfferCodePurchase =
+          Platform.OS === "ios" && awaitingOfferRef.current;
         await finishTransaction({ purchase, isConsumable: false });
         setActiveProductId(purchase.productId ?? null);
         setHasActiveSubscription(true);
         stopAwaitingOffer();
 
-        try {
-          const product = catalogRef.current.find(
-            (item) => item.id === purchase.productId,
-          );
-          if (product) {
-            const price =
-              typeof product.price === "number"
-                ? product.price
-                : typeof product.price === "string"
-                  ? parseFloat(product.price)
-                  : 0;
-            const currency = product.currency || "USD";
+        const product = catalogRef.current.find(
+          (item) => item.id === purchase.productId,
+        );
+        const rawPrice = product?.price;
+        const price =
+          typeof rawPrice === "number"
+            ? rawPrice
+            : typeof rawPrice === "string"
+              ? parseFloat(rawPrice)
+              : 0;
 
-            if (price > 0) {
-              try {
-                AppEventsLogger.logPurchase(price, currency);
-                AppEventsLogger.logEvent("Subscribe", {
-                  value: price,
-                  currency: currency,
-                });
-              } catch (fbError) {
-                console.log("Failed to log Facebook purchase event:", fbError);
-              }
-            }
-          }
-        } catch (fbError) {
-          console.log("Error logging Facebook events:", fbError);
+        if (isOfferCodePurchase) {
+          promoLoggedRef.current = true;
+          trackPromocodeApplied("ios_offer_code");
         }
+        void trackSubscriptionPurchase({
+          productId: purchase.productId,
+          transactionId: purchase.id,
+          value: Number.isFinite(price) ? price : 0,
+          currency: product?.currency || "USD",
+          isPromo: isOfferCodePurchase,
+        });
       } catch (error) {
         stopAwaitingOffer();
         setErrorMessage(
@@ -356,6 +356,8 @@ function StoreIAPProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
       setErrorMessage(null);
+      const wasSubscriber = isSubscriber;
+      promoLoggedRef.current = false;
       awaitingOfferRef.current = true;
       setIsAwaitingOfferRedemption(true);
       await presentCodeRedemptionSheetIOS();
@@ -363,6 +365,10 @@ function StoreIAPProvider({ children }: { children: React.ReactNode }) {
       while (awaitingOfferRef.current && Date.now() < deadline) {
         const hasActive = await refreshEntitlements(true);
         if (hasActive) {
+          if (!wasSubscriber && !promoLoggedRef.current) {
+            promoLoggedRef.current = true;
+            trackPromocodeApplied("ios_offer_code");
+          }
           break;
         }
         await new Promise((r) => setTimeout(r, 400));
@@ -378,7 +384,14 @@ function StoreIAPProvider({ children }: { children: React.ReactNode }) {
     } finally {
       stopAwaitingOffer();
     }
-  }, [isInitialized, isStoreReady, refreshEntitlements, stopAwaitingOffer, t]);
+  }, [
+    isInitialized,
+    isStoreReady,
+    isSubscriber,
+    refreshEntitlements,
+    stopAwaitingOffer,
+    t,
+  ]);
 
   const redeemAndroidPromoCode = useCallback(
     async (code: string) => {
@@ -391,6 +404,7 @@ function StoreIAPProvider({ children }: { children: React.ReactNode }) {
         const expiresAt = await requestAndroidPromoRedeem(code);
         setPromoExpiresAt(expiresAt);
         promoExpiresAtRef.current = expiresAt;
+        trackPromocodeApplied("android_custom");
         return true;
       } catch (error) {
         if (error instanceof PromoRedeemError) {

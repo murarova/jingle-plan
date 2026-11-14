@@ -2,6 +2,7 @@ import React from "react";
 import { act, fireEvent, screen, waitFor } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text } from "react-native";
+import { logEvent } from "@react-native-firebase/analytics";
 import { UserGuideModal } from "@/components/modals/user-guide";
 import { UserGuideProvider, useUserGuide } from "@/providers";
 import { clearUser, setUser } from "@/store/authReducer";
@@ -139,6 +140,69 @@ describe("UserGuideProvider", () => {
 
     fireEvent.press(screen.getByText("reopen"));
     await waitFor(() => expect(screen.getByText("1 / 4")).toBeTruthy());
+  });
+
+  it("logs onboarding_complete when the first guide is finished", async () => {
+    (logEvent as jest.Mock).mockClear();
+    renderWithProviders(
+      <UserGuideProvider>
+        <Text>app</Text>
+      </UserGuideProvider>,
+      { preloadedState: loggedIn },
+    );
+
+    await waitFor(() => expect(screen.getByText("1 / 4")).toBeTruthy());
+    for (let i = 0; i < 4; i += 1) {
+      fireEvent.press(screen.getByTestId("guide-next"));
+    }
+
+    const names = (logEvent as jest.Mock).mock.calls.map((call) => call[1]);
+    expect(names).toEqual(["onboarding_complete"]);
+  });
+
+  it("logs skip_onboarding with the step when the first guide is skipped", async () => {
+    (logEvent as jest.Mock).mockClear();
+    renderWithProviders(
+      <UserGuideProvider>
+        <Text>app</Text>
+      </UserGuideProvider>,
+      { preloadedState: loggedIn },
+    );
+
+    await waitFor(() => expect(screen.getByText("1 / 4")).toBeTruthy());
+    fireEvent.press(screen.getByTestId("guide-next"));
+    fireEvent.press(screen.getByTestId("guide-skip"));
+
+    expect(logEvent).toHaveBeenCalledTimes(1);
+    expect(logEvent).toHaveBeenCalledWith(
+      expect.anything(),
+      "skip_onboarding",
+      { step: 2 },
+    );
+  });
+
+  it("does not log onboarding events when the guide is reopened", async () => {
+    await AsyncStorage.setItem("@user_guide_seen:user-1", "true");
+    (logEvent as jest.Mock).mockClear();
+
+    function Reopen() {
+      const { openGuide } = useUserGuide();
+      return <Text onPress={openGuide}>reopen</Text>;
+    }
+
+    renderWithProviders(
+      <UserGuideProvider>
+        <Reopen />
+      </UserGuideProvider>,
+      { preloadedState: loggedIn },
+    );
+
+    await act(async () => {});
+    fireEvent.press(screen.getByText("reopen"));
+    await waitFor(() => expect(screen.getByText("1 / 4")).toBeTruthy());
+    fireEvent.press(screen.getByTestId("guide-skip"));
+
+    expect(logEvent).not.toHaveBeenCalled();
   });
 
   it("hides the guide when the user logs out", async () => {
