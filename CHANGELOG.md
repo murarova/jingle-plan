@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.8.1...jingle-plan-v1.9.0) (2026-11-14)
+
+
+### Features
+
+* firebase analytics ([#82](https://github.com/murarova/jingle-plan/issues/82)) ([045d874](https://github.com/murarova/jingle-plan/commit/045d874fdf6b77e63ad372fd084379a5ccb946d6))
+
 ## [1.8.1](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.8.0...jingle-plan-v1.8.1) (2026-11-13)
 
 
