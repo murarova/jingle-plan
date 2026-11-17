@@ -38,9 +38,9 @@ describe("computeIsSubscriber", () => {
 
 describe("nextPromoExpiresAt", () => {
   it("keeps the in-memory year when the lookup is unavailable", () => {
-    expect(
-      nextPromoExpiresAt(1_700_000_000_000, { available: false }),
-    ).toBe(1_700_000_000_000);
+    expect(nextPromoExpiresAt(1_700_000_000_000, { available: false })).toBe(
+      1_700_000_000_000,
+    );
   });
 
   it("clears the year when the server says there is no promo", () => {
@@ -53,9 +53,9 @@ describe("nextPromoExpiresAt", () => {
   });
 
   it("stores a successful expiry", () => {
-    expect(
-      nextPromoExpiresAt(null, { available: true, expiresAt: 42 }),
-    ).toBe(42);
+    expect(nextPromoExpiresAt(null, { available: true, expiresAt: 42 })).toBe(
+      42,
+    );
   });
 });
 

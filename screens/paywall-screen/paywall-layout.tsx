@@ -17,7 +17,7 @@ type PaywallLayoutProps = {
   isSubscribeDisabled: boolean;
   isSubscriber: boolean;
   isProcessing: boolean;
-  billingNote: string;
+  billingNote: string | null;
   isRestoreDisabled: boolean;
   onSubscribe: () => void;
   onRestore: () => void;
@@ -92,12 +92,14 @@ export function PaywallLayout({
               </Text>
             </Box>
           ) : null}
-          <Text
-            className={`${typeRole.supporting} text-secondaryText`}
-            style={{ fontSize: 12, lineHeight: 16 }}
-          >
-            {billingNote}
-          </Text>
+          {billingNote ? (
+            <Text
+              className={`${typeRole.supporting} text-secondaryText`}
+              style={{ fontSize: 12, lineHeight: 16 }}
+            >
+              {billingNote}
+            </Text>
+          ) : null}
           {isSubscriber ? (
             <Box
               className="mt-1 flex-row items-center justify-center gap-2 rounded-[14px] py-2.5"
