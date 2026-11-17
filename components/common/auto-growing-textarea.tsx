@@ -19,6 +19,7 @@ import {
   Pressable,
   Modal,
   ScrollView,
+  Keyboard,
 } from "react-native";
 import { Maximize2, Minimize2 } from "lucide-react-native";
 import {
@@ -64,6 +65,7 @@ export const AutoGrowingTextarea = memo(
       const [compactSession, setCompactSession] = useState(0);
       const compactInputRef = useRef<TextInputInstance | null>(null);
       const expandedInputRef = useRef<TextInputInstance | null>(null);
+      const closingExpandedRef = useRef(false);
       const textRef = useRef(
         typeof value === "string"
           ? value
@@ -95,8 +97,12 @@ export const AutoGrowingTextarea = memo(
       );
 
       const closeExpanded = useCallback(() => {
+        const wasClosing = closingExpandedRef.current;
+        closingExpandedRef.current = true;
+        expandedInputRef.current?.blur();
+        Keyboard.dismiss();
         setIsExpanded(false);
-        if (!isControlled) {
+        if (!wasClosing && !isControlled) {
           setCompactSession((session) => session + 1);
         }
       }, [isControlled]);
@@ -110,10 +116,14 @@ export const AutoGrowingTextarea = memo(
       );
 
       const focusExpandedInput = useCallback(() => {
+        if (closingExpandedRef.current) {
+          return;
+        }
         expandedInputRef.current?.focus();
       }, []);
 
       const openExpanded = useCallback(() => {
+        closingExpandedRef.current = false;
         setExpandedDefaultValue(textRef.current);
         setExpandedSession((session) => session + 1);
         setIsExpanded(true);
@@ -201,6 +211,7 @@ export const AutoGrowingTextarea = memo(
                 >
                   <View style={styles.expandedHeader}>
                     <Pressable
+                      onPressIn={closeExpanded}
                       onPress={closeExpanded}
                       style={styles.collapseButton}
                       hitSlop={8}
@@ -226,7 +237,6 @@ export const AutoGrowingTextarea = memo(
                       defaultValue={expandedDefaultValue}
                       placeholderTextColor={placeholderTextColor}
                       onChangeText={handleExpandedChange}
-                      onLayout={focusExpandedInput}
                       style={[styles.expandedTextarea, styles.expandedTextareaFill]}
                       underlineColorAndroid="transparent"
                       textAlignVertical="top"
