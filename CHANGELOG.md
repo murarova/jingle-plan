@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.1](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.9.0...jingle-plan-v1.9.1) (2026-11-17)
+
+
+### Bug Fixes
+
+* Promo billing note and expand close ([#84](https://github.com/murarova/jingle-plan/issues/84)) ([dc7b902](https://github.com/murarova/jingle-plan/commit/dc7b9024abf181836af7e21ba8aba3cdb90bad5f))
+
 ## [1.9.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.8.1...jingle-plan-v1.9.0) (2026-11-14)
 
 
