@@ -16,6 +16,7 @@ export function useAndroidPaywall() {
     isInitialized,
     priceLabel,
     isSubscriber,
+    activeProductId,
     isStoreReady,
     restorePurchases,
     redeemAndroidPromoCode,
@@ -96,7 +97,8 @@ export function useAndroidPaywall() {
     isSubscribeDisabled: isLoading || !productId || !canUseStore,
     isSubscriber,
     isProcessing: isLoading,
-    billingNote: t("paywall.billingNoteAndroid"),
+    billingNote:
+      isSubscriber && !activeProductId ? null : t("paywall.billingNoteAndroid"),
     isRestoreDisabled: isLoading,
     isPromoDisabled: isLoading,
     promoCode: code,

@@ -223,6 +223,16 @@ describe("PaywallScreen", () => {
     expect(screen.getByText(/налаштуваннях Google Play/)).toBeTruthy();
   });
 
+  it("hides the billing note when access comes from a promo code", () => {
+    mockUseIAP.mockReturnValue({
+      ...defaultIap,
+      isSubscriber: true,
+      activeProductId: null,
+    });
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
+    expect(screen.queryByText(/Оплата через/)).toBeNull();
+  });
+
   it("hides the promo code entry for subscribers", () => {
     Object.defineProperty(Platform, "OS", {
       configurable: true,

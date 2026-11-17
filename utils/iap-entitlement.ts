@@ -25,9 +25,7 @@ export function computeIsSubscriber({
 
 export function nextPromoExpiresAt(
   current: number | null,
-  lookup:
-    | { available: true; expiresAt: number | null }
-    | { available: false },
+  lookup: { available: true; expiresAt: number | null } | { available: false },
 ): number | null {
   if (!lookup.available) {
     return current;

@@ -4,8 +4,7 @@ import { useTranslation } from "react-i18next";
 import { EXPO_PUBLIC_IOS_SUBSCRIPTION_ID } from "@env";
 import { useIAP } from "@/hooks/useIAP";
 
-const MANAGE_SUBSCRIPTION_URL =
-  "https://apps.apple.com/account/subscriptions";
+const MANAGE_SUBSCRIPTION_URL = "https://apps.apple.com/account/subscriptions";
 
 export function useIosPaywall() {
   const { t } = useTranslation();
@@ -16,13 +15,15 @@ export function useIosPaywall() {
     isInitialized,
     priceLabel,
     isSubscriber,
+    activeProductId,
     isStoreReady,
     restorePurchases,
     isAwaitingOfferRedemption,
     redeemAppleOfferCode,
   } = useIAP();
 
-  const productId = subscriptions[0]?.id ?? EXPO_PUBLIC_IOS_SUBSCRIPTION_ID ?? "";
+  const productId =
+    subscriptions[0]?.id ?? EXPO_PUBLIC_IOS_SUBSCRIPTION_ID ?? "";
   const canUseStore = isInitialized && isStoreReady;
 
   const handleSubscribe = useCallback(() => {
@@ -65,7 +66,8 @@ export function useIosPaywall() {
     isSubscribeDisabled: isLoading || !productId || !canUseStore,
     isSubscriber,
     isProcessing: isLoading,
-    billingNote: t("paywall.billingNoteIos"),
+    billingNote:
+      isSubscriber && !activeProductId ? null : t("paywall.billingNoteIos"),
     isRestoreDisabled: isLoading || !canUseStore,
     showRedeemOverlay: isAwaitingOfferRedemption,
     isPromoDisabled: isLoading || !canUseStore,
