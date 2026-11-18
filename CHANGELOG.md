@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.9.1...jingle-plan-v1.10.0) (2026-11-18)
+
+
+### Features
+
+* unlock the app for a year after a WayForPay payment ([#86](https://github.com/murarova/jingle-plan/issues/86)) ([6651b2d](https://github.com/murarova/jingle-plan/commit/6651b2d15a155bba5a7227b0a4919cc74d4c5279))
+
 ## [1.9.1](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.9.0...jingle-plan-v1.9.1) (2026-11-17)
 
 
