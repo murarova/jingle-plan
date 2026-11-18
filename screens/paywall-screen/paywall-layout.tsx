@@ -19,6 +19,7 @@ type PaywallLayoutProps = {
   isProcessing: boolean;
   billingNote: string | null;
   isRestoreDisabled: boolean;
+  showManageSubscription: boolean;
   onSubscribe: () => void;
   onRestore: () => void;
   onManageSubscription: () => void;
@@ -33,6 +34,7 @@ export function PaywallLayout({
   isProcessing,
   billingNote,
   isRestoreDisabled,
+  showManageSubscription,
   onSubscribe,
   onRestore,
   onManageSubscription,
@@ -129,11 +131,15 @@ export function PaywallLayout({
             onPress={onRestore}
             disabled={isRestoreDisabled}
           />
-          <Text className={`${typeRole.supporting} text-secondaryText`}>·</Text>
-          <PaywallLink
-            label={t("common.manageSubscription")}
-            onPress={onManageSubscription}
-          />
+          {showManageSubscription ? (
+            <>
+              <Text className={`${typeRole.supporting} text-secondaryText`}>·</Text>
+              <PaywallLink
+                label={t("common.manageSubscription")}
+                onPress={onManageSubscription}
+              />
+            </>
+          ) : null}
         </Box>
 
         {legalLinks.length > 0 ? (

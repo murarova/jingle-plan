@@ -27,6 +27,7 @@ import {
   computeIsSubscriber,
   isPromoEntitlementActive,
   nextPromoExpiresAt,
+  shouldReadServerEntitlement,
   shouldResolveWithoutStoreCheck,
 } from "../utils/iap-entitlement";
 import { getStorePriceLabel } from "../utils/iap-price";
@@ -213,7 +214,7 @@ function StoreIAPProvider({ children }: { children: React.ReactNode }) {
   const refreshPromoEntitlement = useCallback(async (): Promise<
     number | null
   > => {
-    if (Platform.OS !== "android") {
+    if (!shouldReadServerEntitlement(Platform.OS)) {
       return null;
     }
     try {

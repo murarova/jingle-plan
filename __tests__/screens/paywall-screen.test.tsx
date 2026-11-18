@@ -233,6 +233,17 @@ describe("PaywallScreen", () => {
     expect(screen.queryByText(/Оплата через/)).toBeNull();
   });
 
+  it("hides store subscription management for a website year", () => {
+    mockUseIAP.mockReturnValue({
+      ...defaultIap,
+      isSubscriber: true,
+      activeProductId: null,
+    });
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
+    expect(screen.queryByText("Керувати підпискою")).toBeNull();
+    expect(screen.getByText("Підписка активна")).toBeTruthy();
+  });
+
   it("hides the promo code entry for subscribers", () => {
     Object.defineProperty(Platform, "OS", {
       configurable: true,

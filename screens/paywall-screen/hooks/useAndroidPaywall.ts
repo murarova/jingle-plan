@@ -105,6 +105,7 @@ export function useAndroidPaywall() {
     isPromoModalOpen: isModalOpen,
     isRedeemingPromo: isRedeeming,
     onChangePromoCode: setCode,
+    showManageSubscription: !isSubscriber || activeProductId != null,
     onSubscribe: handleSubscribe,
     onRestore: handleRestorePurchases,
     onManageSubscription: handleManageSubscription,

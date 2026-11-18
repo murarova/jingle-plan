@@ -7,7 +7,8 @@
     "build": "tsc",
     "serve": "npm run build && npx firebase-tools emulators:start --only functions",
     "deploy": "npm run build && npx firebase-tools deploy --only functions",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "tsc -p tsconfig.test.json && node --test lib/test-build/test/wayforpay.test.js"
   },
   "engines": {
     "node": "22"

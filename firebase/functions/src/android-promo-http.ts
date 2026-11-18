@@ -11,6 +11,8 @@ import {
   redeemPromoCodeWithCommit,
   type RedeemSuccess,
 } from "./android-promo";
+import { serverEntitlementExpiresAt } from "./wayforpay";
+import { claimPendingWebSubscription } from "./wayforpay-http";
 
 type Response = functions.Response;
 
@@ -250,18 +252,13 @@ export const getAndroidPromoEntitlement = functions
     }
 
     try {
+      await claimPendingWebSubscription(uid);
       const snap = await getDatabase()
         .ref(`iapEntitlements/${uid}`)
         .once("value");
-      const data = snap.val();
-      if (
-        data?.source === PROMO_SOURCE &&
-        isPromoActive(data.expiresAt)
-      ) {
-        sendJson(res, 200, { expiresAt: data.expiresAt });
-        return;
-      }
-      sendJson(res, 200, { expiresAt: null });
+      sendJson(res, 200, {
+        expiresAt: serverEntitlementExpiresAt(snap.val()),
+      });
     } catch (error) {
       functions.logger.error("getAndroidPromoEntitlement failed", error);
       sendJson(res, 500, { error: "internal" });

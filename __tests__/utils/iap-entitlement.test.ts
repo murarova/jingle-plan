@@ -1,6 +1,7 @@
 import {
   computeIsSubscriber,
   nextPromoExpiresAt,
+  shouldReadServerEntitlement,
   shouldResolveWithoutStoreCheck,
 } from "../../utils/iap-entitlement";
 
@@ -33,6 +34,37 @@ describe("computeIsSubscriber", () => {
         promoExpiresAt: Date.now() - 1,
       }),
     ).toBe(false);
+  });
+
+  it("unlocks when a website year is still in the future", () => {
+    expect(
+      computeIsSubscriber({
+        hasActiveSubscription: false,
+        activeProductId: null,
+        promoExpiresAt: Date.now() + 60_000,
+      }),
+    ).toBe(true);
+  });
+
+  it("does not unlock when a website year has expired", () => {
+    expect(
+      computeIsSubscriber({
+        hasActiveSubscription: false,
+        activeProductId: null,
+        promoExpiresAt: Date.now() - 1,
+      }),
+    ).toBe(false);
+  });
+});
+
+describe("shouldReadServerEntitlement", () => {
+  it("reads the paid year on iPhone and Android", () => {
+    expect(shouldReadServerEntitlement("ios")).toBe(true);
+    expect(shouldReadServerEntitlement("android")).toBe(true);
+  });
+
+  it("does not read the paid year on other platforms", () => {
+    expect(shouldReadServerEntitlement("web")).toBe(false);
   });
 });
 
