@@ -76,7 +76,9 @@ export function isSafeOrderReference(value: unknown): value is string {
 }
 
 export function hmacMd5(value: string, secret: string): string {
-  return createHmac("md5", secret).update(value, "utf8").digest("hex");
+  return createHmac("md5", secret) // codeql[js/weak-cryptographic-algorithm]
+    .update(value, "utf8")
+    .digest("hex");
 }
 
 export function signaturesMatch(expected: string, actual: unknown): boolean {
