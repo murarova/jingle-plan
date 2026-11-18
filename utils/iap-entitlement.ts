@@ -33,6 +33,10 @@ export function nextPromoExpiresAt(
   return lookup.expiresAt;
 }
 
+export function shouldReadServerEntitlement(platform: string): boolean {
+  return platform === "ios" || platform === "android";
+}
+
 export function shouldResolveWithoutStoreCheck({
   hasSubscriptionIds,
   promoActive,

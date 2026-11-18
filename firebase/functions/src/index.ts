@@ -10,6 +10,10 @@ import {
   getAndroidPromoEntitlement,
 } from "./android-promo-http";
 import { deleteUserData } from "./delete-user-data";
+import {
+  createWayforpayCheckout,
+  wayforpayService,
+} from "./wayforpay-http";
 
 const DATABASE_URL =
   "https://advent-calendar-12-default-rtdb.europe-west1.firebasedatabase.app";
@@ -44,3 +48,4 @@ export {
 };
 
 export { deleteUserData };
+export { createWayforpayCheckout, wayforpayService };

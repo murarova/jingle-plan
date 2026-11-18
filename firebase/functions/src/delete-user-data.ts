@@ -2,6 +2,7 @@ import * as functions from "firebase-functions/v1";
 import { getDatabase } from "firebase-admin/database";
 import { getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
+import { normalizeEmail, pendingKey } from "./wayforpay";
 
 const FIRST_YEAR = 2024;
 
@@ -23,9 +24,13 @@ async function deleteStoredImages(uid: string, year: string): Promise<void> {
     });
 }
 
-export async function deleteAllUserData(uid: string): Promise<void> {
+export async function deleteAllUserData(
+  uid: string,
+  email?: string | null,
+): Promise<void> {
   const db = getDatabase();
   const years = yearsToClear();
+  const normalized = normalizeEmail(email);
   const tasks: Promise<unknown>[] = [
     db.ref(`usersProfiles/${uid}`).remove(),
     db.ref(`fcmTokens/${uid}`).remove(),
@@ -36,6 +41,11 @@ export async function deleteAllUserData(uid: string): Promise<void> {
       deleteStoredImages(uid, year),
     ]),
   ];
+  if (normalized) {
+    tasks.push(
+      db.ref(`pendingWebSubscriptions/${pendingKey(normalized)}`).remove(),
+    );
+  }
 
   const results = await Promise.allSettled(tasks);
   const failed = results.find(
@@ -50,5 +60,5 @@ export const deleteUserData = functions
   .region("us-central1")
   .auth.user()
   .onDelete(async (user) => {
-    await deleteAllUserData(user.uid);
+    await deleteAllUserData(user.uid, user.email);
   });

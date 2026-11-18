@@ -71,6 +71,7 @@ export function useIosPaywall() {
     isRestoreDisabled: isLoading || !canUseStore,
     showRedeemOverlay: isAwaitingOfferRedemption,
     isPromoDisabled: isLoading || !canUseStore,
+    showManageSubscription: !isSubscriber || activeProductId != null,
     onSubscribe: handleSubscribe,
     onRestore: handleRestorePurchases,
     onManageSubscription: handleManageSubscription,

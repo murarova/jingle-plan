@@ -13,6 +13,7 @@ export const IosPaywall = memo(() => {
     isProcessing,
     billingNote,
     isRestoreDisabled,
+    showManageSubscription,
     showRedeemOverlay,
     isPromoDisabled,
     onSubscribe,
@@ -29,6 +30,7 @@ export const IosPaywall = memo(() => {
       isProcessing={isProcessing}
       billingNote={billingNote}
       isRestoreDisabled={isRestoreDisabled}
+      showManageSubscription={showManageSubscription}
       onSubscribe={onSubscribe}
       onRestore={onRestore}
       onManageSubscription={onManageSubscription}
