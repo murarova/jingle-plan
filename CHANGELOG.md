@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.10.0...jingle-plan-v1.11.0) (2026-11-19)
+
+
+### Features
+
+* Explain empty screens ([#90](https://github.com/murarova/jingle-plan/issues/90)) ([c91c17c](https://github.com/murarova/jingle-plan/commit/c91c17c863621915dccdcf58a89d4362b582d872))
+* explain when empty-screen content will appear ([#88](https://github.com/murarova/jingle-plan/issues/88)) ([2a2de20](https://github.com/murarova/jingle-plan/commit/2a2de206480c4d8fc06ceaa763e74439e35a04a3))
+
 ## [1.10.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.9.1...jingle-plan-v1.10.0) (2026-11-18)
 
 
