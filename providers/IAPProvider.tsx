@@ -47,27 +47,99 @@ function sortByPrice(items: Product[]) {
 }
 
 function LocalIAPProvider({ children }: { children: React.ReactNode }) {
+  const [promoExpiresAt, setPromoExpiresAt] = useState<number | null>(null);
+  const [isSubscriptionResolved, setIsSubscriptionResolved] = useState(false);
+  const [promoErrorMessage, setPromoErrorMessage] = useState<string | null>(
+    null,
+  );
+  const promoExpiresAtRef = useRef<number | null>(null);
+  promoExpiresAtRef.current = promoExpiresAt;
+
+  const refreshServerEntitlement = useCallback(async () => {
+    const user = getAuth().currentUser;
+    if (!user) {
+      setPromoExpiresAt(null);
+      promoExpiresAtRef.current = null;
+      setIsSubscriptionResolved(true);
+      return null;
+    }
+    try {
+      const lookup = await getAndroidPromoEntitlement();
+      const next = nextPromoExpiresAt(promoExpiresAtRef.current, lookup);
+      setPromoExpiresAt(next);
+      promoExpiresAtRef.current = next;
+      return next;
+    } catch {
+      return promoExpiresAtRef.current;
+    } finally {
+      setIsSubscriptionResolved(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(getAuth(), () => {
+      void refreshServerEntitlement();
+    });
+    return unsubscribe;
+  }, [refreshServerEntitlement]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener(
+      "change",
+      (nextAppState: AppStateStatus) => {
+        if (nextAppState === "active") {
+          void refreshServerEntitlement();
+        }
+      },
+    );
+    return () => subscription.remove();
+  }, [refreshServerEntitlement]);
+
+  const redeemAndroidPromoCode = useCallback(async (code: string) => {
+    try {
+      setPromoErrorMessage(null);
+      const expiresAt = await requestAndroidPromoRedeem(code);
+      setPromoExpiresAt(expiresAt);
+      promoExpiresAtRef.current = expiresAt;
+      setIsSubscriptionResolved(true);
+      return true;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      setPromoErrorMessage(message || null);
+      return false;
+    }
+  }, []);
+
   const value: IapContextValue = useMemo(
     () => ({
       isInitialized: false,
       isStoreReady: false,
       subscriptions: [],
       priceLabel: null,
-      isSubscriptionResolved: true,
-      isSubscriber: false,
+      isSubscriptionResolved,
+      isSubscriber: isPromoEntitlementActive(promoExpiresAt),
       activeProductId: null,
       isLoading: false,
       isAwaitingOfferRedemption: false,
       errorMessage: null,
-      promoErrorMessage: null,
+      promoErrorMessage,
       subscribe: async () => {},
       redeemAppleOfferCode: async () => false,
-      redeemAndroidPromoCode: async () => false,
+      redeemAndroidPromoCode,
       clearErrorMessage: () => {},
-      clearPromoError: () => {},
-      restorePurchases: async () => false,
+      clearPromoError: () => setPromoErrorMessage(null),
+      restorePurchases: async () => {
+        const expiresAt = await refreshServerEntitlement();
+        return isPromoEntitlementActive(expiresAt);
+      },
     }),
-    [],
+    [
+      isSubscriptionResolved,
+      promoExpiresAt,
+      promoErrorMessage,
+      redeemAndroidPromoCode,
+      refreshServerEntitlement,
+    ],
   );
 
   return <IapContext.Provider value={value}>{children}</IapContext.Provider>;
