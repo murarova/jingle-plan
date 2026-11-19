@@ -249,15 +249,13 @@ function StoreIAPProvider({ children }: { children: React.ReactNode }) {
           return promoActive;
         }
 
-        let hasActive = await hasActiveSubscriptions(SUBSCRIPTION_IDS);
-        if (!hasActive) {
-          hasActive = await hasActiveSubscriptions();
-        }
-        if (!hasActive) {
-          await new Promise((r) => setTimeout(r, 500));
-          hasActive =
-            (await hasActiveSubscriptions(SUBSCRIPTION_IDS)) ||
-            (await hasActiveSubscriptions());
+        let hasActive = false;
+        if (SUBSCRIPTION_IDS.length) {
+          hasActive = await hasActiveSubscriptions(SUBSCRIPTION_IDS);
+          if (!hasActive) {
+            await new Promise((r) => setTimeout(r, 500));
+            hasActive = await hasActiveSubscriptions(SUBSCRIPTION_IDS);
+          }
         }
         setHasActiveSubscription(hasActive);
         if (hasActive) {

@@ -66,8 +66,12 @@ export const RegisterScreen = () => {
     }
   };
 
-  const validatePassword = (password: string) => {
-    if (!PASSWORD_REGEX.test(password)) {
+  const validatePassword = (value: string) => {
+    if (!value) {
+      setPasswordError("");
+      return;
+    }
+    if (!PASSWORD_REGEX.test(value)) {
       setPasswordError(t("screens.registerScreen.invalidPassword"));
     } else {
       setPasswordError("");
@@ -143,6 +147,10 @@ export const RegisterScreen = () => {
   const handlePasswordChange = (value: string) => {
     passwordValueRef.current = value;
     setPassword(value);
+  };
+
+  const handlePasswordBlur = () => {
+    const value = passwordValueRef.current;
     validatePassword(value);
     validatePasswordMatch(value, repeatPasswordValueRef.current);
   };
@@ -150,7 +158,13 @@ export const RegisterScreen = () => {
   const handleRepeatPasswordChange = (value: string) => {
     repeatPasswordValueRef.current = value;
     setRepeatPassword(value);
-    validatePasswordMatch(passwordValueRef.current, value);
+  };
+
+  const handleRepeatPasswordBlur = () => {
+    validatePasswordMatch(
+      passwordValueRef.current,
+      repeatPasswordValueRef.current,
+    );
   };
 
   const handleNameChange = (value: string) => {
@@ -241,6 +255,8 @@ export const RegisterScreen = () => {
                           value={password}
                           type={showPassword ? "text" : "password"}
                           onChangeText={handlePasswordChange}
+                          onBlur={handlePasswordBlur}
+                          onFocus={() => setPasswordError("")}
                           placeholder={t("screens.registerScreen.password")}
                           placeholderTextColor={colors.secondaryText}
                           autoCapitalize="none"
@@ -272,6 +288,8 @@ export const RegisterScreen = () => {
                           value={repeatPassword}
                           type={showPassword ? "text" : "password"}
                           onChangeText={handleRepeatPasswordChange}
+                          onBlur={handleRepeatPasswordBlur}
+                          onFocus={() => setPasswordMatchError("")}
                           placeholder={t(
                             "screens.registerScreen.repeatPassword",
                           )}

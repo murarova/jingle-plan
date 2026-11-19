@@ -83,12 +83,16 @@ describe("RegisterScreen", () => {
   });
 
   describe("validation", () => {
-    it("shows a password error for a weak password", () => {
+    it("shows a password error for a weak password after blur", () => {
       renderWithProviders(<RegisterScreen />);
-      fireEvent.changeText(
-        screen.getByPlaceholderText(PASSWORD_PLACEHOLDER),
-        "weak"
-      );
+      const passwordInput = screen.getByPlaceholderText(PASSWORD_PLACEHOLDER);
+      fireEvent.changeText(passwordInput, "weak");
+      expect(
+        screen.queryByText(
+          "Пароль має складатись із щонайменше 8 символів і містити хоча б одну цифру та хоча б одну велику літеру"
+        )
+      ).toBeNull();
+      fireEvent(passwordInput, "blur");
       expect(
         screen.getByText(
           "Пароль має складатись із щонайменше 8 символів і містити хоча б одну цифру та хоча б одну велику літеру"
@@ -109,29 +113,29 @@ describe("RegisterScreen", () => {
       ).toBeNull();
     });
 
-    it("shows a mismatch error when passwords differ", () => {
+    it("shows a mismatch error when the repeat password is blurred", () => {
       renderWithProviders(<RegisterScreen />);
       fireEvent.changeText(
         screen.getByPlaceholderText(PASSWORD_PLACEHOLDER),
         "Password1"
       );
-      fireEvent.changeText(
-        screen.getByPlaceholderText(REPEAT_PLACEHOLDER),
-        "Password2"
-      );
+      const repeatInput = screen.getByPlaceholderText(REPEAT_PLACEHOLDER);
+      fireEvent.changeText(repeatInput, "Password2");
+      expect(screen.queryByText("Паролі не збігаються")).toBeNull();
+      fireEvent(repeatInput, "blur");
       expect(screen.getByText("Паролі не збігаються")).toBeTruthy();
     });
 
     it("clears the mismatch error when the password is filled after the repeat field", () => {
       renderWithProviders(<RegisterScreen />);
-      fireEvent.changeText(
-        screen.getByPlaceholderText(REPEAT_PLACEHOLDER),
-        "Password1"
-      );
-      fireEvent.changeText(
-        screen.getByPlaceholderText(PASSWORD_PLACEHOLDER),
-        "Password1"
-      );
+      const repeatInput = screen.getByPlaceholderText(REPEAT_PLACEHOLDER);
+      fireEvent.changeText(repeatInput, "Password1");
+      const passwordInput = screen.getByPlaceholderText(PASSWORD_PLACEHOLDER);
+      fireEvent.changeText(passwordInput, "Password2");
+      fireEvent(repeatInput, "blur");
+      expect(screen.getByText("Паролі не збігаються")).toBeTruthy();
+      fireEvent.changeText(passwordInput, "Password1");
+      fireEvent(passwordInput, "blur");
       expect(screen.queryByText("Паролі не збігаються")).toBeNull();
     });
 

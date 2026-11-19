@@ -75,6 +75,26 @@ export function isSafeOrderReference(value: unknown): value is string {
   return typeof value === "string" && /^[A-Za-z0-9_-]{1,128}$/.test(value);
 }
 
+export function publicOrderView(order: {
+  status?: unknown;
+  email?: unknown;
+} | null): { status: WayforpayOrderStatus; email: string } | null {
+  if (!order) return null;
+  const status = order.status;
+  if (
+    status !== "pending" &&
+    status !== "approved" &&
+    status !== "declined" &&
+    status !== "refunded"
+  ) {
+    return null;
+  }
+  return {
+    status,
+    email: typeof order.email === "string" ? order.email : "",
+  };
+}
+
 export function hmacMd5(value: string, secret: string): string {
   return createHmac("md5", secret) // codeql[js/weak-cryptographic-algorithm]
     .update(value, "utf8")
