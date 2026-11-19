@@ -43,7 +43,7 @@ export const SummaryScreen: React.FC = () => {
   } = useSummaryScreen({ summary });
 
   if (!summary) {
-    return <EmptyScreen />;
+    return <EmptyScreen note="summary" />;
   }
 
   return (

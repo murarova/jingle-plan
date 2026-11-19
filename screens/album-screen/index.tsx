@@ -26,7 +26,7 @@ export const AlbumScreen = memo(() => {
   );
 
   if (!photos) {
-    return <EmptyScreen />;
+    return <EmptyScreen note="album" />;
   }
 
   return (

@@ -59,6 +59,11 @@ describe("DashboardScreen", () => {
       preloadedState: loggedInPreloadedState,
     });
     expect(screen.getByText("Поки що тут нічого немає")).toBeTruthy();
+    expect(
+      screen.getByText(
+        "Вміст цієї сторінки з'явиться після виконання завдань щодо планів.",
+      ),
+    ).toBeTruthy();
   });
 
   it("shows the empty screen when all progress is zero", () => {
@@ -67,6 +72,11 @@ describe("DashboardScreen", () => {
       preloadedState: loggedInPreloadedState,
     });
     expect(screen.getByText("Поки що тут нічого немає")).toBeTruthy();
+    expect(
+      screen.getByText(
+        "Вміст цієї сторінки з'явиться після виконання завдань щодо планів.",
+      ),
+    ).toBeTruthy();
   });
 
   describe("with populated plans", () => {

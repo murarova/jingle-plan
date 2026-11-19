@@ -73,6 +73,11 @@ describe("AlbumScreen", () => {
       preloadedState: loggedInPreloadedState,
     });
     expect(screen.getByText("Поки що тут нічого немає")).toBeTruthy();
+    expect(
+      screen.getByText(
+        "Вміст цієї сторінки з'явиться після виконання завдань про спогади.",
+      ),
+    ).toBeTruthy();
   });
 
   describe("with photos", () => {

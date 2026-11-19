@@ -56,6 +56,11 @@ describe("PlansScreen", () => {
       },
     );
     expect(screen.getByText("Поки що тут нічого немає")).toBeTruthy();
+    expect(
+      screen.getByText(
+        "Вміст цієї сторінки з'явиться після виконання завдань щодо планів.",
+      ),
+    ).toBeTruthy();
   });
 
   it("shows the global goal when only goals exist", () => {

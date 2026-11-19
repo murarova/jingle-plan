@@ -55,6 +55,11 @@ describe("SummaryScreen", () => {
       preloadedState: loggedInPreloadedState,
     });
     expect(screen.getByText("Поки що тут нічого немає")).toBeTruthy();
+    expect(
+      screen.getByText(
+        "Вміст цієї сторінки з'явиться після виконання завдання з підсумків.",
+      ),
+    ).toBeTruthy();
   });
 
   describe("with summary data", () => {
