@@ -11,8 +11,16 @@ export default {
     album: "Album",
     dashboard: "Dashboard",
     empty: "There is nothing here at the moment",
-    emptyNote:
-      "Content on this page will appear after you complete the corresponding daily tasks.",
+    emptyNotes: {
+      summary:
+        "Content on this page will appear after you complete the summary task.",
+      plans:
+        "Content on this page will appear after you complete the planning tasks.",
+      album:
+        "Content on this page will appear after you complete the memory tasks.",
+      dashboard:
+        "Content on this page will appear after you complete the planning tasks.",
+    },
     add: "Add",
     cancel: "Cancel",
     edit: "Edit",

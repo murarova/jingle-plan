@@ -70,7 +70,7 @@ export const PlansMonthView = memo(
     );
 
     if (isEmpty(monthlyPlans)) {
-      return <EmptyScreen />;
+      return <EmptyScreen note="plans" />;
     }
 
     return (

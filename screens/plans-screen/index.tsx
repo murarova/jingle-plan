@@ -79,7 +79,7 @@ export function PlansScreen() {
         }`;
 
   if (!plans && !globalGoal) {
-    return <EmptyScreen />;
+    return <EmptyScreen note="plans" />;
   }
 
   return (

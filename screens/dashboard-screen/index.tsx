@@ -10,7 +10,7 @@ export const DashboardScreen = memo(() => {
   const { totalData, contextData, isEmpty, isLoading } = useDashboardData();
 
   if (isEmpty) {
-    return <EmptyScreen />;
+    return <EmptyScreen note="dashboard" />;
   }
 
   return (
