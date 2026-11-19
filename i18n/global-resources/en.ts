@@ -11,6 +11,8 @@ export default {
     album: "Album",
     dashboard: "Dashboard",
     empty: "There is nothing here at the moment",
+    emptyNote:
+      "Content on this page will appear after you complete the corresponding daily tasks.",
     add: "Add",
     cancel: "Cancel",
     edit: "Edit",
