@@ -233,6 +233,40 @@ describe("PaywallScreen", () => {
     expect(screen.queryByText(/Оплата через/)).toBeNull();
   });
 
+  it("hides store subscription management for a website year on Android", () => {
+    Object.defineProperty(Platform, "OS", {
+      configurable: true,
+      get: () => "android",
+    });
+    mockUseIAP.mockReturnValue({
+      ...defaultIap,
+      isSubscriber: true,
+      activeProductId: null,
+      priceLabel: "₴599.99",
+    });
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
+    expect(screen.queryByText("Керувати підпискою")).toBeNull();
+    expect(screen.queryByText("Відновити покупки")).toBeNull();
+    expect(screen.queryByText("₴599.99")).toBeNull();
+    expect(screen.queryByText(/Google Play/)).toBeNull();
+    expect(screen.getByText("Підписка активна")).toBeTruthy();
+  });
+
+  it("shows manage subscription for an Android Play subscription", () => {
+    Object.defineProperty(Platform, "OS", {
+      configurable: true,
+      get: () => "android",
+    });
+    mockUseIAP.mockReturnValue({
+      ...defaultIap,
+      isSubscriber: true,
+      activeProductId: "test.subscription",
+    });
+    renderWithProviders(<PaywallScreen />, { withNavigation: true });
+    expect(screen.getByText("Керувати підпискою")).toBeTruthy();
+    expect(screen.getByText(/Google Play/)).toBeTruthy();
+  });
+
   it("hides store subscription management for a website year", () => {
     mockUseIAP.mockReturnValue({
       ...defaultIap,
@@ -241,6 +275,9 @@ describe("PaywallScreen", () => {
     });
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
     expect(screen.queryByText("Керувати підпискою")).toBeNull();
+    expect(screen.queryByText("Відновити покупки")).toBeNull();
+    expect(screen.queryByText("$12.99")).toBeNull();
+    expect(screen.queryByText(/Apple ID/)).toBeNull();
     expect(screen.getByText("Підписка активна")).toBeTruthy();
   });
 

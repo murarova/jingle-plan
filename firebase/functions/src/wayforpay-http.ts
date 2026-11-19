@@ -9,6 +9,7 @@ import {
   decideServiceAction,
   isSafeOrderReference,
   nextWebGrant,
+  publicOrderView,
   normalizeEmail,
   pendingKey,
   readServicePayload,
@@ -48,7 +49,7 @@ function setCheckoutCors(req: functions.Request, res: functions.Response) {
     res.set("Vary", "Origin");
   }
   res.set("Access-Control-Allow-Headers", "Content-Type");
-  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
 }
 
 function keepNode(current: EntitlementNode | null): EntitlementNode | undefined {
@@ -168,6 +169,39 @@ export async function claimPendingWebSubscription(uid: string): Promise<void> {
     return null;
   });
 }
+
+export const wayforpayOrderStatus = functions
+  .region("us-central1")
+  .https.onRequest(async (req, res) => {
+    setCheckoutCors(req, res);
+    if (req.method === "OPTIONS") {
+      res.status(204).send("");
+      return;
+    }
+    if (req.method !== "GET") {
+      res.status(405).json({ error: "method_not_allowed" });
+      return;
+    }
+    const orderReference = req.query.orderReference;
+    if (!isSafeOrderReference(orderReference)) {
+      res.status(400).json({ error: "invalid_order" });
+      return;
+    }
+    try {
+      const snap = await getDatabase()
+        .ref(`wayforpayOrders/${orderReference}`)
+        .once("value");
+      const view = publicOrderView(snap.val());
+      if (!view) {
+        res.status(404).json({ error: "unknown_order" });
+        return;
+      }
+      res.status(200).json(view);
+    } catch (error) {
+      functions.logger.error("wayforpayOrderStatus failed", error);
+      res.status(500).json({ error: "internal" });
+    }
+  });
 
 export const createWayforpayCheckout = functions
   .runWith({ secrets: SECRETS })

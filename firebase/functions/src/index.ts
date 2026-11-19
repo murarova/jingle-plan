@@ -12,6 +12,7 @@ import {
 import { deleteUserData } from "./delete-user-data";
 import {
   createWayforpayCheckout,
+  wayforpayOrderStatus,
   wayforpayService,
 } from "./wayforpay-http";
 
@@ -48,4 +49,4 @@ export {
 };
 
 export { deleteUserData };
-export { createWayforpayCheckout, wayforpayService };
+export { createWayforpayCheckout, wayforpayOrderStatus, wayforpayService };

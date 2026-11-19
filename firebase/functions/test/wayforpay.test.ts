@@ -14,6 +14,7 @@ import {
   nextWebGrant,
   normalizeEmail,
   pendingKey,
+  publicOrderView,
   readServicePayload,
   refundWebGrant,
   serverEntitlementExpiresAt,
@@ -324,6 +325,17 @@ describe("web year entitlement", () => {
       ),
       null,
     );
+  });
+});
+
+describe("public order status", () => {
+  it("returns the status a buyer can be shown", () => {
+    assert.deepEqual(
+      publicOrderView({ status: "approved", email: "buyer@example.com" }),
+      { status: "approved", email: "buyer@example.com" },
+    );
+    assert.equal(publicOrderView({ status: "other", email: "a@b.c" }), null);
+    assert.equal(publicOrderView(null), null);
   });
 });
 

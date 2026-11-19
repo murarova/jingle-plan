@@ -81,7 +81,7 @@ export function PaywallLayout({
             </Text>
             <CircleCheck size={20} color={colors.green400} />
           </Box>
-          {priceLabel ? (
+          {priceLabel && showManageSubscription ? (
             <Box className="flex-row items-baseline gap-1.5">
               <Text
                 className="text-primaryText"
@@ -94,7 +94,7 @@ export function PaywallLayout({
               </Text>
             </Box>
           ) : null}
-          {billingNote ? (
+          {billingNote && showManageSubscription ? (
             <Text
               className={`${typeRole.supporting} text-secondaryText`}
               style={{ fontSize: 12, lineHeight: 16 }}
@@ -125,22 +125,20 @@ export function PaywallLayout({
         ) : null}
         {promo}
 
-        <Box className="mt-1 flex-row items-center justify-center gap-2">
-          <PaywallLink
-            label={t("paywall.restore")}
-            onPress={onRestore}
-            disabled={isRestoreDisabled}
-          />
-          {showManageSubscription ? (
-            <>
-              <Text className={`${typeRole.supporting} text-secondaryText`}>·</Text>
-              <PaywallLink
-                label={t("common.manageSubscription")}
-                onPress={onManageSubscription}
-              />
-            </>
-          ) : null}
-        </Box>
+        {showManageSubscription ? (
+          <Box className="mt-1 flex-row items-center justify-center gap-2">
+            <PaywallLink
+              label={t("paywall.restore")}
+              onPress={onRestore}
+              disabled={isRestoreDisabled}
+            />
+            <Text className={`${typeRole.supporting} text-secondaryText`}>·</Text>
+            <PaywallLink
+              label={t("common.manageSubscription")}
+              onPress={onManageSubscription}
+            />
+          </Box>
+        ) : null}
 
         {legalLinks.length > 0 ? (
           <Box className="mt-1 flex-row items-center justify-center gap-2">
