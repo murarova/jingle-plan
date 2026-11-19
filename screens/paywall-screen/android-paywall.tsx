@@ -12,6 +12,8 @@ export const AndroidPaywall = memo(() => {
     billingNote,
     isRestoreDisabled,
     showManageSubscription,
+    showStorePurchase,
+    websiteSubscribeUrl,
     isPromoDisabled,
     promoCode,
     isPromoModalOpen,
@@ -34,6 +36,8 @@ export const AndroidPaywall = memo(() => {
       billingNote={billingNote}
       isRestoreDisabled={isRestoreDisabled}
       showManageSubscription={showManageSubscription}
+      showStorePurchase={showStorePurchase}
+      websiteSubscribeUrl={websiteSubscribeUrl}
       onSubscribe={onSubscribe}
       onRestore={onRestore}
       onManageSubscription={onManageSubscription}

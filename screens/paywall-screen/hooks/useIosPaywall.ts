@@ -62,7 +62,8 @@ export function useIosPaywall() {
   }, [redeemAppleOfferCode]);
 
   return {
-    priceLabel: priceLabel ?? "",
+    priceLabel:
+      !isSubscriber || activeProductId != null ? (priceLabel ?? "") : "",
     isSubscribeDisabled: isLoading || !productId || !canUseStore,
     isSubscriber,
     isProcessing: isLoading,

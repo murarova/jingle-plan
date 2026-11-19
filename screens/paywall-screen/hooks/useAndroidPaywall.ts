@@ -3,6 +3,11 @@ import { Alert, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { EXPO_PUBLIC_ANDROID_SUBSCRIPTION_ID } from "@env";
 import { useIAP } from "@/hooks/useIAP";
+import {
+  GOOGLE_PLAY_PAYWALL_ENABLED,
+  WEBSITE_SUBSCRIBE_PRICE,
+  WEBSITE_SUBSCRIBE_URL,
+} from "@/constants/paywall";
 
 const MANAGE_SUBSCRIPTION_URL =
   "https://play.google.com/store/account/subscriptions";
@@ -32,10 +37,16 @@ export function useAndroidPaywall() {
   const canUseStore = isInitialized && isStoreReady;
 
   const handleSubscribe = useCallback(() => {
+    if (!GOOGLE_PLAY_PAYWALL_ENABLED) {
+      Linking.openURL(WEBSITE_SUBSCRIBE_URL).catch(() => {
+        Alert.alert(t("common.error"), t("errors.generic"));
+      });
+      return;
+    }
     if (productId) {
       subscribe(productId);
     }
-  }, [productId, subscribe]);
+  }, [productId, subscribe, t]);
 
   const handleManageSubscription = useCallback(async () => {
     try {
@@ -92,20 +103,36 @@ export function useAndroidPaywall() {
     }
   }, [code, redeemAndroidPromoCode, t]);
 
+  const showStoreBilling =
+    GOOGLE_PLAY_PAYWALL_ENABLED &&
+    (!isSubscriber || activeProductId != null);
+
   return {
-    priceLabel: priceLabel ?? "",
-    isSubscribeDisabled: isLoading || !productId || !canUseStore,
+    priceLabel: GOOGLE_PLAY_PAYWALL_ENABLED
+      ? showStoreBilling
+        ? (priceLabel ?? "")
+        : ""
+      : isSubscriber
+        ? ""
+        : WEBSITE_SUBSCRIBE_PRICE,
+    isSubscribeDisabled:
+      GOOGLE_PLAY_PAYWALL_ENABLED &&
+      (isLoading || !productId || !canUseStore),
     isSubscriber,
-    isProcessing: isLoading,
-    billingNote:
-      isSubscriber && !activeProductId ? null : t("paywall.billingNoteAndroid"),
+    isProcessing: GOOGLE_PLAY_PAYWALL_ENABLED && isLoading,
+    billingNote: showStoreBilling ? t("paywall.billingNoteAndroid") : null,
     isRestoreDisabled: isLoading,
     isPromoDisabled: isLoading,
     promoCode: code,
     isPromoModalOpen: isModalOpen,
     isRedeemingPromo: isRedeeming,
     onChangePromoCode: setCode,
-    showManageSubscription: !isSubscriber || activeProductId != null,
+    showManageSubscription: showStoreBilling,
+    showStorePurchase: true,
+    websiteSubscribeUrl:
+      GOOGLE_PLAY_PAYWALL_ENABLED || isSubscriber
+        ? null
+        : WEBSITE_SUBSCRIBE_URL,
     onSubscribe: handleSubscribe,
     onRestore: handleRestorePurchases,
     onManageSubscription: handleManageSubscription,

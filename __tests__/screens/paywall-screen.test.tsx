@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Platform } from "react-native";
+import { Alert, Linking, Platform } from "react-native";
 import { fireEvent, screen, waitFor } from "@testing-library/react-native";
 import { PaywallScreen } from "../../screens/paywall-screen";
 import { renderWithProviders } from "../utils/render";
@@ -62,7 +62,7 @@ describe("PaywallScreen", () => {
 
   it("renders subscribe CTA", () => {
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
-    expect(screen.getByText("Відкрити Jingle Plan+")).toBeTruthy();
+    expect(screen.getByText("Оформити підписку")).toBeTruthy();
   });
 
   it("shows the store price instead of a hardcoded amount", () => {
@@ -203,24 +203,39 @@ describe("PaywallScreen", () => {
       isSubscriber: true,
     });
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
-    expect(screen.queryByText("Відкрити Jingle Plan+")).toBeNull();
+    expect(screen.queryByText("Оформити підписку")).toBeNull();
     expect(screen.getByText("Підписка активна")).toBeTruthy();
     expect(screen.getByText("Керувати підпискою")).toBeTruthy();
   });
 
   it("subscribes with the store product when the button is pressed", () => {
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
-    fireEvent.press(screen.getByText("Відкрити Jingle Plan+"));
+    fireEvent.press(screen.getByText("Оформити підписку"));
     expect(mockSubscribe).toHaveBeenCalledWith("test.subscription");
   });
 
-  it("shows a platform-specific billing note", () => {
+  it("points Android users to the website while Google Play billing is hidden", () => {
     Object.defineProperty(Platform, "OS", {
       configurable: true,
       get: () => "android",
     });
+    const openUrl = jest
+      .spyOn(Linking, "openURL")
+      .mockResolvedValue(undefined as never);
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
-    expect(screen.getByText(/налаштуваннях Google Play/)).toBeTruthy();
+    expect(screen.queryByText(/Google Play/)).toBeNull();
+    expect(screen.queryByText("Відновити покупки")).toBeNull();
+    expect(screen.queryByText("Керувати підпискою")).toBeNull();
+    expect(screen.getByText("599.99 грн")).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Оформити підписку можна на офіційному сайті "Jingle Plan".',
+      ),
+    ).toBeTruthy();
+    fireEvent.press(screen.getByText("Оформити підписку"));
+    expect(openUrl).toHaveBeenCalledWith("https://jingle-plan.app/subscribe/");
+    expect(mockSubscribe).not.toHaveBeenCalled();
+    openUrl.mockRestore();
   });
 
   it("hides the billing note when access comes from a promo code", () => {
@@ -248,11 +263,18 @@ describe("PaywallScreen", () => {
     expect(screen.queryByText("Керувати підпискою")).toBeNull();
     expect(screen.queryByText("Відновити покупки")).toBeNull();
     expect(screen.queryByText("₴599.99")).toBeNull();
+    expect(screen.queryByText("599.99 грн")).toBeNull();
+    expect(screen.queryByText("Оформити підписку")).toBeNull();
+    expect(
+      screen.queryByText(
+        'Оформити підписку можна на офіційному сайті "Jingle Plan".',
+      ),
+    ).toBeNull();
     expect(screen.queryByText(/Google Play/)).toBeNull();
     expect(screen.getByText("Підписка активна")).toBeTruthy();
   });
 
-  it("shows manage subscription for an Android Play subscription", () => {
+  it("hides Google Play management for an Android Play subscription", () => {
     Object.defineProperty(Platform, "OS", {
       configurable: true,
       get: () => "android",
@@ -263,8 +285,16 @@ describe("PaywallScreen", () => {
       activeProductId: "test.subscription",
     });
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
-    expect(screen.getByText("Керувати підпискою")).toBeTruthy();
-    expect(screen.getByText(/Google Play/)).toBeTruthy();
+    expect(screen.queryByText("Керувати підпискою")).toBeNull();
+    expect(screen.queryByText(/Google Play/)).toBeNull();
+    expect(screen.queryByText("599.99 грн")).toBeNull();
+    expect(screen.queryByText("Оформити підписку")).toBeNull();
+    expect(
+      screen.queryByText(
+        'Оформити підписку можна на офіційному сайті "Jingle Plan".',
+      ),
+    ).toBeNull();
+    expect(screen.getByText("Підписка активна")).toBeTruthy();
   });
 
   it("hides store subscription management for a website year", () => {
@@ -324,7 +354,7 @@ describe("PaywallScreen", () => {
     alertSpy.mockRestore();
   });
 
-  it("keeps Android restore available when the store is not ready", () => {
+  it("hides Android restore while Google Play billing is hidden", () => {
     Object.defineProperty(Platform, "OS", {
       configurable: true,
       get: () => "android",
@@ -335,7 +365,7 @@ describe("PaywallScreen", () => {
       isStoreReady: false,
     });
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
-    fireEvent.press(screen.getByText("Відновити покупки"));
-    expect(mockRestorePurchases).toHaveBeenCalled();
+    expect(screen.queryByText("Відновити покупки")).toBeNull();
+    expect(screen.getByText("Оформити підписку")).toBeTruthy();
   });
 });

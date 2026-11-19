@@ -20,6 +20,8 @@ type PaywallLayoutProps = {
   billingNote: string | null;
   isRestoreDisabled: boolean;
   showManageSubscription: boolean;
+  showStorePurchase?: boolean;
+  websiteSubscribeUrl?: string | null;
   onSubscribe: () => void;
   onRestore: () => void;
   onManageSubscription: () => void;
@@ -35,6 +37,8 @@ export function PaywallLayout({
   billingNote,
   isRestoreDisabled,
   showManageSubscription,
+  showStorePurchase = true,
+  websiteSubscribeUrl = null,
   onSubscribe,
   onRestore,
   onManageSubscription,
@@ -81,7 +85,7 @@ export function PaywallLayout({
             </Text>
             <CircleCheck size={20} color={colors.green400} />
           </Box>
-          {priceLabel && showManageSubscription ? (
+          {priceLabel && !isSubscriber ? (
             <Box className="flex-row items-baseline gap-1.5">
               <Text
                 className="text-primaryText"
@@ -115,13 +119,20 @@ export function PaywallLayout({
           ) : null}
         </Box>
 
-        {!isSubscriber ? (
+        {showStorePurchase && !isSubscriber ? (
           <AppButton
             label={isProcessing ? t("paywall.processing") : t("paywall.cta")}
             onPress={onSubscribe}
             isDisabled={isSubscribeDisabled}
             className="mt-4 h-[42px]"
           />
+        ) : null}
+        {websiteSubscribeUrl && !isSubscriber ? (
+          <Text
+            className={`${typeRole.secondary} mt-3 text-center text-secondaryText`}
+          >
+            {t("paywall.websiteSubscribe")}
+          </Text>
         ) : null}
         {promo}
 

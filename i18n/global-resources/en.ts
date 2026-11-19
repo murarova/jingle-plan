@@ -266,6 +266,8 @@ export default {
       "Payment is charged to your Apple ID. Renews automatically every year unless canceled at least 24 hours before the period ends. Manage it in your Apple settings.",
     billingNoteAndroid:
       "Payment is charged to your Google Play account. Renews automatically every year unless canceled at least 24 hours before the period ends. Manage it in your Google Play settings.",
+    websiteSubscribe:
+      'You can subscribe on the official "Jingle Plan" website.',
     cta: "Unlock Jingle Plan+",
     alreadySubscribed: "Active Subscription",
     processing: "Please wait...",
