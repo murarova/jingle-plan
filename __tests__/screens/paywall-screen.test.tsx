@@ -62,7 +62,7 @@ describe("PaywallScreen", () => {
 
   it("renders subscribe CTA", () => {
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
-    expect(screen.getByText("Відкрити Jingle Plan+")).toBeTruthy();
+    expect(screen.getByText("Оформити підписку")).toBeTruthy();
   });
 
   it("shows the store price instead of a hardcoded amount", () => {
@@ -203,14 +203,14 @@ describe("PaywallScreen", () => {
       isSubscriber: true,
     });
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
-    expect(screen.queryByText("Відкрити Jingle Plan+")).toBeNull();
+    expect(screen.queryByText("Оформити підписку")).toBeNull();
     expect(screen.getByText("Підписка активна")).toBeTruthy();
     expect(screen.getByText("Керувати підпискою")).toBeTruthy();
   });
 
   it("subscribes with the store product when the button is pressed", () => {
     renderWithProviders(<PaywallScreen />, { withNavigation: true });
-    fireEvent.press(screen.getByText("Відкрити Jingle Plan+"));
+    fireEvent.press(screen.getByText("Оформити підписку"));
     expect(mockSubscribe).toHaveBeenCalledWith("test.subscription");
   });
 
