@@ -40,8 +40,11 @@ export function PlansList({ plans, onEdit, onDelete, title }: PlansListProps) {
   const { t } = useTranslation();
 
   return (
-    <ScrollView className="max-h-80 w-full">
-      <VStack space="sm" className="w-full flex-1">
+    <ScrollView
+      className="max-h-80 w-full grow-0"
+      nestedScrollEnabled
+    >
+      <VStack space="sm" className="w-full">
         {title && plans && plans.length > 0 && (
           <Heading size="md">{title}</Heading>
         )}
