@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.11.0...jingle-plan-v1.12.0) (2026-11-19)
+
+
+### Features
+
+* tailor the empty-screen note to each page ([#91](https://github.com/murarova/jingle-plan/issues/91)) ([2419988](https://github.com/murarova/jingle-plan/commit/24199885ea26a69622818a56a7cd3e10f5a4528a))
+
 ## [1.11.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.10.0...jingle-plan-v1.11.0) (2026-11-19)
 
 
