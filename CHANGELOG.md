@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.1](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.12.0...jingle-plan-v1.12.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* android plans list scroll ([#93](https://github.com/murarova/jingle-plan/issues/93)) ([9e80a5c](https://github.com/murarova/jingle-plan/commit/9e80a5c9f6399742bbe89cef633cdab23cc1a4ed))
+
 ## [1.12.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.11.0...jingle-plan-v1.12.0) (2026-11-19)
 
 
