@@ -59,6 +59,7 @@
       ],
       "./plugins/with-firebase-configure.js",
       "./plugins/with-firebase-screen-reporting.js",
+      "./plugins/with-optional-screen-portrait.js",
       [
         "expo-build-properties",
         {
