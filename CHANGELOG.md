@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.2](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.12.1...jingle-plan-v1.12.2) (2026-11-21)
+
+
+### Bug Fixes
+
+* mark portrait screen feature as optional ([#95](https://github.com/murarova/jingle-plan/issues/95)) ([d7380d1](https://github.com/murarova/jingle-plan/commit/d7380d18faf3f52f8bec05d1841266a06cf17e6c))
+
 ## [1.12.1](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.12.0...jingle-plan-v1.12.1) (2026-11-20)
 
 
