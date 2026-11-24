@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ScrollView, useWindowDimensions } from "react-native";
+import { useEffect, useState } from "react";
+import { BackHandler, Platform, ScrollView, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft } from "lucide-react-native";
@@ -74,6 +74,26 @@ function GuideContent({ onClose }: { onClose: OnGuideClose }) {
   function handleBack() {
     setStepIndex((prev) => Math.max(0, prev - 1));
   }
+
+  useEffect(() => {
+    if (Platform.OS !== "android") {
+      return;
+    }
+
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        if (isFirst) {
+          onClose("skipped", stepIndex + 1);
+        } else {
+          setStepIndex((prev) => Math.max(0, prev - 1));
+        }
+        return true;
+      },
+    );
+
+    return () => subscription.remove();
+  }, [isFirst, onClose, stepIndex]);
 
   return (
     <Box className="flex-1">

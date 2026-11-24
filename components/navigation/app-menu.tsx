@@ -3,12 +3,13 @@ import { MenuIcon, Icon } from "@/ui/icon";
 import { Box } from "@/ui/box";
 import { Pressable } from "@/ui/pressable";
 import { Menu, MenuItem } from "@/ui/menu";
-import { LogOut, Trash2, Crown, CircleHelp } from "lucide-react-native";
+import { LogOut, Trash2, Crown, CircleHelp, Star } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { SCREENS } from "@/constants";
 import { PAYWALL_PLACEMENTS } from "@/constants/analytics";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
+import { openPlayStoreListing } from "@/utils/open-play-store";
 import { typeRole } from "@/constants/typography";
 import { colors } from "@/constants/colors";
 import { useAppDispatch, useAppSelector } from "../../store/withTypes";
@@ -72,6 +73,17 @@ export function AppMenu() {
     });
   }
 
+  async function handleRateApp() {
+    try {
+      await openPlayStoreListing();
+    } catch (error) {
+      Alert.alert(
+        t("common.error"),
+        error instanceof Error ? error.message : t("errors.generic"),
+      );
+    }
+  }
+
   function handleDeleteAccount() {
     Alert.alert(
       "Увага!",
@@ -116,6 +128,17 @@ export function AppMenu() {
       icon: CircleHelp,
       onPress: openGuide,
     },
+    ...(Platform.OS === "android"
+      ? [
+          {
+            key: "Rate",
+            textValue: "Rate",
+            label: t("common.rateApp"),
+            icon: Star,
+            onPress: handleRateApp,
+          },
+        ]
+      : []),
     {
       key: "Logout",
       textValue: "Logout",
@@ -143,6 +166,7 @@ export function AppMenu() {
           <Pressable
             {...triggerProps}
             accessibilityRole="button"
+            testID="app-menu-trigger"
             hitSlop={8}
             delayPressIn={0}
             collapsable={false}

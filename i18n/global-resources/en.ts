@@ -33,6 +33,7 @@ export default {
     welcome: "Welcome",
     year: "Year",
     manageSubscription: "Manage subscription",
+    rateApp: "Rate the app",
     proceed: "Proceed",
   },
   messages: {
@@ -44,6 +45,9 @@ export default {
     unsavedChangesTitle: "Unsaved Changes",
     unsavedChangesMessage:
       "You have unsaved data. Do you want to proceed without saving?",
+    exitAppTitle: "Exit",
+    exitAppMessage: "Do you want to exit the app?",
+    exitAppConfirm: "Exit",
   },
   errors: {
     emptyText: "Text field cannot be empty",

@@ -23,6 +23,7 @@ import { typeRole } from "@/constants/typography";
 import { useAppSelector } from "../../store/withTypes";
 import { selectSelectedYear } from "../../store/appReducer";
 import { useCurrentDate } from "../../hooks/useCurrentDate";
+import { useAndroidExitConfirmation } from "./use-android-exit-confirmation";
 
 type NavigationProp = StackNavigationProp<
   HomeStackParamList,
@@ -30,6 +31,7 @@ type NavigationProp = StackNavigationProp<
 >;
 
 function PeriodOverviewScreen() {
+  useAndroidExitConfirmation();
   const nav = useNavigation<NavigationProp>();
   const rootNav = useNavigation<NativeNavigationProp<RootStackParamList>>();
   const { t } = useTranslation();

@@ -1,7 +1,7 @@
 import React from "react";
 import { act, fireEvent, screen, waitFor } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Text } from "react-native";
+import { BackHandler, Platform, Text } from "react-native";
 import { logEvent } from "@react-native-firebase/analytics";
 import { UserGuideModal } from "@/components/modals/user-guide";
 import { UserGuideProvider, useUserGuide } from "@/providers";
@@ -57,6 +57,43 @@ describe("UserGuideModal", () => {
   it("renders nothing when closed", () => {
     renderWithProviders(<UserGuideModal isOpen={false} onClose={jest.fn()} />);
     expect(screen.queryByText("1 / 4")).toBeNull();
+  });
+
+  it("uses the Android back button to move through the guide", async () => {
+    const originalOs = Platform.OS;
+    Object.defineProperty(Platform, "OS", {
+      configurable: true,
+      get: () => "android",
+    });
+    const onClose = jest.fn();
+    let onBackPress: (() => boolean | null | undefined) | null = null;
+    const subscription = jest
+      .spyOn(BackHandler, "addEventListener")
+      .mockImplementation((event, handler) => {
+        if (event === "hardwareBackPress") {
+          onBackPress = handler;
+        }
+        return { remove: jest.fn() };
+      });
+
+    renderWithProviders(<UserGuideModal isOpen onClose={onClose} />);
+    fireEvent.press(screen.getByTestId("guide-next"));
+    await act(async () => {
+      onBackPress?.();
+    });
+    expect(screen.getByText("1 / 4")).toBeTruthy();
+    expect(onClose).not.toHaveBeenCalled();
+
+    await act(async () => {
+      onBackPress?.();
+    });
+    expect(onClose).toHaveBeenCalledWith("skipped", 1);
+
+    subscription.mockRestore();
+    Object.defineProperty(Platform, "OS", {
+      configurable: true,
+      get: () => originalOs,
+    });
   });
 });
 
