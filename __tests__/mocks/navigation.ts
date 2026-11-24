@@ -1,3 +1,5 @@
+import React from "react";
+
 export const mockNavigate = jest.fn();
 export const mockReplace = jest.fn();
 export const mockPush = jest.fn();
@@ -13,6 +15,9 @@ export const mockNavigationModule = () => {
       push: mockPush,
       goBack: mockGoBack,
     }),
+    useFocusEffect: (effect: () => void | (() => void)) => {
+      React.useEffect(() => effect(), [effect]);
+    },
   };
 };
 

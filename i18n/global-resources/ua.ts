@@ -37,6 +37,7 @@ export default {
     welcome: "Ласкаво просимо",
     year: "Рік",
     manageSubscription: "Керувати підпискою",
+    rateApp: "Оцінити застосунок",
     proceed: "Продовжити",
   },
   calendar: {
@@ -174,6 +175,9 @@ export default {
     unsavedChangesTitle: "Незбережені зміни",
     unsavedChangesMessage:
       "У вас є незбережені дані. Ви хочете продовжити без збереження?",
+    exitAppTitle: "Вихід",
+    exitAppMessage: "Ви хочете вийти із застосунку?",
+    exitAppConfirm: "Вийти",
   },
   errors: {
     emptyText: "Текстове поле не може бути порожнім",
