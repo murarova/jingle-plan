@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.0](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.12.2...jingle-plan-v1.13.0) (2026-11-24)
+
+
+### Features
+
+* implement Android back navigation in UserGuideModal and add app… ([#97](https://github.com/murarova/jingle-plan/issues/97)) ([f648fa7](https://github.com/murarova/jingle-plan/commit/f648fa7cf767d750bd5d6bbef91ca694d1e377c1))
+
 ## [1.12.2](https://github.com/murarova/jingle-plan/compare/jingle-plan-v1.12.1...jingle-plan-v1.12.2) (2026-11-21)
 
 
